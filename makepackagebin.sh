@@ -113,6 +113,15 @@ else if [ X$OSTYPE = "Xdarwin10.0" \
 	USBBINFILES="binfiles.osx"
 	USETAR=true
 	USETARPREFIX=true
+else if [ X$OSTYPE = "Xdarwin20" ] ; then
+	PACKAGE=Argyll_V${VERSION}_osx10.6_x86_64_bin.tgz
+	if [ X$HOSTTYPE = "Xarm64" ] ; then
+		PACKAGE=Argyll_V${VERSION}_macOS11_arm64_bin.tgz
+	fi
+	USBDIRS="usb"
+	USBBINFILES="binfiles.osx"
+	USETAR=true
+	USETARPREFIX=true
 else if [ X$OSTYPE = "Xlinux-gnu" ] ; then
 	if [[ "$MACHTYPE" = x86_64-*-linux-gnu ]] ; then
 		echo "We're on Linux x86_64!"
@@ -125,6 +134,7 @@ else if [ X$OSTYPE = "Xlinux-gnu" ] ; then
 	USBDIRS="usb"
 	USBBINFILES="binfiles.lx"
 	USETAR=true
+fi
 fi
 fi
 fi
