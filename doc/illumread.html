@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>illumread</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/illumread</b></h2>
+    <h3>Summary</h3>
+    Use an instrument or instruments to measure an illuminant spectrum,
+    including estimate its Ultra Violet content. A combination of direct
+    illumination readings and readings from a piece of paper having some
+    FWA content are used for this. (If the UV content is not needed, or
+    a suitable instrument is not available, then <a
+      href="spotread.html">spotread</a> should be used instead.)<br>
+    <h3>Usage Summary</h3>
+    <small><span style="font-family: monospace;">illumread [-options]
+        illuminant.sp</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp; Verbose mode</span><span style="font-family:
+        monospace;"></span></small><small><span style="font-family:
+        monospace;"></span></small><br style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#S">-S</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; &nbsp; Plot the readings in a graph window.</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#c">-c comport</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+
+
+
+
+
+
+
+
+
+        COM port, 1..4 (default 1)</span><span style="font-family:
+        monospace;"></span><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span></small><font size="-1"><span
+        style="font-family: monospace;"></span></font><font size="-1"><span
+        style="font-family: monospace;"><br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#N">-N</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Disable
+
+
+
+
+
+
+
+
+
+        initial calibration of instrument</span></font> if possible<br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#H">-H</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use high resolution spectrum mode
+        (if available)<br>
+        <font size="-1">&nbsp;<a href="#Yr">-Y r</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+          Set refresh measurement mode</font><br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#W">-W n|h|x</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Override
+
+
+
+
+
+
+
+
+
+        serial port flow control: n = none, h = HW, x = Xon/Xoff</span></font><br>
+    <small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#T">-T</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Test mode - restore &amp; save measurements to<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+        *_i.sp, *_r.sp, *_p.sp, *_mpir.sp, *_cpir.sp files<br>
+      </span></small> <small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#D">-D [level]</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Print debug diagnostics to stderr</span></small><br>
+    &nbsp; <font size="-1"><span style="font-family: monospace;"><a
+          href="#file"><span style="font-style: italic;">illuminant.sp</span></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+File
+
+
+
+
+
+
+
+
+
+        to save measurement to<br style="font-family: monospace;">
+      </span></font><small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;"></span></small><br>
+    <h3>Usage Details and Discussion</h3>
+    <b>illumread</b> uses a suitable instrument to read an illuminant
+    spectrum, and uses an indirect method to estimate the Ultra Violet
+    content of the illuminant, so as to provide better accuracy with <a
+      href="FWA.html">FWA compensation</a>. An instrument or combination
+    of instruments capable of spectral measurement of both emissive
+    measurement and reflective measurement without a U.V. filter is
+    required for this.<br>
+    <br>
+    <a name="v"></a>The <b>-v</b> flag causes extra information to be
+    printed out during chartread operation.<br>
+    <br>
+    <a name="S"></a>The <b>-S</b> flag enables the plotting of the
+    spectral reflectance/transmittance values. You must select the plot
+    window and strike a key in it to continue with another measurement.<br>
+    <br>
+    <a name="c"></a> The instrument is assumed to communicate through a
+    USB or serial communication port, and the initial port can be
+    selected with the <b>-c</b> option, if the instrument is not
+    connected to the first port. If you invoke <span
+      style="font-weight: bold;">illumread</span> so as to display the
+    usage information (i.e. "illumread -?" or "illumread --"), then the
+    discovered USB and serial ports will be listed. On UNIX/Linux, a
+    list of all possible serial ports are shown, but not all of them may
+    actually be present on your system.<br>
+    <br>
+    <a name="N"></a><span style="font-weight: bold;">-N</span> Any
+    instrument that requires regular calibration will ask for
+    calibration on initial start-up. Sometimes this can be awkward if
+    the instrument is being mounted in some sort of measuring jig, or
+    annoying if several sets of readings are being taken in quick
+    succession. The -<span style="font-weight: bold;">N</span>
+    suppresses this initial calibration if a valid and not timed out
+    previous calibration is recorded in the instrument or on the host
+    computer. It is advisable to only use this option on the second and
+    subsequent measurements in a single session.<br>
+    <br>
+    <a name="H"></a> The -<span style="font-weight: bold;">H</span>
+    option turns on high resolution spectral mode, if the instrument
+    supports it. See <a href="instruments.html">Operation of particular
+      instruments</a> for more details.<br>
+    <br>
+    <a name="Yr"></a> The -<span style="font-weight: bold;">Y r</span>
+    option turns on refresh mode measurement, if the instrument supports
+    it. This may improve the repeatability of measurements of
+    illuminants that have a repetitive flicker.<br>
+    <br>
+    <a name="W"></a>The <b>-W</b> <span style="font-weight: bold;">n|h|x</span>
+    parameter overrides the default serial communications flow control
+    setting. The value <span style="font-weight: bold;">n</span> turns
+    all flow control off, <span style="font-weight: bold;">h</span>
+    sets hardware handshaking, and <span style="font-weight: bold;">x</span>
+    sets Xon/Xoff handshaking. This commend may be useful in workaround
+    serial communications issues with some systems and cables. <br>
+    <br>
+    <a name="T"></a>The <b>-T</b> flag invokes the test mode. In test
+    mode the three measurements are saved to files <i>illuminant</i><i>_i.sp</i>
+    (Illuminant spectrum), <i>illuminant</i><i>_r.sp</i> (Illuminant
+    off paper spectrum), and <i>illuminant_p.sp (</i>Instrument
+    measured paper reflectance spectrum), and these will be loaded if
+    discovered, allowing a replay of the calculation without requiring
+    any measurement. In addition, two diagnostic files <i>illuminant</i><i>_mpir.sp</i>
+    (Measured paper under illuminant spectrum) and <i>illuminant</i><i>_cpir.sp
+
+
+
+
+
+
+      (</i>Computed paper under illuminant spectrum) will be saved.<br>
+    <br>
+    <a name="D"></a>The <b>-D</b> flag causes communications and other
+    instrument diagnostics to be printed to stdout. A level can be set
+    between 1 .. 9, that may give progressively more verbose
+    information, depending on the instrument. This can be useful in
+    tracking down why an instrument can't connect.<br>
+    <br>
+    <a name="file"></a>The <span style="font-weight: bold; font-style:
+      italic;">illuminant.sp</span> is the name of the file to save the
+    resulting illuminant spectrum to. The format used is <a
+      href="File_Formats.html#.sp">.sp</a>.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><br>
+    Unlike the other measurement utilities, <span style="font-weight:
+      bold;">illumread</span> doesn't connect to the instrument until it
+    is about to make a measurement. This allows for the possibility of
+    using a different instrument for each measurement.<br>
+    <br>
+    It will display a menu:<br>
+    <br>
+    Press 1 .. 6<br>
+    1) Measure direct illuminant<br>
+    2) Measure illuminant reflected from paper<br>
+    3) Measure paper<br>
+    4) Select another instrument, Currently 1 'usb:/bus4/dev2/
+    (GretagMacbeth i1 Pro)'<br>
+    5) Compute illuminant spectrum, average result with 0 previous
+    readings &amp; save it<br>
+    6) Compute illuminant spectrum from this reading &amp; save result<br>
+    7) Exit<br>
+    <br>
+    There are three measurements to be made, after which the illuminant
+    can be computed and saved. Before each measurement, the instrument
+    may need calibrating.<br>
+    <br>
+    The first measurement needs a spectral instrument capable of reading
+    in an ambient or emissive mode. For instance, a Spectrolino, Eye-One
+    Pro or ColorMunki would be suitable instruments.<br>
+    <br>
+    The second measurement needs a spectral instrument capable of
+    reading in an projector or emissive mode. For instance, a
+    Spectrolino, Eye-One Pro or ColorMunki would be suitable
+    instruments.<br>
+    <br>
+    The third measurement needs a spectral instrument capable of reading
+    in reflective mode with UV included. For instance, a Spectrolino,
+    Eye-One Pro, DTP20, DTP22 or&nbsp; DTP41 would be suitable
+    instruments, as long as they are not fitted with UV filters.<br>
+    <br>
+    To be able to estimate the level of Ultra Violet (UV) light in the
+    illuminant, a reasonable sized piece of white paper needs to be
+    used. The paper should have some noticeable level of FWA
+    (Fluorescent Whitener Additive, or Optical Brightening Agents) in
+    it, so that it responds to UV light. A piece of cheap copier paper
+    is ideal, since cheap paper is typically whitened with large amounts
+    of FWA. If the paper is thin (less than 160 gsm) then two or three
+    sheets should be used to prevent any background showing through. If
+    the intention is to use the illuminant spectrum for proofing to a
+    particular paper, then it's best to use the intended paper for this
+    purpose.<br>
+    <br>
+    The first measurement <span style="font-weight: bold;">1)</span>,
+    is to use either the ambient or emissive measurement mode to measure
+    the illumination directly.<br>
+    <br>
+    <div style="margin-left: 40px;">If the instrument supports an
+      ambient measurement capability, then it will be used. If the
+      insrument does not have an ambient mode, then an emissive
+      measurement mode can be used, although typically many illuminants
+      are too bright to directly point the instrument at. A work-around
+      is to reflect the illuminant from a spectrally flat white surface.
+      A good candidate for this is a piece of white, fine textured
+      polystyrene foam, or piece of white <a
+        href="https://en.wikipedia.org/wiki/Tyvek">Tyvec</a>. [The
+      suitability of a reflector can be checked using <span
+        style="font-weight: bold;">spotread -S</span> to check that the
+      reflection characteristic is close to flat.]<br>
+      <br>
+      <img alt="Measuring Ambient" src="illumread_1.jpg" width="143"
+        height="272"> <img style="width: 141px; height: 282px;"
+        alt="Measuring Ambient" src="illumread_2.jpg">&nbsp; <img
+        style="width: 226px; height: 282px;" alt="Measuring Ambient"
+        src="illumread_3.jpg"><br>
+    </div>
+    <br>
+    The second measurement <span style="font-weight: bold;">2)</span>,
+    is to measure the illuminant after it has reflected from the paper.<br>
+    <br>
+    <div style="margin-left: 40px;">This is done by placing the paper
+      such that it is uniformly illuminated with reasonable brightness,
+      and then placing the instrument so that it receives the reflected
+      light from the paper. This is typically achieved by placing the
+      instrument close to the paper at about 45º, so that it's aperture
+      has a clear view of the illuminated paper, but avoiding shadowing
+      the region that is in view, and also avoiding measuring specular
+      reflection if the paper is glossy.<br>
+      <br>
+      <img style="width: 219px; height: 261px;" alt="Measuring via
+        Paper" src="illumread_5.jpg"><img style="width: 252px; height:
+        259px;" alt="Measuring via Paper" src="illumread_4.jpg"><br>
+    </div>
+    <br>
+    The third measurement <span style="font-weight: bold;">3)</span>,
+    is to measure the paper directly using the instrument reflective
+    mode measurement.<br>
+    <div style="margin-left: 40px;"><img style="width: 186px; height:
+        162px;" alt="Measuring Paper" src="illumread_6.jpg"><br>
+    </div>
+    If a different instrument is needed, use <span style="font-weight:
+      bold;">4)</span> to select from the available instruments attached
+    to your computer.<br>
+    <br>
+    Once these three measurements have been made, then the illuminant
+    readings spectrum can be computed and save using <span
+      style="font-weight: bold;">6)</span>, or a series of readings can
+    be made with each reading being averages with the previous readings
+    before saving it by using <span style="font-weight: bold;">5)</span>.
+    Note that the averaged readings will be weighted by their absolute
+    intensities, and that while the direct and indirect illumination
+    needs measuring for each reading, the same paper measurement can be
+    used each time.<br>
+    <br>
+    If plotting is enabled, a plot of the measured (black) and with
+    estimated UV (red) is plotted. This is followed by a plot showing
+    measured paper reflectance (black) and the FWA calculated paper
+    reflectance (red).<br>
+    <br>
+    <br>
+    Illumread can then be terminated using <span style="font-weight:
+      bold;">7)</span>.<br>
+    <h3>References:</h3>
+    <p>If For a full description of the approach that illumread uses,
+      see:</p>
+    <p><b>"Estimating illuminant U.V. without a U.V. capable
+        instrument",</b><b><br>
+      </b><b>Graeme W. Gill, IS&amp;T 19th Color and Imaging Conference
+        Final Program and Proceedings, pp. </b><b><span
+          class="pagesNum">58-60(3)</span></b></p>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

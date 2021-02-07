@@ -1,0 +1,39 @@
+
+# Jamfile for the numlib and other general utilities
+
+# Optization state and configuration. Overridden by parent-Jamfiles
+
+PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+#PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
+#PREF_CCFLAGS 	= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	= $(LINKPROFFLAG) ;    # Profile flags
+
+# Products
+Libraries = libnum libui ;
+Headers = numlib.h libui.h ;
+
+#Install
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+HDRS = ../h ;
+
+# Numeric library
+Library libnum.lib : numsup.c dnsq.c powell.c dhsx.c varmet.c ludecomp.c svd.c zbrent.c rand.c sobol.c aatree.c quadprog.c gnewt.c roots.c ;
+
+# Link all utilities with libnum
+LINKLIBS = libnum ;
+
+# All test programs are made from a single source file
+MainsFromSources dnsqtest.c tpowell.c tconjgrad.c tdhsx.c LUtest.c svdtest.c zbrenttest.c soboltest.c qptest.c ;
+
+# Compile .c as .m
+if $(OS) = MACOSX {
+	ObjectCcFlags ui : -ObjC ;
+}
+
+# UI setup library
+Library libui.lib : ui.c ;
+
+

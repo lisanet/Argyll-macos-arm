@@ -1,0 +1,499 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll Installation on Linux</title>
+  </head>
+  <body>
+    <h1> <u>Installing the software on Linux with X11<br>
+      </u></h1>
+    <br>
+    You will need to unpack the downloaded file in the location you have
+    chosen to hold the executable files. Typically this might be in <span
+      style="font-style: italic;">/usr/local/</span>, or perhaps <span
+      style="font-style: italic;">$HOME/bin/</span>. You would then
+    unpack the files using <span style="font-weight: bold;">tar -zxf</span>
+    <span style="font-weight: bold;">archivename.tgz</span>, which will
+    create a directory <span style="font-weight: bold;">Argyll_VX.X.X</span>,
+    where X.X.X is the version number, and the executables will be in <span
+      style="font-weight: bold;">Argyll_VX.X.X/bin</span> You will also
+    have to configure your $PATH environment variable to give access to
+    the executables from your command line environment. The .tgz file
+    also contains several useful reference files (such as scanner chart
+    recognition templates, sample illumination spectrum etc.) in the ref
+    sub-directory, as well as all the current HTML documentation in a
+    doc sub-directory. You may want to copy things to more standard
+    locations such as /usr/local/bin, /usr/local/argyll/bin etc.,
+    depending on the conventions used on your system.<br>
+    <br>
+    Some systems (Fedora ?) seem to be missing normal X11 libraries like
+    <b>libXss.so</b>, so you may have to install <b>libXScrnSaver</b>,
+    i.e. "sudo dnf install libXScrnSaver".<br>
+    <br>
+    <big style="color: rgb(51, 102, 255);"><span style="font-weight:
+        bold;"><a name="bell"></a>Note on the system bell:</span></big><br>
+    <br>
+    When reading strips using the Eye-One Pro or ColorMunki instrument,
+    the system bell is used to indicate when the instrument the ready to
+    be used, and to provide feedback on any problems. On some Linux
+    installations the system bell may be disabled. As well as checking
+    the terminal and GUI sound preferences, you may have to enable the
+    used of the PC speaker driver, which can be done by adding the
+    command <span style="font-weight: bold;">/sbin/modprobe pcspkr </span>to
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    the <span style="font-weight: bold;">/etc/rc.local</span> startup
+    script. You may also have to run <span style="font-weight: bold;">xset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      b 100 1000 100</span> in your local setup, if you are running in
+    an X11 environment. You can check that the system bell is operating
+    by doing an "echo ^G", where ^G is ctrl-G.<br>
+    <br>
+    <big style="color: rgb(51, 102, 255);"><span style="font-weight:
+        bold;"><a name="multimonitor"></a>Note on X11 multi-monitor
+        setups:</span></big><br>
+    <br>
+    When working with a multi-monitor X11 configuration, note that you
+    will only be able to individually calibrate monitors if the
+    multi-window extension you are using (if any), supports access to
+    the individual screen Video LUT tables that are used for
+    calibration. The native X11 multi-screen addressing supports this,
+    as does the Xinerama extension, and XRandR V1.2.<br>
+    <br>
+    The proprietary NVidia TwinView and ATI MergeFB extensions do not
+    currently support access to the individual screen Video LUTs, so
+    calibration of each screen independently is impossible if either of
+    these extensions are running. You can switch to using Xinerama to
+    solve this problem, or you can try doing a calibration for the
+    screens that do have accessible Video LUTs with these proprietary
+    extensions, or ignore calibration and rely purely on display
+    profiling. Use the dispwin tool to figure out what works on your
+    system. The NVidia ATI binary drivers do not seem to properly
+    support XRandR V1.2 either, even though they claim to do so. You may
+    have to set the <span style="font-weight: bold;"></span><span
+      style="font-weight: bold;">ARGYLL_IGNORE_XRANDR1_2</span>
+    environment variable if the XRandR V1.2 extension is faulty.<br>
+    <br>
+    If these limitations trouble you, then as a valuable customer of
+    NVidia or AMD/ATI, perhaps you should contact them and urge them to
+    fix the problems with Video LUT access in their proprietary
+    multi-monitor extensions and XRandR implementation, bringing their
+    support for multi-monitors on X11 up to the same standards as other
+    operating systems. Ask them to add full and correct support for the
+    XRandR V1.2 extension.<br>
+    <br>
+    <big style="color: rgb(51, 102, 255);"><span style="font-weight:
+        bold;"><a name="VideoLUTs"></a>Fixing access to Video LUTs:</span></big><br>
+    <br>
+    Some users have noted that their default X11 installation doesn't
+    properly enable access to the video card Video Lookup Tables
+    (RAMDAC). The Video LUTs are used for display calibration purposes,
+    and a warning will be issues by the <span style="font-weight:
+      bold;">dispcal</span> and <span style="font-weight: bold;">dispread</span>
+    tools if there is a problem with this. Without access to the
+    VideoLUTs, you won't be able to use display calibration.<br>
+    <br>
+    The problem may be because certain X11 extensions aren't being
+    loaded by default. You may want to check that you have<br>
+    <br>
+    <big style="color: rgb(51, 102, 255);"><span style="font-weight:
+        bold;"></span></big>&nbsp; Load&nbsp; "extmod" <br>
+    <br>
+    in&nbsp;the&nbsp;appropriate&nbsp;(or&nbsp;any)&nbsp;section&nbsp;of
+    your Xorg.conf file, to allow the XF86Video&nbsp;LUT
+    extensions&nbsp;to function correctly.<br>
+    <br>
+    Another source of problems is if the display isn't configured with a
+    suitable visual. Typically for high quality color you need to be
+    using at least <span style="font-weight: bold;">24 bits</span> per
+    pixel (8 Bits for each of Red, Green and Blue channels), but more
+    importantly the number of entries in the the VideoLUTs needs to
+    match the depth of the screen. So if the VideoLUTs have 256 entries
+    per channel, then the screen must be using 8 bits per channel to
+    match. Or 64 entries and 6 bits. Or 4096 entries and 12 bits, etc.
+    Running "dispwin -D" may give some clues as to what the nature of
+    the problem is. You might have to look into your xorg.conf or XRANDR
+    setup, or on some distributions there will be some configuration
+    program that will let you choose the display configuration (ie. YaST
+    or SaX2 on openSUSE, etc.).<br>
+    <br>
+    <big style="color: rgb(51, 102, 255);"><span style="font-weight:
+        bold;"><a name="InstAccess"></a>Setting up instrument access:<br>
+        <br>
+      </span></big>By default most Linux based systems make devices
+    inaccessible to user mode programs, so it is necessary to make some
+    modification to your permissions so that Argyll tools are able to
+    access the Color Measurement Instruments. In order from newest to
+    oldest, the following sub-systems may need to be configured to
+    permit this:<br>
+    <br>
+    &nbsp; <a style="font-weight: bold;" href="#None">No device
+      configuration needed when running from the console:</a><span
+      style="font-weight: bold; text-decoration: underline;"><br>
+      <br>
+    </span>&nbsp;&nbsp;&nbsp; <a href="#None">Mandriva 2008.0 default
+      installation</a><br>
+    <br>
+    <h5>&nbsp; <a href="Installing_Linux.html#udev1">USB instruments
+        access using udev:</a></h5>
+    <a href="#udev1"></a>&nbsp;&nbsp;&nbsp; <a
+      href="Installing_Linux.html#udev1">Ubuntu 10.04</a><br>
+    &nbsp;&nbsp;&nbsp; <a href="Installing_Linux.html#udev1">Fedora
+      Core 8</a><br>
+    &nbsp;&nbsp;&nbsp; <a href="#udev1">Mandriva 2008.1</a><br>
+    &nbsp;&nbsp;&nbsp; <a href="#udev1">OpenSuSE 10.3</a><br>
+    &nbsp;&nbsp;&nbsp; <a href="#udev1">Ubuntu 7.1</a><br>
+    &nbsp;&nbsp;&nbsp; <a href="#udev1">Kubuntu 7.1</a><br>
+    &nbsp;&nbsp;&nbsp; <a href="#udev1">Debian 4.0</a><br>
+    <h5>&nbsp; <a href="#hotplug">USB instruments access using hotplug:</a></h5>
+    &nbsp;&nbsp; <a href="#hotplug">Red Hat 4.0</a><br>
+    &nbsp;&nbsp; <a href="Installing_Linux.html#hotplug">Fedora Core 4</a><br>
+    &nbsp;&nbsp; <a href="Installing_Linux.html#hotplug">Fedora Core 3</a><br>
+    &nbsp;&nbsp; <a href="Installing_Linux.html#hotplug">Fedora Core 2</a><br>
+    <br>
+    <h5>&nbsp; <span style="text-decoration: underline;"></span><a
+        href="#serial">Serial instrument access:</a></h5>
+    &nbsp;&nbsp; <a href="#serial">All</a><br>
+    <br>
+    <span style="font-weight: bold;">NOTE:</span> That <b>mtp-probe</b>
+    /&nbsp; <span style="font-weight: bold;">libmtp</span> been known
+    to interfere with device access, particularly the Spyder 3 and
+    DTP94. Recent versions of the libmtp should ignore any instrument
+    marked as COLOR_MEASUREMENT_DEVICE by the
+    /etc/udev/rules.d/55-Argyll.rules file, but for older systems you
+    probably need to disable libmtp (look in the udev configuration).<br>
+    <br>
+    The <b>JETI</b> specbos <b>1211</b><b>,&nbsp;</b><b>1201</b><b>,
+      1511, 1501</b> and the <b>Klien K10A</b> makes use of the <a
+      href="http://www.ftdichip.com/Drivers/VCP.htm">FTDI Virtual COM
+      Port Drivers</a> (VCP), that should come with any recent version
+    of Linux. Older versions of Linux may not support the FTDI FT231XS
+    chip that the <b>JETI</b> specbos <b>1511, 1501</b> use. You may
+    have to add yourself to the<span style="font-weight: bold;">
+      tty,&nbsp;</span><span style="font-weight: bold;">uucp</span>
+    or&nbsp;<b>dialout</b> group to have permission to open the
+    instrument.<br>
+    <br>
+    <span style="font-weight: bold;"></span>
+    <hr style="width: 100%; height: 2px;">
+    <h5><span style="color: rgb(204, 51, 204);"><a name="None"></a>No
+        device configuration needed:</span></h5>
+    A few systems have in place&nbsp; a security configuration such that
+    anyone logging in at the console of a machine has access to all the
+    local devices.<span style="color: rgb(204, 51, 204);"><span
+        style="font-weight: bold;"><br>
+      </span></span>
+    <h5><span style="color: rgb(204, 51, 204);"><a name="udev1"></a>USB
+        instruments access using udev with existing </span><span
+        style="color: rgb(204, 51, 204);"><span style="font-weight:
+          bold;"><font color="#330033">/etc/udev/rules.d</font> or</span>
+        <font color="#330033"> /usr/lib/udev/rules.d/69-cd-sensors.rules</font>
+        file.<br>
+      </span></h5>
+    <span style="color: rgb(204, 51, 204);"> </span>Recent Fedora based
+    systems include Gnome Color Manager, which comes with a udev rule
+    for color instruments. You can check this by looking for the <span
+      style="font-weight: bold;">/etc/udev/rules.d</span> or in <b>/usr/lib/udev/rules.d/69-cd-sensors.rules</b>
+    file. If this exists and is up to date enough to include the
+    instrument you want to use, then all you have to do is add yourself
+    to the <b>colord</b> group, ie:<br>
+    <br>
+    &nbsp;&nbsp; sudo usermod -a -G colord $USER<br>
+    <br>
+    If the <b>69-cd-sensors.rules</b> file is out of date and does not
+    include the latest instruments supported by Argyll, then the
+    simplest thing to do is to replace the <b>69-cd-sensors.rules</b>
+    file with the <span style="font-weight: bold;">usb/</span><span
+      style="font-weight: bold;">55-Argyll.rules</span>. You will need
+    to do this as root, and set the owner as root, group root,
+    permissions 644. You may need to re-plug in your instrument to get
+    changes to the udev rules recognised.<br>
+    <h5><span style="color: rgb(204, 51, 204);"><a name="udev2"></a>USB
+        instruments access using udev, with no existing <font
+          color="#330033">/etc/udev/rules.d</font> or <font
+          color="#330033">/usr/lib/udev/rules.d/69-cd-sensors.rules</font>
+        file.<br>
+      </span></h5>
+    Most recent systems use udev to manage device names and permissions,
+    but by default color instruments may not be accessible to normal
+    system users.<br>
+    To solve this a udev rule file needs to be added that modifies the
+    group and permission of any Color Measurement Instruments, and you
+    may then need to add yourself to that group.<br>
+    <br>
+    First check whether other rules are in <span style="font-weight:
+      bold;">/etc/udev/rules.d</span> or in <b>/usr/lib/udev/rules.d</b>,
+    and use the appropriate directory.<br>
+    (You may also want to check in that directory whether
+    55-Argyll.rules or some other .rules file that is setup to enable
+    color instruments already exists in that directory.)<br>
+    <br>
+    <span style="font-weight: bold;"></span>Copy the file <span
+      style="font-weight: bold;">usb/</span><span style="font-weight:
+      bold;">55-Argyll.rules</span> from the binary or source
+    distribution into <span style="font-weight: bold;">/etc/udev/rules.d/55-Argyll.rules</span>
+    or <span style="font-weight: bold;">/usr/lib/udev/rules.d/55-Argyll.rules
+
+
+
+
+
+
+
+    </span>(as appropriate) with&nbsp;owner root, group root,
+    permissions 644.<br>
+    <br>
+    If you are on an <span style="font-weight: bold;">older system</span>
+    that uses a udev that doesn't recognize the syntax used in
+    55-Argyll.rules, or that doesn't have rules to create the libusb
+    /dev/bus/usb/00X/00Y device entries, you should install the <span
+      style="font-weight: bold;">usb/45-Argyll.rules</span> file instead
+    - See below.<br>
+    <br>
+    On recent systems the new rules file will be notices as soon as you
+    plug the instrument in again.<br>
+    On older systems you may need to run <b>/sbin/udevtrigger</b>,&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <b>/sbin/udevcontrol reload_rules</b> or&nbsp; <span
+      style="font-weight: bold;">/sbin/udevstart</span> or reboot to get
+    the new file noticed.<br>
+    <br>
+    (You may want to refer to <a
+      href="http://reactivated.net/writing_udev_rules.html">this
+      document</a> for more guidance on modifying udev rules, as well as
+    <a
+href="http://www.google.com/search?hl=en&amp;q=man+udev&amp;btnG=Search&amp;meta=&amp;aq=f&amp;oq=">this</a>.)<br>
+    <br style="font-weight: bold;">
+    <span style="font-weight: bold;">YOU THEN MAY NEED TO:</span><br>
+    <br>
+    If your system is <span style="font-weight: bold;">not</span> using
+    the ACL to manage device access for console users (the file <span
+      style="font-weight: bold;">/var/run/ConsoleKit/database</span>
+    doesn't exist on your system), then you will <span
+      style="text-decoration: underline;">need to add</span> yourself to
+    the <span style="font-weight: bold;">colord</span> group, if you
+    are not already a member of it. You can do this either by using a
+    "Users and Groups" system administration tool, or on the command
+    line running as root:<br>
+    <br>
+    &nbsp;&nbsp; sudo usermod -a -G colord $USER<br>
+    <br>
+    or<br>
+    &nbsp;&nbsp;&nbsp; su root<br>
+    &nbsp;&nbsp;&nbsp; usermod -a -G colord $USER<br>
+    <br>
+    (If the usermod program isn't found as root, it might be in
+    /usr/sbin, ie. use /usr/sbin/usermod .... etc.<br>
+    &nbsp;If usermod doesn't recognize the -a flag try "usermod -A
+    colord $USER".<br>
+    &nbsp;If this doesn't work you will have to run "id yourusername" to
+    list the current supplemental<br>
+    &nbsp;groups, and add them plus colord using just "usermod -G
+    group1,group2,... yourusername")<br>
+    <br>
+    You may find that the <b>colord</b><b></b> group doesn't exist on
+    your system, and if so you will need to create it:<br>
+    <br>
+    &nbsp; sudo groupadd -r colord<br>
+    <br>
+    and then add yourself to the <b>colord</b> group.<br>
+    <br>
+    You may have to log out and then in again for the groups to become
+    effective.<br>
+    <br>
+    You can check whether the instrument is being recognized and set to
+    the colord group by comparing the output of <span
+      style="font-weight: bold;">ls -l -R /dev/bus/usb</span> without
+    and then with the instrument plugged in.<br>
+    <br>
+    You can test whether your instrument is accessible by plugging it in
+    and then running "spotread -?" and looking for it listed after the <span
+      style="font-weight: bold;">-c</span> option.<br>
+    <h5><span style="color: rgb(204, 51, 204);"><a name="hotplug"></a>USB
+instruments
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        access using hotplug:<br>
+      </span></h5>
+    Under <span style="font-weight: bold;">much older versions of Linux</span>,
+    you should look into the hotplug system configuration for USB
+    devices. You know you are running this because the <span
+      style="font-weight: bold;">/etc/hotplug</span> directory exists on
+    your system.<br>
+    <br>
+    Assuming we want to configure for all Argyll supported USB
+    instruments, copy the file <span style="font-weight: bold;">usb/</span><span
+      style="font-weight: bold;">Argyll.usermap</span> from the binary
+    or source distribution into&nbsp; <span style="font-weight: bold;">/etc/hotplug/usb/Argyll.usermap</span>
+    with owner root, group root, permissions 644.<span
+      style="font-weight: bold;"></span><br>
+    <br>
+    <br>
+    &nbsp;(For even older versions, append the lines above to <span
+      style="font-weight: bold;">/etc/hotplug/usb.usermap</span>, and
+    you may have to run <span style="font-weight: bold;">update-usb.usermap</span>)<br>
+    <br>
+    Then copy the file <span style="font-weight: bold;">usb/</span><span
+      style="font-weight: bold;">Argyll</span> from the binary or source
+    distribution into <span style="font-weight: bold;">/etc/hotplug/usb/Argyll</span>
+    with owner root, group root, permissions 744.<span
+      style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">YOU THEN NEED TO:</span><br>
+    <br>
+    You will then <span style="text-decoration: underline;">need to add</span>
+    yourself to the <span style="font-weight: bold;">colord</span>
+    group, if you are not already a member of it. You can do this either
+    by using a "Users and Groups" system administration tool, or on the
+    command line running as root:<br>
+    <br>
+    &nbsp;&nbsp; sudo usermod -a -G colord $USER<br>
+    <br>
+    or<br>
+    &nbsp;&nbsp;&nbsp; su root<br>
+    &nbsp;&nbsp;&nbsp; usermod -a -G colord $USER<br>
+    <br>
+    <br>
+    (If the usermod program isn't found as root, it might be in
+    /usr/sbin, ie. use /usr/sbin/usermod .... etc.<br>
+    &nbsp;If usermod doesn't recognize the -a flag try "usermod -A
+    colord $USER".<br>
+    &nbsp;If this doesn't work you will have to run "id yourusername" to
+    list the current suplemental<br>
+    &nbsp;groups, and add colord using just "usermod -G
+    group1,group2,... yourusername"<br>
+    &nbsp;Another option may be to use gpasswd -a $USER colord))<br>
+    <br>
+    You may find that the <span style="font-weight: bold;">colord</span>
+    group doesn't exist on your system, and if so you will need to
+    create it:<br>
+    <br>
+    &nbsp; sudo groupadd -r colord<br>
+    <br>
+    and then add yourself to the colord group.<br>
+    <br>
+    You may have to log out and then in again for the groups to become
+    effective.<br>
+    <br>
+    You can test whether your instrument is accessible by plugging it in
+    and then running "spotread -?" and looking for it listed after the <span
+      style="font-weight: bold;">-c</span> option.<br>
+    <span style="font-weight: bold;"></span>&nbsp; <br>
+    <h5><span style="color: rgb(204, 51, 204);"><a name="serial"></a>Serial
+instruments
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        access:</span><br>
+    </h5>
+    If you have a serial instrument then you may find that by default
+    you don't have permission to access the serial ports or a Serial to
+    USB adapter. Most systems make the serial ports available to any
+    user in the <span style="font-weight: bold;">tty</span>, <span
+      style="font-weight: bold;">uucp </span>or <b>dialout </b>group,
+    so the best way of getting access to the serial ports is to add
+    yourself to the correct group. (You can identify the correct group
+    by looking at the group name shown by <b>ls -l /dev/ttyS*</b> )<b><br>
+      <br>
+    </b>&nbsp;You can add yourself to a group either by using a "Users
+    and Groups" system administration tool, or on the command line using
+    "usermod":<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; su root<br>
+    &nbsp;&nbsp;&nbsp; usermod -a -G dialout $USER<br>
+    <br>
+    or<br>
+    <br>
+    &nbsp;&nbsp; sudo usermod -a -G dialout $USER<br>
+    <br>
+    (If the usermod program isn't found as root, it might be in
+    /usr/sbin, ie. use /usr/sbin/usermod .... etc.<br>
+    &nbsp;If usermod doesn't recognize the -a flag try "usermod -A
+    dialout $USER".<br>
+    &nbsp;If this doesn't work you will have to run "id yourusername" to
+    list the current suplemental<br>
+    &nbsp;groups, and add a tty, uucp or dialout group using just
+    "usermod -G group1,group2,... yourusername"<br>
+    &nbsp;Another option may be to use gpasswd -a $USER dialout)<br>
+    <br>
+    You may have to log out and then in again, or even re-boot your
+    system for the group to become effective.<span style="font-weight:
+      bold;"><br>
+    </span>
+    <p>&nbsp; <br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; </p>
+  </body>
+</html>

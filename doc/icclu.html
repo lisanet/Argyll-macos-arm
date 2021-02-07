@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>icclu</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+</head>
+<body>
+<h2><b>icclib/icclu</b></h2>
+<h3>Summary</h3>
+Lookup individual color values through any ICC profile table, either
+interactively, or as a batch.<br>
+<h3>Usage summary<br>
+</h3>
+<small><span style="font-family: monospace;">icclu [-v level] [-f func]
+[-i intent] [-o order] profile</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-v level
+&nbsp;&nbsp;&nbsp;&nbsp; Verbosity level 0 -
+2 (default = 1)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-f </span><i
+ style="font-family: monospace;">function</i><span
+ style="font-family: monospace;">&nbsp;&nbsp; f = forward, b =
+backwards, g =
+gamut, p = preview</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-i </span><i
+ style="font-family: monospace;">intent</i><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; p =
+perceptual, r = relative colorimetric,</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+s = saturation, a = absolute</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-p </span><i
+ style="font-family: monospace;">oride</i><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x =
+XYZ_PCS, l = Lab_PCS, y = Yxy,</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-o </span><i
+ style="font-family: monospace;">order</i><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n =
+normal
+(priority: lut &gt; matrix &gt; monochrome)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+r = reverse (priority: monochrome &gt; matrix &gt;
+lut)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-s</span><span
+ style="font-style: italic; font-family: monospace;"> scale</span><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Scale
+device range 0.0 - scale rather than 0.0 - 1.0</span></small><br>
+<br>
+The colors to be translated should be fed into standard input,<br>
+one input color per line, white space separated.<br>
+A line starting with a # will be ignored.<br>
+A line not starting with a number will terminate the program.<br>
+<h3></h3>
+<h3>Flags and Parameters</h3>
+The <b>-v</b> parameter sets the level of verbosity.
+Default is level 1, which repeats each input value, the colorspaces of
+input and output, the type of conversion algorithm used, and if the
+result was clipped. Level 2 adds prints extra information about the
+profile before doing the conversions. Level 0 turns off all verbosity,
+just outputting the results of each conversion. Use the latter to
+capture batch output ready for further processing.<br>
+<br>
+The <b>-f</b> flag selects which type of table or conversion is to be
+used.<br>
+<br>
+The <b>-i</b> flag selects the intent for a lut based profile.<br>
+<br>
+Normally the native PCS (Profile Connection Space) of a device or
+abstract profile is used, but the <b>-p</b> flag<br>
+allows this to be overridden, and XYZ, L*a*b* or Yxy space to be used.<br>
+<br>
+A profile is allowed to contain more than the minimum number of
+elements or table needed to<br>
+describe a certain transform, and may contain redundant descriptions.
+&nbsp;By default, lut based<br>
+table information will be used first if present, followed by
+matrix/shaper information, and<br>
+only using monochrome information if it is all that is present. <b>-o
+r</b> reverses this order. <br>
+<br>
+Usually device values are processed and displayed using a normalized
+value range between 0.0 and 1.0<br>
+Sometimes other systems scale them to some other range (such as 100 or
+255) due to an underlying<br>
+binary representation. The <span style="font-weight: bold;">-s</span>
+flag lets you input and display such data in its normal range. For
+instance,<br>
+if your device values have a range between 0 and 255, use <span
+ style="font-weight: bold;">-s 255.</span><br>
+<h3>Usage Details and Discussion</h3>
+Typical usage for an output profile might be:<br>
+<br>
+&nbsp;&nbsp;&nbsp; icclu -ff -ip profile.icm<br>
+<br>
+Normally the program is interactive, allowing the user to type in input
+color values, each number separated by a space, and the resulting
+output
+color being looked up and displayed after pressing return. To batch
+process
+a group of color values, prepare a text file containing each input
+value on
+a separate line, and use the input indirection facilities of your
+command
+line shell to redirect this input file into the standard input of
+icclu.
+The output can be captured to a file by redirecting standard output to
+a file. In most shells this would be done something like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp; icclu -ff -ip profile.icm &lt; inputvalues.txt &gt;
+outputvalues.txt<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

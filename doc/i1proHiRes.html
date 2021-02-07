@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>The i1pro Hi Res. Mode</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta content="Graeme Gill" name="author">
+  </head>
+  <body>
+    <h2 style="text-decoration: underline; font-weight: bold;">Does the
+      i1pro High Resolution mode improve accuracy ?<br>
+    </h2>
+    A question that has been asked is : "<span style="font-weight:
+      bold;">You've extended the Eye-One Pro with a high resolution
+      spectral mode, giving readings at 3.3nm spacing rather than the
+      default 10nm. Does this mode improve accuracy ?</span>"<br>
+    <br>
+    This is a quite reasonable question. The following attempts to
+    answer it.<br>
+    <h4 style="text-decoration: underline;">Why would a higher
+      resolution spectral mode improve accuracy ?<br>
+    </h4>
+    A spectrometer computes CIE tri-stimulus values by measuring
+    spectral values and then weighing those values by the observer
+    curves before summing the weigted values. The accuracy depends on
+    the correct weighting being applied at each wavelength. If the color
+    is composed of very narrow spectra peaks, as is sometimes the case
+    for certain light sources and many display devices, then the exact
+    positioning of one of the peaks on the observer curves may be
+    influencial in the final color value, and too coarse a quanization
+    of the spectral readings may lead to tri-stimulus errors. So in
+    theory increasing the spectral reading resolution to 3.3 nm should
+    lead to improved color accuracy with narrow spectra color sources. <br>
+    <h4 style="text-decoration: underline;">Why may this not work in
+      practice ?</h4>
+    <p>The instrument spectral resolving power is set by a number of
+      factors, and a critical one is the entrance slit width. By
+      measuring a very narrow band source such a as a laser, using the
+      default 10nm resolution indicates a FWHM (<a
+        href="http://en.wikipedia.org/wiki/Full_width_at_half_maximum">Full
+
+
+
+
+
+
+        width at half maximum</a>) of about 25nm. Doing a measurement at
+      3.3nm resolution reveals that the optical limit seems to be about
+      15nm, so there is some hope of improvement from that perspective.</p>
+    <p>Another factor is that the calibration data for the instrument is
+      only given at 10nm intervals. So to produce calibrated readings at
+      3.3nm intervals, it is necessary to up-sample the calibration data
+      with sufficient accuracy. If the calibration data is sufficiently
+      smooth (indicating that the underlying device characteristics are
+      also smooth), or any slight inaccuracy will get calibrated out
+      (which is typically the case for reflective measurements) then
+      this may not be a limitation either. In the case of the i1pro2,
+      which seems to have a diffraction grating/light sensor with a less
+      smooth spectral efficiency curve than the Rev A - D models, the
+      task of up-sampling the emissive calibration data with sufficient
+      accuracy is more difficult.<br>
+    </p>
+    <h4 style="text-decoration: underline;">The verification experiment<br>
+    </h4>
+    To give some indication of whether ArgyllCMS's high resolution
+    spectral mode is capable of improving color measurement accuracy, or
+    at least to indicate that it doesn't noticeably worsen it, the
+    following fairly simple, real world experiment was performed:<br>
+    <br>
+    A measurement target consisting of white + primary + secondary
+    colors (White, Red, Green, Blue, Cyan, Magenta, Yellow) repeated 10
+    times was used. This target was displayed on a conventional LCD
+    screen with a CCFL backlight (MacBook display), and measured using
+    using ArgyllCMS V1.6.0 <a href="dispread.html">dispread</a>:<br>
+    <br>
+    1) Using a <a
+href="http://www.jeti.com/cms/index.php/instruments-55/radiometer/specbos-1211">JETI
+
+
+
+
+
+
+      specbos 1211</a> reference Tele-Spectro-Radiometer.<br>
+    <br>
+    2) Using an i1pro2 in standard 10nm mode.<br>
+    <br>
+    3) Using an i1pro2 in ArgyllCMS 3.3nm mode.<br>
+    <br>
+    The resulting readings were then analyzed using <a
+      href="colverify.html">colverify</a>.<br>
+    <br>
+    The results were analyzed two ways, first in absolute value error
+    terms, and secondly in brightness (Y) normalized terms, the latter
+    corresponding to the typical way such readings are used for display
+    calibration and profiling. <br>
+    <br>
+    A second, similar experiment was run on a CRT type display.<br>
+    <h4 style="text-decoration: underline;">Results:</h4>
+    <p><br>
+      LCD display:<br>
+    </p>
+    <p>Absolute errors of i1pro2 10nm mode to specbos 1211:<br>
+    </p>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    3.070420, avg = 2.204137<br>
+    <br>
+    Absolute errors of i1pro2 3.3nm mode to specbos 1211:<br>
+    <br>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    2.108411, avg = 1.568577<br>
+    <br>
+    <br>
+    White Y normalised errors of i1pro2 10nm mode to specbos 1211:<br>
+    <br>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    2.419800, avg = 0.747926<br>
+    <br>
+    White Y normalised errors of i1pro2 3.3nm mode to specbos 1211:<br>
+    <br>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    1.595033, avg = 0.578270<br>
+    <br>
+    <br>
+    So in this particular situation, hi-res mode improves accuracy by
+    somewhere between 0.2 and 0.6 DeltaE 2K.<br>
+    <br>
+    <br>
+    Example of white spectrum for the three measurements (red: 10nm
+    i1pro2, green: 3.3nm i1pro2, black: specbos):<br>
+    <img alt="specbos 1211 (Black), i1pro2 10nm (Red), i1pro2 3.3nm
+      (Green)" src="i1proHiRes.jpg" height="335" width="667"><br>
+    <br>
+    <p><br>
+      CRT display:<br>
+    </p>
+    <p>Absolute errors of i1pro2 10nm mode to specbos 1211:<br>
+    </p>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    1.516886, avg = 0.965740<br>
+    <br>
+    Absolute errors of i1pro2 3.3nm mode to specbos 1211:<br>
+    <br>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    1.751776, avg = 0.887878<br>
+    <br>
+    <br>
+    White Y normalised errors of i1pro2 10nm mode to specbos 1211:<br>
+    <br>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    1.509129, avg = 0.654752<br>
+    <br>
+    White Y normalised errors of i1pro2 3.3nm mode to specbos 1211:<br>
+    <br>
+    &nbsp; Total errors (CIEDE2000):&nbsp;&nbsp;&nbsp;&nbsp; peak =
+    1.284044, avg = 0.622501<br>
+    <br>
+    <h4 style="text-decoration: underline;">Conclusions:</h4>
+    The results for the conditions of this particular experiment
+    indicate that ArgyllCMS High Resolution mode can very slightly
+    improve colorimetric measurement accuracy of display devices.
+    Accuracy may conceivably be improved a little more than indicated by
+    this experiment for i1pro rev A-D instruments which have a smoother
+    diffraction grating/light sensor characteristic, but it is also
+    conceivable that an unfortunate combination of display spectra and
+    the i1pro2 may result in reduced accuracy. More extensive testing of
+    a range of instruments and illuminants would be needed to allay such
+    a concern. <br>
+    <br>
+    <b>In summary</b>: the High Resolution mode is unquestionably useful
+    for showing more spectral detail, and demonstrates promise of
+    improved accuracy, but should probably not be used used for
+    colorimetric measurement when the highest possible confidence is
+    desired.<br>
+    <h4 style="text-decoration: underline;">Raw Data:</h4>
+    The raw measurement data is available in this <a
+      href="i1proHiRes.zip">.ti3 archive</a>.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

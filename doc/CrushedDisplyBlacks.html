@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Crushed Display Blacks</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta content="Graeme Gill" name="author">
+</head>
+<body>
+<h2 style="text-decoration: underline; font-weight: bold;">Crushed
+Display Blacks<br>
+</h2>
+Often people create a display profile, and then notice that when they
+try and display some images using the profile, that the darkest blacks
+in the image all get crushed into the black of the display. Why does
+this happen ?<br>
+<br>
+There are many reasons this may happen, but here is a common one:<br>
+<br>
+The image has blacks that are darker than the black of the display, and
+the color management intent being used clips out of gamut colors. So
+all the blacks that are darker than the display black get mapped to the
+display black. To avoid this, some sort of <span
+ style="font-weight: bold;">Gamut Mapping</span> that maps that black
+of the source image to the black of the display, while preserving the
+distinction between all the rest of the colors needs to be used.<br>
+<br>
+Some popular synthetic colorspaces have a perfect (and unrealistic)
+zero black, for instance <span style="font-weight: bold;">sRGB</span>
+and <span style="font-weight: bold;">AdobeRGB</span>. Real world
+display profiles have non-zero blacks, so transforming between these
+two using a colorimetric intent will clip the blacks, and loose the
+shadow details.<br>
+<br>
+<h4 style="text-decoration: underline;">What performs gamut mapping ?</h4>
+Typically there are only two mechanisms available to perform gamut
+mapping. The main one is a pre-cooked (static) gamut mapping built into
+cLUT type ICC profiles. The second is an on-the-fly (dynamic) gamut
+mapping performed by the CMM (Color Management Module). A limited form
+of the latter is Adobe BPC (Black point compensation), which is also
+available sometimes with applications or systems that use lcms. (Little
+cms).<br>
+<br>
+<h4 style="text-decoration: underline;">How do I fix it ?</h4>
+There are two ways of avoiding the black crush. One is to turn on BPC
+if it is available in the system you are using. Sometimes it may only
+be available for certain intents.<br>
+<br>
+The second way of fixing it is to create your display profile with
+appropriate gamut mapping, and make sure that it gets used.<br>
+<br>
+Shaper/Matrix type ICC profiles do not support gamut mapping, since
+there is only one transformation in them and it does not have the
+necessary flexibility to incorporate gamut mapping. Shaper/Matrix
+profiles are always colorimetric intent. So it is necessary to create a
+cLUT based Display profile if gamut mapping is to be incorporated into
+the profile. (Note that not all systems accept cLUT based Display
+profiles). Creating cLUT profiles that incorporate appropriate gamut
+mapping depends on the profile creation tools, and not all tools give
+adequate control over gamut mapping to reliably fix this problem.<br>
+<br>
+<h4 style="text-decoration: underline;">OK, so how do I fix it using
+Argyll ?</h4>
+You can usually fix this problem using Argyll by simply creating a cLUT
+based profile (the default), and telling colprof what the source
+colorspace is going to be.<br>
+<br>
+i.e. say your source images are in sRGB space, then:<br>
+<br>
+&nbsp;&nbsp;&nbsp; colprof&nbsp;-v -S&nbsp;sRGB.icm&nbsp;-D "My
+Display" MyDisplayProfile
+<br>
+<br>
+[It's usually safer to use the sRGB profile provided by Argyll than use
+an sRGB profile of unknown origin. Find it in the ref directory.]<br>
+<br>
+This will create 3 separate B2A cLUT tables, one for colorimetric
+intent, one for Perceptual intent, and one for Saturation intent. Both
+Perceptual and Saturation tables will have appropriate gamut mapping
+for a source colorspace of sRGB. So it is just a matter of making sure
+that either Perceptual or Saturation intent is used when making use of
+the display profile.<br>
+<br>
+</body>
+</html>

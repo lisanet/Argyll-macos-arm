@@ -1,0 +1,23 @@
+
+# Jamfile for namedc library
+ 
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
+
+HDRS = ../h ../icc ../cgats ../numlib ../xicc ../spectro ../xml ; 
+
+# mXML library
+Library libnamedc : namedc.c ;
+
+LINKLIBS = ./libnamedc ../xicc/libxicc ../spectro/libconv ../icc/libicc ../cgats/libcgats
+           ../plot/libplot ../numlib/libui ../numlib/libnum ../xml/libmxml ;
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+# Individual stand alone test of namedc
+MainVariant namedc : namedc.c : : STANDALONE_TEST ;
+
+# Conversion utility
+Main txt2iccnc : txt2iccnc.c ;
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>3D viewing file format</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>3D Viewing Format<br>
+      </b></h2>
+    Gamut and other 3D output visualisations can be created in one of 3
+    formats:<br>
+    <br>
+    <b>VRML</b><br>
+    &nbsp;&nbsp;&nbsp; A legacy web 3D file format, using the <b>.wrl</b>
+    file extension.<br>
+    &nbsp;&nbsp;&nbsp; Either a standalone viewer of a web browser
+    plugin is needed to view the file.<br>
+    <br>
+    <b>X3D</b><br>
+    &nbsp;&nbsp;&nbsp; A current web 3D file format modeled after VRML,
+    using the <b>.x3d</b> file extension.<br>
+    &nbsp;&nbsp;&nbsp; Either a standalone viewer of a web browser
+    plugin is needed to view the file.<br>
+    <br>
+    <b>X3DOM</b><br>
+    &nbsp;&nbsp;&nbsp; An HTML file using a javascript viewer and an X3D
+    scene, using the <b>.x3d.html</b> file extension.<br>
+    &nbsp;&nbsp;&nbsp; Any web browser supporting javascript and WebGL
+    can be used to display this.<br>
+    <br>
+    By default ArgyllCMS tools will output X3DOM format, but the defaul
+    can be overridden by setting the environment variable<br>
+    <b>"ARGYLL_3D_DISP_FORMAT"</b> to <b>"VRML"</b>, <b>"X3D"</b> or <b>"X3DOM"</b><br>
+    <br>
+    Note that the X3DOM file has references to the x3dom.css and
+    x3dom.js support files in the same directory as the created
+    .x3d.html file, and the tools will create a copy of these files in
+    that directory if they don't exist. These two files must be copied
+    with the .x3d.html if it is moved somewhere else.<br>
+    <br>
+    To check if your browser supports X3DOM, try <a
+      href="http://www.x3dom.org/check/">this test page</a>.<br>
+    <br>
+    X3DOM navigation in Web browser:<br>
+    <p>"Examine" - default viewing mode, which can be<br>
+      re-activate this mode by pressing the "e" key.</p>
+    <table style="border-collapse:collapse" border="1" width="350px">
+      <tbody>
+        <tr>
+          <th>Function</th>
+          <th>Mouse Button</th>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <td>Rotate</td>
+          <td>Left / Left + Shift</td>
+        </tr>
+        <tr>
+          <td>Pan</td>
+          <td>Mid / Left + Ctrl</td>
+        </tr>
+        <tr>
+          <td>Zoom</td>
+          <td>Right / Wheel / Left + Alt</td>
+        </tr>
+        <tr>
+          <td>Set center of rotation</td>
+          <td>Double-click left</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <br>
+    <table style="border-collapse:collapse" border="1" width="350px">
+      <thead><tr>
+          <th>Function</th>
+          <th>Key</th>
+        </tr>
+      </thead> <tbody>
+        <tr>
+          <td>Reset view</td>
+          <td>r</td>
+        </tr>
+        <tr>
+          <td>Show all</td>
+          <td>a</td>
+        </tr>
+        <tr>
+          <td>Upright</td>
+          <td>u</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>The i1pro Driver</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta content="Graeme Gill" name="author">
+  </head>
+  <body>
+    <h2 style="text-decoration: underline; font-weight: bold;">How can I
+      have confidence in the i1pro Driver ?<br>
+    </h2>
+    A question that has been asked is : "<span style="font-weight:
+      bold;">You've
+      written your own driver for the Eye-One Pro. How can I have
+      confidence
+      that the measurements are accurate, and will match those made with
+      the
+      original manufacturers driver </span>?"<br>
+    <br>
+    This is a quite reasonable question. The following attempts to
+    answer
+    it.<br>
+    <h4 style="text-decoration: underline;">Why does Argyll use it's own
+      i1pro driver ?</h4>
+    Primarily because the Original Manufacturers Driver (OMD) isn't
+    available for all the platforms that ArgyllCMS supports (Linux in
+    particular). A side benefit is that it's possible to tweak many of
+    the
+    driver parameters for slightly better results and more flexibility.
+    It
+    has also helped in understanding the characteristics and limitations
+    of
+    such instruments.<br>
+    <h4 style="text-decoration: underline;">Does it match the OMD ?</h4>
+    In principle the behaviour should be very similar. While the Argyll
+    driver has been written from scratch, it does use exactly the same
+    calibration values from<br>
+    inside the instrument, and attempts to use the calibration values
+    and
+    process the raw instrument readings in an equivalent manner to that
+    of
+    the OMD.<br>
+    <br>
+    But the proof of the pudding is in the measuring, so to actually
+    verify
+    this, the following experiment was conducted:<br>
+    <br>
+    The Argyll version used was V1.2.0<br>
+    The OMD is the original version prior to the introduction of the
+    i1pro2, and hence reporting the native instrument measurements,
+    rather than applying a conversion to the XRGA standard<br>
+    <br>
+    The Macbeth 24 patch ColorChecker was used as a sample target. For
+    each
+    patch (and the calibration tile), the following steps were
+    performed:<br>
+    <br>
+    1) Place the instrument on the calibration tile.<br>
+    <br>
+    2) Use Argyll spotread to calibrate the Argyll driver.<br>
+    <br>
+    3) Change drivers to the OMD.<br>
+    <br>
+    4) Use the OMD to calibrate the instrument.<br>
+    <br>
+    5) Move the instrument to the patch on the ColorChecker.<br>
+    <br>
+    6) Read the color using the OMD.<br>
+    <br>
+    7) Change the back to the Argyll driver.<br>
+    <br>
+    8) Using the calibration made in step 2), read the color using
+    Argyll.<br>
+    <br>
+    Each calibration or reading was performed 15 seconds from the
+    previous
+    one, to put the instrument lamp in a repeatable state.<br>
+    The instrument was kept in exactly the same position for calibration
+    and patch measurement with the two drivers.<br>
+    (The whole idea is to reduce all other sources of error, other than
+    the
+    driver itself.)<br>
+    <br>
+    This measurement was repeated just once for each patch + the
+    calibration tile. This was done in one run, and the readings were
+    not
+    specially selected.<br>
+    <h4 style="text-decoration: underline;">Results:</h4>
+    The following D50 L*a*b* values were recorded for each measurement:<br>
+    <br>
+    A) &nbsp;&nbsp; The OMD internally calculated L*a*b* value<br>
+    B) &nbsp;&nbsp; The L*a*b* value calculated by Argyll from the OMD
+    spectral values.<br>
+    C) &nbsp;&nbsp; The L*a*b* value calculated from the Argyll measured
+    spectral values.<br>
+    D) &nbsp;&nbsp; The L*a*b* value calculated from the Argyll
+    Hi-Resolution mode measured spectral values.<br>
+    <br>
+    <span style="text-decoration: underline;">A is compare to B, to
+      check
+      that the spectral to standard observer calculations are
+      equivalent.</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; The result was an average Delta E (CIE76) of
+    0.006,
+    with a maximum of 0.012.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; This shows that there is very close agreement in
+    the
+    way spectral values are converted to XYZ and L*a*b*.<br>
+    <br>
+    <span style="text-decoration: underline;">B is compared to C to
+      check
+      that the Argyll driver behaves the same as the OMD.</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; The result was an average Delta E (CIE76) of
+    0.028,
+    with a maximum of 0.051.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; This shows that the OMD and Argyll driver are in
+    close agreement in spectral measurement.<br>
+    &nbsp;&nbsp;&nbsp; This error is an order of magnitude smaller than
+    uniformity induced errors typical in the media being measured.<br>
+    <br>
+    <span style="text-decoration: underline;">A is compared to C to
+      check
+      that the Argyll driver and spectral to XYZ differences don't
+      compound.</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; The result was an <span style="font-weight:
+      bold;">average</span>
+    Delta E (CIE76) of <span style="font-weight: bold;">0.026</span>,
+    with
+    a <span style="font-weight: bold;">maximum</span> of <span
+      style="font-weight: bold;">0.048</span>.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; Rather than compounding, any spectral to XYZ
+    differences tend to cancel
+    out slightly. This is the <span style="font-weight: bold;">bottom
+      line</span>
+    experimental difference between
+    the two drivers. The actual underlying difference may in fact be
+    less
+    than this, but it would be necessary to do multiple test runs to
+    filter out experimental error.<br>
+    <br>
+    <span style="text-decoration: underline;">C is compare to D to check
+      that the Argyll Hi-Resolution mode is behaving reasonably.</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; The result was an average Delta E (CIE76) of
+    0.158,
+    with a maximum of 0.353.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; Because the ColorChecker samples have relatively
+    smooth reflectance spectra, it can be expected that<br>
+    &nbsp;&nbsp;&nbsp; the normal and Hi-Res mode results should be
+    fairly
+    similar. And indeed, this is the case. The biggest<br>
+    &nbsp;&nbsp;&nbsp; differences are for patches
+    with the largest spectral transitions in them, which is to be
+    expected
+    as the<br>
+    &nbsp;&nbsp;&nbsp; Hi-Res measurement more
+    closely follows the spectral shape, while the differences for
+    spectrally flat<br>
+    &nbsp;&nbsp;&nbsp; patches is neglegable, since both can follow the
+    spectral shape well.<br>
+    <br>
+    Example Yellow-Green Patch, Hi-Res &amp; Normal spectrum:<br>
+    <img style="width: 709px; height: 259px;" alt="Yellow-Green patch,
+      Hi-Res vs. Normal" src="YellowGreen.jpg"><br>
+    <br>
+    <h4 style="text-decoration: underline;">Conclusions:</h4>
+    The experimental average difference of <span style="font-weight:
+      bold;">0.026</span>
+    Delta E76 shown above provides evidence that despite using a
+    completely
+    different instrument driver to that supplied with the instrument,
+    the
+    ArgyllCMS Eye-One pro measurement values have comparable accuracy,
+    and
+    can be relied upon to match measurements made using the original
+    manufactures driver.<br>
+    <h4 style="text-decoration: underline;">Raw Data:</h4>
+    The raw data is available in this <a href="i1proDriver.xls">spread
+      sheet</a>.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

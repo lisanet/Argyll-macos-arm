@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Calibration vs. Characterization</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=ISO-8859-1">
+  </head>
+  <body>
+    <h2 style="text-decoration: underline; font-weight: bold;">Calibration
+vs.
+
+      Characterization<br>
+    </h2>
+    Some of the terminology can be confusing. Many people are initially
+    confused about the difference between <span style="font-weight:
+      bold;">Calibration</span> and <span style="font-weight: bold;">Characterization</span>.<br>
+    <h3>What is Calibration ?</h3>
+    "Calibration" is a short hand Graphic Arts term for adjusting a
+    devices behavior to meet calibration targets.<br>
+    Calibration is the process of modifying the color behavior of a
+    device. This is typically done using two mechanisms:<br>
+    &nbsp;&nbsp;&nbsp; 1) Changing controls or internal settings that it
+    has.<br>
+    &nbsp;&nbsp;&nbsp; 2) Applying curves to its color channels.<br>
+    <br>
+    The idea of calibration is to put a device is a defined state with
+    regard to its color response. Often this is used as a day to day
+    means of maintaining reproducible behavior. Calibration is often the
+    most practical way of setting parameters such as white point and
+    brightness of displays. Typically calibration will be stored in
+    device or systems specific file formats that record the device
+    settings and/or per channel calibration curves.<br>
+    <h3>What is Characterization ?</h3>
+    Characterization (or <span style="font-weight: bold;">profiling</span>)
+    is <span style="text-decoration: underline;">recording</span> the
+    way a device reproduces or responds to color. Typically the result
+    is stored in a device <span style="font-weight: bold;">ICC</span>
+    profile. Such a profile does not in itself modify color in any way.
+    What it does is allow a system such as a CMM (Color Management
+    Module) or color aware application to modify color when combined
+    with another device profile. Only by knowing the characteristics of
+    two devices or colorspaces, can a way of transferring color from one
+    device representation to another be achieved.<br>
+    <br>
+    Note that a characterization (profile) will only be valid for a
+    device if it is in the same state of calibration as it was when it
+    was characterized.<br>
+    <h3>What about display calibration and profiles ?</h3>
+    In the case of display profiles there is some additional confusion
+    because often the <span style="font-weight: bold;">calibration</span>
+    information is stored in the <span style="font-weight: bold;">profile</span>
+    for convenience. By convention it is stored in a tag called the
+    'vcgt' tag. Although it is stored in the profile, none of the normal
+    <span style="font-weight: bold;">ICC</span> based tools or
+    applications are aware of it, or do anything with it, it is just
+    "along for the ride". Similarly, typical display calibration tools
+    and applications will not be aware of, or do anything with the ICC
+    characterization (profile) information.<br>
+    <br>
+    <br>
+  </body>
+</html>

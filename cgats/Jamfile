@@ -1,0 +1,37 @@
+
+# Jamfile for cgats library
+ 
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
+
+#if stdio is not wanted in icclib:
+#DEFINES = SEPARATE_STD ;
+
+#Products
+Libraries = libcgats ;
+Headers = cgats.h ;
+
+#Install
+#InstallLib $(DESTDIR)$(PREFIX)/lib : $(Libraries ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+
+# Stop objects that are in more than one library from being
+# prematurely deleted:
+ObjectKeep cgats pars ;
+
+# CGATS library
+Library libcgats : pars.c cgats.c ;
+
+# Executable support if SEPARATED_STD
+if SEPARATE_STD in $(DEFINES) {
+	Objects parsstd.c cgatsstd.c ;
+	LINKOBJS = cgatsstd parsstd ;		# Link all tests here with these
+}
+
+# Individual stand alone test of parser
+MainVariant pars : pars.c : : STANDALONE_TEST ;
+
+# Individual stand alone test of cgats i/o
+MainVariant cgats : cgats.c : : STANDALONE_TEST : : pars ;
+

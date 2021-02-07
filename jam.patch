@@ -1,0 +1,74 @@
+--- jam.old.c	2008-03-14 12:15:01.000000000 +1100
++++ jam.c	2008-03-29 17:59:14.000000000 +1100
+@@ -99,6 +99,7 @@
+  * 09/19/02 (seiwald) - new -d displays
+  * 10/22/02 (seiwald) - list_new() now does its own newstr()/copystr()
+  * 11/04/02 (seiwald) - const-ing for string literals
++ * 03/14/08 (gwg)     - Added JAMBASE enviroment variable
+  */
+ 
+ # include "jam.h"
+@@ -333,7 +334,13 @@
+ 	    parse_file( s );
+ 
+ 	if( !n )
+-	    parse_file( "+" );
++	{
++		char *jambase;
++		if ((jambase = getenv("JAMBASE")) != NULL)
++	    	parse_file( jambase );
++		else 
++		    parse_file( "+" );
++	}
+ 
+ 	status = yyanyerrors();
+ 
+--- filent.old.c	2008-03-29 17:41:58.000000000 +1100
++++ filent.c	2008-03-31 01:28:06.000000000 +1100
+@@ -26,6 +26,7 @@
+  * 01/08/01 (seiwald) - closure param for file_dirscan/file_archscan
+  * 11/04/02 (seiwald) - const-ing for string literals
+  * 01/23/03 (seiwald) - long long handles for NT IA64
++ * 03/29/08 (gwg) - fix MingW long library names
+  */
+ 
+ # include "jam.h"
+@@ -186,6 +187,7 @@
+ {
+ 	struct ar_hdr ar_hdr;
+ 	char *string_table = 0;
++	long stable_size = 0;
+ 	char buf[ MAXJPATH ];
+ 	long offset;
+ 	int fd;
+@@ -229,6 +231,7 @@
+ 		string_table = malloc(lar_size);
+ 		if (read(fd, string_table, lar_size) != lar_size)
+ 		    printf("error reading string table\n");
++		stable_size = lar_size;
+ 		offset += SARHDR + lar_size;
+ 		continue;
+ 	    }
+@@ -237,10 +240,20 @@
+ 		/* Long filenames are recognized by "/nnnn" where nnnn is
+ 		** the offset of the string in the string table represented
+ 		** in ASCII decimals.
++		** However, the name end with 0 or '/', depending on
++		** the librarian used to generate them (0 for Mingw,
++		**  '/' for Visual C++)
+ 		*/
+ 
+-		name = string_table + atoi( ar_hdr.ar_name + 1 );
+-		endname = name + strlen( name );
++		long off = atoi( ar_hdr.ar_name + 1 );
++		name = string_table + off;
++		for ( ; off < stable_size; off++ )
++		{
++		    int  c = string_table[off];
++                    if ( c == 0 || c == '/' )
++			break;
++		}
++		endname = string_table + off;
+ 	    }
+ 	    else
+ 	    {

@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>applycal</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=ISO-8859-1">
+    <meta name="author" content="Graeme W. Gill">
+  </head>
+  <body>
+    <h2><b>profile/applycal</b></h2>
+    <h3>Summary</h3>
+    Apply, re-apply or remove calibration curves to an ICC profile.<br>
+    <h3>Usage Summary</h3>
+    <small><span style="font-family: monospace;">usage: applycal
+        [-options]
+        [calfile.cal] inprof.icm [outprof.icm]<br>
+        &nbsp;<a href="#v">-v</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose
+        mode<br>
+        &nbsp;<a href="#a">-a</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Apply
+        or re-apply calibration (default)<br>
+        &nbsp;<a href="#u">-u</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Remove
+        calibration<br>
+        &nbsp;<a href="#c">-c</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Check
+        calibration<br>
+        &nbsp;<a href="#p1">calfile.cal</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        Calibration
+        file to apply<br>
+        &nbsp;<a href="#p2">inprof.icm</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ICC
+        profile to read<br>
+        &nbsp;<a href="#p3">outprof.icm</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        modified
+        ICC
+        profile to write</span></small><br>
+    <br>
+    <h3>Usage Details <br>
+    </h3>
+    <a name="v"></a> The <b>-v</b> flag makes applycal more verbose.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="a"></a>-a</span> By
+    default
+    the <span style="font-weight: bold;">calfile.cal </span>is applied
+    or
+    re-applied to the <span style="font-weight: bold;">inprof.icm</span>,
+    and then written to <span style="font-weight: bold;">outprof.icm</span>.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="u"></a>-u</span> This flag
+    causes any calibration applied to the <span style="font-weight:
+      bold;">inprof.icm</span>
+    to be remove, the profile being restored to its pre-calibrated
+    state,
+    and then written to <span style="font-weight: bold;">outprof.icm</span>.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="c"></a>-c</span> This flag
+    checks the <span style="font-weight: bold;">inprof.icm</span> and
+    if
+    verbose is on, reports whether it has had calibration applied. It
+    will
+    return status 0 if it has not been applied, 1 if it has, and 2 on
+    error.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="p1"></a>calfile.cal</span>&nbsp;
+must
+    be supplied if the calibration is being applied or re-applied.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="p2"></a>inprof.icm</span>&nbsp;
+should
+    be the
+    path to the ICC profile that will have calibration applied,
+    re-applied
+    or removed. The appropriate extension should be used for the
+    platform, i.e. <span style="font-weight: bold;">icm</span> for
+    MSWindows, and <span style="font-weight: bold;">icc</span> for OS X
+    or
+    Unix/Linux.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="p3"></a>outprof.icm</span>&nbsp;
+should
+    be the
+    path to the file that will be created to hold the modified ICC
+    profile.
+    The appropriate extension should be used for the
+    platform, i.e. <span style="font-weight: bold;">icm</span> for
+    MSWindows, and <span style="font-weight: bold;">icc</span> for OS X
+    or
+    Unix/Linux.<br>
+    <br>
+    <h3>Discussion</h3>
+    <span style="font-weight: bold;">Applycal</span> provides a means of
+    using per channel calibration on devices and systems that don't
+    explicitly support such calibration. Once a calibration has been
+    created for a device (see <a href="printcal.html">printcal</a>), it
+    needs to be then used for all subsequent profiling and printing. If
+    the
+    printing device, display or system doesn't explicitly support the
+    use of
+    calibration, then the calibration can be applied during the printing
+    of
+    profile test charts using <a href="printtarg.html#K">printtarg -K</a>,
+    or the reading of a display target using dispread -K, and then for
+    processing imagery using <a href="cctiff.html">cctiff</a>
+    or by modifying the device ICC profiles using <span
+      style="font-weight: bold;">applycal</span>.<br>
+    <br>
+    <span style="font-weight: bold;">Applycal</span> modifies the
+    appropriate input or output per-channel curves of the profile to
+    incorporate the per-channel calibration. To allow the calibration to
+    be
+    re-applied or removed, it first makes a copy of the uncalibrated
+    curves
+    and stores them in private tags in the profile.<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that things like the
+    white point, black point tag, gamut tag etc. are <span
+      style="text-decoration: underline;">not</span> adjusted to account
+    for the calibration, nor does applycal read, add or change any
+    'vcgt' tag (If a 'vcgt' tag is present and a calibration applied as
+    well, then both will be in effect when such a profile is installed
+    using typical display installation tools.)<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that any calibration
+    embedded in the ICC profile <span style="font-weight: bold;">'targ</span>'
+    tag is ignored, since it is intended for computation of final
+    calibrated device value ink limits, and may not represent the exact
+    current calibration curves.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

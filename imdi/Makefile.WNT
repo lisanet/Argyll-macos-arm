@@ -1,0 +1,42 @@
+# Microsoft VC++, WinNT setup
+
+# Copyright 2000 - 2007 Graeme W. Gill
+# This material is licenced under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 :-
+# see the License.txt file for licencing details.
+
+SLASH     = \ 
+SUFLIB    = .lib
+SUFOBJ    = .obj
+SUFEXE    = .exe
+CMDSEP    = &
+
+INCFLAG       = /I
+DEFFLAG       = /D
+UNDEFFLAG     = /U
+CCOPTFLAG     = /Ox /GB
+CCDEBUGFLAG   = /Z7 /Od
+CCPROFFLAG    = /Z7
+LINKDEBUGFLAG = /DEBUG
+LINKPROFFLAG  = /PROFILE
+
+STDHDRSDEF   = $(MSVCNT)\include
+
+MAKEU     = nmake
+LIBU      = lib
+LIBOF     = /OUT:
+RANLIB    = rem
+AS        = masm386
+CCFLAGSDEF   = /DNT /c
+CC        = cl /nologo $(CCFLAGS) $(STDHDRS)
+CCOF      = /Fo
+LINKLIBS  = $(MSVCNT)/lib/user32.lib $(MSVCNT)/lib/gdi32.lib
+LINKFLAGSDEF = /link /INCREMENTAL:NO
+LINK      = link $(LINKFLAGS)
+LINKOF    = /OUT:
+
+.SUFFIXES:
+.SUFFIXES: .c $(SUFLIB) $(SUFOBJ) $(SUFEXE)
+
+.c$(SUFOBJ):
+	$(CC) $(CCOF)$*$(SUFOBJ) $<
+	

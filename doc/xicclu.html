@@ -1,0 +1,1112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>xicclu</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>xicc/xicclu</b>&nbsp; </h2>
+    <h3>Summary&nbsp;<br>
+    </h3>
+    Lookup individual color values forward or inverted though an ICC
+    profile table or CAL file. <b>xicclu</b> is the analogue of the
+    icclib tool <a href="icclu.html">icclu</a>, but expands the
+    capability to reverse lookup the Lut tables, and displaying PCS
+    values in CIECAM02 Jab space. <b>xicclu</b> can also be used to
+    plot the device value composition down the neutral axis for device
+    profiles, or CAL file contents.<br>
+    <br>
+    Few of the options that apply to ICC profiles apply to CAL files,
+    although device value options such as <b>-e</b> or <b>-E</b> will
+    work. To lookup inverted CAL values, use <b>-f b</b>.<br>
+    <h3>Usage Summary</h3>
+    &nbsp;<span style="font-family: monospace;">xicclu [-</span><i
+      style="font-family: monospace;">options</i><span
+      style="font-family: monospace;">] profile_or_cal</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#v">-v level</a><span
+      style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Verbosity level 0 - 2 (default = 1)<br style="font-family:
+        monospace;">
+    </span> <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#g">-g</a><span
+      style="font-family: monospace;"> &nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; Plot slice instead of looking colors up. (Default
+      white to black)<br>
+      &nbsp;<a href="#Gs">-G s:L:a:b</a>&nbsp;&nbsp;&nbsp;&nbsp;
+      Override plot slice start with Lab or Jab co-ordinate<br>
+      &nbsp;<a href="#Ge">-G e:L:a:b</a>&nbsp;&nbsp;&nbsp;&nbsp;
+      Override plot slice end with Lab or Jab co-ordinate<br>
+      &nbsp;<a href="#V">-V</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+      Lookup or plot the 'vcgt' calibration tag from profile<br
+        style="font-family: monospace;">
+    </span><span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#f">-f function</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp; f = forward, b
+      = backwards, g = gamut, p = preview</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if
+=
+
+
+
+
+
+
+
+
+
+
+
+      inverted forward, ib = inverted backwards</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#i">-i intent</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a =
+      absolute, r = relative colorimetric,</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </span><span style="font-family: monospace;"> p = perceptual, </span><span
+      style="font-family: monospace;">s = saturation, A = disp. abs.
+      measurements</span><span style="font-family: monospace;"></span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#o">-o order</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      n = normal (priority: lut &gt; matrix &gt; monochrome)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+r
+=
+
+
+
+
+
+
+
+
+
+
+
+      reverse (priority: monochrome &gt; matrix &gt; lut)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#p">-p oride</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      x = XYZ_PCS, X = XYZ * 100, l = Lab_PCS, L = LCh, y = Yxy, u =
+      Yu'v'<br>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; j =
+      CIECAM02 Appearance Jab, J = CIECAM02 Appearance JCh<br>
+    </span><span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#s">-s scale</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Scale
+
+
+
+
+
+
+
+
+
+
+
+      device range 0.0 - scale rather than 0.0 - 1.0<br>
+    </span><br>
+    &nbsp; <span style="font-family: monospace;"><span
+        style="font-family: monospace;"><a href="#e">-e flag</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+        Video encode device input as:<br>
+        &nbsp;<a href="#E">-E flag</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+        Video decode device output as:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        normal 0..1 full range RGB levels (default)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (16-235)/255 "TV" RGB levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec601 YCbCr SD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec709 1125/60Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec709 1250/50Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec2020 YCbCr UHD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec2020 Constant Luminance YCbCr UHD (16-235,240)/255 "TV" lev</span></span><span
+      style="font-family: monospace;"><br style="font-family:
+        monospace;">
+    </span> <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#k">-k [zhxrlv]</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp; Black
+      generation: z = zero K,</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+h
+
+
+
+
+
+
+
+
+
+
+
+      = 0.5 K, x = max K, r = ramp K (def.)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+l
+
+
+
+
+
+
+
+
+
+
+
+      = extra PCS input is portion of K locus</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+v
+
+
+
+
+
+
+
+
+
+
+
+      = extra PCS input is K target value</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#kp">-k p stle stpo enpo
+      enle shape</a><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+stle:
+
+
+
+
+
+
+
+
+
+
+
+      K level at White 0.0 - 1.0</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+stpo:
+
+
+
+
+
+
+
+
+
+
+
+      start point of transition Wh 0.0 - Bk 1.0</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+enpo:
+
+
+
+
+
+
+
+
+
+
+
+      End point of transition Wh 0.0 - Bk 1.0</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+enle:
+
+
+
+
+
+
+
+
+
+
+
+      K level at Black 0.0 - 1.0</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+shape:
+
+
+
+
+
+
+
+
+
+
+
+      1.0 = straight, 0.0-1.0 concave, 1.0-2.0 convex</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#kq">-k q stle0 stpo0 enpo0
+      enle0 shape0 stle2 stpo2 enpo2 enle2 shape2</a><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Transfer
+extra
+
+
+
+
+
+
+
+
+
+
+
+      PCS input to dual curve limits</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#K">-K parameters</a><span
+      style="font-family: monospace;">&nbsp; Same as -k, but target is K
+      locus rather than K value itself</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#l">-l tlimit</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set
+      total ink limit, 0 - 400% (estimate by default)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#L">-L klimit</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set
+      black ink limit, 0 - 100% (estimate by default)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#a">-a</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+show
+actual
+
+
+
+
+
+
+
+
+
+
+
+      target values if clipped<br>
+      &nbsp;<a href="#b">-b</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+use
+CAM
+
+
+
+
+
+
+
+
+
+
+
+      Jab for clipping<br style="font-family: monospace;">
+    </span><span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#m">-m</a><span
+      style="font-family: monospace;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      merge output processing into clut</span><span style="font-family:
+      monospace;"></span><span style="font-weight: bold; font-family:
+      monospace;"></span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><a
+      style="font-family: monospace;" href="#c">-c viewcond</a><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp; set viewing
+      conditions for CIECAM02,</span><br style="font-family: monospace;">
+    &nbsp;&nbsp;<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+either
+
+
+
+
+
+
+
+
+
+
+
+      an enumerated choice, or a parameter:value change</span><span
+      style="font-family: monospace;"></span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;"></span><tt> &nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp; &nbsp; </tt><tt><tt>pc - Critical print
+        evaluation environment (ISO-3664 P1)</tt><tt><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt>pp
+
+
+      - Practical Reflection Print (ISO-3664 P2)<br>
+      &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; pe - Print evaluation
+      environment (CIE 116-1995)<br>
+    </tt><tt>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; pm - Print
+      evaluation with partial Mid-tone adaptation</tt><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp; &nbsp; mt - Monitor in typical work environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      mb - Monitor in bright work environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; md - Monitor in darkened work
+      environment</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; jm - Projector in dim environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; jd - Projector in dark environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp;&nbsp;&nbsp; pcd - Photo CD - original scene outdoors</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; ob - Original scene - Bright Outdoors</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; cx - Cut Sheet Transparencies on a
+      viewing box</span><span style="font-family: monospace;"></span><span
+      style="font-family: monospace;"></span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+s:surround&nbsp;&nbsp;
+n
+
+
+
+
+
+
+
+
+
+
+
+      = auto, a = average, m = dim, d = dark,</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp;&nbsp;&nbsp; c = transparency (default average)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+w:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Adapted
+
+
+
+
+
+
+
+
+
+
+
+      white point as XYZ (default media white, Abs: D50)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+w:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Adapted
+
+
+
+
+
+
+
+
+
+
+
+      white point as x, y</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a:adaptation
+Adaptation
+
+
+
+
+
+
+
+
+
+
+
+      luminance in cd.m^2 (default 50.0)</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp; &nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b:background Background % of image
+      luminance (default 20)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;"><span style="font-family:
+        monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+f:flare&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Flare
+light
+
+
+
+
+
+
+
+
+
+
+
+        % of image luminance (default 1)<br>
+      </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      g:glare&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare light % of ambient
+      (default 2)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp; &nbsp; g:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare color as
+      XYZ (default media white, Abs: D50)</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+      g:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FGare color as x,
+      y</span><br style="font-family: monospace;">
+    <tt><span style="font-family: monospace;"><tt><span
+            style="font-family: monospace;"><span style="font-family:
+              monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+              h:hkscale&nbsp;&nbsp;&nbsp; Helmholtz-Kohlrausch effect
+              scale factor (default 1.0)<br>
+            </span>&nbsp;</span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+            m:mtaf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone partial
+            adaptation factor (default 0.0)</span><br
+            style="font-family: monospace;">
+          <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+            m:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone Adaptation
+            white as XYZ (default D50)</span><br style="font-family:
+            monospace;">
+          <span style="font-family: monospace;">&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            m:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone
+            Adaptation white as x, y</span></tt></span></tt> <br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp; </span><a
+      style="font-family: monospace;" href="#p1"><i>inoutfile</i></a><span
+      style="font-family: monospace;"> &nbsp;&nbsp; &nbsp;&nbsp; The
+      input ICC profile or CAL file.</span><br style="font-family:
+      monospace;">
+    <br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; The colors
+      to be translated should be fed into standard in,</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; one input
+      color per line, white space separated.</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; A line
+      starting with a # will be ignored.</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; A line not
+      starting with a number will terminate the program.</span> <br>
+    <h3>Flags and Parameters</h3>
+    <a name="v"></a> The <b>-v</b> parameter sets the level of
+    verbosity. Default is level 1, which repeats each input value, the
+    colorspaces of input and output, the type of conversion algorithm
+    used, and if the result was clipped. Level 2 adds prints extra
+    information about the profile before doing the conversions. Level 0
+    turns off all verbosity, just outputting the results of each
+    conversion. Use the latter to capture batch output ready for further
+    processing.<br>
+    <br>
+    <a name="g"></a>The <b>-g</b> flag causes a plot of the device
+    values along a slice through the Lab or Jab colorspace, rather than
+    allowing the interactive looking up of color values. By default this
+    will be the neutral axis from the white point to the black point,
+    but the start and end can be overridden using the <span
+      style="font-weight: bold;">-G</span> parameters. This is useful in
+    determining the existing black generation in a CMYK profile, or
+    exploring the behavior of various black generation options using the
+    <b>-k</b> parameters. The profile must be a device profile, and the
+    PCS must be either Lab or Jab. The default plot is up the neutral
+    axis is from the white to the black point (scale 0 to 100%), and
+    shows the percentage of each device colorant. To examine a profiles
+    B2A table black generation, use the flag <b>-fb</b> to select the
+    B2A table, or to invert the A2B table, and be able to explore black
+    generation behavior, use the <b>-fif</b> flag. The appropriate
+    intent can be selected with the <b>-i</b> flag, &nbsp;as can other
+    flags appropriate to the function selected.&nbsp; See <a href="#xg">example</a>.<br>
+    <br>
+    If a CAL file is used, then <b>-g</b> will simply plot the each
+    channels calibration curve. It will also plot the invers curve for <b>-f
+
+
+
+
+
+
+
+      b</b>.<br>
+    <br>
+    <a name="Gs"></a>The <span style="font-weight: bold;">-G </span><small><span
+        style="font-family: monospace;"><span style="font-weight: bold;">s:L:a:b</span></span></small>
+    parameter overrides the plot slice start point of white, with some
+    other point specified in Lab or Jab Profile Connection Space. The
+    parameter must be a single string that combines<span
+      style="font-weight: bold;"> s:</span> with the three numbers
+    separated by the '<span style="font-weight: bold;">:'</span>
+    character (no spaces).<br>
+    <br>
+    <a name="Ge"></a>The <span style="font-weight: bold;">-G </span><small><span
+        style="font-family: monospace;"><span style="font-weight: bold;">e:L:a:b</span></span></small>
+    parameter overrides the plot slice end point of black, with some
+    other point specified in Lab or Jab Profile Connection Space. The
+    parameter must be a single string that combines<span
+      style="font-weight: bold;"> s:</span> with the three numbers
+    separated by the '<span style="font-weight: bold;">:'</span>
+    character (no spaces).<br>
+    <br>
+    <a name="V"></a>The <b>-V</b> flag tells xicclu to load the given
+    ICC profile, and the extract the 'vcgt' display calibration curves
+    from the profile. The calibration curves can then be looked up in
+    the normal way, or plotted using <b>-g.</b><br>
+    <br>
+    <a name="f"></a> The <b>-f</b> flag selects which type of table or
+    conversion is to be used. In addition to the usual four tables that
+    can be accessed in a fully populated Lut based profile, two
+    additional options are available in <b>xicclu</b>. One is to invert
+    the forward table, and the other is to invert the backward table.
+    For non Lut based profiles, -fif is equivalent to -fb, and -fib is
+    equivalent to -ff. Note that the -fib combination may not be fully
+    supported.<br>
+    <br>
+    <a name="i"></a> The <b>-i</b> flag selects the intent table used
+    for a lut based profile. It also selects between relative and
+    absolute colorimetric for non-lut base profiles.<br>
+    The -A flag selects Display absolute measurement mode, where the
+    Luminance tag value is used restore absolute measurement XYZ values.
+    The PCS will be force to be XYZ with this selection.<br>
+    <br>
+    <a name="o"></a> A profile is allowed to contain more than the
+    minimum number of elements or table needed to describe a certain
+    transform, and may contain redundant descriptions. &nbsp;By default,
+    Lut based table information will be used first if present, followed
+    by matrix/shaper information, and only using monochrome information
+    if it is all that is present. The <b>-o</b> flag, reverses this
+    order.&nbsp;&nbsp;&nbsp; <br>
+    <br>
+    <a name="p"></a> Normally the native PCS (Profile Connection Space)
+    of a device or abstract profile is used, but the <b>-p</b> flag
+    allows this to be overridden: <span style="font-weight: bold;">-px</span>:
+    XYZ (scaled to 1.0), <span style="font-weight: bold;">-pX</span>:
+    XYZ scaled to 100, <span style="font-weight: bold;">-pl</span>:
+    L*a*b*, <span style="font-weight: bold;">-pL</span>: LCh, <span
+      style="font-weight: bold;">-py</span>: Yxy space, <span
+      style="font-weight: bold;"><span style="font-weight: bold;">-pu</span></span>:
+    Yu'v' perceptual CIE 1976 UCS diagram Yu'v' space,<span
+      style="font-weight: bold;"> -pj</span>: CIECAM02 appearance space
+    Jab, or <span style="font-weight: bold;">-pJ</span>: CIECAM02
+    appearance space JCh.<span style="font-weight: bold;"><br>
+    </span>Note that the CIECAM02 output space selection by default uses
+    the colorimetric table of the profile, but that the perceptual or
+    saturation tables may be used by selecting them using the <span
+      style="font-weight: bold;">-i</span> parameter. If the absolute
+    colorimetric intent is chosen using <span style="font-weight:
+      bold;">-ia</span> in combinations with <span style="font-weight:
+      bold;">-pj</span>, then&nbsp; Jab with a fixed white reference is
+    used, which emulates an absolute CIECAM02 Jab appearance space. <br>
+    <br>
+    <a name="s"></a> Usually device values are processed and displayed
+    using a normalized value range between 0.0 and 1.0 Sometimes other
+    systems scale them to some other range (such as 100 or 255) due to
+    an underlying binary representation. The <span style="font-weight:
+      bold;">-s</span> flag lets you input and display such data in its
+    normal range. For instance, if your device values have a range
+    between 0 and 255, use <span style="font-weight: bold;">-s 255.</span><br>
+    <br>
+    <a name="e"></a>The <b>-e</b> <i>flag</i> applies a Video encoding
+    to the input. See <a href="collink.html#E"><b>-E</b></a> for the
+    list of encodings.<br>
+    <br>
+    <b><a name="E"></a></b>The <b>-E</b> <i>flag</i> applies a Video
+    encoding to the output. The possible encoding are:<br>
+    <br>
+    <small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+            n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            normal RGB 0..1 full range levels (default)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            RGB (16-235)/255 "TV" levels<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            Rec601 YCbCr SD (16-235,240)/255 "TV" levels<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            Rec709 1125/60Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            Rec709 1250/50Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            Rec2020 YCbCr UHD (16-235,240)/255 "TV" levels<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+            Rec2020 Constant Luminance YCbCr UHD (16-235,240)/255 "TV"
+            levels<br>
+          </span></small></span></small><br>
+    <a name="k"></a> When inverting a CMYK profile, (ie. using the -fif
+    flag), an input PCS value can have many possible CMYK solutions. To
+    be able to return a unique solution, a black level (or black inking
+    rule) should be chosen. The choice here reflect similar choices in
+    black generation available in other tools (eg. <a
+      href="colprof.html">colprof</a>, <a href="collink.html"> collink</a>),
+
+
+
+
+
+
+
+
+
+
+    with the addition of two extra options.<br>
+    <br>
+    &nbsp;Possible arguments to the <b>-k</b> option are:<br>
+    <br>
+    <b> -kz</b> selects minimum black (0.0)<br>
+    <b> -kh</b> selects a black value of 0.5<br>
+    <b> -kx</b> selects the maximum possible black (1.0)<br>
+    <b> -kr</b> selects a linear black ramp, starting at minimum black
+    for highlight, and maximum black for shadow (equivalent to -kp 0 0 1
+    1 1). This is the default.<br>
+    <b> -kl</b> uses an extra (fourth) value entered after the input PCS
+    value, to select a black locus target between 0.0 and 1.0.<br>
+    <b> -kv</b> uses an extra (fourth) value entered after the input PCS
+    value, to select a black value target value between 0.0 and 1.0.<br>
+    <br>
+    <b><a name="kp"></a>-k p stle stpo enpo enle shape</b>&nbsp; allows
+    an arbitrary black value ramp to be defined, consisting of a
+    starting value (stle) for highlights, a breakpoint L value (stpo)
+    where it starts to transition to the shadow level, an end breakpoint
+    L (enpo) where it flattens out again, and the finishing black level
+    (enle) for the shadows. There is also a curve parameter, that
+    modifies the transition from stle to enle to either be concave
+    (ie.&nbsp; the transition starts gradually and and finished more
+    abruptly) using values 0.0-1.0, with 0.0 being most concave, or
+    convex (the transition starts more abruptly but finishes gradually),
+    using values 1.0-2.0, with 2.0 being the most convex.<br>
+    <br>
+    Typical black value generation curve with parameters something like:
+    -kp 0 .05 1 .9 .8<br>
+    <br>
+    <tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.0 K &nbsp; |
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;enpo<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp; &nbsp;_______&nbsp; enle<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp; &nbsp;/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp; /<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp;/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      /<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      stle&nbsp; | ------/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; +-------------------<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.0 K&nbsp;
+      0.0&nbsp;&nbsp;&nbsp;
+      stpo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+White&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      Black<br>
+    </tt><br>
+    <b><a name="kq"></a>-k q stle0 stpo0 enpo0 enle0 shape0 stle2 stpo2
+      enpo2 enle2 shape2</b> is a combination of the <b>-kv</b> and <b>-kp</b>
+    functionality, with the black being preserved in CMYK to CMYK
+    linking, with the output black constrained to be between the first
+    and second set of curve parameters.<br>
+    <br>
+    <a name="K"></a> <span style="font-weight: bold;">-K parameters.</span>
+    Any of the <span style="font-weight: bold;">-k</span> options above
+    can use the <span style="font-weight: bold;">-K</span> version, in
+    which rather than an absolute black value target being defined by
+    the inking rule, the black proportion out of the maximum possible
+    for each color is defined. This makes the inking curve scale
+    proportionally over the gamut, rather than clipping in dark
+    chromatic regions where not much black can be added.<br>
+    <tt> </tt><span style="text-decoration: underline;"></span><br>
+    &nbsp;The <b>-g</b> flag can be used together with the <b>-fif</b>
+    flag, to plot out the resulting black channel behaviour for various
+    <b>-k</b> or <span style="font-weight: bold;">-K </span>parameter
+    values.<br>
+    <br>
+    <b><a name="l"></a>-l</b> <i>tlimit</i>&nbsp; &nbsp;&nbsp; Sets the
+    total ink limit (TAC, Total Area Coverage) for the CMYK inverse
+    forward lookup, as a total percentage from 0% to 400%. If none is
+    provided, it will be estimated from the profile relcolor B2A table.
+    The ink limit will be in final calibrated device values if the
+    profile includes calibration information.<br>
+    <br>
+    <b><a name="L"></a>-L</b> <i>klimit</i>&nbsp; &nbsp; Sets the black
+    ink limit for the CMYK inverse forward lookup, as a total percentage
+    from 0% to 100%. If none is provided, it will be estimated from the
+    profile relcolor B2A table. The ink limit will be in final
+    calibrated device values if the profile includes calibration
+    information.<br>
+    <br>
+    <a name="a"></a> If the <b>-a</b> flag is used for inverse forward
+    lookups, then if the target PCS value cannot be reproduced by the
+    device (ie. it clips), then the achievable, clipped PCS value is
+    displayed.<br>
+    <br>
+    <a name="b"></a> If the <b>-b</b> flag is used for inverse forward
+    lookups, then out of gamut clipping will be performed in the
+    CIECAM02 Jab appearance colorspace, rather than L*a*b* colorspace.<br>
+    <br>
+    <a name="m"></a> The <b>-m</b> flag turns on an internal processing
+    option, in which the per device curve lookup table processing is
+    merged into the main multi-dimensional interpolation lut lookup.<br>
+    <br>
+    <a name="c"></a>Whenever PCS values are to be specified or displayed
+    in Jab/CIECAM02 colorspace, a set of viewing conditions will be used
+    to determine the details of the conversion. The <b>-c</b> parameter
+    allows the specification of the viewing conditions. Viewing
+    conditions can be specified in two basic ways. One is to select from
+    the list of "pre canned", enumerated viewing conditions, choosing
+    one that is closest to the conditions that are appropriate for the
+    media type and situation. Alternatively, the viewing conditions
+    parameters can be specified in detail individually. If both methods
+    are used, them the chosen enumerated condition will be used as a
+    base, and its parameters will then be individually overridden.<br>
+    <br>
+    <a name="p1"></a> The final parameter is the name of the <a
+      href="File_Formats.html#ICC">ICC</a> profile to be used. On the
+    MSWindows platform a .icm extension is generally used, and on Apple
+    or Unix/Linux platforms a .icc extension is often used.<br>
+    <h3>Usage and Discussion</h3>
+    Typical usage for an output profile might be:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; xicclu -ff -ip profile.icm<br>
+    <br>
+    Normally the program is interactive, allowing the user to type in
+    input color values, each number separated by a space, and the
+    resulting output color being looked up and displayed after pressing
+    return. To batch process a group of color values, prepare a text
+    file containing each input value on a separate line, and use the
+    input indirection facilities of your command line shell to redirect
+    this input file into the standard input of xicclu. The output can be
+    captured to a file by redirecting standard output to a file. In most
+    shells this would be done something like this:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; xicclu -ff -ip profile.icm &lt; inputvalues.txt
+    &gt; outputvalues.txt<br>
+    <br>
+    <a name="xg"></a>When plotting the neutral axis behavior, plotting
+    the existing B2A table behavior would typically be done something
+    like this:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; xicclu -g -fb profile.icm<br>
+    <br>
+    Exploring possible black generation and ink limiting behavior might
+    be done like this:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; xicclu -g -fif -kp 0 .1 .9 1 .5 -l230 -L95
+    profile.icm<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

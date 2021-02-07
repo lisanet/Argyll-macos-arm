@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>colverify</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>profile/colverify</b></h2>
+    <h3>Summary</h3>
+    Verify a color transform by comparing CIE measurement values from
+    two test charts. The charts can be any suitably formatted CGATS or <a
+      href="File_Formats.html#.ti3">.ti3</a> format that contains
+    corresponding XYZ, Lab or spectral values. The overall average and
+    worst case delta E will be reported, as well as the worst 10% and
+    best 90% of values.<br>
+    <h3>Usage Summary</h3>
+    <tt><small>colverify&nbsp; [-options] target.ti3 measured.ti3<br>
+        &nbsp;-v
+        [n]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Verbose mode, n &gt;= 2 print each value<br>
+        &nbsp;-l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+        Match patches by sample location rather than id<br>
+        &nbsp;-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Normalise
+
+
+
+
+
+
+
+
+
+        each files reading to white Y<br>
+        &nbsp;-N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Normalise
+
+
+
+
+
+
+
+
+
+        each files reading to white XYZ<br>
+        &nbsp;-m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+        Normalise each files reading to its white X+Y+Z<br>
+        &nbsp;-M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+        Normalise both files reading to mean white XYZ<br>
+        &nbsp;-D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+
+
+
+
+
+
+
+
+
+        D50 100.0 as L*a*b* white reference<br>
+        &nbsp;-c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+        &nbsp; Show CIE94 delta E values<br>
+        &nbsp;-k &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; Show CIEDE2000 delta E values<br>
+        &nbsp;-h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+        Plot a histogram of delta E's<br>
+        &nbsp;-s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; Sort patch value by error<br>
+        &nbsp;-w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+        &nbsp; create X3DOM vector visualisation (measured.x3d.html)<br>
+      </small></tt><tt><small>&nbsp;-W
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+        &nbsp; create X3DOM marker &amp; vector visualisation
+        (measured.x3d.html)</small></tt><tt><br>
+    </tt><tt> </tt><tt><small>&nbsp;-x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+        &nbsp; Use X3DOM axes<br>
+        &nbsp;</small></tt><tt><small><small>-f
+          [illum]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use Fluorescent
+          Whitening Agent compensation [opt. simulated inst. illum.:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+          M0, M1, M2, A, C, D50 (def.), D50M2, D65, F5, F8, F10 or
+          file.sp]<br>
+          &nbsp;-i illum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Choose illuminant for computation of CIE XYZ from spectral
+          data &amp; FWA:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+          A, C, D50 (def.), D50M2, D65, F5, F8, F10 or file.sp<br>
+          &nbsp;-o observ&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Choose
+          CIE Observer for spectral data:<br>
+        </small><small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+          1931_2 </small><small>(def.)</small><small>, 1964_10, </small></small></tt><tt><small><small><tt><small>2012_2,
+
+
+              2012_10, </small></tt>S&amp;B 1955_2, shaw, J&amp;V
+          1978_2 or file.cmf<br>
+          &nbsp;-L profile.icm&nbsp;&nbsp; Skip any first file, out of
+          profile gamut patches<br>
+          &nbsp;-X file.ccmx&nbsp;&nbsp;&nbsp;&nbsp; Apply Colorimeter
+          Correction Matrix to second file<br>
+        </small> &nbsp;<i>target.ti3</i>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+        Target or reference patch data file<br>
+        &nbsp;<i>measured.ti3</i> &nbsp; &nbsp; Measured or actual patch
+        data file</small></tt><br>
+    <h3>Usage Details and Discussion</h3>
+    <b> colverify</b> provides a way of verifying how well a color
+    transformation (such a proofing) performs.<br>
+    <br>
+    The <b>-v</b> flag prints out extra information during the
+    checking, and prints each patch value, rather than just a summary.<br>
+    <br>
+    The <b>-l</b> flag makes colverify look for the SAMPLE_LOC fields
+    to match patches by, rather than the default SAMPLE_ID field.<br>
+    <br>
+    The <b>-n</b> flag causes the two sets of values to be normalized
+    to the Y value of white for each set before comparison. White is
+    assumed to be the patch with the largest Y value.<br>
+    <br>
+    The <b>-N</b> flag causes the two sets of values to be normalized
+    to the XYZ of white for each set before comparison. White is assumed
+    to be the patch with the largest Y value.<br>
+    <br>
+    The <b>-m</b> flag causes the two sets of values to be normalized
+    to the X+Y+Z of white for each set before comparison. White is
+    assumed to be the patch with the largest Y value.<br>
+    <br>
+    The <b>-M</b> flag causes the two sets of values to be normalized
+    to the average XYZ of the whites from each set before comparison.
+    White is assumed to be the patch with the largest Y value.<br>
+    <br>
+    The <b>-D</b> flag causes the white reference point for the
+    conversion to L*a*b* to be D50 with a Y value of 100%. By default
+    the sample with the largest Y value is found, and the L*a*b* white
+    reference scaled to have that Y value. This allows sensible delta E
+    values when comparing absolute color values, such as those from
+    emission or display measurements.<br>
+    <br>
+    The <b>-c</b> option causes the differences between the test values
+    and the profile prediction of the color for each device value to be
+    displayed in CIE94 delta E, rather than plain L*a*b* delta E. CIE94
+    delta E has a closer correspondence with perceived color differences
+    than the default CIE76 delta E values.<br>
+    <br>
+    The <b>-k</b> option causes the differences between the test values
+    and the profile prediction of the color for each device value to be
+    displayed in CIEDE2000 delta E, rather than plain L*a*b* delta E.
+    CIEDE2000 delta E has a closer correspondence with perceived color
+    differences than either CIE76 or CIE94 delta E values.<br>
+    <br>
+    The <b>-h</b> flag will display a histogram plot of the fit delta
+    E's. The X scale is delta E, the Y scale is %<br>
+    <br>
+    If the <b>-s </b>flag is used in combination with the <b>-v</b>
+    flag, then the test point by test point output will be sorted from
+    worst to best.<br>
+    <br>
+    The <b>-w</b> creates a <a href="File_Formats.html#X3DOM">X3DOM</a>
+    3D visualization of the differences between the test points in D50
+    L*a*b* space, each difference being shown as a line vector. If the <span
+      style="font-weight: bold;">-W</span> flag is used, then the target
+    and measured values will also be marked by a small sphere. This can
+    be used to visualize the placement of values in a .ti3 (or other
+    CGATS file) by using the same file for both "target" and "measured"
+    values.<br>
+    <br>
+    The <b>-x</b> flag adds Lab axes to the X3DOM output.<br>
+    <br>
+    The <b>-f</b> flag enables Fluorescent Whitening Agent (FWA)
+    compensation. This only works if spectral data is available and, the
+    instrument is not UV filtered.&nbsp; FWA compensation adjusts the
+    spectral samples so that they appear to have been measured using an
+    illuminant that has a different level of Ultra Violet to the one the
+    instrument actually used in the measurement. The optional
+    illumination parameter allows specifying a standard or custom
+    illumination spectrum to be used as the similated instrument
+    illuminant, overriding the default <b>D50</b> or CIE computation
+    illuminant used for FWA (see <b>-i</b> below<b>). </b>See <a
+      href="colprof.html#f">colprof -f</a> for a fuller explanation. The
+    same value should be used as was used during the creation of the
+    profile.<br>
+    <br>
+    The <b>-i</b> flag allows specifying a standard or custom
+    illumination spectrum, applied to the spectral test point values to
+    compute CIE tristimulus values. <b>A</b>, <b>D50</b>, <b>D50M2,
+      D65</b>, <b>F5</b>, <b>F8</b>, <b>F10</b> are a selection of
+    standard illuminant spectrums, with <b>D50</b> being the default.
+    If a filename is specified instead, it will be assumed to be an
+    Argyll specific <a href="File_Formats.html#.sp">.sp</a> spectrum
+    file. If FWA compensation is used during measurement, this
+    illuminant will be used by default as the simulated instrument
+    illuminant. The same value should be used as was used during the
+    creation of the profile.<br>
+    <br>
+    The <b>-o</b> flag allows specifying a tristimulus observer, and is
+    used to compute PCS (Profile Connection Space) tristimulus values.
+    The following choices are available:<br>
+    <b>&nbsp; 1931_2</b> selects the standard CIE 1931 2 degree
+    observer. The default.<br>
+    &nbsp; <b>1964_10</b> selects the standard CIE 1964 10 degree
+    observer.<br>
+    <b>&nbsp; 2012_2</b> selects the proposed CIE 2012 2 degree
+    observer.<br>
+    &nbsp; <b>2012_10</b> selects the proposed CIE 2012 10 degree
+    observer.<br>
+    &nbsp; <b>1955_2</b> selects the Stiles and Birch 1955 2 degree
+    observer<br>
+    &nbsp; <b>1978_2 </b>selects the Judd and Voss 1978 2 degree
+    observer<br>
+    &nbsp; <b>shaw</b> selects the Shaw and Fairchild 1997 2 degree
+    observer<br>
+    &nbsp; <i><b>file.cmf</b></i> selects an observer specified by the
+    given <a href="File_Formats.html#.cmf">.cmf</a> file.<br>
+    <br>
+    The same parameter value should be used as was used during the
+    creation of the profile.<br>
+    <br>
+    The <b>-L</b><b> profile.icm</b> parameter causes colverify to
+    ignore any patches from the first file that are out of gamut
+    according to the profile given by th -L argument. This can be useful
+    in evaluating accuracy without tainting it by impossible to reach
+    colors.<br>
+    <br>
+    The <b>-X</b><b> file.ccmx</b> option applies the given 3x3
+    calibration matrix to the values from the second file before doing
+    any verification. This can be useful in evaluating the effects of a
+    calibration matrix on raw colorimeter values, against reference
+    values measured using a spectrometer.<br>
+    <br>
+    If both CIE and spectral values are present in the input files, the
+    CIE values will be used by default. Using the <span
+      style="font-weight: bold;">-i</span>, <span style="font-weight:
+      bold;">-o</span> or <span style="font-weight: bold;">-f</span>
+    flag will force spectral values to be used. The the <span
+      style="font-weight: bold;">-i</span>, <span style="font-weight:
+      bold;">-o</span> or <span style="font-weight: bold;">-f</span>
+    flags will apply to both the target and measured input files.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

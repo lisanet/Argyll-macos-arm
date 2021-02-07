@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>timage</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+</head>
+<body>
+<h2><b>render/timage</b></h2>
+<h3>Summary</h3>
+Create TIFF test image, suitable for evaluating various color
+transformations. By default a test image consisting of two hexagons and
+a grey wedge is produced. The two hexagons are the white and black
+corners of the RGB cube surface. This is useful in checking gamut
+mapping behaviour applied to an RGB colorspace.<br>
+<br>
+<img alt="RGB cube surface" src="cube.jpg"
+ style="width: 200px; height: 101px;"><br>
+<br>
+&nbsp;An alternate rectangular "rainbow" representation of the surface
+of an RGB
+cube can also be created. <br>
+<br>
+<img alt="RGB rectangular surface" src="surface.jpg"
+ style="width: 200px; height: 148px;"><br>
+<br>
+A third type is a set of stepped rectangles that explore the L*a*b*
+space, useful for testing profiles B2A tables (-p 6):<br>
+<br>
+<img alt="Lab steps image" src="LabSteps.jpg"
+ style="width: 150px; height: 150px;"><br>
+<h3>Usage Summary</h3>
+<small><span style="font-family: monospace;"></span><span
+ style="font-family: monospace;"></span><span
+ style="font-family: monospace;">usage: timage [-options] outfile.tif</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Generate rectangular boundary test chart<br>
+&nbsp;-p steps&nbsp;&nbsp;&nbsp;&nbsp; Generate a colorspace step chart
+with L* steps^2<br style="font-family: monospace;">
+</span><span style="font-family: monospace;">&nbsp;-r
+res&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Resolution
+in DPI (default 200)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Smooth blend</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+16 bit output</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-g
+prop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Percentage towards grey
+(default 0%)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;outfile.tif&nbsp; Profile
+to check against</span></small><br>
+<h3>Usage Details and Discussion<br>
+</h3>
+The<b> -v</b> flag increases verbosity.&nbsp;&nbsp; <br>
+<br>
+The default behaviour is to create the two hexagon plus grey wedge test
+image. If the <span style="font-weight: bold;">-t</span> flag is used,
+the alternate single rectangular surface test image&nbsp; is generated.
+If the <span style="font-weight: bold;">-p steps</span> parameter is
+given, than an L*a*b* test chart is generated.<br>
+<br>
+The dots per inch of the image can be set using the <span
+ style="font-weight: bold;">-r</span> parameter. Increasing this,
+increases the size and detail of the image.<br>
+<br>
+Normally the images are generated using linear blending of the RGB
+values. If the <span style="font-weight: bold;">-s</span> flag is
+used, a smoother blending is employed. This is most desirable when
+generating the rectangular test image.<br>
+<br>
+Normally an 8 bit per color component image is generated. If the <span
+ style="font-weight: bold;">-x</span> flag is use, a 16 bit per color
+component image will be generated, giving smoother blends, particularly
+if a higher resolution (DPI) image is created.<br>
+<br>
+The hexagon and surface test images are normally the surface colors of
+the RGB colorspace
+cube. If a percentage greater than 0% is given as an argument to the <span
+ style="font-weight: bold;">-g</span> option, a test chart composed of
+colors away from the RGB cube surface, towards the center grey point
+will be generated. 100% will generate a completely grey image. Values
+of 10, 20 to 50% are more usual.<br>
+<br>
+The L*a*b* step chart explores the range of L*a*b* values that are
+handled by an L*a*b* PCS B2A table, with the L* stepping from 0 to 100
+in steps from the top left to the bottom right square, while the a*
+values range from -127 to 127 left to right in each square, and the b*
+values range from -127 to 127 bottom to top in each square.<br>
+<br>
+The last argument on the command line is the name of the TIFF file to
+save the resulting image to.<br>
+<br>
+<br>
+<br>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Argyll Organization</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+A brief tour of all the directories in the Argyll source code archive:<br>
+<br>
+<b>TARGET</b><br>
+<br>
+This directory contains routines that generate calibration test charts,
+based
+on various distribution algorithms suitable for
+reading using an Xrite DTP51 or DTP41 colorimeter, or scanner for print
+charts,
+the Gretag Spectrolino for film charts, or the Xrite DTP92 pr DTP94 for
+monitor
+calibration.
+The generated file is a PostScript file for the print chart, and a
+series
+of TIFF files for the film chart.<br>
+<br>
+<b>SPECTRO</b><br>
+<br>
+This directory contains the implementation of all the instrument
+drivers, as well as the tools to calibrate a display, take readings
+from a display, or read a test chart. It also contains the tool that
+supports installing and uninstalling display profiles.<br>
+<br>
+<b> PROFILE</b><br>
+<br>
+This directory has code for taking raw device information (created
+from,
+xxxread.exe or scanin.exe), and creating an ICC device profile from it.
+It
+takes care of the top level details of creating profiles, and relies on
+the
+XICC and RSPL libraries to do the underlying hard work, <br>
+<br>
+<b> LINK</b><br>
+<br>
+This directory holds the ICC profile linking code. Linking two device
+profiles
+creates a device link profile, that embodies a direct device to device
+colorspace
+conversion.<br>
+<br>
+<b> IMDI</b><br>
+<br>
+This is the development area for IMDI, the Integer Multi-Dimensional
+Interpolation
+routines. They provide a flexible and high performance system for
+applying
+color transforms to typical raster pixel data. The system has two
+parts,
+one that generates tailored, optimized source code for the
+transformation
+kernels, and the run time code that matches a transform request&nbsp;
+to
+a compiled kernel, and initializes the appropriate run time lookup
+tables.<br>
+<br>
+The kernel source generator is intended to accommodate various
+optimizations,
+such as assembly code, vector instruction set (ie. MMX, AltiVec etc.)
+version, but
+at present only generates the more portable 'C' code kernels.<br>
+<br>
+<b> ICC</b><br>
+<br>
+ICC profile I/O library (icclib). This distribution contains
+source code which implements the reading and writing of color profile
+files
+that conform to the International Color Consortium (ICC) Profile Format
+Specification,
+Version 3.4.<br>
+<br>
+<b> XICC</b><br>
+<br>
+This directory holds the "extension" icc libraries. These supplement
+the base icc library with enhanced profile functionality, such as
+smoothed
+interpolation, reverse interpolation, table creation from scattered
+data
+etc.<br>
+<br>
+Most of this functionality is based on the rspl and icc libraries. This
+is
+where ink limiting and black generation policies for CMYK devices is
+implemented. The CIECAM97s and CIECAM02 Color Appearance
+Model libraries live here. Support for spectral to CIE conversions
+(including
+FWA compensation) lives here. A simple model, notation and
+classification
+system for n-color printing devices (MPP) lives here too.<br>
+<br>
+<b>RSPL</b><br>
+<br>
+This is the second generation Regular Spline library. It
+contains
+scattered data point to regular grid interpolation, as well as spline
+smoothing,
+and the reverse interpolation code. This version is more modular, and
+uses
+better solution algorithms than the earlier REGSPL, and generally
+replaces
+it. As well as creation from scattered data, there is support for
+lookup,
+re-processing and reverse interpolation (inversion). The reverse
+interpolation
+algorithms support features needed for devices like CMYK printers, such
+as
+total ink limiting, black locus selection, gamut boundary detection,
+vector&nbsp;
+and nearest gamut clipping.<br>
+<br>
+<b>NUMLIB</b><br>
+<br>
+Collection of numerical routines used by various other (mainly color)
+code.<br>
+<br>
+&nbsp; Included are:<br>
+<br>
+&nbsp; numsup&nbsp;&nbsp; &nbsp;Support routines, array and vector
+malloc/free,
+macros<br>
+&nbsp; dnsq&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; Non-linear equation
+solver<br>
+&nbsp; powell&nbsp;&nbsp; &nbsp; &nbsp;Powell multi dimensional
+minimizer<br>
+&nbsp; ludecomp &nbsp;LU decomposition matrix solver<br>
+&nbsp; svd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;Singular
+Value decomposition matrix solver<br>
+&nbsp; zbrent&nbsp;&nbsp; &nbsp; &nbsp; 1 dimensional brent root search<br>
+&nbsp; rand&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;Random number
+generators<br>
+&nbsp; sobol&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;Sobol pseudo-random
+sequence generator.<br>
+<br>
+<b>SCANIN</b><br>
+<br>
+This directory contains the code to extract charts from TIFF scan
+files,
+and output the patch values using the CGATS file format. Typically this
+is
+used to get the patch information from a scan of an IT8 calibration
+chart.
+It also has a mode to use a scanned image to measure color, and
+convert a print test chart into approximate CIE values.<br>
+<br>
+<b>GAMUT</b><br>
+<br>
+This directory contains the gamut boundary creation, and usage code. It
+also
+contains the gamut mapping code. <br>
+<br>
+<b>CGATS</b><br>
+<br>
+This directory contains a library for reading and writing CGATS format
+color data files. These files are used extensively for holding color
+related
+information in a human readable form.<br>
+<br>
+<b>TIFF</b><br>
+<br>
+Sam Lefflers standard TIFF library.<br>
+<br>
+<b>PLOT</b><br>
+<br>
+A simple 2D graph plot library,&nbsp; to quickly display 2D graphs for
+debug
+purposes.<br>
+<br>
+<span style="font-weight: bold;">H</span><br>
+<br>
+Where project common #include files live.<br>
+<br>
+<span style="font-weight: bold;">BIN</span><br>
+<br>
+Where the main executables are copied to, when install.ksh or
+install.bat is run. Other useful files get copied here too.<br>
+<br style="font-weight: bold;">
+<span style="font-weight: bold;">LIBUSB, LIBUSBW<br>
+<br>
+</span>The necessary libraries to access USB devices live here<br>
+<br>
+<span style="font-weight: bold;">TWEAK<br>
+<br>
+</span>Tools that allow adjustment and improvement of profiles or links
+live here. Currently the tool <span style="font-weight: bold;">refine</span>
+is the only member.<br>
+<br>
+<span style="font-weight: bold;">RENDER</span><br>
+<span style="font-weight: bold;"></span><br>
+This is a library and set of tools for rendering to raster images. It
+supports creating a test images, and the raster output of <span
+ style="font-weight: bold;">printtarg</span>. <br>
+<br>
+<span style="font-weight: bold;">JCNF</span><br>
+<br>
+Implementation of color configuration file format using JSON, used by <span
+ style="font-weight: bold;">ucmm</span>.<br>
+<br>
+<span style="font-weight: bold;">UCMM</span><br>
+<br>
+Unix micro Color Management Module implementation, for supporting the
+installation and access to display profiles.<br>
+<br>
+<span style="font-weight: bold;">REF</span><br>
+<br>
+Miscellaneous useful reference files, such as scanin recognition
+templates for standard charts, live here.<br>
+<br>
+<span style="font-weight: bold;">DOC</span><br>
+<br>
+All the Argyll HTML documentation lives here.<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

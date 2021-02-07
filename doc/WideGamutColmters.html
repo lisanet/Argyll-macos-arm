@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Wide Gamut Displays &amp; Colorimeters</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=ISO-8859-1">
+  </head>
+  <body>
+    <h2 style="text-decoration: underline; font-weight: bold;">Wide
+      Gamut Displays and Colorimeters<br>
+    </h2>
+    With the introduction of more wide color gamut displays, many people
+    are finding that their Colorimeter instruments don't work so well on
+    them. Why is this, and what can be done about it ?<br>
+    <h3>What's the difference between a Colorimeter and a Spectrometer ?</h3>
+    Colorimeters and Spectrometers both have the same aim: to measure
+    tri-stimulus color values, but they go about this in two quite
+    different ways.<br>
+    <br>
+    A spectrometer breaks the captured light up into a narrow series of
+    wavelengths, measures the response at each of the wavelengths, and
+    then weights and sums each wavelength response by the Standard
+    Observer weighting curves, to arrive at the CIE XYZ tri-stimulus
+    values. Because a Spectrometer computes the Standard Observer
+    weightings in software, the accuracy of the curves is nearly
+    perfect, the primary errors being due to wavelength calibration
+    errors, spectrum calibration errors, and the quantised nature of the
+    discrete wavelength bands.<br>
+    <br>
+    A Colorimeter uses physical filters that approximate the Standard
+    Observer weighting curves to filter the captured light onto three
+    sensors, the sensor values then<br>
+    being measured, and then multiplied by a 3x3 calibration matrix to
+    arrive at the CIE XYZ tri-stimulus values. The main advantage of a
+    Colorimeter is its simplicity, which results in a lower cost
+    instrument. In theory it is also possible to make a Colorimeter that
+    cheaply captures more light by using larger sensors, but this
+    possibility is rarely exploited by low cost instruments. Also due to
+    cost constraints, the physical filters used in these instruments may
+    not be a very good match to the CIE Standard Observer weightings,
+    and if nothing were done about it, this would result&nbsp; in large
+    measurement errors. Because such Display Colorimeters are typically
+    used with additive, 3 colorant displays, it is possible to calibrate
+    these errors out for any particular display, and this is the purpose
+    of the 3x3 calibration matrix that is used by the instrument and/or
+    instrument drivers. Since the calibration depends on the spectral
+    characteristics of the display primaries, no single calibration
+    matrix will be perfect for all display technologies, and typically
+    the instruments will come with two matrices, one for "typical" CRT
+    (Cathode Ray Tube) type displays, and one for "typical" LCD (Liquid
+    Crystal) type displays. Each individual Colorimeter may have
+    slightly different filters to others of the same model, due to batch
+    variations in the filter material. If each Colorimeter is calibrated
+    against a reference instrument, then this source of error can also
+    be minimised.<br>
+    <h3>Why don't Colorimeters work so well on Wide Gamut displays ?</h3>
+    As explained above, due to the imperfect match between the
+    Colorimeter filters and CIE Standard Observer weighting curves,
+    Colorimeters have calibration matrices that are created for
+    "typical" CRT or LCD displays. A Wide Gamut display by its very
+    nature has primaries that have narrower spectral characteristics
+    than typical displays, and this spectral difference exacerbates the
+    approximations and errors in the Colorimeter filters.<br>
+    <br>
+    Since Spectrometers have mathematically computed weighting curves,
+    they are less sensitive to the spectral characteristics of the
+    display primary colors, and generally work better on Wide Gamut
+    displays.<br>
+    <h3>What can be done about this ?</h3>
+    There are three approaches to addressing this problem:<br>
+    <br>
+    One is to use a Spectrometer to measure Wide Gamut displays. Since
+    lower cost Spectrometers are now available (e.g. Color Munki
+    Design/Photo), this may be the best general solution, since a
+    Spectrometer offers a good deal more flexibility and display
+    technology independence than a Colorimeter. Spectrometers are more
+    expensive than colorimeters though, and typical low cost instruments
+    are not well compensated for temperature changes (making reliable
+    black measurement somewhat tricky), and may take longer, or be less
+    accurate at measuring low light levels than the best colorimeters.<br>
+    <br>
+    The second approach is to correct the Colorimeter for the specific
+    type of Wide Gamut Display. Often this is what has been done when a
+    Colorimeter ("Puck") is supplied with a Wide Gamut display :- the
+    3x3 calibration matrix inside the Colorimeter will have been "tuned"
+    to match the display, or the Colorimeter driver or color management
+    software will include an additional 3x3 correction matrix for that
+    Colorimeter/Display combination.<br>
+    <br>
+    The third approach is to make a colorimeter that has filters that
+    are closer to the standard observer curves, reducing the calibration
+    needed for the instrument, and making it less dependent on the exact
+    type of display technology. The X-Rite i1 DisplayPro, Pantone
+    ColorMunki Display and possibly the Spyder 4 may have such an
+    improvement. <br>
+    <br>
+    Argyll V1.3.0 has a facility to create and apply a <a
+      href="File_Formats.html#.ccmx">correct matrix</a> to Colorimeter
+    measurements. To create the correction matrix, the display, the
+    Colorimeter and a reference Spectrometer are needed. (see <a
+      href="ccxxmake.html">ccxxmake</a>). The correction matrix can then
+    be used with the usual display measurement utilities (see <a
+      href="dispcal.html#X">dispcal</a>, <a href="dispread.html#X">dispread</a>
+    and <a href="spotread.html#X">spotread</a> -X option).<br>
+    <br>
+    Some recent colorimeters take a slightly different approach to
+    calibration, and rather than using pre-defined 3x3 calibration
+    matricies, they instead contain the spectral sensitivity curves for
+    each particular colorimeter (e.g. i1 DisplayPro and ColorMunki
+    Display, Spyder 4). It's then possible to create 3x3 calibration
+    matricies automatically for any display for which the spectral
+    characteristics are known. This makes it easy to tailor the
+    colorimeters measurements to a particular type of display without
+    having to cater for each colorimeter &amp; display combination. <a
+      href="ccxxmake.html">ccxxmake</a> also allows creation of these <a
+      href="File_Formats.html#.ccss">Colorimeter Calibration Spectral
+      Sample</a> files.<br>
+    <br>
+  </body>
+</html>

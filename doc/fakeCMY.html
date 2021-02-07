@@ -1,0 +1,73 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+  <meta name="GENERATOR"
+ content="Mozilla/4.73 [en] (WinNT; I) [Netscape]">
+  <title>fakeread</title>
+</head>
+<body>
+<h2> <b>xicc/fakeCMY</b></h2>
+<h3> Summary</h3>
+Using a CMYK <a href="File_Formats.html#ICC">ICC</a> profile, create a
+<a href="File_Formats.html#.ti3">.ti3</a> file containing device CMY to
+colorimetric
+values. This can then be used to create a CMY profile, that can be
+linked
+with the original CMYK profile to form a CMY to CMYK separation
+transform.
+<h3> Usage</h3>
+<small><span style="font-family: monospace;">fakeCMY [</span><i
+ style="font-family: monospace;">options</i><span
+ style="font-family: monospace;">]&nbsp; </span><i
+ style="font-family: monospace;">cmykprofile.</i><span
+ style="font-family: monospace;">icm </span><i
+ style="font-family: monospace;">fakecmy</i><span
+ style="font-family: monospace;">.ti3
+</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose mode </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-r </span><i
+ style="font-family: monospace;">res</i><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set the resolution of the resulting </span><a
+ style="font-family: monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+ style="font-family: monospace;">
+file (default 3). </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-l </span><i
+ style="font-family: monospace;">tlimit</i><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set a total ink limit, 0 .. 400%&nbsp; (estimate by default)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-l </span><i
+ style="font-family: monospace;">klimit</i><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set a black ink limit, 0 .. 100%&nbsp; (estimate by default) </span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;</span><i
+ style="font-family: monospace;">profile.</i><span
+ style="font-family: monospace;">icm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CMYK&nbsp; </span><a style="font-family: monospace;"
+ href="File_Formats.html#ICC">ICC</a><span
+ style="font-family: monospace;"> input profile to
+use </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;</span><i
+ style="font-family: monospace;">outfile</i><span
+ style="font-family: monospace;">.ti3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Name for output </span><a style="font-family: monospace;"
+ href="File_Formats.html#.ti3">.ti3</a><span
+ style="font-family: monospace;"> file </span></small><br>
+&nbsp;
+<h3> Comments</h3>
+This tool is a means of producing a CMY to CMYK separation. A fake
+CMY profile is created from the output of fakeCMY, and this is then
+linked to
+the original CMYK profile using <a href="collink.html">collink</a>, to
+create
+a separation containing the desired black generation. <br>
+</body>
+</html>

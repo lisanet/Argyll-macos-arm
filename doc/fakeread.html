@@ -1,0 +1,433 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>fakeread</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/fakeread</b></h2>
+    <h3>Summary</h3>
+    Simulate the measurement of a devices response, using an existing
+    device profile, or measured test point data set. The device profile
+    can be either an <a href="File_Formats.html#ICC">ICC</a> or <a
+      href="File_Formats.html#MPP">MPP</a> profile, or the data set can
+    be a <a href="File_Formats.html#.ti3">.ti3</a> file. A device link
+    separation or color space conversion can be applied before the
+    print/measure simulation, as well as device calibration&nbsp; or
+    inverse calibration curves.<br>
+    <br>
+    <b>fakeread</b> can be useful for creating a data set from an
+    existing profile to re-create a different style of profile (i.e.
+    create a cLUT profile from a matrix profile), for creating synthetic
+    data sets with known amounts of randomness for testing profile
+    creation against a perfectly known ideal, or for creating
+    verification test sets for checking colorimetric colorspace
+    emulation against.<br>
+    <br>
+    The options below are in the order of color processing that fakeread
+    performs.<br>
+    <h3>Usage</h3>
+    <small><span style="font-family: monospace;">fakeread [-options] </span></small><small><span
+        style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span><i style="font-family:
+        monospace;">profile.</i><span style="font-family: monospace;">[icm|mpp|ti3]
+
+
+
+
+
+
+      </span><i style="font-family: monospace;">inoutfile</i></small><small><span
+        style="font-family: monospace;"><br>
+        &nbsp;-v
+        [n]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Verbose mode [level]<br>
+        &nbsp;-e
+        flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Video encode device input to sepration as:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        normal 0..1 full range RGB levels (default)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        (16-235)/255 "TV" RGB levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Rec601 YCbCr SD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Rec709 1125/60Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Rec709 1250/50Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Rec2020 YCbCr UHD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Rec2020 Constant Luminance YCbCr UHD (16-235,240)/255 "TV"
+        levels<br>
+        &nbsp;-p <i>separation.icm</i> Use device link separation
+        profile on input<br>
+        &nbsp;-E
+        flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Video decode separation device output. See -e above<br>
+        &nbsp;-Z nbits&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; </span></small><small><span
+        style="font-family: monospace;"><small><span style="font-family:
+            monospace;">Quantize test values to fit in nbits<br>
+          </span></small>&nbsp;-k <i>file.cal</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Apply calibration (include in .ti3 output)<br>
+        &nbsp;-i <i>file.cal</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Include calibration in .ti3 output, but don't apply it<br>
+        &nbsp;-K <i>file.cal</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Apply inverse calibration<br>
+        &nbsp;-r
+        level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Add
+        average random deviation of &lt;level&gt;% to device values
+        (after sep. &amp; cal.)<br>
+        &nbsp;-0
+        pow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Apply power to device chanel 0-9<br>
+        &nbsp;-B
+        display.icm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Use BT.1886 source EOTF with technical gamma 2.4<br>
+        &nbsp;-b g.g:display.icm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use
+        BT.1886-like source EOTF with effective gamma g.g<br>
+        &nbsp;-b p.p:g.g:display.icm&nbsp; Use effective gamma g.g
+        source EOTF with p.p prop. output black point offset<br>
+        &nbsp;-g g.g:display.icm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use
+        effective gamma g.g source EOTF with all output black point
+        offset<br>
+        &nbsp;-I intent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        r = relative colorimetric, a = absolute (default)<br>
+        &nbsp;-A
+        L,a,b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Scale black point to target Lab value<br>
+        &nbsp;-l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Output Lab rather than XYZ<br>
+        &nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Lookup </span></small><small><span style="font-family:
+        monospace;"><small><a style="font-family: monospace;"
+            href="File_Formats.html#MPP">MPP</a></small> spectral values</span></small><br>
+    <small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;-R
+            level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Add average random deviation of &lt;level&gt;% to output PCS
+            values<br>
+          </span></small>&nbsp;-u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Make random deviations have uniform distributions rather than
+        normal<br>
+        &nbsp;-S
+        seed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Set random seed<br>
+        &nbsp;-U&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        Reverse convert PCS to device, output_r.ti3<br>
+      </span><span style="font-family: monospace;">&nbsp;</span><i
+        style="font-family: monospace;">profile.</i><span
+        style="font-family: monospace;">[icm|mpp|ti3] &nbsp; &nbsp; </span><a
+        style="font-family: monospace;" href="File_Formats.html#ICC">ICC</a><span
+        style="font-family: monospace;">, </span><a style="font-family:
+        monospace;" href="File_Formats.html#MPP">MPP</a><span
+        style="font-family: monospace;"> or&nbsp;</span><a
+        style="font-family: monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+        style="font-family: monospace;"> profile/file to use</span><br
+        style="font-family: monospace;">
+      &nbsp; <span style="font-family: monospace;"></span><i
+        style="font-family: monospace;">inoutfile</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+        &nbsp; Base name for input[</span><a style="font-family:
+        monospace;" href="File_Formats.html#.ti1">.ti1</a></small><small><span
+        style="font-family: monospace;"><small><a style="font-family:
+            monospace;" href="File_Formats.html#.ti3"></a><span
+            style="font-family: monospace;"></span></small>]/output[</span><a
+        style="font-family: monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+        style="font-family: monospace;">] file</span></small><br>
+    <b><br>
+      Examples</b><br>
+    <br>
+    fakeread profile.icm testvalues<br>
+    fakeread -p separation.icm profile.icm testvalues<br>
+    <h3>Comments<br>
+    </h3>
+    <a name="v"></a>The <span style="font-weight: bold;">-v</span> flag
+    reports extra information, e.g. on what BT.1886 option is doing. A
+    level &gt; 1 will be more verbose.<br>
+    <br>
+    <a name="e"></a>The <b>-e</b> <i>flag</i> applies a Video encoding
+    to the input of the separation.<small><small><br>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        normal 0..1 full range RGB levels (default)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (16-235)/255 "TV" RGB levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec601 YCbCr SD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec709 1125/60Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec709 1250/50Hz YCbCr HD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec2020 YCbCr UHD (16-235,240)/255 "TV" levels<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Rec2020 Constant Luminance YCbCr UHD (16-235,240)/255 "TV" lev</small></small><br>
+    <br>
+    <a name="p"></a>The <span style="font-weight: bold;">-p</span> <b><i>separation.icm</i></b>
+    option enables a device to device value conversion before converting
+    to expected PCS values. This might be an ink separation of a video
+    calibration device link. The argument is the name of the ICC device
+    link that defines the separation.<br>
+    <br>
+    <a name="E"></a>The <b>-E</b> <i>flag</i> applies a Video decoding
+    to the output of the separation.<small><small> &nbsp; </small></small>See
+
+
+
+
+
+    <a href="#e"><b>-e</b></a> for the list of decodings. Setting a
+    video encoding for output will also set quantization of 8 bits (see
+    -Z flag below). If your video connection is better than 8 bits (ie.
+    10 or 12 bits), then you may wish to raise this default.<br>
+    <br>
+    <a name="Z"></a> <b>-Z nbits </b>Normally the target device values
+    are floating point numbers that may get rounded and quantized in the
+    process of printing them or reproducing them on the display device.
+    If some of this quantization can be accounted for, it may improve
+    the accuracy of the resulting profile, and the <span
+      style="font-weight: bold;">Q</span> parameter allows this
+    quantization to be specified. The parameter is the number of binary
+    digits (bits) that the device values should be quantized to. An idea
+    of the number of bits of precision that makes its way to your
+    display can be obtained by using <a href="dispcal.html#R">dispcal
+      -R</a> If Video encoding is selected (see -E flag above), then 8
+    bits is selected by default. On systems using an VGA connection or
+    Display Port with a graphics card with VideoLUT entries with greater
+    than 8 bits depth, or if using the MadVR rendered with dithering,
+    then a higher bit depth is typically possible.<br>
+    <br>
+    <a name="k"></a>The <b>-k file.cal</b> parameter specifies a
+    calibration file created by <a href="printcal.html">printcal</a> or
+    <a href="dispcal.html">dispcal</a>, and the supplied calibration
+    curves will be applied to the chart device values after any
+    separation and before the device profile. This allows emulating a
+    system that uses per device channel calibration. The calibration
+    curves will also be included in the resulting .ti3 file, so that
+    they can be passed through to the ICC profile allowing accurate
+    computation of ink limits.<br>
+    <br>
+    <a name="i"></a> The <b>-i file.cal</b> parameter specifies a
+    printer calibration file created by <a href="printcal.html">printcal</a>
+    or <a href="dispcal.html">dispcal</a>, and the calibration curves
+    will be included in the included in the resulting .ti3 file, so that
+    they can be passed through to the ICC profile, to allow accurate
+    computation of ink limits. The calibration <span
+      style="font-weight: bold;">is not applied</span> to tchart values.
+    <span style="font-weight: bold;">Note</span> that if the supplied
+    ICC profile contains VCGT calibration curves, that these will be
+    included in the resulting .ti3 by default.<br>
+    <br>
+    <a name="K"></a>The <b>-K</b> <b>file.cal</b> parameter specifies
+    a calibration file created by <a href="printcal.html">printcal</a>
+    or <a href="dispcal.html">dispcal</a>, and the inverse of the
+    supplied calibration curves will be applied to the chart device
+    values after any separation and before the device profile. This
+    allows for undoing calibration curves that may be part of a video
+    calibration device link, so that the (calibrated device value)
+    device profile will work as expected.<br>
+    <br>
+    <a name="r"></a>The <span style="font-weight: bold;">-r</span>
+    parameter is a way of simulating instability in the behaviour of the
+    simulated printing system. The parameter supplied to the flag will
+    be used to scale a random offset added to the device values (after
+    any separation and calibration is applied). The offset will be a
+    normally distributed error with an average deviation of level%. A
+    typically value supplied might be 1.0 to simulate 1% randomness.<br>
+    <br>
+    <a name="0"></a>The <span style="font-weight: bold;">-0, -1, -2 ..
+      -9</span> parameters are a way of simulating changes in the
+    behavior of the simulated printing system. The parameter supplied to
+    the flag will be used to modify the device values (after any
+    separation, calibration and device randomness is applied) by raising
+    them to the power of the parameter. This applies a transfer curve to
+    the simulated device response.<br>
+    <br>
+    <b><a name="b"></a></b>The <b>-[b|B|g|G] [p.p:][g.g:]</b><b>display.icm</b>
+    series of options, substitutes an alternative EOTF (Electro-Optical
+    Transfer Function) for the one specified by the matrix input
+    profile. <b>display.icm</b> is the display ICC profile that
+    provides the black point that the gamma curve curves will target.
+    Typically these options will be used to create a verification test
+    set for checking the operation of a device link or 3dLut created
+    using <a href="collink.html">collink</a>, using the same gamma
+    curve parameters. See <a href="collink.html#Ib">collink -I b</a>
+    for a full explanation of these parameters, and <a
+      href="Scenarios.html#TV2">Verifying Video Calibration</a> for more
+    detail.<br>
+    <br>
+    <a name="I"></a>The <span style="font-weight: bold;">-I</span>
+    parameter allows changing the intent used in looking up the ICC
+    profile colors to relative colorimetric. This would <span
+      style="text-decoration: underline;">not</span> be used if you
+    intend to make a profile from the resulting .ti3 file, since
+    profiles are always made from absolute colorimetric measurement
+    values. Note that this flag does nothing if the profile is an MPP or
+    .ti3 file.<br>
+    <span style="font-weight: bold;"></span><br>
+    <a name="A"></a>The <span style="font-weight: bold;">-A</span>
+    parameter is a way of simulating devices that have a different black
+    point to the profile used. This only works if an ICC profile is
+    used, and scales the black point to the parameter value. This will
+    be done in XYZ space by default, and in L*a*b* space if the <a
+      href="#l"><span style="font-weight: bold;">-l</span></a> flag is
+    used.<br>
+    <br>
+    <a name="l"></a>The <span style="font-weight: bold;">-l</span> flag
+    causes the CIE output values to be L*a*b* rather than the default
+    XYZ values.<br>
+    <br>
+    <a name="s"></a>The <span style="font-weight: bold;">-s</span> flag
+    works if a spectral MPP file is being used as a device profile, and
+    causes the output to include spectral values.<br>
+    <br>
+    <a name="R"></a>The <span style="font-weight: bold;">-R</span>
+    parameter is a way of simulating instability in the behavior of the
+    simulated measuring system. The parameter supplied to the flag will
+    be used to scale a random offset added to the PCS values. The offset
+    will be a normally distributed error with an average deviation of
+    level%. A typically value supplied might be 1.0 to simulate 1%
+    randomness. <br>
+    <br>
+    <a name="u"></a>The <span style="font-weight: bold;">-u</span> flag
+    changes the distribution of the random offsets applied using the <span
+      style="font-weight: bold;">-r</span> or <span style="font-weight:
+      bold;">-R</span> flags, from the default standard deviation, to a
+    uniform deviation distribution. The level is still specified as an
+    average deviation.<br>
+    <br>
+    <a name="S"></a>The <span style="font-weight: bold;">-S</span>
+    parameter lets a particular random seed be used when generating
+    random offsets, so that the randomness can be made repeatable.
+    Normally a different seed will be used for each run. <br>
+    <br>
+    <a name="U"></a>The <b>-U</b> flag causes fakeread to read <i>inoutfile.ti3</i>
+    and use a backwards lookup (CIE to device conversion), saving the
+    result in <i>inoutfile</i>_r.<i>ti3</i>.<br>
+    <br>
+    Fakeread is useful in creating artificial test value for testing <a
+      href="colprof.html">colprof</a>, as well as providing one path for
+    turning an MPP profile into an ICC profile. It can also be used to
+    create a reference file for verifying against. If a <a
+      href="File_Formats.html#.ti3">.ti3</a> file is specified instead
+    of an <a href="File_Formats.html#ICC">ICC</a> or <a
+      href="File_Formats.html#MPP">MPP</a> profile, then the closest
+    matching measured points in the .<a href="File_Formats.html#.ti3">.ti3</a>
+    are substituted for the test values in the <a
+      href="File_Formats.html#.ti1">.ti1</a> file on output. If the <a
+      href="File_Formats.html#.ti1">.ti1</a> file is a monochrome test
+    file with a White device value, then an RGB <a
+      href="File_Formats.html#ICC">ICC</a> profile, <a
+      href="File_Formats.html#MPP">MPP</a> or <a
+      href="File_Formats.html#.ti3">.ti3</a> may be used, and the White
+    values will be translated to equal RGB values. If the <a
+      href="File_Formats.html#.ti1">.ti1</a> file is a monochrome test
+    file with a Black device value, then a CMYK <a
+      href="File_Formats.html#ICC">ICC</a> profile, <a
+      href="File_Formats.html#MPP">MPP</a> or <a
+      href="File_Formats.html#.ti3">.ti3</a> may be used, and the Black
+    values will be translated to equal CMY = 0, K = grey values. <span
+      style="font-weight: bold;">Note</span> that any calibration within
+    a supplied ICC profile is <span style="text-decoration: underline;">not</span>
+    applied during the conversion, although it will be included in the
+    .ti3 output (see <span style="font-weight: bold;">-k</span> and <span
+      style="font-weight: bold;">-i</span> flags for how apply
+    calibration curves during the conversion and/or include a specific
+    calibration curves in the output).<br>
+    <br>
+    If a separation device profile is provided (e.g. from CMY -&gt;
+    CMYK, or perhaps CMYK-&gt;CMYK, to simulate a color correction step
+    before "printing", or perhaps a Video RGB-&gt;RGB calibration link)
+    then this will be applied to the .ti1 device values, before
+    converting the the device values into .ti3 PCS values.<br>
+    <br>
+    Note that a .ti3 file can be renamed to be .ti1 and fakeread will
+    treat it as if it was a .ti1.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

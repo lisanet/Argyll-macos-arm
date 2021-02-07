@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>synthread</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/synthread</b></h2>
+    <h3>Summary</h3>
+    Simulate the measurement of a devices response using a synthetic
+    device
+    model. This is intended for testing of profile creation accuracy. A
+    device link
+    separation or color space conversion can be applied before the
+    print/measure simulation.<br>
+    <h3>Usage</h3>
+    <small><span style="font-family: monospace;">synthread [-v] </span></small><small><span
+        style="font-family: monospace;">[<span style="font-style:
+          italic;">separation.ic<span style="font-family: monospace;">m</span></span>]</span></small><small><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"> </span><i style="font-family: monospace;">inoutfile</i><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+        &nbsp; &nbsp; &nbsp; Verbose mode</span><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"></span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+        separation profile</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Output
+        Lab rather than XYZ<br>
+        <br style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;-0
+        pow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Apply
+        power to input device chanel 0-9 (after sep.)<br>
+        <br style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;-r
+        level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Add
+        average random deviation of &lt;level&gt;% to input device
+        values
+        (after sep.)</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-R
+        level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Add
+        average random deviation of &lt;level&gt;% to output PCS values<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;-u
+&nbsp;
+        &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Make
+        random deviations have uniform distributions rather than normal</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;-b
+        L,a,b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Scale
+        black point to target Lab value</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;[<span
+          style="font-style: italic;">separation.icm</span>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Device
+        link separation profile</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><i
+        style="font-family: monospace;">profile.</i><span
+        style="font-family: monospace;">[icm|mpp|ti3] &nbsp; &nbsp; </span><a
+        style="font-family: monospace;" href="File_Formats.html#ICC">ICC</a><span
+        style="font-family: monospace;">, </span><a style="font-family:
+        monospace;" href="File_Formats.html#MPP">MPP</a><span
+        style="font-family: monospace;">
+        or&nbsp;</span><a style="font-family: monospace;"
+        href="File_Formats.html#.ti3">.ti3</a><span style="font-family:
+        monospace;">
+        profile/file to use</span><br style="font-family: monospace;">
+      &nbsp;
+      <span style="font-family: monospace;"></span><i
+        style="font-family: monospace;">inoutfile</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+        &nbsp; &nbsp; &nbsp; Base name for
+        input[</span><a style="font-family: monospace;"
+        href="File_Formats.html#.ti1">.ti1</a><span style="font-family:
+        monospace;">]/output[</span><a style="font-family: monospace;"
+        href="File_Formats.html#.ti3">.ti3</a><span style="font-family:
+        monospace;">] file</span></small><br>
+    <b><br>
+      Examples</b><br>
+    <br>
+    synthread xxxx testvalues<br>
+    synthread -p xxx separation.icm testvalues<br>
+    <h3>Comments<br>
+    </h3>
+    The <span style="font-weight: bold;">-v</span> flag does nothing at
+    the moment.<br>
+    The <span style="font-weight: bold;">-p</span> flag enables a
+    device
+    to device value conversion before
+    converting to expected PCS values.<br>
+    The <span style="font-weight: bold;">-l</span> flag causes the CIE
+    output values to be L*a*b* rather than the
+    default XYZ values.<br>
+    <br>
+    The <span style="font-weight: bold;">-0, -1, -2 .. -9</span>
+    parameters are a way of simulating changes in the
+    behaviour of the simulated printing system. The parameter supplied
+    to
+    the flag will be used to modify the device values (after any
+    separation
+    is applied) by raising them to the power of the parameter. This
+    applies
+    a transfer curve to the simulated device response.<br>
+    <br>
+    The <span style="font-weight: bold;">-r</span> parameter is a way
+    of
+    simulating instability in the behaviour of
+    the simulated
+    printing system. The parameter supplied to the flag will be used to
+    scale a random offset added to the device values (after any
+    separation
+    is applied). The offset will be a normally distributed error with an
+    average deviation of level%. A typically value supplied
+    might be 1.0 to simulate 1% randomness.<br>
+    <br>
+    The <span style="font-weight: bold;">-R</span> parameter is a way
+    of
+    simulating instability in the behaviour of
+    the simulated
+    measuring system. The parameter supplied to the flag will be used to
+    scale a random offset added to the PCS values. The offset will be a
+    normally distributed error with an average deviation of level%. A
+    typically value supplied
+    might be 1.0 to simulate 1% randomness. <br>
+    <br>
+    The <span style="font-weight: bold;">-u</span> flag changes the
+    distribution of the random offsets applied using the <span
+      style="font-weight: bold;">-r</span> or <span style="font-weight:
+      bold;">-R</span> flags, from the default standard
+    deviation, to a uniform deviation distribution. The level is still
+    specified as an average deviation.<br>
+    <br>
+    The <span style="font-weight: bold;">-b</span> parameter is a way
+    of
+    simulating devices that have a different black point to the profile
+    used. This only works if an ICC profile is used, and scales the
+    black
+    point to the parameter value. This will be done in XYZ space by
+    default, and in L*a*b* space if the <span style="font-weight:
+      bold;">-l</span>
+    flag is used.<br>
+    <br>
+    synthread is useful in creating artificial test value for testing <a
+      href="colprof.html">colprof</a>, as well as providing one path for
+    turning an MPP profile into an ICC profile. If a <a
+      href="File_Formats.html#.ti3">.ti3</a> file is
+    specified instead of an <a href="File_Formats.html#ICC">ICC</a> or
+    <a href="File_Formats.html#MPP">MPP</a> profile,
+    then the closest matching measured points in the .<a
+      href="File_Formats.html#.ti3">.ti3</a> are substituted
+    for the test values in the <a href="File_Formats.html#.ti1">.ti1</a>
+    file on
+    output. If the <a href="File_Formats.html#.ti1">.ti1</a>
+    file is a monochrome test file with a White device value, then an
+    RGB <a href="File_Formats.html#ICC">ICC</a> profile, <a
+      href="File_Formats.html#MPP">MPP</a> or <a
+      href="File_Formats.html#.ti3">.ti3</a> may be used, and the White
+    values will be translated to equal RGB values. If the <a
+      href="File_Formats.html#.ti1">.ti1</a>
+    file is a monochrome test file with a Black device value, then a
+    CMYK <a href="File_Formats.html#ICC">ICC</a> profile, <a
+      href="File_Formats.html#MPP">MPP</a> or <a
+      href="File_Formats.html#.ti3">.ti3</a> may be used, and the Black
+    values will be translated to equal CMY = 0, K = grey values. <br>
+    <br>
+    If a separation device profile is provided (e.g. from CMY -&gt;
+    CMYK,
+    or perhaps CMYK-&gt;CMYK, to simulate a color correction step before
+    "printing"), then this will be applied to the .ti1 device values,
+    before converting the the device values into .ti3 PCS values.<br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+ 
+# JAM style makefile for ucmm
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS    = $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+Libraries = libucmm ;
+Executables = ;
+Headers = ucmm.h ;
+
+#Install
+#InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+HDRS = ../jcnf ../spectro ../icc ;
+
+# config parser based on yajl 
+Library libucmm : ucmm.c ;
+
+
+
+

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>average</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/average</b></h2>
+    <h3>Summary</h3>
+    Average or merge two or more <a href="File_Formats.html#.ti3">.ti3</a>
+    measurement files.<br>
+    If only one input file is provided, all the patches with the same
+    device values will be average together.<br>
+    <h3>Usage</h3>
+    <small><span style="font-family: monospace;"></span></small><small>
+      <span style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span></small><span
+      style="font-family: monospace;">usage: average [-options]
+      input1.ti3 input2.ti3 ... output.ti3</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+      Verbose</span><br>
+    <span style="font-family: monospace;">&nbsp;-e
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Median rather than average</span><br>
+    <tt>&nbsp;-g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      Geometric Median of PCS in encoded space</tt><tt><br>
+    </tt><tt>&nbsp;-L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      Geometric Median of PCS in L*a*b* space</tt><tt><br>
+    </tt><tt>&nbsp;-X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      Geometric Median of PCS in XYZ space</tt><br>
+    <span style="font-family: monospace;">&nbsp;-m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Merge
+
+
+
+      rather than average</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;input1.ti3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+First
+
+
+
+      input file</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;input2.ti3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Second
+
+
+
+      input file</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+      etc.</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;output.ti3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Resulting
+
+
+
+      averaged or merged output file</span><br>
+    <br>
+    <br>
+    All keywords and other table data will be taken from the first input
+    file. By default the input files are averaged, but they can be
+    merged by using the <span style="font-weight: bold;">-m</span>
+    flag.<br>
+    <br>
+    The fields must be the same and in the same order. For averaging,
+    the device values must be the same and in the same order.<br>
+    <br>
+    If the <b>-e</b> option is used, then the independent median (i.e.
+    Marginal median) of the field values is used, rather than the
+    average. <br>
+    <br>
+    If the<b> </b><b>-g</b> option is used, then <a
+      href="https://en.wikipedia.org/wiki/Geometric_median">Geometric
+      Median</a> of PCS values is computed in their encoded space (i.e.
+    XYZ or L*a*b*).<br>
+    <br>
+    If the <b>-L</b> option is used, then Geometric Median of PCS
+    values is computed in L*a*b* space.<br>
+    <br>
+    If the <b>-X</b> option is used, then Geometric Median of PCS
+    values is computed in XYZ space.<br>
+    <br>
+  </body>
+</html>

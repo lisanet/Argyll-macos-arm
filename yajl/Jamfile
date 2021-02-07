@@ -1,0 +1,42 @@
+ 
+# JAM style makefile for yajl
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS    = $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+Libraries = libyajl ;
+Executables = ;
+Headers = yajl_common.h  yajl_gen.h  yajl_parse.h  yajl_tree.h ;		# API headers
+
+#Install
+#InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+SRC = 
+	yajl.c
+	yajl_alloc.c
+	yajl_buf.c
+	yajl_encode.c
+	yajl_gen.c
+	yajl_lex.c
+	yajl_parser.c
+	yajl_tree.c
+	yajl_version.c
+	;
+
+# config parser based on yajl 
+Library libyajl : $(SRC) ;
+
+# Link all utilities here with libicc
+LINKLIBS = libyajl ;
+
+# All utils are made from a single source file 
+MainsFromSources yajl_test.c json_verify.c ;
+
+
+
+

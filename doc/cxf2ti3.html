@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>cxf2ti3</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>profile/cxf2ti3</b></h2>
+    <h3>Summary</h3>
+    <small><big>Convert X-Rite CxF format reference or RGB or CMYK test
+        chart results into</big></small> .cie or Argyll&nbsp;<a
+      href="File_Formats.html#.ti3">.ti3</a> CGATS format.<br>
+    <br>
+    Currently supports scan reference file conversion to .cie CGATS
+    format.<br>
+    <h3>Usage Summary</h3>
+    <small><span style="font-family: monospace;">cxf2ti3 [-v level]
+        infile.cxf outbase</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">-v
+        level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Verbosity level 1-9<br>
+      </span></small><small><span style="font-family: monospace;">-D
+        level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Debugging level 1-9</span><span style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span><br style="font-family:
+        monospace;">
+      <i style="font-family: monospace;">infile.cxf </i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Input
+CxF3
+        file</span><span style="font-family: monospace;"></span><br
+        style="font-family: monospace;">
+      <i style="font-family: monospace;">outbase</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Base name for output .cie or </span><a style="font-family:
+        monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+        style="font-family: monospace;"> file</span></small> <br>
+    <h3>Usage Details and Discussion</h3>
+    cxf2ti3 takes an X-Rite CxF3 format reference or test chart and
+    converts it into a CGATS format .cie reference file or an
+    Argyll&nbsp;<a href="File_Formats.html#.ti3">.ti3</a> CGATS files.<br>
+    <br>
+    Currently conversion of input test chart reference data is
+    supported. cxf2ti3 will attempt to convert other types of CxF files,
+    but still needs some work to make this complete (CxF3 test files are
+    welcome). <br>
+    <br>
+    The input files may have data that is scaled to one of three levels:
+    1.0, 100.0 or 255.0, and txt2ti3 attempts to guess what the
+    appropriate range is, in order to scale to Argyll's standard range 0
+    .. 100.0.<br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

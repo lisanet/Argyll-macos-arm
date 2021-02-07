@@ -1,0 +1,96 @@
+
+# Regular spline library
+
+# Optimization and Debug flags
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile flags
+#PREF_CCFLAGS		+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;      # Link with debug info
+
+SCAT = scat ;	# Use thps scattered interpolation library
+
+#Products
+Libraries = librspl ;
+Headers = rspl.h ;
+
+#Install
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+
+# Multi-dimensional regular spline library
+Library librspl : rspl.c $(SCAT).c rev.c gam.c spline.c opt.c : : : ../h ../numlib ../plot ;
+
+HDRS = ../h ../numlib ../plot $(TIFFINC) ;
+LINKLIBS = librspl ../plot/libplot ../numlib/libnum ../numlib/libui ../plot/libvrml ../icc/libicc $(TIFFLIB) $(JPEGLIB) ;
+
+# Test programs
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+MainsFromSources revbench.c c1.c cw1.c cw3.c c1df.c t2d.c t2ddf.c t3d.c t3ddf.c tnd.c trnd.c ;
+
+BUILD_TESTS = false ;
+
+if $(BUILD_TESTS) {
+
+	HDRS = ../h ../numlib ../plot ../icc ../rspl ../xicc ../gamut ../cgats ../spectro $(TIFFINC) ;
+	LINKLIBS = ../xicc/libxicc ../gamut/libgamut ../spectro/libinsttypes librspl
+	           ../cgats/libcgats ../icc/libicc ../plot/libplot ../plot/libvrml
+	           ../numlib/libnum ../numlib/libui $(TIFFLIB) $(JPEGLIB) ;
+
+	# Smoothness factor tuning test in Nd.
+	Main smtnd : smtnd.c ;
+
+	# Smoothness factor tuning test in Nd.
+	Main smtmpp : smtmpp.c ;
+
+#	Main rand_check : rand_check.c ;
+
+#	Main tt : tt.c ;
+
+	HDRS = ;
+	LINKLIBS = ;
+
+	Main sm1 : sm1.c ;
+	Main sm2 : sm2.c ;
+	Main sm3 : sm3.c ;
+
+}
+
+
+# Test code
+if ( $(HOME) = "D:\\usr\\graeme" && $(PWD) = "/src/argyll/rspl" )
+ ||  ( $(HOME) = "/Users/graeme" && $(PWD) = "/Users/graeme/src/argyll/rspl" ) {
+	#	Main tt : tt.c : : ../xicc : : : ../plot/libvrml ../icc/libicc ;
+
+	Main lchw : lchw.c : : : ../h ../numlib ../icc ../plot : : ../plot/libplot ../icc/libicc ../numlib/libui ../numlib/libnum ;
+	Main lchw_solve : lchw_solve.c : : : ../h ../numlib ../icc ../plot : : ../plot/libplot ../icc/libicc ../numlib/libui ../numlib/libnum ;
+	Main lchw_deriv : lchw_deriv.c : : : ../h ../numlib ../icc ../plot : : ../plot/libplot ../icc/libicc ../numlib/libui ../numlib/libnum ;
+	Main lchw_2deriv : lchw_2deriv.c : : : ../h ../numlib ../icc ../plot : : ../plot/libplot ../icc/libicc ../numlib/libui ../numlib/libnum ;
+	Main crossv : crossv.c : : : ../h ../numlib ../plot : : ../plot/libplot ../numlib/libui ../numlib/libnum ;
+
+}
+
+if $(BUILD_JUNK) {
+
+	HDRS = ../h ../numlib ;
+	LINKLIBS = ..//numlib/libnum ;
+
+	#Main temp : temp.c ;
+
+	MainsFromSources prime.c combo.c combo2.c combo3.c combo4.c combo5.c combo9.c ; 
+
+	#Main cache : cache.c ;
+
+	# Nearest point test code
+	Main nptest : nptest.c ;
+
+	# Nearest object test code
+	Main notest : notest.c ;
+
+	#direct mlbs scattered interpolation test
+	Main mlbs_test : mlbs_test.c ;
+}
+

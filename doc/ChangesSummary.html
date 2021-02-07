@@ -1,0 +1,1448 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+    <meta name="description" content="Root of Argyll CMS documentation">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <meta name="Author" content="Graeme Gill">
+    <meta name="Description" content="Summary of changes for the most
+      recent release.">
+    <title>Argyll CMS changes since last release</title>
+  </head>
+  <body>
+    <h1> Summary of Argyll CMS Changes since last release</h1>
+    <h3>For a <span style="text-decoration: underline;">complete</span>
+      and more detailed list of changes, please see the log.txt file.</h3>
+    <h1>[V2.1.1 -&gt; V2.1.2] 14th January 2020</h1>
+    <ul>
+      <li>Added -d option to spotread to print out Density values.</li>
+      <li>Improved i1Pro2 emissive measurement compatibility with X-Rite
+        driver.</li>
+      <li>Changed targen round down/up to 0%/100% to have a
+        tighter&nbsp; tolerance.</li>
+      <li>Added -Yk flag to spectro/dispread, to restore a workflow in
+        which display calibration is done without using vcgt hardware.</li>
+      <li>Modified txt2ti3 to cope with files that don't have
+        SampleName/SampleID fields, such as CoPrA sample files.</li>
+      <li>Added instrument ambient mode (-a flag) to dispcal, dispread
+        and ccxxmake, to allow use of direct projector to ambient mode
+        measurement.</li>
+      <li>Fixed problem with i1Pro2 EO2-XR-UF model crashing when
+        high-res mode used.</li>
+      <li>Changed dispcal ADJ_THRESH mode MIN_THRESH value to 0.25 from
+        0.05, as well as restricting it to the last pass, to reduce
+        pointless repeats of dark values.</li>
+    </ul>
+    <h1>[V2.1.0 -&gt; V2.1.1] 29th April 2019</h1>
+    <ul>
+      <li>Fix typo in usb/55-Argyll.rules for i1Studio.<br>
+      </li>
+      <li>Added SpyderX support for inst_opt_noinitcalib option, so that
+        the -N flag can be honoured. (Thanks to Florian Hoch)</li>
+    </ul>
+    <h1>[V2.0.1 -&gt; V2.1.0] 10th April 2019</h1>
+    <ul>
+      <li>Added scanin .cht for Christophe Metairie's Digital Target
+        2019 and Digital Target Studio Edition input charts.<br>
+      </li>
+      <li>Added support for Lasersoft ISO12641-2 reflective and 3 part
+        transmissive charts (recognition files, cxf2ti3 tool, changes to
+        average utility).</li>
+      <li>Changed spotread -E option to work with all the spectral
+        instruments, and now argument should be a transmission spectrum
+        of the filter placed on the instrument.</li>
+      <li>Added targen options -M to generate device space cube surface
+        steps, and -n option to generate neutral axis steps based on a
+        pre-conditioning profile.</li>
+      <li>Added support for SpyderX colorimeter.</li>
+      <li>Improvements and bug fixes to oeminst and oemdnld.</li>
+      <li>Add IES TM-30-15 (Method for Evaluating Light Source Color
+        Rendition) to spotread.</li>
+      <li>Added optional spectrum save file argument to spotread -O
+        option.</li>
+      <li>Changed spotread so that plot option -S doesn't wait for a
+        keystroke before continuing.</li>
+      <li>Fix FWA bugs in spotread - wasn't saving FWA compensated
+        spectra, was double correcting reference spectra.</li>
+      <li>Changed colprof Display profile -ax option to create just XYZ
+        cLUT profiles, rather than including dummy channel swapped
+        matrix as well. This will force the use of the cLUT tags in any
+        application/CMM that uses an unconventional tag priority when
+        dealing with a profile that contains both cLUT and shaper/matrix
+        tags. The -aY option has been added to create a diagnostic cLUT
+        display profile that contains matrix tags with swapped color
+        channels.</li>
+      <li>Change black ink "locus" rules (i.e. -K option) to just scale
+        from zero to maximum possible K, rather than minimum to maximum
+        K. This makes these rules much more usable, since the sharp
+        increase in minimum black near the black point will no longer
+        badly distort the curve shape. This affects colprof, collink and
+        xicclu.</li>
+    </ul>
+    <h1>[V2.0.0 -&gt; V2.0.1] 9th July 2018</h1>
+    <ul>
+      <li>Increased maximum render channels to 16<br>
+      </li>
+      <li>Added -O option to collink to allow creating a link purely
+        from calibration file.</li>
+      <li>Fixed JETI specbos &amp; specval timeout when in averaging
+        mode and dark measurement.</li>
+      <li>Changed JETI specval 1511 driver to ignore REMOTE command
+        error with newer firmware.</li>
+      <li>Changed Klein K10 serial parameters in attempt to prevent
+        serial lock up on MSWindows.</li>
+      <li>Made a failure of the conf:maxtin command with a JETI 1201 a
+        soft error, to allow for old firmware versions.</li>
+      <li>Change colorhug Linux driver to reset on close. This may
+        overcome a problem re-starting the driver.</li>
+      <li>Fixed i1Pro driver to cope with stripped down OEM i1Pro2 that
+        is missing one piece of calibration information.</li>
+      <li>Fixed display calibration selection to allow for more than 62
+        entries. This is to fix problem using Klein K10 that has a lot
+        of saved calibrations.</li>
+      <li>Changed spec2cie to add extra informational L*a*b* output
+        fields, if a non D50 illuminant (-i option) is used.</li>
+      <li>Added -w parameter to spotread, to use the -i parameter
+        illuminant for L*a*b* calculation.</li>
+      <li>Fixed bug in spec2cie - XRGA conversion wasn't saving spectrum
+        out.<br>
+      </li>
+    </ul>
+    <h1>[V1.9.2 -&gt; V2.0.0] 17th November 2017</h1>
+    <ul>
+      <li>Added support for "pm" viewing condition (Print evaluation
+        with partial Mid-tone adaptation), and associated m: viewing
+        condition parameter. This is intended to address certain
+        situations involving the use of papers containing FWA/OBE
+        brighteners when viewed in an environment that has a very
+        noticeably warmer white point than the paper itself under the
+        illuminant.</li>
+      <li>Added support for the X-Rite i1Studio instrument. Note that
+        you may have to un-install and re-install the system drivers on
+        MSWindows, or update the udev 55-Argyll.rules file on Linux.<span
+          style="font-weight: bold;"></span></li>
+      <li>Slight improvement to i1d3 accuracy, by rounding the frequency
+        mode measurements up by 0.5.</li>
+      <li>Returned input profile forced Absolute Colorimetric option
+        with -ua flag, after the -u option was changed in V1.5.0.<br>
+      </li>
+      <li>Try and fix problem in triggering calibration when
+        ARGYLL_NOT_INTERACTIVE is set.</li>
+      <li>Improve compatibility of txt2ti3, and added -D option to mark
+        output as Display but not Normalized to white.</li>
+      <li>Modified collink to disable Video encoded in/out sync level
+        preservation.</li>
+      <li>Added support for custom Observer by using a .cmf file as an
+        argument to all tools taking an observer parameter.</li>
+      <li>Added support for proposed CIE 2012 2 degree &amp; 10 degree
+        observers, based on the CIE (2006) 2-deg LMS cone fundamentals.</li>
+      <li>Fix problem with dispwin -E option not being shown in usage,
+        and only being applied when a calibration file is used.</li>
+      <li>Added spotread -u option to display XYZ amd CIE 1976 Yuv
+        values.</li>
+      <li>Added XRGA conversion support to spec2cie, as well as better
+        support in chartread and txt2ti3 for tracking XRGA standard and
+        polarization filter use.</li>
+      <li>Fix bug in spec2cie processing emissive .sp files.</li>
+      <li>Fix problem with i1d3 running direct USB (i.e. Not via HID) on
+        MSWin.</li>
+      <li>Fixed bug in render/timage -p.</li>
+      <li>Changed spotread ambient readings (CCT, CRI, TLCI) to show CCT
+        delta E in 1960 Duv units and others in Delta E 2000.</li>
+      <li>Added ARGYLL_UNTWIST_GAMUT_SURFACE environment variable, that
+        enables extra gamut clip surface processing that may improve the
+        smoothness of device links and B2A tables for poorly behaved
+        devices.</li>
+      <li>Fixed bug introduced in new colorimetric nearest clipping code
+        in rspl/rev.c in V1.9.0 that caused colprof using some ink limit
+        settings (such as -L0) to crash.</li>
+      <li>Fixed bug introduced in new colorimetric nearest clipping code
+        in rspl/rev.c in V1.9.0 that caused some (mainly XYZ clut)
+        profiles to clip badly, causing banding.</li>
+      <li>Improved dispcal -R VideoLUT depth measurement algorithm
+        robustness.</li>
+      <li>Worked around latest OS X super slow opening serial port
+        problem (1.5 seconds to open a port!)</li>
+      <li>Added ColorCheckerHalfPassport.cht file.</li>
+      <li>Fixed bug in ChromeCast mDNS parsing that caused problems with
+        some devices with long names being detected.</li>
+      <li>Now ignoring Chromecast-Audio and (.ca flags &amp; 1) == 0
+        devices, and showing the friendly chromecast name if available.</li>
+      <li>Wait longer to find more Chromecasts, even if we've found one.</li>
+      <li>Fixed colprof bug when handling Display L*a*b* .ti3 data.</li>
+      <li>Added Wacom i1d3 support.</li>
+      <li>Changed dispwin to by default ignore Gnome colord, and use its
+        native ucmm for storage of display profiles, since colord
+        support for ArgyllCMS has proven unreliable. This can be
+        re-enabled by setting the ARGYLL_USE_COLORD environment variable
+        (i.e. to "true").</li>
+      <li>Change X11 root window _ICC_PROFILE_xxx atom setting for
+        Xrandr case to now match the Xinerama order, so that
+        ICC_PROFILE_xxx atoms match, irrespective of which extension
+        applications are using. This improves conformance to "ICC
+        Profiles in X Specification 0.2".</li>
+      <li>Improved ucmm install/load/delete to better respect
+        systemlocal/user scopes, as well as eliminating need for profile
+        name on delete when ucmm is used.</li>
+      <li>Improve fast serial port scan to better detect Lumagen
+        Radiance without upsetting it.</li>
+      <li>Added ARGYLL_EXCLUDE_SERIAL_SCAN environment variable, to
+        allow suppression of fast serial port scan of sensitive devices.<br>
+      </li>
+    </ul>
+    <h1>[V1.9.1 -&gt; V1.9.2] 17th October 2016</h1>
+    <ul>
+      <li>Added CMYKOGB and CMYKRGB 7 channel ink preset, and made
+        targen more flexible in matching pre-conditioning profiles to
+        targen ink selection.<br>
+      </li>
+      <li>Fix oeminst for OS X save location.</li>
+      <li>Fix oeminst for OS X Spyder 4 CD calibration file location.</li>
+    </ul>
+    <h1>[V1.8.3 -&gt; V1.9.1] 28th September 2016</h1>
+    <ul>
+      <li>Improved robustness of ChromeCast discovery, and added some
+        minimal diagnostics.<br>
+      </li>
+      <li>Improved robustness of targen ofps patch generation when using
+        less well behaved pre-conditioning profiles.<br>
+      </li>
+      <li>Fixed oeminst so that it locates cdrom's in Linuxes latest
+        mount point of /run/media/$USER/.<br>
+      </li>
+      <li>Fixed bug in i1pro2 driver, in which strip calibration would
+        fail if instrument had been first calibrated with
+        ARGYLL_DISABLE_I1PRO2_DRIVER set, and then calibrated with
+        ARGYLL_DISABLE_I1PRO2_DRIVER unset.<br>
+      </li>
+      <li>Added option to icclib to write Output profiles using 'chad'
+        tag if the ARGYLL_CREATE_DISPLAY_PROFILE_WITH_CHAD&nbsp;
+        environment variable is set. This is not recommended for normal
+        use, but may assist compatibility with other systems.</li>
+      <li>Added JETI spectraval support, including Bluetooth access.</li>
+      <li>Added support for the Klein K10 connecting via a serial port.</li>
+      <li>Fixed bug in Colormunki Smile driver that causes crash on
+        Ubuntu 16.04.1 LTS.</li>
+      <li>Modified "lp" intent to greatly reduce eliminate
+        Helmholtz-Kohlrausch appearance modelling.<br>
+      </li>
+      <li>Fixed problem with targen -g, in that the corresponding XYZ
+        values had double the power applied, rather than none. This was
+        causing problems with printtarg spacer colors.<br>
+      </li>
+      <li>Extensive re-write of colorimetric nearest clipping code in
+        rspl/rev.c to restore precision that was lost in the speedups
+        made in V1.0.0. The nnrev setup now takes a lot longer with
+        &nbsp; high resolution CMYK profiles though. This corrects a
+        "green becoming too yellow" problem for mapping from ProPhoto
+        space with some RGB devices.</li>
+      <li>Change dispwin to properly set X11 DirectColor and take
+        account of TrueColor Colormap.&nbsp; This fixes problem with
+        NVidia linux driver 364.12 exposing a VideoLUT depth that is
+        different from the frame buffer depth.</li>
+      <li>Change icclib to automatically repair icmTextDescription
+        strings that have an allocation that is longer than their size.</li>
+      <li>Added i1Pro Lamp Drift test and fix functions to spotread (-Y
+        l|L options).</li>
+      <li>Change colprof so that -s -S will accept general compression
+        percentage as an alternative to a source colorspace/image gamut.</li>
+      <li>Added optional conversion from native Gretag-MacBeth &amp;
+        X-Rite reflective calibration standards to/from XRGA.</li>
+      <li>Changed OS X GUI support code so as not to switch to "interact
+        with the Dock" mode until actual GUI element is to be displayed.
+        This prevents batch commands with optional GUI elements from
+        blocking normal GUI interactions.</li>
+      <li>Re-jigged OS X UI code to use the main thread to avoid window
+        creation timing issues and a warning backtrace on OS X 10.11.</li>
+      <li>Added CMP_Digital_Target-7.cht</li>
+      <li>Fix spec2cie to cope with .ti3 files that are missing device
+        values, so that it can process a wider range of input CIE
+        reference files.</li>
+      <li>Changed implementation of ARGYLL_NOT_INTERACTIVE on MSWin to
+        make it more reliable when operated progromatically.</li>
+      <li>Fixed chartread so that if you are reading patch by patch, the
+        location strings can be arbitrary (i.e. they don't have to
+        conform to an alpha/num strip/patch pattern.)</li>
+      <li>Added support for Sencore ColorPro V, IV &amp; III
+        colorimeters (based on Sequel Chroma colorimeter.).<br>
+      </li>
+    </ul>
+    <h1>[V1.8.2 -&gt; V1.8.3] 26th October 2015</h1>
+    <ul>
+      <li>Added SpyderCheckr24 scaning .cht and .cie files.</li>
+      <li>Fixed USB problem with i1pro (Rev B &amp; D ?), where
+        communications would occasionally break down on fast systems.<br>
+      </li>
+      <li>Added another fixed display intergration time to i1pro
+        non-adaptive emission mode to cope with higher brightness
+        displays.</li>
+      <li>Added workaround for i1d3 Rev. B status code 0x83 on very low
+        light measurement</li>
+      <li>Fixed minor bug in i1d3.c that truncated serial number string.
+        (Thanks to Mikael Sterner).</li>
+      <li>Fixed bug in Klein K10 driver - adaptive measurement wasn't
+        properly using all the extra measurements.</li>
+      <li>Improved Klein K10 driver to be more robust when lights off
+        command returns bogus error codes, or causes a cascade of bogus
+        measurement errors.<br>
+      </li>
+      <li>Added workaround for OS X 10.9+ "App Nap" problem.</li>
+      <li>Added maximum sensor frequency check for Spyder &amp; i1d3
+        drivers, so that erronious readings due to excessive brightness
+        can't be missed.</li>
+      <li>Changed chartread so that it doesn't warn of a possible wrong
+        strip being read, nor allows bi-directional strip reading, if
+        "printtarg -r" was used. A warning will be issued if "printtarg
+        -r" was used, and "chartread -B" wasn't used.<br>
+      </li>
+      <li>Fixed collink for eeColor Full range RGB to use output curve
+        ("second" 1D curves) to compensate for cLUT being wired for 1.0
+        output from 1.0 input.<br>
+      </li>
+      <li>Added "lp" gamut mapping intent :- Luminance Preserving
+        Perceptual, for Photographers concerned with maintaining tonal
+        variations.</li>
+      <li>Fixed bugs in image specific gamut mapping that were degrading
+        the accuracy of the result.</li>
+      <li>Re-wrote gamut smoothing code, and re-tuned it to behave
+        similarly to the V1.8.2 release.</li>
+      <li>Changed default viewing condition glare to 5%, to smooth out
+        shadow tone curve.</li>
+      <li>Reduced the level of Helmholtz-Kohlrausch effect in CIECAM02
+        implementation in the light of visual experiments.</li>
+    </ul>
+    <h1>[V1.8.1 -&gt; V1.8.2] 7th September 2015</h1>
+    <ul>
+      <li>Fixed endless loop bug in alternate calibration selectors
+        code.</li>
+    </ul>
+    <h1>[V1.8.0 -&gt; V1.8.1] 4th September 2015</h1>
+    <ul>
+      <li>Fixed bug in "spec2cie -n" wrong field indexes were being
+        used.</li>
+      <li>Fixed colorimeter calibration selectors to add in alternate
+        selectors if the letters are free.</li>
+    </ul>
+    <h1>[V1.7.0 -&gt; V1.8.0] 20th August 2015</h1>
+    <ul>
+      <li>Added support for the Image Engineering EX1 spectroradiometer.</li>
+      <li>Added support for the SwatchMate Cube reflective colorimeter,
+        with improved accuracy.</li>
+      <li>Added Added Television Lighting Consistency Index (EBU
+        TLCI-2012 Qa)&nbsp; to spotread and specplot output.</li>
+      <li>Added R9 value to CRI value in spotread and specplot output.</li>
+      <li>Added workaround for JETI specbos having been calibrated by a
+        3rd party, and its calibrated range being out of sync with its
+        claimed range.<br>
+      </li>
+      <li>Added support for "EMISINPUT" type .ti3 file.</li>
+      <li>Build using OpenSSL rather than axTLS if it is built on Linux.</li>
+      <li>Fixed stack space problem in OS X UI programs by expanding
+        main thread proxy to have 8MB instead of the default 512K.</li>
+      <li>Updated built in libtiff to V4.0.4beta.</li>
+      <li>Changed CGATS format to not emit unknown keyword declaration
+        ("KEYWORD") by default.</li>
+      <li>Added inst_calc_cond_mask to inst.h to allow for flags in
+        calibration conditions. A consequence of this is that calc needs
+        to be masked with this when comparing against a specific
+        condition, and the inst_calc_optional_flag should be cleared if
+        it is set, before callint inst-&gt;calibrate() if the user wants
+        to proceed with a particular calibration.</li>
+      <li>Fixed bug with dispcal -e N</li>
+      <li>Fixed bug in xicclu -fg and -kp</li>
+      <li>Added dispcal -x x option to allow reading a chart and
+        manually entering the XYZ values.</li>
+      <li>Fix spyder4 &amp; 5 bug where some display types were set as
+        refresh when they shouldn't be.</li>
+      <li>Fix collink "Warning :- RGB black hack trigger more than
+        once!" when -b is used with input video encoding (-e).</li>
+      <li>Changed colprof so that the default ICC description is the
+        base filename rather than the whole file path.</li>
+      <li>Fix technology type and display type selector
+        "uniqueification" bug&nbsp; that shows up in "ccxxmake -??".</li>
+      <li>Add OEM field to ccmx and ccss files to mark files that have
+        been installed from OEM disk, so that custom ccmx &amp; ccss
+        files can be given suggested selector letter priority (+
+        ref/CRT.ccss).</li>
+      <li>Tweak CGATS write format to avoid scientific notation until
+        the numbers are bigger and smaller (i.e until e6 and e-6 are
+        needed).<br>
+      </li>
+    </ul>
+    <h1>[V1.6.3 -&gt; V1.7.0] 1st May 2015</h1>
+    <ul>
+      <li>Improved gamut mapping to reduce unnecessary changes to less
+        saturated colors&nbsp; such as skin tones.</li>
+      <li>Add support for DataColor Spyder 5.</li>
+      <li>Add support for ColorHug2 colorimeter.</li>
+      <li>Add support for Klein K10-A colorimeter.</li>
+      <li>Added Google ChromeCast as a test patch generator for Video
+        displays.</li>
+      <li>Added ls2ti3 tool to convert LightSpace .bcs files to .ti3.</li>
+      <li>Added IRIDAS .cube 3DLut format support to collink.</li>
+      <li>Add X3D and X3DOM support as an alternative to VRML, and make
+        X3DOM the default.</li>
+      <li>Add better cross compatibility with non-Argyll ICC profiles
+        using ArgyllCMS 'arts' tag to mark 'wtpt' Absolute Colorimetric
+        chromaticity transform, as well as implement proper absolute
+        colorimetric intent for Display profiles use the 'chad' tag.
+        Note that the standard ICC profiles provided by ArgyllCMS in the
+        ref directory (such as sRGB etc.) now include an 'arts' tag.</li>
+      <li>Ignore any patches that have zero values for creating Display
+        profiles, unless they are for device zero. </li>
+      <li>Fix various instrument communications problems for JETI
+        specbos, DTP20, DTP92 &amp; DTP94.</li>
+      <li>Fix gestaltSystemVersion warning on OS X 10.10.</li>
+      <li>Fix very major bug in illumread. It wasn't actually working at
+        all since V1.4.0.</li>
+      <li>Added collink -I[gG][:p.p]:x.x options that allows an output
+        offset gamma curve be targetted instead of BT1886.</li>
+      <li>Added dispcal and collink -b black point hack. This forces the
+        input zero to map to the output zero for well behaved displays,
+        reducing dependence on the instrument accuracy for a very dark
+        black point.</li>
+      <li>Added preset list of display techologies to select from in
+        ccxxmake.</li>
+      <li>Added a -P prune option to profcheck, that creates a .ti3 file
+        pruned of any patches that have a delta E fit error greater than
+        a threshold. This may be of use in eliminating bad reading
+        values from a measurement set.</li>
+      <li>Added histogram plot option -h to both profcheck and verify.</li>
+      <li>Added a dispread &amp; fakeread -Z option to set the number of
+        bits to quantize the test values to. </li>
+      <li>Fixed bug in targen - the -V dark emphasis wasn't being
+        applied to OFPS generated points.</li>
+      <li>Make sure that if an instrument display reading is interrupted
+        by a forced calibration, that the user is asked to place it back
+        on the display before resuming the measurements.</li>
+    </ul>
+    <h1>[V1.6.2 -&gt; V1.6.3] 26th January 2014</h1>
+    <ul>
+      <li>Added ProPhoto.icm and ProPhotoLin.icm to ref profiles.</li>
+      <li>Fix bug in xicclu -py conversion.</li>
+      <li>Added code to minimize ICC rounding error on matrix profile
+        white point accuracy. Re-generated all reference profiles with
+        this change.</li>
+      <li>Changed i1d3 driver to completely ignore any EEPROM checksum
+        errors for non "A-01" rev. instruments.</li>
+      <li>Made transplot handle RGB-&gt;RGB device link.</li>
+      <li>Removed colprof -y option. Use "profcheck -v2" instead, as it
+        is more developed.</li>
+      <li>Fixed bug in dispcal - it was not using the final measurement
+        pass to update the calibration curves.</li>
+      <li>Fixed bug in spotread, dispcal &amp; dispread for CCSS capable
+        instruments where refresh display types was being ignored if a
+        custom observer was used, and/or the custom observer as being
+        ignored, and/or a&nbsp; CCMX was being ignored. Changed instlib
+        semantics for inst_opt_set_ccss_obs :- this is now set
+        immediately, and applied also to any subsequent set_disptype()
+        or col_cal_spec_set().</li>
+      <li>Renamed verify to colverify to avoid clash with MSWin program
+        of the same name. Made it print the patch location for -v2 if it
+        is present in the file.</li>
+      <li>Changed targen to ensure that -V and -p options effects are
+        reflected in the resulting expected CIE values of the .ti1 file.</li>
+      <li>Changed targen so that -V parameter also affects single
+        channel, grey wedge, grid &amp; body centered grid point
+        distribution.</li>
+      <li>Changed colprof to deal with variable grid distribution in a
+        more neuanced way, to reduce overshoot artifacts when the -V
+        parameter is used.</li>
+      <li>Changed colprof to used a power_like function for the grid
+        distribution shape from the -V parameter, so as to avoid issues
+        with a power curve infinte slope near zero.</li>
+      <li>Changed colprof to used a scaled down value of the targen -V
+        parameter as the default for its -V parameter. Documentation now
+        recommends more moderate values for -V.</li>
+      <li>Added a special case to collink for RGB video input encoding
+        to (attempt) to fine tune the black point to compensate for it
+        (probably) not falling on a cLUT grid point. &amp; out encoding</li>
+      <li>Tweaked dispcal to try and improve accuracy of black point
+        calibration.</li>
+      <li>Switch dispread to use NoClamp readings, so that average black
+        point value is not biased.</li>
+      <li>Fixed bug introduced into 1.6.2 oeminst that prevents .ccss
+        files being installed.<br>
+      </li>
+    </ul>
+    <h1>[V1.6.1 -&gt; V1.6.2] 18th November 2013</h1>
+    <ul>
+      <li> Added "dark region emphasis" -V parameter to targen and
+        colprof,&nbsp; in an attempt to improve the accuracy of display
+        profiles intended for use with video. This should improve the
+        subsequent black point accuracy of the profile.</li>
+      <li>Fixed bug and tweaked dispcal black point optimization to err
+        on the black side. Added -v3 for even more debugging
+        information.</li>
+      <li>Changed i1d3 driver to be more forgiving of EEProm checksum
+        calculation, so that it works with the latest release "A-02"
+        rev.&nbsp; i1 display pro &amp; colormunki display instruments,
+        as well as improving its robustness in the face of errors.</li>
+      <li>Fixed race condition bug in OS X HID driver. This fixes
+        occassional problem with i1d3, and also solves problem with the
+        ColorHug on OS X. </li>
+      <li>Fixed problem with TV encoded output and dispread -E -k/-K.</li>
+      <li>Fixed minor bug in DE94 in icclib.</li>
+      <li>Fixed major bug in illumread - result was being corrupted.</li>
+      <li>Fixed "edges don't match" bug in printarg when -iCM -h -s/-S
+        used.</li>
+      <li>Fix bug in -H flag in ccxxmake, chartread, dispcal, dispread,
+        illumread &amp; spotread so that it works once again.</li>
+      <li> <br>
+      </li>
+    </ul>
+    <h1>[V1.6.0 -&gt; V1.6.1] 30th September 2013</h1>
+    <ul>
+      <li>Fix bug in "average -m"<br>
+      </li>
+      <li>Fix oeminst to work with a wider range of i1d3 install files.</li>
+      <li>Fix ColorMunki reflective measurement accuracy, particularly
+        for reflective readings. This has been poor since V1.5</li>
+      <li>Fix bug in using DTP94 on Apple OS X introduced in V1.5</li>
+      <li>Fix MadVR connect code to look for appropriate 32 bit or 64
+        bit .dll.</li>
+      <li>Improve MSWin system driver installation by creating valid
+        ArgyllCMS.cat file to match ArgyllCMS.inf. This eliminates the
+        need to "Disable Driver Signature Enforcement", as well as
+        allowing installation on MSWin&nbsp; 8.1.<br>
+      </li>
+    </ul>
+    <h1>[V1.5.1 -&gt; V1.6.0] 16th August 2013</h1>
+    <ul>
+      <li>Added support for <b>JETI</b> specbos 1211 and 1201 (Thanks
+        to JETI for their support!)</li>
+      <li>Added Video profiling &amp; 3dLut creation support for eeColor
+        and MadVR. See video section in tutorial for pointers to
+        relevant changes to tools. This includes support for MadTPG +
+        various Video standard ICC profiles + verification workflow.<br>
+      </li>
+      <li>Linux profile installation will use <b>colord</b> if
+        libcolordcompat.so is present on system.</li>
+      <li>Fix <b>ColorHug</b> driver so that it is backwards compatible
+        with FW 1.1.8</li>
+      <li>Made sure that MSWin test colors are not color managed. This
+        may affect Vista, Win7 and Win8.</li>
+      <li>Changed spectro/dispwin.c so that null transform color
+        matching is used for displaying test patches on OS X &gt;= 10.6.
+        This should fix calibrating/profiling secondary displays on &gt;
+        OS X 10.6. Note that the 32 bit 10.4 binary will still have
+        problems on &gt; OS X 10.6.</li>
+      <li>Changed <b>instlib API</b> ambient XYZ and spectral units to
+        Lux. In previous versions of instlib they were Lux/pi.</li>
+      <li>For those instruments that support it, made ambient readings
+        honor refresh mode measurements, to improve repeatability when
+        measuring regularly flickering light sources. (specbos, i1d3,
+        i1disp).</li>
+      <li>Changed spotread -ew mode to be Bradford chromatic transform
+        rather than XYZ scaling, to better match Argyll ICC abs. vs.
+        rel.</li>
+      <li>Added support to xicclu to lookup colors though CAL files,
+        both forward and backwards. Will also plot CAL file contents
+        using -g.</li>
+      <li>Added -Y R:rate option to spotread, dispcal, dispread &amp;
+        ccxxmake to allow setting a chosen display refresh rate. This
+        can be used with the Colormunki display, as well as situations
+        in which refresh rate measurement is not reliable.</li>
+      <li>By default printtarg will create PS and EPS files with a CUPS
+        job ticket to disable color management. Use the -U flag to
+        disable this.</li>
+      <li>Added display update delay calibration support to i1pro and
+        ColorMunki (just like i1disp3), to improve measurement times.</li>
+      <li>Changed dispcal &amp; dispread so that they wait up to 0.5
+        seconds when reading dark patches after light ones to allow for
+        display fall time. Added&nbsp; patch order optimization for
+        display patch sets in targen to minimize the extra time.</li>
+      <li>Changed dispwin daemon loader mode option from -E to -X. Added
+        -E option to encode test patch colors in Video 16-235 range.</li>
+      <li>Changed dispcal verify option from -E to -z. Added -E option
+        to encode test patch colors in Video 16-235 range.</li>
+      <li>Added -E option to to dispread to encode test patch colors in
+        Video 16-235 range.</li>
+      <li>Changed CIECAM02 Flare model to distinguish between Flare from
+        the image itself, and Glare from ambient light. This allows
+        scaling Glare with ambient automatically. Changed enumerated
+        viewing conditions for new Flare/Glare settings, changed all to
+        Flareless to improve dark image behavior, while retaining Glare
+        modelling. Tweaked brightness and ambient values.</li>
+      <li>Improved i1pro hi-res mode to improve accuracy.</li>
+      <li>Added Body Centered Cubic grid option to targen.</li>
+      <li>Added -Yn flag to dispcal and dispread, which skips asking the
+        user to place the instrument on the measuring spot.</li>
+      <li>Improve robustness of i1d3 display update measurement code.</li>
+      <li>Added support for applying calibration curves in collink.</li>
+      <li>Changed spotread so that it won't fall back to emissive spot
+        mode if an ambient reading is requested.</li>
+      <li>Turned off B2A table clip map smoothing, as it seems to
+        introduce reversals for some data sets, and provides little
+        benefit.</li>
+      <li>Fixed crash in ucmm/ucmm.c when loading certain profiles using
+        dispwin (thanks to Torok Edwin).</li>
+      <li>Fixed gamut mapping intent "rl" to really use relative L*a*b*</li>
+      <li>Fix bug in cicam02 in V1.5.0 that causes some mapping problems
+        in the red for collink -ir or -ila.&nbsp;</li>
+      <li>Changed cctiff so that it does lossless JPEG copy when there
+        is no color transformation. This makes it more useful for
+        embedding a profile.</li>
+      <li>Fix xicclu so that it works with device links.</li>
+      <li>Fixed bug in shaper/matrix profile curves that caused random
+        bumpy black behaviour (shaper curve optimization local minimum
+        problem).</li>
+      <li>Don't add colorant tag to .tiff files in cctiff unless it is a
+        non-standard space, as Photoshop will barf on such files.</li>
+      <li>Fix bug with Spyder not being able to break out of dispcal
+        adjustment loop.</li>
+      <li>Fix bug in xicc/xicclu, -K flag not being recognised.</li>
+      <li>Fix bug in xicc/xmatrix.c introduced in V1.5 that prevents
+        matrix only profiles from being created.</li>
+      <li>libusb 1.0 is now deprecated in favor of native USB drivers.<br>
+      </li>
+    </ul>
+    <h1>[V1.5.0 -&gt; V1.5.1] 8th March 2013</h1>
+    <ul>
+      <li>Fix spectro/instlib.ksh and standalone instlib build.</li>
+      <li>Turned off debug plot on using FWA.</li>
+      <li>Changed link $(LINKFLAGS) location in link command line
+        Jambase to get latest gcc working.</li>
+      <li>Fixed new bug in matrix display profile creation that causes
+        an inaccurate relative white point. This causes Photoshop to
+        barf on the profiles.</li>
+      <li>Added -m option to printcal.</li>
+      <li>Fix bug in webwin that causes crash.<br>
+      </li>
+    </ul>
+    <h1>[V1.4.0 -&gt; V1.5.0] 1st March 2013</h1>
+    <ul>
+      <li>Increased ease of selecting ISO 13655:2009 M0, M1 and M2
+        measurements using FWA comensation using any spectrometer that
+        can take non-UV filtered measurements. M0, M1 or M2 can now be
+        selected directly using the -f flag. [ArgyllCMS has been
+        supporting ISO 13655 M0, M1 &amp; M2 well before the standard
+        was created, thanks to its FWA compensation feature.]<br>
+      </li>
+      <li>Increased stability of i1d3 refresh display measurements by
+        increasing integration time, and tweaking crossover from
+        frequency to period measurement.</li>
+      <li>Added i1pro Rev E (i1pro2) feature support. Uses RevE
+        measurement mode, and does wavelength calibration. Uses RevE
+        (internal) stray light reduction, and black level temperature
+        compensation. The only Rev E feature not currently supported is
+        U.V. measurement, which would improve the accuracy of FWA
+        compensation. Rev E driver can be disabled and the legacy driver
+        mode used by setting the ARGYLL_DISABLE_I1PRO2_DRIVER
+        environment variable.</li>
+      <li>Changed i1pro adaptive mode to avoid high gain mode, so as to
+        give more consistent and longer integration times for low light
+        levels.</li>
+      <li>Changed ColorMunki adaptive mode to avoid high gain mode, so
+        as to give more consistent and longer integration times for low
+        levels. Added black level temperature compensation.</li>
+      <li>Added spotread interactive function 'f' to read out the
+        calibrate display refresh rate for instruments that have a
+        refresh display mode, as well as an 'F' function that measures
+        the refresh rate for instruments that support a refresh rate
+        measurement function (colorimeters &amp; spectrometers).</li>
+      <li>The Display Type selection option -y in dispcal, dispread,
+        chartread, spotread &amp; ccxxmake now lists installed CCSS and
+        CCMX files as a selection, rather than using the -X parameter.
+        CCMX and CCSS files now have extra fields to indicate the
+        refresh mode, an optional list of default UI selection
+        characters, and (for CCMX files) the base display type they
+        apply over (CB-n).<br>
+      </li>
+      <li>Tweaked CIECAM02 to improve behavior for extreme blue colors,
+        so that the hue doesn't swing too far towards the cyan. This
+        helps in the clipping behavior from colorspaces such as
+        ProPhotoRGB.</li>
+      <li>Made the input profile cLUT extra neutral axis extrapolation
+        points the default for colprof -u and non -u profiles. Changed
+        -u algorithm to work similarly to -U scale :- it sets the scale
+        automatically. Relative colorimetric is therefore hue matched to
+        the white reference patch, Removed colprof -un, as it seems
+        unnecessary. Added colprof -uc, which clips cLUT colors over Y =
+        1 to white.</li>
+      <li>The spyd2en, spyd4en and i1d3ccss tools have been combined
+        into, and replaced by a single oeminst tool.</li>
+      <li>Fix problem with dispwin/dispcal/dispread -dweb and the latest
+        Safari browser.</li>
+      <li>Changed to a single ArgyllCMS.inf file for MSWin USB driver
+        installation. This eases installation of more than a single type
+        of instrument. Tested on MS Windows 8 and updated installation
+        instructions.</li>
+      <li>Dropped libusb for USB access, using native USB access
+        instead. MSWin uses the libusb-win32 kernel driver. Moved the
+        usb setup files from libusb1 to a new directory, usb.</li>
+      <li>Added scanin support for ColorCheckerPassort.</li>
+      <li>Updated OS X code to compile on 10.6 and 10.7 and (presumably)
+        10.8 (64 bit compatible API used when compiling on those
+        platforms, including Cocoa for the test patch window).<br>
+      </li>
+      <li>Changed udev file usb/55-Argyll.rules to eliminate the test
+        for /lib/udev/udev-acl as a condition of using ACL_MANAGE, since
+        I'm informed that it is deprecated in recent distribution
+        releases (but who can tell, given the churn in the udev API).</li>
+      <li>Deprecated -V flag (adaptive mode) in dispcal, dispread and
+        ccxxmake, since this is now the default. Flag will be ignored
+        with a warning. Added -ZA flag instead, to select non-adaptive
+        integration time mode.</li>
+      <li>spotread -d flag is deprecated, and is now a synonym for the
+        -e flag, since it defaults to adaptive mode. Added -ZA flag
+        instead, to select non-adaptive integration time mode. Also
+        added -Zr and -ZR flags to allow testing of the refresh mode
+        overrides.</li>
+      <li>Migrated ArgyllCMS specific application runtime files (such as
+        instrument blobs, calibration state &amp; calibration files) to
+        an "ArgyllCMS" sub-directory rather than the generic "color"
+        directory. On OS X also moved data files to below the
+        "Application Support" sub directory. The old locations will be
+        used as a fallback.<br>
+      </li>
+      <li>Added support for Quato Silver Haze 3 OEM i1d3<br>
+      </li>
+      <li>Added support for X-Rite ColorMunki Smile colorimeter.</li>
+      <li>Enable the ColorHug by default, although it isn't advertised
+        as supported, since it doesn't yet work reliably on OS X.
+        Updated ColorHug PCI VID &amp; PID</li>
+      <li>For Spyder, emit a warning rather than error if the feature
+        bits are missing for calibration tables.</li>
+      <li>Added automatic adjustment of patch reading delay for i1d3, so
+        that a more conservative (longer) default value (200 msec) can
+        be used without impacting i1d3 speed. Also added environment
+        variable ARGYLL_MIN_DISPLAY_UPDATE_DELAY_MS that can set a
+        different minimum update delay.</li>
+      <li>Fixed a bug introduced in V1.3.6 that stops the dtp41 from
+        being initialized properly.</li>
+      <li>Improved black level readings derived from spectral values by
+        allowing them to be -ve. <br>
+      </li>
+      <li>The instlib API has been modified quite extensively to make it
+        more self contained and flexible, although the basic
+        architecture remains the same.<br>
+      </li>
+    </ul>
+    <h1>[V1.3.7 -&gt; V1.4.0] 20th April 2012</h1>
+    <ul>
+      <li>Modified spectro/ccxxmake so that a colorimeter can be used as
+        a reference to make ccmx files if two .ti3 files are used. Added
+        ref/ccxx.ti1 as convenient way of creating ccmx .ti3 files.<br>
+      </li>
+      <li>Added dither/screening support for 8 bit output of render, and
+        then made it available in target/printtarg.<br>
+      </li>
+      <li>Added JPEG file support to imdi/cctiff, xicc/tiffgamut and
+        xicc/extracticc. ICC profiles embedded in JPEG files can now be
+        used anywhere a TIFF file with embedded ICC profile can be used
+        as a source of an ICC profile.<br>
+      </li>
+      <li>Fixed memory leaks in usbio.c, xdg_bds.c &amp; conv.c</li>
+      <li>Fixed double memory free bug in icc/icc.c when iccdump'ing a
+        profile that has a duplicate tag.</li>
+      <li>Changed license of xicc/ccmx.[ch] to GPL2+.<br>
+      </li>
+      <li>Made display calibration and profile making deal with displays
+        without hardware calibration support (VideoLUT support) more
+        graceful. Added tutorial section covering this.<br>
+      </li>
+      <li>Added option to dispwin/dispcal/dispread/ccxxmake to redirect
+        the test patches to a web browser via a local web server. This
+        augments Argyll's existing local and remote display capability.<br>
+      </li>
+      <li>Fixed bug in spectro/i1d3.c which results in NAN if a low
+        level readings drops to zero at a particular time. Improved
+        refresh rate calibration accuracy. Fixed bugs in adaptive
+        measurement logic that caused a channel to be pre-measured when
+        it shouldn't. This seems to noticeably improve repeatability on
+        refresh displays.<br>
+      </li>
+      <li>Fixed bug in ucmm/jcnf where it was failing to locate the
+        correct profile for a display.<br>
+      </li>
+      <li>Fix bugs in ColorMunki Transmissive measurement mode
+        calibration.<br>
+      </li>
+    </ul>
+    <h1>[V1.3.6 -&gt; V1.3.7] 26th March 2012</h1>
+    <ul>
+      <li>Fix regression in Spyder support - ccmx files were not being
+        handled (bug introduced in 1.3.6).</li>
+      <li>Fix packaging problem - Spyder4 MSWin .inf file was missing.</li>
+      <li>Change dispwin so that it will install a profile when there is
+        no access to the display VideoLUT if the profile has no vcgt.<br>
+      </li>
+    </ul>
+    <h1>[V1.3.5 -&gt; V1.3.6] 19th March 2012<br>
+    </h1>
+    <ul>
+      <li>Added Spyder4 support. Note the need for spyd4en for access to
+        a full range of Manufacturers calibrations. The Spyder4 can use
+        .ccss calibration files too. Speeded up all Spyder instrument
+        readings on brighter colors.</li>
+      <li>Experimental ColorHug support is compiled in, but is disabled
+        unless the environment variable "ENABLE_COLORHUG" is set. The
+        ColorHug currently doesn't seem to work reliably across all
+        platforms ArgyllCMS supports.<br>
+      </li>
+      <li>Changed and expanded display selection (-y flag) to be
+        instrument specific. This is to support the Spyder4 and
+        ColorHug, and adds a refresh display selection to the i1d3.</li>
+      <li>Tweaked i1d3 integration times and added accurate refresh
+        period calibration to the refresh display mode. Refresh display
+        measurement times are double non-refresh displays. Improved i1d3
+        period measurement logic to improve measurement speed and
+        accuracy for dark colors.</li>
+      <li>Changed i1disp measurement logic to try and make it more
+        robust against light to dark changes during a reading. This may
+        make it slightly less precise for LCD displays on bright colors
+        (equivalent now to Refresh display precision).<br>
+      </li>
+      <li>Added a -V option to spotread to allow tracking reading
+        consistency.</li>
+      <li>Changed ccxxmake to create default .ccss with just&nbsp; RGBW,
+        and not to weight W. This may give better matching. Made
+        corresponding change to CCMX, giving the white patch 1/4
+        weighting of sum of all other patches.</li>
+      <li>Fixed applycal so that it applies calibration to both A2B and
+        B2A tables, to preserve softproofing.</li>
+      <li>Fixed timeout in SpectroScanT reference transmission
+        measurement. (Someone kindly donated me a SpectroScanT to test
+        with!)</li>
+      <li>Made DTP94 driver ignore with a warning any
+        NEEDS_OFFSET_DRIFT_CAL_ERR after a full reset. It seems that
+        occasionally a few instruments do this, and X-Rite don't appear
+        to be prepared to treat this as an instrument fault.</li>
+      <li>Added support for Datacolor SpyderCheckr (Thanks to Jos
+        Pereira).</li>
+      <li>Improved the ability of spyd2en to cope with slightly
+        different setup.exe formats.</li>
+      <li>Add support for NEC SpectraSensor Pro version of the i1d3.<br>
+      </li>
+    </ul>
+    <h1>[V1.3.4 -&gt; V1.3.5] 24th October 2011</h1>
+    <ul>
+      <li>Fix bug (crash) that affects ColorMunki design/photo display
+        measurement. This also stops it restoring a calibration (-N
+        flag).</li>
+      <li>Add support for the OEM version of the i1d3.</li>
+      <li>Fix bug that stopped ccxxmake being able to make ccmx's.</li>
+      <li>Tweak gamut mapping to improve dark area mapping,
+        non-monotonic profile inversion, and contrast preservation to
+        small gamut.</li>
+      <li>Kill i1ProfileTray.exe process if unable to open i1d3 on
+        MSWin.</li>
+      <li>Fix DTP20 chart printing - TID was sometimes incomplete. This
+        shows up on a 4x6 chart.<br>
+      </li>
+    </ul>
+    <h1>[V1.3.3 -&gt; V1.3.4] 31st August 2011</h1>
+    <ul>
+      <li>Added support for the X-Rite i1 Display Pro and ColorMunki
+        Display colorimeters. As part of this, added support for CCSS
+        calibration files for the instruments and added CCSS support to
+        ccxxmake (renamed from ccmxmake). Provide new tool i1d3ccss to
+        translating and installing CCSS files as well as the
+        manufacturers calibration files for these instruments. Added
+        non-default observer support for these instruments too.</li>
+      <li>Fix gamut code to ignore setting primary/secondary cusps that
+        are unlikely to be true. This avoids buggy gamut mapping
+        behavior for gamuts that are very small and odd shaped.</li>
+      <li>Changed Linux USB code to avoid doing a
+        set_configuration&nbsp; if possible, since the USB driver does
+        this by default. This then avoids triggering a bug in the
+        Spyder2, which allows it to work on Linux version without the
+        reset_ep fix, and may also allow the Spyder to work better with
+        USB hubs.</li>
+      <li>Change printtarg for DTP20 to allow for variable patch size.</li>
+      <li>Changed dummy display matrix table to have channels rotated
+        rather than R &amp; G swapped, to make it more obvious.</li>
+      <li>Added option to colprof to allow setting the default profile
+        rendering intent.</li>
+      <li>Enhanced spectro/fakeread so that it will process a .ti3 file
+        that has been renamed to .ti1.</li>
+      <li>Fix bug in matrix input profile white point selection, + add
+        in slight neutral bias code used in clut profiles.</li>
+      <li>New profcheck -I wasn't working - fix option parsing.</li>
+    </ul>
+    <h1>[V1.3.2 -&gt; V1.3.3] 13th May 2011</h1>
+    <ul>
+    </ul>
+    <ul>
+      <li>Fixed compiler dependant bug in Eye-One pro and (possibly)
+        Munki high res. spectral wavelength calculation.</li>
+      <li>Add support for install variables DESTDIR and PREFIX in
+        Jamtop. These can be set on the command line using "jam -s"</li>
+      <li>Added targen -N parameter to allow adjustment of neutral axis
+        patch density emphasis, as well as increasing the default. This
+        should improve the result without needing to add explicit grey
+        test patches.</li>
+      <li>Added spectro/instlib.ksh script to assemble all the files
+        needed for a standalone instrument library. Changed licence to
+        GPLv2 for the files included in the instlib.zip file that is
+        thus created. See spectro/instlib.txt for more details.</li>
+      <li>Fix Jambase so that recent MingW compilers don't need extra
+        .dll's</li>
+      <li>Change Linux serial code to test ports using O_NONBLOCK</li>
+      <li>Modify xspect &amp; illumread to improve realism of UV
+        spectrum estimation.</li>
+      <li>Fixed profile/txt2ti3 so that a sample name that looks like an
+        integer is treated as text. (Fixes problem with latest
+        ProfileMaker file).</li>
+      <li>Added LCh option to spotread.</li>
+      <li>Fixed numerical issue in scanin/scanrd.c, where large input
+        rasters would cause fitting to fail.</li>
+      <li>Modified colprof input chart white patch detection to slightly
+        favour patches that are close to D50 neutral.</li>
+      <li>Increase the default XYZ PCS A2B profile default smoothness.</li>
+      <li>Improved cLUT input -u black &amp; white&nbsp; point
+        extrapolation.</li>
+      <li>Improved black point determination for devices that have
+        extremely narrow gamuts doe to the use of custom inks.</li>
+      <li>Added -Z option to colprof, to allow setting ICC attribute
+        flags.</li>
+      <li>Fix CIECAM02 to better match forward and backwards, to fix
+        perceptual table white point.</li>
+      <li>Add code to override X-Rite's new OS X drivers for ColorMunki
+        and EyeOne. Note new installation instructions
+        &lt;http://www.argyllcms.com/doc/Installing_OSX.html&gt;.</li>
+      <li>Added -R flag to colprof, which restricts the range of the
+        white, black for better compatibility with other programs.</li>
+      <li>Fixed typo bug that prevented flash measurement mode from
+        working.</li>
+      <li>Replaced spectro/average with a new version that is more
+        general.</li>
+      <li>Fixed bug in printcal not working with spectral only files.</li>
+      <li>Added extra verbose output to printcal in which it computes an
+        ideal power-like value to apply to the test chart values in
+        targen.</li>
+      <li>Modify the way that XYZ cLUT B2A tables are indexed, so that
+        the white point is at the top corner of the grid.This should
+        solve Photoshop CS4/CS5 complaining that XYZ LUT profiles are
+        'defective'.</li>
+      <li>Added option in xicc/xicclu to plot an arbitrary slice.</li>
+      <li>Expand the number of i1 Display OEM devices that can be used.</li>
+      <li>Made some changes to help compile on FreeBSD.</li>
+      <li>Added another intent, "pa", Perceptual Appearance, which is
+        the same as perceptual except that the grey axes are not forced
+        into alignment, allowing the appearance parameters to have full
+        affect, including altering the chromatic mapping.</li>
+      <li>Fixed bug in txt2ti3 - it wasn't creating an iRGB colorspace
+        file for output device RGB files, causing warnings warnings and
+        failures when mixed with other iRGB tool sequences. </li>
+      <li>Added pathological case fix for target/ofps where the ink
+        limit == di-2. </li>
+      <li>targen was failing to proceed when fixed points happened to be
+        numerically just over the total ink limit.</li>
+      <li>Added more navigation options for chartread patch by patch
+        mode.</li>
+      <li>&nbsp;Fixed bug in "chartread -r -H" that caused resume of
+        i1Pro high res to fail with "The resumed spectral type seems to
+        have changed".</li>
+      <li>Modified profcheck so that it prints patch location if it is
+        present in the .ti3 file.</li>
+      <li>Changed dispcal and dispread -K option to -J. Added -K option
+        to dispcal as an alternate way of profiling a calibrated
+        display, and also added a -K option to dispcal. </li>
+      <li>Increased ColorMunki emissive auto scaling target "over"
+        margin from 5% to 10% to allow more room for instrument drift
+        during measurement.</li>
+      <li>&nbsp;Fix bug in winusb + i1Display, where dark CRT
+        measurements timeout.</li>
+    </ul>
+    <h1>[V1.3.1 -&gt; V1.3.2] 4th November 2010<br>
+    </h1>
+    <ul>
+      <li>Turn off debugging that was accidentally left on in FWA code.
+        Add gcc 3.3 PPC optimizer bug workaround to FWA code in
+        xicc/xspect.c</li>
+      <li>Change shaper/matrix profile back to using power curve as 0th
+        order shape. Improve it with input &amp; output offsets and
+        straight segment at zero. Make cLUT input -u black &amp; white
+        point extrapolation use pure shaper curves with special tweaks.</li>
+      <li>Increase dispcal native white target weighting from 10 to 50
+        to encourage white to be device 1.0,1.0,1.0 more strongly.</li>
+    </ul>
+    <h1>[V1.3.0 -&gt; V1.3.1] 26th October 2010<br>
+    </h1>
+    <ul>
+      <li>Fixed MSWIN Vista/Win7 problem where having Task Manager
+        running would stop display test window updating. Also fixed plot
+        library to avoid the same problem.</li>
+      <li>Swapped dispwin -E and -D flags, to make -D debug consistent
+        throughout tools.</li>
+      <li>Changed the ARGYLL_NOT_INTERACTIVE mode so that all return and
+        line feed characters are ignored, so that they can be used
+        freely to flush stdin without triggering anything.</li>
+      <li>Fixed endless loop problem with chartread -r -p on fully read
+        chart.</li>
+      <li>Added -S option to chartread, that suppresses wrong strip and
+        unexpected value warnings.</li>
+      <li>Fix dispcal and spotread so that color temperature takes into
+        account any non-standard observer (ie. the color temperature is
+        the closest point on the spectrum locus as determined by the
+        chosen observers interpretation of the Plancian or daylight
+        spectrum.)</li>
+      <li>Fix bug in libusb1 triggered on systems that support bulk
+        continuation (Linux)</li>
+      <li>Added 1964_10c observer to spectro/dispcal, to better allow
+        comparison to the default numbers.</li>
+      <li>Added recognition for Huey built into Lenovo W series Laptops.</li>
+      <li>Fixed chartread/dispsup/spotread etc. so that -N isn't fatal
+        if the instrument doesn't support it.</li>
+      <li>Fixed dispcal to disable black &amp; white drift tracking
+        during interactive adjustment.</li>
+      <li>Added -s option to ccmxmake to allow the number of test
+        patches to be set.</li>
+    </ul>
+    <h1>[V1.2.0 -&gt; V1.3.0] 8th September 2010<br>
+    </h1>
+    <ul>
+      <li>Added option to <span style="font-weight: bold;">dispcal</span>
+        and dispread that attempts to counteract instrument black drift
+        and display white drift (-I option). This may help with
+        instruments that haven't properly acclimatised to the
+        measurement location, and LCD displays that also take some time
+        to stabilise. The is a short discussion <a
+          href="Scenarios.html#PM6">here</a>.<br>
+      </li>
+      <li>Added option to <span style="font-weight: bold;">dispcal</span>
+        to allow specifying a non 1931 2 degree observer if a
+        spectrometer is being used.<br>
+      </li>
+      <li>Added new utility spectro/<span style="font-weight: bold;">ccmxmake</span>,
+        which makes Colorimeter Correction Matrices for a particular
+        Colorimeter + Display combination, using a Spectrometer as a
+        reference. The resulting <span style="font-weight: bold;">.ccmx</span>
+        file can then be used with <span style="font-weight: bold;">spotread/dispcal/dispread</span>
+        (-X option) to improve the&nbsp; accuracy of the colorimeter on
+        that particular display. See a discussion <a
+          href="WideGamutColmters.html">here</a> and <a
+          href="Scenarios.html#PM6">here</a>.<br>
+      </li>
+      <li>Fixed bug in spotread's handling of emissive measurements. If
+        the XYZ was computed from spectral, it was using a D50 white
+        instead of no white reference.</li>
+      <li>Fixed bug in i1pro normal resolution wavelength calibration,
+        introduced in V1.2.0.<br>
+      </li>
+      <li>Changed libusb V1.0 name to libusb-1.0A, so as not to clash
+        with any official but different libusb V1.0 installation. [This
+        may necessitate re-installing device drivers on MSWin.]</li>
+      <li>Added support for HP DreamColor version of the i1 display.<br>
+      </li>
+      <li>Fix problem with ARGYLL_NOT_INTERACTIVE - reading from
+        instruments was not actually possible, because polling for input
+        was disabled.</li>
+      <li>Adjust ColorMunki dark threshold to reduce misread reports.
+        Add inconsistent data to debug output. Fix bug in adaptive mode
+        - the integration time was sometimes&nbsp; too short. Set
+        adaptive emissive target at 95% to allow a little more margin to
+        saturation.<br>
+      </li>
+      <li>Fix problem with ColorMunki reporting erroneous inconsistent
+        measurement errors. This shows up on display calibration.</li>
+      <li>Fix some minor compiler warnings.</li>
+      <li>Added direction indicators to xy values in dispcal
+        interactive&nbsp; monitor adjustments. </li>
+      <li>Fix bug in CIECAM02 viewing condition settings :- the
+        enumerated conditions after "mt" are displaced by 1. (ie. "mt"
+        is really "pc", "mb" is "mt", "md" is "mb" etc.) Added option
+        -c:sn for auto surround from the Lv parameter (-c:l).</li>
+      <li>Add option to illumread to average several readings. Fixed bug
+        in the way illumread displays available instruments.<br>
+      </li>
+    </ul>
+    <h1>[V1.1.1 -&gt; V1.2.0] 30 July 2010<br>
+    </h1>
+    <ul>
+      <li>Re-worked gamut mapping to improve perceptual intent
+        saturation levels, as well as improve highlight and shadow
+        contrast. Added fine tuning to improve both smoothness and the
+        precision with which the source is mapped to the destination.</li>
+      <li>Added illumread, which allows measuring an illuminant and
+        estimating its UV content, for better accuracy with FWA
+        compensation.</li>
+      <li>Use a modified/forked version of libusb V1.0, that supports
+        Win2K (libusb0.sys) back end by default. Supports 64 but MSWin
+        using a combination of WinUSB.sys and ptlibusb0.sys. [ The HCFR
+        does not work on Win 64 bit though, due to its buggy USB
+        implementation. ] NOTE that the included version of Libusb V1
+        has been carefully tested with all supported instruments on all
+        supported platforms,&nbsp; and includes many bug fixes needed
+        for correct functioning. While bug fixes have been fed upstream,
+        not all have been adopted. In particular there is a nasty race
+        condition that has not, and may never be fixed upstream, as well
+        as missing critical functionality (clearep()).<br>
+      </li>
+      <li>Modified colprof -p to allow different abstract profiles to be
+        applied for each intent.</li>
+      <li>Added -I option (imitation) to printcal, so that an existing
+        devices response can be set as a target.</li>
+      <li>Increase target/ofps.c vertex intersection retries from 10 to
+        40 to give it a better chance of working with difficult
+        profiles.</li>
+      <li>Fixed bug in plot that shows up on XP+, where the window isn't
+        dismissed by the first keystroke, but only after it has been
+        moved or resized.</li>
+      <li>Changed CMYK black point to be natural, rather than the
+        darkest point in the same direction and K only. This may wreck K
+        only to black point matching, but it will stop printers with
+        funny colored K ink from messing up the black point.</li>
+      <li>Make Lacie Blue Eye colorimeter appear as an i1display.</li>
+      <li>Improved i1pro matching to Original Manufacturers Driver (see
+        doc/i1proDriver.html).</li>
+      <li>Improved i1pro/ColorMunki patch recognition for better
+        uniformity.</li>
+      <li>Fixed bug in ColorMunki driver scan mode calibration when
+        instrument is more sensitive than usual.</li>
+      <li>Added EV calculation to spotread -a<br>
+      </li>
+    </ul>
+    <h1>[V1.1.0 -&gt; V1.1.1] 21 February 2010<br>
+    </h1>
+    <ul>
+      <li>Renamed the following tools:<br>
+        &nbsp;&nbsp;&nbsp; cb2cgats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt;
+        cb2ti3<br>
+        &nbsp;&nbsp;&nbsp; kodak2cgats -&gt; kodak2ti3<br>
+        &nbsp;&nbsp;&nbsp; logo2cgats&nbsp;&nbsp;&nbsp; -&gt; txt2ti3<br>
+        &nbsp;&nbsp;&nbsp; splitcgats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        -&gt; splitti3<br>
+        &nbsp;&nbsp;&nbsp;
+        mpprof&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt;
+        mppprof<br>
+      </li>
+      <li>Modified black curve to make sure that smoothed curve meets
+        target level at boundaries.</li>
+      <li>Added -M option to printtarg, for the case where the TIFF file
+        is to include the margin.</li>
+      <li>Fixed several build bugs in imdi code related to 64 bits.</li>
+      <li>Fixed profile/colprof -u so that it is applied to matrix
+        profiles too</li>
+      <li>Changed tiffgamut to use one pass gamut hull finding and
+        modified the smoothing so as to end up with a more closely
+        wrapped volume.</li>
+      <li>Fixed bug in input matrix profiles introduced by the XYZ cLUT
+        display matrix profile change, where the correct white and black
+        point weren't being written.</li>
+      <li>Added matrix only/linear algorithm option to profile/colprof,
+        for raw camera profiling.</li>
+      <li>Modified libusb/55-Argyll.rules for better compatibility with
+        systems that have ACL installed but no ConsoleKit. Also set
+        ID_VENDOR and ID_MODEL using. usb-db.</li>
+      <li>Modified target/targen to cope better with case where adding
+        nodes fails to determine vertex positions a lot of the time,
+        causing extreme slowdown.</li>
+      <li>Fixed colprof so that the per channel input curves for XYZ PCS
+        B2A tables are actually scaled correctly.</li>
+      <li>Changed link/collink to apply Y to L* curve if the input or
+        output space is XYZ. Fixed the Y to L* scaling to make sure it
+        only apples to XYZ space, and that the L* non-linearisation
+        still applies to Y like device spaces.</li>
+      <li>Modified scanin so that it ignores any alpha channels in the
+        input .tiff file.</li>
+      <li>Changed printcal so that it will create .AMP file with more
+        than 4 channels. Also fixed up plotting to plot up to 10
+        channels.</li>
+      <li>Changed dispcal and dispread so that a request for projector
+        mode falls back to display mode if the instrument doesn't
+        support a projector mode.</li>
+      <li>Updated ref/CMP_Digital_Target-3.cht as it seems that the
+        reference chart has columns labelled "2A - 2D" rather than the
+        "AA - AD" that is actually printed on the chart...</li>
+      <li>Altered xpsect FWA code to reduce overshoot artefacts due to
+        filtering.<br>
+      </li>
+    </ul>
+    <h1>[V1.0.4 -&gt; V1.1.0] 17th January 2010<br>
+    </h1>
+    <ul>
+      <li>Spyder3 and ColorMunki Design, Photo and Create instrument
+        support.</li>
+      <li>Added a complete printer calibration system. This can work
+        either with a print system that supports per channel print
+        calibration curves, or purely using ICC profiling mechanisms.</li>
+      <li>Default targen (OFPS) test point distribution has been
+        re-written to generate test points on the gamut surface, refine
+        the point locations when using a guide profile, and use a better
+        error estimate model to determine the test point locations. <br>
+      </li>
+      <li>Changed chartread strip reading mode to allow navigating about
+        the strips, saving a partially read chart, and resuming a
+        partially read chart.<br>
+      </li>
+      <li>Improved and re-tuned gamut mapping. This is noticeably
+        smoother and better retains source image detail.</li>
+      <li>Re-tuned the cLUT profile creation smoothness vs. accuracy.</li>
+      <li>Fixed viewgam so that the number of gamuts that can be viewed
+        is unlimited. Also added error when computing intersecting
+        volume if the two gamuts are incompatible.</li>
+      <li>Improved CMYK black generation control and smoothness near the
+        black point.</li>
+      <li>Improved collink special black and colorant handling so that
+        the gamut mapping is consistent&nbsp; with the special black and
+        colorant mapping</li>
+      <li>Changed profile/colprof to generate matrix tags for Display
+        XYZ PCS cLUT profiles, to improve compatibility with other CMMs.<br>
+        By default (-ax) the matrix tags will be a dummy transform that
+        swaps red and green, while using -aX will create real matrix
+        tags.</li>
+      <li>Added -V option to dispcal and dispread to allow use of i1pro
+        adaptive mode to give better low level consistency.</li>
+      <li>Changed dispcal to default to -f 1.0 (assume black is all
+        output offset) to make it work in more sympathy to a typical
+        display response. Also changed default gamma to 2.4 for OS X
+        10.6 systems.<br>
+      </li>
+      <li>Improved X11 XRandR CRTC detection.</li>
+      <li>Added spotread option to save spectral reading of an
+        illuminant to a .sp file.</li>
+      <li>Added Color Rendering Index (Ra) to spotread measurement
+        results.</li>
+      <li>Added i1pro &amp; ColorMunki flash measurement
+        support.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+      </li>
+      <li>Improve reliability of detecting backwards read i1pro/Munki
+        strips.</li>
+      <li>Fixed bug in i1pro driver that subtly affected accuracy.</li>
+      <li>Modified xicc/cam02 to clip the blue to avoid crazy behavior
+        outside the spectrum locus.</li>
+      <li>Simplified the Linux installation instructions, particularly
+        with regard to USB and serial permissions.</li>
+      <li>Added working MSWindows 64 bit libusb drivers, which will work
+        on Vista 64 and MSWindows 7 64 bit. Because of Microsoft's
+        driver signing requirements though, they won't be usable unless
+        a driver code signing workaround is used.</li>
+      <li>Changed printtarg so that the TIFF output has the paper margin
+        subtracted from it. This is so that the resulting TIFF can be
+        placed on that sized paper without clipping or scaling. Set the
+        margin to zero to get a TIFF that exactly fits into the
+        specified paper size</li>
+    </ul>
+    <h1>[V1.0.3 -&gt; V1.0.4] 30th June 2009<br>
+    </h1>
+    <ul>
+      <li>Modify icc/icclib to protect against integer overflow
+        exploits, and fixes to minor bugs. Bump icclib version to 2.11
+        to reflect this.<br>
+      </li>
+      <li>Fix bug in spectro/hidio.c that can cause a crash (bus error)
+        on OS X for any program that accesses the instruments.</li>
+      <li>Fix bug in xicc/xfit.c where too little memory was being
+        allocated.<br>
+      </li>
+    </ul>
+    <h1>[V1.0.2 -&gt; V1.0.3] 3rd September 2008<br>
+    </h1>
+    <ul>
+      <li>Added multi-TIFF and popularity filtering to <span
+          style="font-weight: bold;">tiffgamut</span>.<br>
+      </li>
+      <li>Modified gamut mapping in <span style="font-weight: bold;">colprof</span>
+        and <span style="font-weight: bold;">collink</span> to be
+        consistent, and have higher perceptual intent saturation.<br>
+      </li>
+      <li>Fixed timeout problem with the Eye-One Display colorimeter.<br>
+      </li>
+      <li>Fix segmentation fault in <span style="font-weight: bold;">dispread</span>.</li>
+      <li>Fix out of memory error in <span style="font-weight: bold;">colprof
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </span>for systems with &gt; 3Gig Ram.</li>
+      <li>Add support for the Eye-One Monitor spectrometer.</li>
+      <li>Added -L option to <span style="font-weight: bold;">printtarg</span>
+        to suppress the i1pro target holder clip margin.<br>
+      </li>
+      <li>Fixed bug in <span style="font-weight: bold;">dispcal</span>
+        when using -a with -t<br>
+      </li>
+    </ul>
+    <h1>[V1.0.1 -&gt; V1.0.2] 19th August 2008<br>
+    </h1>
+    Various bug fixes, the main ones being:<br>
+    <ul>
+      <li>Fixed some <span style="font-weight: bold;">colprof </span>performance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        and memory usage issues.</li>
+      <li>Fixed issues with Eye-One Pro Rev B timeouts.</li>
+      <li>Added new option to collink -fk, that forces 000K input to K
+        only output.</li>
+      <li>Added device target value quantization option to <span
+          style="font-weight: bold;">printtarg</span>, as well as making
+        it default for TIFF output files.put files.</li>
+      <li>Fixed leak that was affecting <span style="font-weight:
+          bold;">printtarg</span>.<br>
+      </li>
+    </ul>
+    <h1>[V0.70 Beta 8 -&gt; V1.0.0] 1st July 2008<br>
+    </h1>
+    <br>
+    Apart from numerous bug fixes and many minor feature additions and
+    improvements, the main changes to this version compared to the
+    previous one are:<br>
+    <ul>
+      <li>Speedup in profile and device link generation (inversion
+        code), and better memory usage.<br>
+      </li>
+      <li>Support for embedded profiles in TIFF files.</li>
+      <li>Support for installing and uninstalling and loading of display
+        profiles for all operating systems, and a micro CMM system for
+        X11/Linux<br>
+      </li>
+      <li>Improved display calibration and profiling, including ambient
+        light adjustment.</li>
+      <li>X11 XRandR 1.2 support added.</li>
+      <li>Raster test charts now supported, as well as PS and EPS.<br>
+      </li>
+      <li>Guidance for installing on a wider range of systems.</li>
+      <li>Fixed luminance and ambient calibration issues with various
+        instruments.</li>
+      <li>Renamed "profile" to "colprof", and "icclink" to "collink" to
+        avoid clashes that have arisen with other executable names.</li>
+      <li>Streamlined source code build system, for much easier
+        building.<br>
+      </li>
+      <li>Installation archives now include a top directory, and
+        gzip/tar format for OS X and Linux.</li>
+      <li>Added B2A table to input device LUT profiles by default.<br>
+      </li>
+    </ul>
+    As usual, a more detailed description of all changes is in the <b>log.txt</b>
+    file that accompanies the source code.
+    <h1>[V0.60 -&gt; V0.70 Beta 8]15th January 2008<br>
+    </h1>
+    <ul>
+      <li>Added quick display ICC profile creation as part of
+        calibration.</li>
+      <li>Added support for the Huey, Spyder 2, DTP20, Eye-One Pro,
+        DTP22/Digital Swatchbook, Eye-One Display 1 and 2 instruments.</li>
+      <li>Changed to GPL Version 3 license.</li>
+      <li>Countless other bug fixes and feature enhancements.<br>
+      </li>
+    </ul>
+    <br>
+    <br>
+    <br>
+    <p><br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; <br>
+      &nbsp; </p>
+    <br>
+  </body>
+</html>

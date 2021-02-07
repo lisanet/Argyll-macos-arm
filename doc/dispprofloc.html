@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="content-type">
+    <title>Display profile locations</title>
+  </head>
+  <body>
+    <h2>Where display profiles are stored, and how to load them
+      automatically.<br>
+    </h2>
+    <br>
+    Installing a display profile for your monitor is very operating
+    system dependent, which is why <a href="dispwin.html#I">dispin -I</a>
+    is a good way of taking care of all these details. On some systems
+    it is not the operating system itself that supports display
+    profiles, but individual applications, or helper programs.<br>
+    <br>
+    Please choose from the detailed instructions below that suite your
+    system:<br>
+    <br>
+    <span style="font-weight: bold;"><a href="#MSW">Microsoft Windows</a><br>
+      <a href="#OSX">Apple OS X</a><br>
+      <a href="#Linux">Linux/UNIX X11</a></span><br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><a name="MSW"></a>On <span
+      style="font-weight: bold;">Microsoft Windows</span>, display
+    profiles are typically in one of the following directories:<br>
+    <p>&nbsp;&nbsp;&nbsp; MS Windows Me and 98: C:\Windows\System\Color<br>
+    </p>
+    <p>&nbsp;&nbsp;&nbsp; MS Windows NT:
+      C:\Winnt\system32\spool\drivers\color </p>
+    <p>&nbsp;&nbsp;&nbsp; MS Window 2000, XP, Vista and 7:
+      C:\Windows\system32\spool\drivers\color</p>
+    <p>An alternative to using <span style="font-weight: bold;">dispwin
+        -I</span> to install your display profiles, is to use the
+      Display Property dialog, advanced settings, Color management tab,
+      and locate the profile and install it there. This in itself does
+      not cause the profile to be made use of anywhere in your system.<br>
+    </p>
+    <p>If you are using Adobe Photoshop on your system, then you can
+      tell it to use your monitor profile by editing the appropriate
+      registry key, typically "My
+      Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Adobe\Color\Monitor\Monitor0",
+      to contain the name of the display profile, and then restart
+      Photoshop This is the simplest way of ensuring that the Adobe
+      calibration loader tool Adobe Gamma loads the video hardware
+      lookup tables from the vcgt tag, and uses the profile as its
+      display profile.<br>
+    </p>
+    <p>The adobe gamma tool can be told to use your profile, but the
+      procedure is slightly tricky: Open adobe gamma from photoshop (in
+      the Help-&gt;Color Management... menu item), select "Open Adobe
+      Gamma", and select the "Load.." button. Select your profile and
+      "Open". Select "OK" in the Adobe Gamma, it will then ask you to
+      save it's modified version of your profile under a different name.
+      Chose a name for the modified profile, and save it. Exit from
+      Photoshop. Copy the profile you want to use, over the modified
+      profile that you saved in Adobe Gamma. (If you don't do the last
+      step, the profile Photoshop will be using will have been modified
+      in strange ways from what you intended.)<br>
+    </p>
+    <p>Installing a profile on Microsoft Windows generally doesn't mean
+      that the profiles calibration will be automatically loaded into a
+      display on startup. A separated tool is usually needed to achieve
+      this.<br>
+    </p>
+    <p>Some Microsoft Windows applications may come with
+      "Gamma/VCGT/RAMDAC/Video LUT" loader tools, so consult their
+      documentation and check your Start Menu Startup folders. If you
+      don't want to use any of these 3rd party tools, you can also use
+      the <a href="dispwin.html">dispwin</a>
+      tool to do this for you, as it takes either a <a
+        href="cal_format.html">.cal</a> or ICC
+      file as an argument. The <a
+        href="http://freshmeat.net/projects/xcalib/">xcalib</a> tool
+      could also be used.<br>
+    </p>
+    <p>To add a startup item that will load a profiles calibration into
+      the display using <span style="font-weight: bold;">dispwin</span>,
+      use the following instructions:<br>
+    </p>
+    <p style="margin-left: 40px;">On the task bar, right click and
+      select "Properties", then select the "Advanced" tab, then click
+      "Add..". then browse till you locate dispwin.exe. In the box
+      containing the path to <span style="font-weight: bold;">dispwin.exe</span>,
+      add a space then the option <span style="font-weight: bold;">-L</span>,
+      eg:<br>
+    </p>
+    <p style="margin-left: 40px;">&nbsp;&nbsp;&nbsp; <span
+        style="font-weight: bold;">c:\bin\argyll\dispwin -L</span></p>
+    <p style="margin-left: 40px;">If you don't want to use the default
+      installed profile, you could explicitly set the calibration file
+      to use as an argument:</p>
+    <p style="margin-left: 40px;">&nbsp;&nbsp;&nbsp; <span
+        style="font-weight: bold;">c:\bin\argyll\dispwin
+        c:\myprofiles\mydisplay.icm<br>
+      </span></p>
+    <p style="margin-left: 40px;">Click "Next &gt;", select the
+      "Startup" folder, then name the item (ie. "Argyll Calibration
+      Loader"), then press "Finish".<br>
+      <br>
+      You can test it out by simply navigating the "Start" menu to the
+      "Startup" folder and selecting the item you've just created. If
+      you want to alter any of the details, navigate to the item again
+      and right click it, and select "Properties". More than one startup
+      item can be created to set the calibration for more than one
+      display. You may want to cut and paste the "Target" line to a
+      normal Command Prompt shell to check that it works as expected, as
+      it is impossible to catch error messages in the startup.<br>
+    </p>
+    Microsoft Windows <span style="font-weight: bold;">XP</span> has an
+    optional <span style="font-weight: bold;">Microsoft&nbsp;Color&nbsp;Control&nbsp;Panel&nbsp;Applet&nbsp;for&nbsp;Windows&nbsp;XP</span>
+    available for download from Microsoft, which handles installation
+    and registering of the a display profile, and will also
+    automatically set the display calibration on system startup. The
+    applet is started from the control panel, and first you have to
+    "Install..." the profile in the <span style="font-weight: bold;">Profiles</span>
+    tab, then associate it with the display in the <span
+      style="font-weight: bold;">Devices</span> tab, but <span
+      style="font-weight: bold;">NOTE</span> that it seems to have a <span
+      style="font-weight: bold;">bug</span>, in that it sometimes
+    associates the profiles with the <span style="font-weight: bold;">wrong
+      monitor</span> entry!<br>
+    <br>
+    On Microsoft <span style="font-weight: bold;">Vista</span> you can
+    set the display profile in
+    Control&nbsp;Panel&nbsp;-&gt;&nbsp;Hardware&nbsp;and&nbsp;Sound
+    -&gt;&nbsp;Color&nbsp;Management, as an alternative to <span
+      style="font-weight: bold;">dispwin -I</span>.&nbsp;In&nbsp;Devices&nbsp;
+you&nbsp;select&nbsp;"Use&nbsp;my&nbsp;settings&nbsp;for&nbsp;this
+device",&nbsp;and&nbsp;then&nbsp;add&nbsp;the&nbsp;profile&nbsp;you've&nbsp;created.
+Unfortunately
+
+    though, it doesn't use the 'vcgt' calibration curves on system
+    startup, so a tool such as <span style="font-weight: bold;">dispwin</span>
+    will still have to be used to do this. Note that currently Vista
+    also has a <span style="font-weight: bold;">bug</span> that causes
+    the calibration curves to be reset whenever the User Account Dialog
+    (and similar) is displayed. This problem can only be worked around
+    manually, by re-running the startup item whenever this happens. Note
+    that due to the details of this bug it is necessary to actually
+    reset the calibration to something else before re-setting it. This
+    can be done quite conveniently in dispwin by adding the <span
+      style="font-weight: bold;">-c</span> flag: e.g.: <span
+      style="font-weight: bold;">c:\bin\argyll\dispwin -c -L</span><br>
+    <br>
+    On Microsoft <span style="font-weight: bold;">Windows 7 &amp; 8</span>
+    you can set the display profile by opening the <span class="phrase">Color
+
+      Management control by clicking the <span class="ui">Start</span>
+      button and then clicking <span class="ui">Control Panel</span>.
+      In the search box, type <span class="userInput">color management</span>,
+      and then click <span class="ui">Color Management</span>.</span>
+    Make sure the correct display device is selected in "Device:", and
+    then tick the "Use my settings for this device" box. Select "Add..."
+    and then "Browse..." to locate and load the profile. (Alternately
+    you can use the normal file browser to locate the profile, and then
+    right click on it and select "Install Profile". In the Color Manager
+    "Add..." dialog you can then select it.). Make sure that the new
+    profile has been marked "(default)" if you want it to be
+    automatically used for your display.<br>
+    <br>
+    By default Windows 7 &amp; 8 seems to automatically load the default
+    display profiles calibration on startup, but needs to be told to do
+    this at all other times by changing the system defaults, or if some
+    3rd party tool to load display calibration has been installed. This
+    can be done by logging on with a user account that has
+    administrative privileges, then opening the <span class="phrase">Color
+      Management (see above), and then select the "</span><span
+      class="ui">Advanced</span>" tab, and then "<span class="ui">Change
+      system defaults...", then select the </span><span class="phrase">"</span><span
+      class="ui">Advanced</span>" tab, and select/un-select the "<span
+      class="ui">Use <span class="notLocalizable">Windows</span>
+      display calibration</span>" check box. (You could use <span
+      style="font-weight: bold;">dispwin -I</span> as an alternative to
+    this if you really wanted.)<br>
+    <br>
+    &nbsp;<br>
+    <hr style="width: 100%; height: 2px;"><a name="OSX"></a>On <span
+      style="font-weight: bold;">Apple OSX</span>, the display profile
+    are in one of the following locations:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; /Network/Library/ColorSync/Profiles<br>
+    &nbsp;&nbsp;&nbsp; /System/Library/Colorsync/Profiles<br>
+    &nbsp;&nbsp;&nbsp; /Library/ColorSync/Profiles<br>
+    &nbsp;&nbsp;&nbsp; ~/Library/ColorSync/Profiles<br>
+    <br>
+    Note though that&nbsp; /System/Library/Colorsync/Profiles is only
+    for profiles supplied by Apple. You can use <a
+      href="dispwin.html#S">dispwin -S</a>&nbsp; to select the
+    appropriate scope when installing a profile using <a
+      href="dispwin.html#I">dispwin -I</a>. You can use the "System
+    Preferences-&gt;Displays-&gt;Color" tool to check that the profile
+    has been installed correctly. Note that the contents of the
+    description tag (the argument to the <span style="font-weight:
+      bold;"><span style="font-weight: bold;">-D</span></span> flag used
+    with the <span style="font-weight: bold;">colprof</span> tool) will
+    be used to identify the profile.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><a name="Linux"></a>On <span
+      style="font-weight: bold;">Linux</span> and other <span
+      style="font-weight: bold;">Unix</span> style systems, there is no
+    universally agreed location for ICC profiles yet, although the
+    following locations have been suggested at various times:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; /usr/share/color/icc<br>
+    &nbsp;&nbsp;&nbsp; /usr/local/share/color/icc<br>
+    &nbsp;&nbsp;&nbsp; ~/.color/icc<br>
+    <br>
+    although particular applications may use their own locations, such
+    as:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; /usr/local/share/Scribus/profiles<br>
+    <br>
+    Argyll <a href="dispwin.html">dispwin</a> follows uses the <a
+      href="ucmm.html">ucmm</a> scheme for storing user and system
+    display profiles, and when a display is set to use a profile
+    correctly, it will follow <a
+      href="http://www.burtonini.com/computing/x-icc-profiles-spec-0.2.html">this
+
+      convention</a> to make it available to applications.<br>
+    &nbsp;&nbsp; <br>
+    If you want the display calibration to be loaded, you should
+    consider installing a tool to do so at startup, such as <a
+      href="dispwin.html">dispwin</a> or <a
+      href="http://freshmeat.net/projects/xcalib/">xcalib</a>.<br>
+    <br>
+    Using <a href="dispwin.html">dispwin</a> the currently installed
+    profile for a particular display can be loaded using the <a
+      href="dispwin.html#L">-L</a> option of <a href="dispwin.html">dispwin:</a><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <span style="font-weight: bold;">dispwin -L</span><span
+      style="font-style: italic;"><span style="font-weight: bold;"></span><br>
+      <br>
+    </span>which will both upload the installed profile <span
+      style="font-style: italic;"></span>into the <span
+      style="font-weight: bold;"></span>root window _ICC_PROFILE
+    property, and also load it into the display VideoLUTs. <br>
+    <br>
+    You can use the <span style="font-weight: bold;">dispwin</span> <a
+      href="dispwin.html#d">-d</a> parameter
+    in the usual way to select other displays to store or load the
+    calibration using the _ICC_PROFILE property.<br>
+    <br>
+    To do this when you start your X11 server, you could put the above
+    command in your <span style="font-weight: bold;">.xinitrc</span>
+    file in your home directory for each screen.<br>
+    <br>
+    <br>
+  </body>
+</html>

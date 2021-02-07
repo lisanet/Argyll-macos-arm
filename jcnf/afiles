@@ -1,0 +1,7 @@
+Jamfile
+Readme.txt
+afiles
+jcnf.c
+jcnf.h
+test.c
+test.jcnf

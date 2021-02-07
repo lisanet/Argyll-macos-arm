@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll XRGA conversion</title>
+  </head>
+  <body>
+    <br>
+    <h2> <u>Conversion to/from XRGA<br>
+      </u></h2>
+    After purchasing Gretag-Macbeth, X-Rite harmonized the subtly
+    different calibration standards the two companies were using for
+    their reflective measurement instruments, in order to minimize
+    changes with the introduction of new instruments. The result was the
+    <a href="http://www.xrite.com/xrite-graphic-arts-standard">XRGA
+      standard</a>, introduced in September 2010.<br>
+    <br>
+    Current X-Rite instruments are natively calibrated to XRGA, while
+    older instruments from X-Rite are calibrated to XRDI, and
+    Gretag-Macbeth instruments to GMDI standards. To smooth the
+    interchange of old and new instruments, a spectral <a
+href="https://www.xrite.com/documents/literature/en/L7-462_XRGA_WhitePaper_en.pdf">conversion
+
+
+
+
+
+      is possible</a> between these different standards. While such a
+    conversion is not perfect, it reduces the discontinuities between
+    old instrument families and current X-Rite instruments.<br>
+    <br>
+    By default, Argyll will use the native calibration of Gretag-Macbeth
+    and X-Rite instruments. These are summarized here:<br>
+    &nbsp; <br>
+    <table cellspacing="2" cellpadding="2" border="0">
+      <tbody>
+        <tr>
+          <td valign="top"><a href="instruments.html#DTP20">DTP20
+              "Pulse"</a>&nbsp; <br>
+          </td>
+          <td valign="top">XRDI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="instruments.html#DTP22">DTP22
+              Digital Swatchbook</a></td>
+          <td valign="top">XRDI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="instruments.html#DTP41">DTP41</a></td>
+          <td valign="top">XRDI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="instruments.html#dtp51">DTP51</a></td>
+          <td valign="top">XRDI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"> <a href="instruments.html#sl">Spectrolino</a>/
+            <a href="instruments.html#ss">SpectroScan</a></td>
+          <td valign="top">GMDI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="instruments.html#i1p">Eye-One Pro</a>
+            Rev A-D</td>
+          <td valign="top">GMDI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="instruments.html#ColorMunki"><span
+                style="text-decoration: underline;">ColorMunki</span></a>
+            Design, Photo or i1Studio<br>
+          </td>
+          <td valign="top">XRGA<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="instruments.html#i1p2">Eye-One Pro2</a>
+            (Eye-One Pro Rev E)</td>
+          <td valign="top">XRGA<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <br>
+    You can override this and force reflective data to be a particular
+    calibration standard in two ways:<br>
+    <br>
+    <a name="A"></a>Using the <b>-A</b> command line option in <a
+      href="spotread.html#A">spotread</a> and <a
+      href="chartread.html#A">chartread</a>:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <b>-A </b>N|A|X|G<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>N</b> argument sets
+    the calibration to Native.<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>A</b> argument sets
+    the calibration to XRGA.<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>X</b> argument sets
+    the calibration to XRDI.<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>G</b> argument sets
+    the calibration to GMDI.<br>
+    <br>
+    <br>
+    Or by setting an environment variable:<br>
+    (Note that command line options will override this.)<br>
+    <br>
+    <br>
+    <span style="font-weight: bold;"><a name="ARGYLL_XRGA"></a>ARGYLL_XRGA</span><br>
+    <br>
+    <div style="margin-left: 40px;"> If the <span style="font-weight:
+        bold;">ARGYLL_XRGA&nbsp;</span> environment variable is set to:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; <b>XRGA</b>, then all Getag-MacBeth/X-Rite
+      reflective measurements will be converted to XRGA.<br>
+      <b>&nbsp;&nbsp;&nbsp; XRDI</b>, then all Getag-MacBeth/X-Rite
+      reflective measurements will be converted to XRDI.<br>
+      <b>&nbsp;&nbsp;&nbsp; GMDI</b>, then all Getag-MacBeth/X-Rite
+      reflective measurements will be converted to GMDI.<br>
+      <br>
+      If not set (or set to some other string), then the native
+      calibration will be used. Note that the values must be upper case.<br>
+    </div>
+    <span style="font-weight: bold;"></span><br>
+    All of the above except the <b>DTP51</b> can have a conversion
+    applied. <br>
+    (The DTP51 returns only colorimetric data, while the conversion
+    requires spectral data.)<br>
+    <br>
+    You can also convert from one standard to the other using <a
+      href="spec2cie.html#A">spec2cie</a>.<br>
+    <br>
+    For informational purposes, the native calibration of some other
+    Gretag-Macbeth and X-Rite instruments are:<br>
+    <br>
+    <table cellspacing="2" cellpadding="2" border="0">
+      <tbody>
+        <tr>
+          <td valign="top">HP Z printer Sensor&nbsp; <br>
+          </td>
+          <td valign="top">GMDI<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

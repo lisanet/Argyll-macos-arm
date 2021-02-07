@@ -1,0 +1,197 @@
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	    += $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+Libraries = libxicc libxcolorants libxutils ;
+Executables = fakeCMY iccgamut mpplu revfix tiffgamut xicclu extracticc extractttag specplot ;
+Headers = xicc.h ;
+Samples = License.txt ;
+
+#Install
+InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+InstallFile $(DESTDIR)$(PREFIX)/bin : $(Samples) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+HDRS = ../h ../icc ../rspl ../cgats ../numlib ../gamut ../spectro ../profile
+       ../plot ../render $(TIFFINC) $(JPEGINC) $(LibWinH) ;
+
+# XICC library
+Library libxicc :  xicc.c xlutfix.c xspect.c xcolorants.c xutils.c iccjpeg.c xdevlin.c
+        xcam.c cam97s3.c cam02.c mpp.c ccmx.c ccss.c xfit.c xdgb.c moncurve.c xcal.c
+		bt1886.c tm3015.c ;
+
+# colorant library. Use instead of libxicc
+Object xcolorants2 : xcolorants.c ;
+LibraryFromObjects libxcolorants : xcolorants2 ;
+
+# standalone utilities library. Use instead of libxicc
+Object xutils2 : xutils.c ;
+Object iccjpeg2 : iccjpeg.c ;
+LibraryFromObjects libxutils : xutils2 iccjpeg2 ;
+
+# Utilities / test programs
+
+LINKLIBS = libxicc ../spectro/libinsttypes ../gamut/libgamut ../rspl/librspl
+           ../cgats/libcgats ../icc/libicc ../plot/libplot ../plot/libvrml
+           ../numlib/libnum ../numlib/libui
+           $(TIFFLIB) $(JPEGLIB) ; 
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+# Not created yet
+#Main xicctest : xicctest.c ;
+
+# Not created yet
+#Main xlutest : xlutest.c ;
+
+# expanded version of icclu
+Main xicclu : xicclu.c ;
+
+# expanded version of iccgamut - does Jab and ink limiting
+Main iccgamut : iccgamut.c ;
+
+# tiff file gamut utility
+Main tiffgamut : tiffgamut.c : : : $(TIFFINC) $(JPEGINC) : : ;
+
+# diagnostic utility
+if [ GLOB [ NormPaths . ] : tiffgmts.c ]  {
+	Main tiffgmts : tiffgmts.c : : : $(TIFFINC) $(JPEGINC) : : ../plot/libvrml ;
+}
+
+# Reverse profile fixer
+Main revfix : revfix.c ;
+
+# MPP lookup test utility
+Main mpplu : mpplu.c ;
+
+# Embedded ICC profile extractor
+Main extracticc : extracticc.c : : : $(TIFFINC) $(JPEGINC) : : ;
+
+# Text tag from ICC profile extracto
+Main extractttag : extractttag.c : : : $(TIFFINC) $(JPEGINC) : : ;
+
+# xcolorant lookup test
+Main xcolorantslu : xcolorantslu.c ;
+
+# Individual stand alone test of IES TM-30-15 */
+MainVariant tm3015 : tm3015.c : : STANDALONE_TEST ;
+
+#test program for viewing inverse algorithm
+#Should be in JUNK ??
+Main fbview : fbview.c ;
+
+Main fakeCMY : fakeCMY.c : : : ../target ;
+
+Main xfbview : xfbview.c ;
+
+Main icheck : icheck.c ;
+
+# Test FWA in xspect
+Main spectest : spectest.c ;
+
+# Test FWA in xspect 2
+Main spectest2 : spectest2.c : : : : : ../spectro/libinsttypes ;
+
+# Spectral plotting and CCT test
+Main ccttest : ccttest.c ;
+
+# transfer curve plotting
+Main transplot : transplot.c ;
+
+# CGATS .ti3 plotting
+Main cgatsplot : cgatsplot.c ;
+
+# per channel curve testing
+Main cv : cv.c ;
+
+# per channel curve fitting testing
+Main cvtest : cvtest.c ;
+
+# per channel curve fitting testing
+Main cvtest : cvtest.c ;
+
+# Generate sub sampled illuminants or observers */
+Main specsubsamp : specsubsamp.c ;
+
+# Plot spectrum and test CCT spectrum code and illuminant utility
+Main specplot : specplot.c ;
+
+# CAM test routines
+Main cam97test : cam97test.c ;
+Main cam02test : cam02test.c ;
+
+# Test utility for moncurve
+Main monctest : monctest.c ;
+
+#Main cam02vecplot : cam02vecplot.c : : : : : ../plot/libvrml ;
+
+#Home = ' d:\usr\graeme ' and PWD = ' /src/argyll/xicc '
+if $(HOME) = "D:\\usr\\graeme" && $(PWD) = "/src/argyll/xicc" {
+	Echo "Creating test utilities" ;
+	#Create test TIFF file for cam02 conversion
+	Main cam02plot : cam02plot.c : : : $(TIFFINC) $(JPEGINC) : : ;
+	Main cam02logplot : cam02logplot.c : : : $(TIFFINC) $(JPEGINC) : : ;
+	Main cam02delplot : cam02delplot.c : : : $(TIFFINC) $(JPEGINC) : : ;
+	Main cam02vecplot : cam02vecplot.c : : : : : ../plot/libvrml ;
+	Main cusptest : cusptest.c : : : : : ../plot/libvrml ;
+}
+
+#Main t : t.c ;
+
+# diagnostic utility
+if [ GLOB [ NormPaths . ] : tennm.c ]  {
+	Main tennm : tennm.c ;
+}
+
+if [ GLOB [ NormPaths . ] : cam16.c ]  {
+	Main cam16vecplot : cam16vecplot.c cam16.c ;
+}
+
+#Main Lpttune : Lpttune.c ;
+
+if $(BUILD_JUNK) {
+
+	LINKLIBS += ../render/librender ;
+
+	Main Lpttune : Lpttune.c ;
+
+	Main illlocus : illlocus.c ;
+	Main illlocus2 : illlocus2.c ;
+
+	Main slocustest : slocustest.c ;
+	
+	MainsFromSources t1.c t2.c t22.c t23.c t24.c t3.c ;
+
+	Main test : test.c ;
+
+	Main t : t.c ;
+
+	# CAM97s3 matrix inversion calc
+	Main cammatrix : cammatrix.c ;
+
+	# test matrix deriv version
+	Main t : t.c ;
+
+	# Develop conjgrad version of code for profile
+	Main tt3 : tt3.c ;
+
+	# test icx_icc_cv_to_colorant_comb() 
+	Main tcc : tcc.c ;
+
+	# Develop conjgrad version of code for profile
+	Main tt4 : tt4.c ;
+
+	# Test viewing conditions extractor
+	Main vctest : vctest.c ;
+
+	# ~~~ test code
+	Main lseptest : lseptest.c ;
+
+	# ~~~ test code
+	Main llseptest : llseptest.c ;
+}
+

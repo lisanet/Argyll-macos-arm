@@ -1,0 +1,606 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll Environment Variables</title>
+  </head>
+  <body>
+    <h2><u>Setting an environment variable</u></h2>
+    &nbsp;To set an environment variable an MSWindows DOS shell, either
+    use set, e.g.;<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; set ARGYLL_REV_CACHE_MULT=1.5<br>
+    <br>
+    which will set the value for that session, or set it in<br>
+    <br>
+    Control Panel-&gt;System-&gt;Advanced-&gt;Environment Variables..<br>
+    <br>
+    in either user or system variables.<br>
+    <br>
+    You can examine individual variables using<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; echo %VARIABLE_NAME%<br>
+    <br>
+    or see all of them using<br>
+    <br>
+    &nbsp;&nbsp; set<br>
+    <br>
+    <br>
+    For OS X or Linux, the exact procedure will depend on the shell you
+    are running, but<br>
+    is usually something like:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; export ARGYLL_REV_CACHE_MULT=1.5<br>
+    or<br>
+    &nbsp;&nbsp;&nbsp; set ARGYLL_REV_CACHE_MULT=1.5<br>
+    or<br>
+    &nbsp;&nbsp;&nbsp; ARGYLL_REV_CACHE_MULT=1.5<br>
+    <br>
+    and may need separately exporting, something like:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; export ARGYLL_REV_CACHE_MULT<br>
+    <br>
+    Generally it should be configured in the shell start-up
+    script,&nbsp; if you want the setting to be used<br>
+    for every session.<br>
+    <br>
+    You can examine individual variables using<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; echo $VARIABLE_NAME<br>
+    <br>
+    or see all of them using<br>
+    <br>
+    &nbsp;&nbsp; set<br>
+    <h2><u>Environment variables</u></h2>
+    The following environment variables affect behaviour:<br>
+    <br>
+    <span style="font-weight: bold;"><a name="ARGYLL_NOT_INTERACTIVE"></a>ARGYLL_NOT_INTERACTIVE</span><br>
+    <br>
+    <div style="margin-left: 40px;">Normally Argylls tools expect that
+      they are directly interacting with a user, and use a couple of
+      techniques for communicating with them through the command line.
+      One is to output progress information by re-writing the same
+      display line by using a Carriage Return rather than a Line Feed at
+      the end of each line. Another is to allow a single key stroke to
+      trigger an action or interrupt operations.<br>
+      <br>
+      If the <span style="font-weight: bold;">ARGYLL_NOT_INTERACTIVE</span>
+      environment variable is set, then:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; A Line Feed will be added to the end of each
+      progress line.<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; Any time it would wait for a single keystroke
+      input, it will instead wait for and read the next character from
+      stdin.<br>
+      &nbsp;&nbsp;&nbsp; To facilitate flushing stdin, any return or
+      line feed characters will be ignored, so a character other than
+      return or line feed must be used to trigger activity.<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; Note that while a reading is being made, a
+      character input can abort the reading, just as with normal
+      interactive mode.<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; Note that on MSWin systems, the character and
+      return or line fee characters must be written to stdin in a single
+      operation (i.e. testing <span style="font-weight: bold;">ARGYLL_NOT_INTERACTIVE&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span>mode manually will probably fail, because the character and
+      return get split up.)<br>
+    </div>
+    <span style="font-weight: bold;"></span><br>
+    <b><a name="ARGYLL_3D_DISP_FORMAT"></a>ARGYLL_3D_DISP_FORMAT<br>
+    </b>
+    <blockquote>This overrides the default 3D visualisation file format
+      for tools such as <a href="iccgamut.html">iccgamut</a> or <a
+        href="viewgam.html">viewgam</a>. Set to<b> </b><b>VRML</b> or <b>X3D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </b>or <b>X3DOM</b>, which will result in <b>.wrl</b>, <b>.x3d</b>
+      and <b>.x3d.html</b> files respectively. See <a href="3dformat">3d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Viewing Format</a>.<br>
+    </blockquote>
+    <b><br>
+    </b> <span style="font-weight: bold;"><a
+        name="ARGYLL_COLMTER_CAL_SPEC_SET"></a>ARGYLL_COLMTER_CAL_SPEC_SET</span><br>
+    <span style="font-weight: bold;"><a name="ARGYLL_COLMTER_COR_MATRIX"></a>ARGYLL_COLMTER_COR_MATRIX</span><br>
+    <br>
+    <div style="margin-left: 40px;">Both of these can be used to set a
+      default <span style="font-weight: bold;">CCMX</span> or <span
+        style="font-weight: bold;">CCSS</span> colorimeter calibration
+      file, equivalent to supplying a <span style="font-weight: bold;">-X</span>
+      argument to spotread, dispcal, dispread and any other utility that
+      allows using a colorimteter. The ARGYLL_COLMTER_CAL_SPEC_SET will
+      take priority if both are set.<br>
+      <br>
+    </div>
+    <br>
+    <span style="font-weight: bold;"><a
+        name="ARGYLL_MIN_DISPLAY_UPDATE_DELAY_MS"></a>ARGYLL_MIN_DISPLAY_UPDATE_DELAY_MS<br>
+      <br>
+    </span>
+    <div style="margin-left: 40px;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"></span></span></span>Normally
+
+
+
+
+
+a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      delay of 200 msec is allowed between changing a patch color in
+      software, and that change appearing in the displayed color itself.
+      For some instuments (ie. i1d3, i1pro, ColorMunki, Klein K10-A)
+      ArgyllCMS will automatically measure and set an appropriate update
+      delay during instrument calibration. In rare situations this delay
+      may not be sufficient (ie. some TV's with extensive image
+      processing features turned on), and a larger delay can be set
+      using the <span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"></span></span></span>ARGYLL_MIN_DISPLAY_UPDATE_DELAY_MS
+
+
+
+
+
+environment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      variable, ie. ARGYLL_MIN_DISPLAY_UPDATE_DELAY_MS=400 would set a
+      400 msec minimum delay.<br>
+      <span style="font-weight: bold;"><br>
+      </span></div>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;"><span style="font-weight: bold;"><a
+          name="ARGYLL_DISPLAY_SETTLE_TIME_MULT"></a>ARGYLL_DISPLAY_SETTLE_TIME_MULT</span></span><br>
+    <blockquote> Normally the display technology type determines how
+      long is allowed between when a patch color change appears on the
+      display, and when that change has settled down, and as actually
+      complete within measurement tolerance. A CRT or Plasma display for
+      instance, can have quite a long settling delay due to the decay
+      characteristics of the phosphor used, while an LCD can also have a
+      noticeable settling delay due to the liquid crystal response time
+      and any response time enhancement circuitry. [ Instruments without
+      a display technology type selection such as spectrometers assume a
+      worst case.].<br>
+      The ARGYLL_DISPLAY_SETTLE_TIME_MULT environment variable allows
+      the rise and fall times of the model to be scaled to extend or
+      reduce the settling time. For instance,
+      ARGYLL_DISPLAY_SETTLE_TIME_MULT=2.0 would double the settling
+      time, while ARGYLL_DISPLAY_SETTLE_TIME_MULT=0.5 would halve it.<br>
+    </blockquote>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><span style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><a
+                              name="ARGYLL_CREATE_WRONG_VON_KRIES_OUTPUT_CLASS_REL_WP"></a>ARGYLL_CREATE_WRONG_VON_KRIES_OUTPUT_CLASS_REL_WP<br>
+                          </span></span></span></span></span></span></span></span></span></span></span></span>
+    <blockquote>By default ArgyllCMS uses the Bradford sharpened cone
+      Chromatic adaption matrix in adapting the measured, absolute
+      colorimetric test data to the <b>PCS</b> (Profile Connection
+      Space) relative colorimetric D50 white point for all profile
+      types. This makes the profile handling consistent with the widely
+      deployed (HP &amp; Microsoft) sRGB and AdobeRGB profiles, as well
+      as being recommended practice in modelling chromatic
+      adaption.&nbsp; The ICC profile format though, specifies the use
+      of a non-cone space XYZ adaptation (so called "Wrong Von Kries"
+      chromatic adaptation) [ ICC Specification ICC.1:2001-04 (ICCV2.4)
+      Annex A, pp 66, equations A.1, A.2 &amp; A.3 ], so ArgyllCMS
+      profiles have a very slight incompatibility with ICC profiles
+      created strictly according to the ICC specifications, depending on
+      how close to white Output (i.e. print) profiles media white is to
+      the perfect diffuser. (Note that CMM's that strictly follow the
+      ICC specifications have much more gross incompatibilities due to
+      this, when dealing with the HP &amp; Microsoft sRGB and AdobeRGB
+      profiles.) By setting this environment variable, Output (i.e.
+      print) profiles will be created that better conform to the ICC
+      specification, and&nbsp; therefore have better
+      inter-interoperability with some other CMMs, at the cost of poorer
+      color behavior.<br>
+      See also the <a href="ArgyllCMS_arts_tag.html">ArgyllCMS 'arts'
+        tag</a>.<br>
+      <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+            style="font-weight: bold;"><span style="font-weight: bold;"><span
+                style="font-weight: bold;"><span style="font-weight:
+                  bold;"></span></span></span></span></span></span></blockquote>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><a
+                        name="ARGYLL_CREATE_DISPLAY_PROFILE_WITH_CHAD"></a>ARGYLL_CREATE_DISPLAY_PROFILE_WITH_CHAD<br>
+                    </span></span></span></span></span></span></span></span></span>
+    <blockquote>The ICC V2 format originally provided no clear mechanism
+      for Display profiles to use a modern chromatic adaptation
+      transform in dealing with the D65 white point of typical displays.
+      Profile makers ended up taking two different approaches :- one was
+      to use a Bradford chromatic transform for the media (display)
+      white to PCS D50 (this approach being used by the widely deployed
+      HP &amp; Microsoft sRGB and AdobeRGB profiles, as well as
+      ArgyllCMS profiles by default), and the other was to apply the
+      Bradford transform to the measurement data and then disable
+      Absolute Intent for display profiles by setting the
+      mediaWhitePoint tag to D50. The latter approach was supplemented
+      later on with the introduction of the ChromaticAdapation ('chad')
+      tag, but this did not restore the Absolute Colorimetric capability
+      to Display profiles. The latter approach has also been adopted
+      more formally in the ICC V4 specifications. To restore the
+      Absolute Intent for such profiles, ArgyllCMS will make use of the
+      'chad' tag in such profiles when Absolute Colorimetric intent is
+      requested, but by default does not create such profiles. Setting
+      this environment variable causes it to create Display profiles in
+      the fashion dictated by the ICC V4 spec. :- setting the
+      mediaWhitePoint tag to D50 and storing the display media white to
+      D50 matrix in the 'chad' tag. (This approach has slightly poorer
+      accuracy for Absolute Intent than ArgyllCMS's default.) <br>
+    </blockquote>
+    <br>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><span style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><a
+                              name="ARGYLL_CREATE_OUTPUT_PROFILE_WITH_CHAD"></a>ARGYLL_CREATE_OUTPUT_PROFILE_WITH_CHAD<br>
+                          </span></span></span></span></span></span></span></span></span></span></span></span>
+    <blockquote>For Output type devices (i.e. Printers), the assumption
+      is that test patches are measured under D50 illuminant. It can be
+      very useful for proofing to calculate color corrections for other,
+      real world illuminants, and ArgyllCMS makes provision for this
+      with the <a href="colprof.html#i">coloprof -i</a> parameter, or
+      the <a href="spec2cie.html#i">spec2cie -i</a> parameter. To be
+      broadly useful, this change in illuminant needs to be available to
+      CMM's, which the ArgyllCMS's implementation makes possible by
+      incorporating the illuminant change into the absolute XYZ values
+      and hence the white point tag, so that Absolute Colorimetric
+      rendering intent returns XYZ values under that illuminant using
+      any CMM.<br>
+      <br>
+      The ICC specification have provision for hiding this difference in
+      illuminant by chromatically transforming the absolute values to be
+      functionally equivalent to having been measured using a D50
+      illuminant, and recording this transform in the ChromaticAdapation
+      ('chad') tag. This appears to motivated by the assumption that the
+      difference in illuminant is a quirk or limitation of the
+      instrument that is to be worked around, as well as the limitation
+      of the ICC Absolute to Relative chromatic transformation being
+      based on the inferior non-cone space XYZ adaptation (so called
+      "Wrong Von Kries" chromatic adaptation), while the
+      ChromaticAdapation tag allows for the use of a superior cone-space
+      based transformation. (see <span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><span style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><span
+                              style="font-weight: bold;">ARGYLL_CREATE_WRONG_VON_KRIES_OUTPUT_CLASS_REL_WP</span></span></span></span></span></span></span></span></span></span></span></span><span
+        style="font-weight: bold;"><span style="font-weight: bold;"><span
+            style="font-weight: bold;"><span style="font-weight: bold;"><span
+                style="font-weight: bold;"><span style="font-weight:
+                  bold;"><span style="font-weight: bold;"><span
+                      style="font-weight: bold;"><span
+                        style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><span
+                              style="font-weight: bold;"> </span></span></span></span></span></span></span></span></span></span></span></span>above
+
+
+
+
+
+
+      for more details.)<span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><span style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><span
+                              style="font-weight: bold;"> <br>
+                              <br>
+                            </span></span></span></span></span></span></span></span></span></span></span></span>To
+
+
+
+
+
+
+      allow for strict conformance to the ICC specification when using
+      non-standard illuminants, setting the <span style="font-weight:
+        bold;"><span style="font-weight: bold;"><span
+            style="font-weight: bold;"><span style="font-weight: bold;"><span
+                style="font-weight: bold;"><span style="font-weight:
+                  bold;"><span style="font-weight: bold;"><span
+                      style="font-weight: bold;"><span
+                        style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><span
+                              style="font-weight: bold;">ARGYLL_CREATE_OUTPUT_PROFILE_WITH_CHAD
+
+
+
+
+
+
+                            </span></span></span></span></span></span></span></span></span></span></span></span>environment
+
+
+
+
+
+
+      variable causes a non-D50 illuminant white point change to be
+      hidden in the ChromaticAdapation Tag, and to still allow this to
+      be useful in a proofing situation, ArgyllCMS will incorporate the
+      effect of the ChromaticAdapation Tag when Absolute Colorimetric
+      Intent is chosen. Note that other CMM's may not do so. For full
+      conformance with ICC specifications, the <span
+        style="font-weight: bold;"><span style="font-weight: bold;"><span
+            style="font-weight: bold;"><span style="font-weight: bold;"><span
+                style="font-weight: bold;"><span style="font-weight:
+                  bold;"><span style="font-weight: bold;"><span
+                      style="font-weight: bold;"><span
+                        style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><span
+                              style="font-weight: bold;">ARGYLL_CREATE_WRONG_VON_KRIES_OUTPUT_CLASS_REL_WP</span></span></span></span></span></span></span></span></span></span></span></span>
+      variable would also be set, but neither of these options is
+      recommended, since ArgyllCMS's default behavior will give superior
+      results.<span style="font-weight: bold;"><span style="font-weight:
+          bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><span style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"><span
+                              style="font-weight: bold;"><br>
+                            </span></span></span></span></span></span></span></span></span></span></span></span></blockquote>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><span
+                    style="font-weight: bold;"><span style="font-weight:
+                      bold;"><span style="font-weight: bold;"><span
+                          style="font-weight: bold;"><span
+                            style="font-weight: bold;"></span></span></span></span></span></span></span></span></span><a
+            name="ARGYLL_CCAST_DEFAULT_RECEIVER"></a>ARGYLL_CCAST_DEFAULT_RECEIVER<br>
+        </span></span></span>
+    <blockquote>By default the ChromeCast test patch source uses a
+      special receiver application that gets the test patch data
+      directly. By setting this environment variable to true, the
+      default Google ChromeCast receiver will be used, making use of a
+      local web server to provide the images. This is slower than the
+      special reciever, but can be used as a fallback.<br>
+    </blockquote>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><a name="ARGYLL_IGNORE_XRANDR1_2"></a>ARGYLL_IGNORE_XRANDR1_2<br>
+          <br>
+        </span></span> </span>
+    <div style="margin-left: 40px;">On an X11 system, if this is <span
+        style="font-weight: bold;"></span>set (ie. set it to "yes"),
+      then the presence of the XRandR 1.2 extension will be ignored, and
+      other extensions such as Xinerama and XF86VidMode extension will
+      be used. This may be a way to work around buggy XRandR 1.2
+      implementations.<br>
+      <br>
+    </div>
+    <br>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><a
+              name="ARGYLL_IGNORE_XRANDR1_2"></a>ARGYLL_IGNORE_XINERAMA</span></span></span></span><br>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"><span
+              style="font-weight: bold;"><span style="font-weight:
+                bold;"><span style="font-weight: bold;"><br>
+                </span></span> </span> </span></span></span></span>
+    <div style="margin-left: 40px;">On an X11 system, if this is <span
+        style="font-weight: bold;"></span>set (ie. set it to "yes"),
+      then the presence of the XInerama extension will be ignored, and
+      default X11 Screen numbering will be used to access multiple
+      displays.</div>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"><span style="font-weight: bold;"> </span></span></span><br>
+      <a name="ARGYLL_IGNORE_COLORD"></a>ARGYLL_USE_COLORD</span><br>
+    <blockquote><small><small>By default </small></small>ArgyllCMS
+      &gt;= V 1.9.4&nbsp; will use its native <a
+        href="ucmm.html">ucmm</a> to store
+      display ICC profiles on Linux based systems, but if the&nbsp;<b>ARGYLL_USE_COLORD</b>
+      environment variable is set, it will attempt to use the Gnome <b>colord</b>
+      storage instead.<span style="font-weight: bold;"></span></blockquote>
+    <span style="font-weight: bold;"><a
+        name="ARGYLL_DISABLE_I1PRO2_DRIVER"></a>ARGYLL_DISABLE_I1PRO2_DRIVER<br>
+      <br>
+    </span>
+    <div style="margin-left: 40px;">ArgyllCMS supports most of the the
+      Eye-One Pro Rev E (aka Eye-One Pro 2) instrument features, but a
+      Rev E can be operated in legacy mode if the environment variable
+      ARGYLL_DISABLE_I1PRO2_DRIVER is set (ie. set it to "yes").<br>
+      <b><br>
+      </b><b> </b></div>
+    <b> </b><b><a name="ARGYLL_EXCLUDE_SERIAL_SCAN"></a>ARGYLL_EXCLUDE_SERIAL_SCAN</b><br>
+    <blockquote>Normally ArgyllCMS will try and identify any device on a
+      fast serial port (i.e. USB or BlueTooth based port). This may
+      disturb devices it doesn't know about, so the
+      ARGYLL_EXCLUDE_SERIAL_SCAN variable can be set to a semi-colon or
+      comma separated list of serial ports that should not be fast
+      scanned. Example:<br>
+      <br>
+      "COM2;/dev/tty5" etc.<br>
+    </blockquote>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;"><a name="ARGYLL_XRGA"></a>ARGYLL_XRGA</span><br>
+    <blockquote>If the <span style="font-weight: bold;">ARGYLL_XRGA&nbsp;</span>
+      environment variable is set to:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; <b>XRGA</b>, then all Getag-MacBeth/X-Rite
+      reflective measurements will be converted to XRGA.<br>
+      <b>&nbsp;&nbsp;&nbsp; XRDI</b>, then all Getag-MacBeth/X-Rite
+      reflective measurements will be converted to XRDI.<br>
+      <b>&nbsp;&nbsp;&nbsp; GMDI</b>, then all Getag-MacBeth/X-Rite
+      reflective measurements will be converted to GMDI.<br>
+      <br>
+      If not set (or set to some other string), then the native
+      calibration will be used. Note that the values must be upper case.<br>
+    </blockquote>
+    <span style="font-weight: bold;"><a name="UNTWIST_GAMUT_SURFACE"></a>ARGYLL_UNTWIST_GAMUT_SURFACE<br>
+    </span>
+    <blockquote>Whenever a color device profile value is inverted (i.e.
+      in creating ICC B2A tables, or creating a device link using gamut
+      mapping mode), colors that are out of gamut after gamut mapping,
+      will be clipped to the gamut surface. If the device behavior is
+      poor (i.e. non-monotonic), the gamut surface representation used
+      for clipping may have "shadow" areas that result in non-smooth
+      jumps in clipped output. Setting the <span style="font-weight:
+        bold;">ARGYLL_UNTWIST_GAMUT_SURFACE</span> environment variable
+      to a non empty value will invoke an additional step in the gamut
+      surface creation routine, that attempts to minimize such shadowed
+      surface areas. This can improve the smoothness of clipped colors
+      for poorly behaved devices, but may make the output for some
+      devices worse. </blockquote>
+    <span style="font-weight: bold;"><br>
+      <a name="XDG_CACHE_HOME"></a>XDG_CACHE_HOME<br>
+      <span style="font-weight: bold;"><br>
+      </span></span>
+    <div style="margin-left: 40px;">Argyll tries to follow the <a
+href="http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html">XDG
+
+
+
+
+
+Base
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Directory Specification</a>, and uses the <span
+        style="font-weight: bold;">XDG_CACHE_HOME</span> environment
+      variable to place per instrument calibration information, and
+      .ccmx and .ccss files.<br>
+    </div>
+    <br>
+    <span style="font-weight: bold;"><a name="XDG_CONFIG_DIRS"></a>XDG_CONFIG_DIRS<br>
+      <a name="XDG_DATA_DIRS"></a>XDG_DATA_DIRS<span style="font-weight:
+        bold;"><br>
+        <span style="font-weight: bold;"></span></span></span><br>
+    <div style="margin-left: 40px;">On Unix type operating systems,
+      configuration and profiles for displays are placed relative to
+      these environment variables.<br>
+    </div>
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; <br>
+    <br>
+    See <a href="Performance.html">Performance Tuning</a> for other
+    variables.<br>
+    <br>
+    <br>
+  </body>
+</html>

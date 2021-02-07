@@ -1,0 +1,28 @@
+# JAM style makefile for tweak tools
+ 
+PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+#PREF_CCFLAGS	    += $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile flags
+#PREF_CCFLAGS	+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+Executables = refine ;
+
+#Install
+InstallBin $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+
+HDRS = ../h ../icc ../cgats ../xicc ../spectro ../gamut
+       ../rspl ../numlib ../plot ;
+LINKLIBS = ../icc/libicc ../xicc/libxicc
+           ../spectro/libinsttypes ../gamut/libgamut
+           ../gamut/libgammap ../rspl/librspl 
+           ../cgats/libcgats ../numlib/libnum
+           ../plot/libplot ../plot/libvrml ../numlib/libui $(LibWin) ;
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+# Profile refiner
+Main refine : refine.c ;
+

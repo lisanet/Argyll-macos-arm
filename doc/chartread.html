@@ -1,0 +1,682 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>chartread</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/chartread</b></h2>
+    <h3>Summary</h3>
+    Read a printer test chart using an instrument, to create a&nbsp;<a
+      href="File_Formats.html#.ti3">.ti3</a> data file. The type of
+    instrument is determined by the communication port selected.<br>
+    <br>
+    <span style="font-weight: bold;">chartread</span> can also be used
+    to read transmission values, and to read display values manually.<br>
+    <h3>Usage</h3>
+    <small><span style="font-family: monospace;">chartread [-options]
+        outfile</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Verbose
+
+
+
+
+
+
+
+
+
+        mode</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#c">-c listno</a><span
+        style="font-family: monospace;"> &nbsp; &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Set communication port from the following
+        list (default 1)</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#t">-t</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+Use
+transmission
+
+
+
+
+
+
+
+
+
+        measurement mode<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#d">-d</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+display
+measurement
+
+
+
+
+
+
+
+
+
+        mode (white Y relative results)</span></small><small><span
+        style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"><br>
+        &nbsp;</span></small><font size="-1"><span style="font-family:
+        monospace;"><a href="#y">-y X</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        Display type - instrument specific list to choose from.</span></font><br>
+    <small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#e">-e</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+emissive&nbsp;
+measurement
+
+
+
+
+
+
+
+
+
+        mode (absolute results)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#p">-p</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Measure
+patch
+by
+
+
+
+
+
+
+
+
+
+        patch rather than strip</span></small><br>
+    <small><span style="font-family: monospace;"></span>&nbsp; <a
+        style="font-family: monospace;" href="#x">-x [lx]</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Take
+
+
+
+
+
+
+        manually entered values, either L*a*b* (-xl) or XYZ (-xx).</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#n">-n</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Don't
+
+
+
+
+
+
+
+
+
+        save spectral information (default saves spectral)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#l">-l</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; Save CIE as D50 L*a*b* rather than XYZ<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#L">-L</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; Save CIE as D50 L*a*b* as well as XYZ</span></small><br>
+    <small><span style="font-family: monospace;">&nbsp;<a href="#r">-r</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Resume
+reading
+partly
+
+
+
+
+
+
+
+
+
+        read chart<br>
+        &nbsp;<a href="#I">-I</a>
+        file.cal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override
+        calibration info from .ti2 in resulting .ti3<br>
+        &nbsp;</span></small><font size="-1"><span style="font-family:
+        monospace;"><a href="#F">-F filter</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        Set filter configuration:<br>
+        &nbsp;
+        n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        None<br>
+        &nbsp;
+        p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        Polarising filter<br>
+        &nbsp;
+        6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        D65<br>
+        &nbsp;
+        u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        U.V. Cut</span></font><small><span style="font-family:
+        monospace;"></span><span style="font-family: monospace;"></span></small><br>
+    &nbsp; <font size="-1"><span style="font-family: monospace;"><a
+          href="#A">-A N|A|X|G</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+        XRGA conversion</span></font> (default N)<br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#N">-N</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp; Disable initial calibration of instrument unless
+        essential<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;</span><a style="font-family: monospace;"
+        href="#B">-B</a><span style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp; Disable auto bi-directional strip recognition</span></font><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#H">-H</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp; Use high resolution spectrum mode (if available)<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;</span></font><font size="-1"><span
+        style="font-family: monospace;"><a href="#X1">-X file.ccmx</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+        Apply Colorimeter Correction Matrix</span></font><br>
+    <span style="font-family: monospace;">&nbsp;<a href="#X2">-X
+        file.ccss</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+Colorimeter
+Calibration
+Spectral
+Samples
+
+
+
+
+
+
+
+
+
+
+      for calibration</span><br>
+    <small><span style="font-family: monospace;">&nbsp;</span><a style="
+        font-family: monospace;" href="#Q">-Q observ</a><span
+        style="font-family: monospace;">&nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose CIE Observer for
+        spectral data or CCSS instrument:</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; </span></small><small><span
+        style="font-family: monospace;">1931_2 </span></small><small><span
+        style="font-family: monospace;"> (def.)</span></small><small><span
+        style="font-family: monospace;">, 1964_10, </span></small><small><span
+        style="font-family: monospace;"><tt><small>2012_2, 2012_10, </small></tt>S&amp;B
+
+        1955_2, shaw, J&amp;V 1978_2 or file.cmf</span></small><small><span
+        style="font-family: monospace;"></span></small><font size="-1"><span
+        style="font-family: monospace;"></span></font><br>
+    <font size="-1"><span style="font-family: monospace;"> &nbsp;<a
+          href="#T">-T ratio</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Modify
+strip
+patch
+
+
+
+
+
+
+
+
+
+        consistency tolerance by ratio (if available)<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#S">-S</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Suppress
+wrong
+strip
+
+
+
+
+
+
+
+
+
+        &amp; unexpected value warnings</span></font><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;<a
+          href="#W">-W n|h|x</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Override
+
+
+
+
+
+
+
+
+
+        serial port flow control: n = none, h = HW, x = Xon/Xoff</span></font><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><small
+        style="font-family: monospace;">&nbsp;<a href="#D">-D [level]</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Print debug
+        diagnostics to stderr</small><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#p1"><i>inoutfile</i></a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+        &nbsp;Base name for input[</span><a style="font-family:
+        monospace;" href="File_Formats.html#.ti2">.ti2</a><span
+        style="font-family: monospace;">]/output[</span><a
+        style="font-family: monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+        style="font-family: monospace;">] file</span></small> <br>
+    <h3>Usage Details</h3>
+    <a name="v"></a>The <b>-v</b> flag causes extra information to be
+    printed out during chartread operation.<br>
+    <br>
+    <a name="c"></a>Normally instruments are connected via a serial
+    communication port, and the port used should be selected by
+    supplying the correct parameter to the <b>-c</b> flag. If you
+    invoke <span style="font-weight: bold;">chartread</span> so as to
+    display the usage information (i.e. "chartread -?" or "chartread
+    --"), then the discovered serial ports will be listed on Windows and
+    Mac OSX systems.<br>
+    <br>
+    <a name="t"></a>If using an Xrite DTP41T, and printing onto
+    transparent or back lit media, use the <b>-t</b> flag to operate
+    the instrument in transparency mode. If using a Spectrolino or
+    Eye-One Pro (handheld), this triggers a fake transparency mode, that
+    uses a separate backlight (such as a light box). The&nbsp;
+    instrument will be used to calibrate the level of backlight, and use
+    this to compute the transparency of the test chart samples. Note
+    that for good transparency values, the backlight level needs to be
+    neither too bright not too dark, should ideally be incandescent
+    rather than fluorescent (since fluorescent lights often have big
+    dips in their spectrum), and ideally should be of uniform brightness
+    over the measurement area. If using the SpectroScanT, the <span
+      style="font-weight: bold;">-t</span> flag operates the instrument
+    in transparency mode, each reading being manually triggered.<br>
+    <br>
+    <a name="d"></a>The <span style="font-weight: bold;">-d</span> flag
+    allows measuring in display mode using instruments that support this
+    mode, with the brightness normalized to the white patch value in the
+    test chart. While the brightness values are then relative to the
+    white, the readings are otherwise absolute. This corresponds to the
+    raw ICC absolute readings created by <a href="dispread.html">dispread</a>,
+    and is the mode that should be used for creating a normal display
+    ICC profile using manual, spot by spot readings. This can be useful
+    if the display cannot be driven directly by the computer, but can be
+    made manually to display the test charts.<br>
+    <br>
+    <a name="y"></a>&nbsp; The <span style="font-weight: bold;">-y</span>
+    flag allows setting the Display Type. The selection typically
+    determines two aspects of of the instrument operation: <span
+      style="font-weight: bold;">1)</span> It may set the measuring mode
+    to suite <a
+      href="http://en.wikipedia.org/wiki/Comparison_of_display_technology"><span
+        style="font-weight: bold;">refresh</span> or <span
+        style="font-weight: bold;">non-refresh</span> displays</a>.
+    Typically only LCD (Liquid Crystal) displays have a non-refresh
+    nature. <span style="font-weight: bold;">2)</span> It may select an
+    instrument calibration matrix suitable for a particular display
+    type. The selections available depends on the type and model of
+    instrument, and a list of the options for the discovered instruments
+    will be shown in the <a href="ArgyllDoc.html#CmdLine">usage</a>
+    information. For more details on what particular instruments support
+    and how this works, see <a href="instruments.html">Operation of
+      particular instruments</a>. <b>3)</b> Any installed CCSS files
+    (if applicable), or CCMX files. These files are typically created
+    using <a href="ccxxmake.html">ccxxmake</a>, and installed using <a
+      href="oeminst.html">oeminst</a>. The default and Base Calibration
+    types will be indicated in the usage.<br>
+    <br>
+    <a name="e"></a> If using an instrument that supports an emissive
+    measurement mode (such as the Spectrolino), then the <span
+      style="font-weight: bold;">-e</span> flag enables this measurement
+    mode, and the values recorded will be absolute XYZ values. This can
+    be used for media such as backlit film, measuring it on a lightbox,
+    so as to capture the actual illumination characteristics of that
+    particular media. An adaptive integration time will be used in
+    devices that support it. <br>
+    <br>
+    <a name="p"></a> The <span style="font-weight: bold;">-p</span>
+    flag causes chartread to use a spot read mode for an instrument,
+    even if it is capable of faster chart reading modes such as strip
+    reading. This can be useful if strip measurement patch recognition
+    is not reliable for certain media.<br>
+    <br>
+    <a name="x"></a> The <span style="font-weight: bold;">-x</span>
+    flag causes chartread to expect values to be manually entered for
+    each reading, rather than using an instrument to do the
+    measurements.&nbsp; This mode is ideal if your instrument is not
+    supported by Argyll. Either XYZ or L*a*b* values can be entered,
+    depending on what option follows <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-l</span></span>, <span
+      style="font-weight: bold;">-lx</span> to specify XYZ values, or <span
+      style="font-weight: bold;">-ll</span> to specify L*a*b* values.
+    XYZ values are expected to be scaled to a maximum of 100. It is
+    possible to navigate about the test values being measured, so as to
+    do them in any order, as well as re-do values, in case of any
+    mistakes.<br>
+    <br>
+    <a name="n"></a> <span style="font-weight: bold;">-n</span> By
+    default spectral information as well as D50 standard observer XYZ
+    values will be recorded for each test patch, when such readings are
+    available from a device. The spectral readings allow for choosing a
+    non-standard viewing illuminant, a non-standard observer model, or
+    the use of the Fluorescent Paper Whitener Additive compensation when
+    creating the profile. If the spectral readings are not needed, then
+    prinread operation can be speeded up by specifying the <b>-n</b>
+    flag.<br>
+    <br>
+    <a name="l"></a> <span style="font-weight: bold;">-l</span> By
+    default D50 standard observer XYZ values will be recorded for each
+    test patch, but if the <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-l</span></span> flag is used, D50
+    L*a*b* values will be recorded instead.<br>
+    <br>
+    <a name="L"></a> <span style="font-weight: bold;">-L</span> By
+    default D50 standard observer XYZ values will be recorded for each
+    test patch, but if the <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-L</span></span> flag is used, XYZ <span
+      style="font-weight: bold;">and&nbsp;</span>D50 L*a*b* values will
+    be recorded.<br>
+    <br>
+    <a name="r"></a> <span style="font-weight: bold;">-r</span> By
+    default chartread reads the chart from scratch each time. When
+    reading a chart using a strip instrument or patch by patch you can
+    choose to finish chartread without reading all the patches, and
+    whatever patches have been read will be saved to the output .ti3
+    file. You can then <span style="text-decoration: underline;">resume</span>
+    reading the patches by using the <span style="font-weight: bold;">-r</span>
+    flag, in which case chartread will read the .ti3 file and set the
+    patches to those previously read values, allowing any unread patches
+    to then be read, or to re-read previously read patches.<br>
+    <br>
+    <a name="I"></a> <span style="font-weight: bold;">-I</span> <span
+      style="font-style: italic;">file.cal</span>&nbsp; Normally per
+    channel calibration curves are added to the .ti2 file using the <span
+      style="font-weight: bold;">printtarg -K</span> or <span
+      style="font-weight: bold;">-I</span> options, so that they will be
+    passed on to the .ti3 file by&nbsp; <span style="font-weight:
+      bold;">chartread</span>, so that <span style="font-weight: bold;">colprof</span>
+    is able to correctly compute total ink limits. Where the calibration
+    is being applied in a workflow with native calibration capability<small><span
+        style="font-family: monospace;"></span></small> though, it is
+    sometimes convenient to re-use a profile chart with different
+    calibration curves without going through the process of using <span
+      style="font-weight: bold;">printtarg</span> to re-create it. This
+    would mean though, that the calibration information and subsequent
+    ink limit calculations wouldn't be accurate. To overcome this and
+    allow such a scenario, the <span style="font-weight: bold;">chartread
+
+
+
+
+
+
+
+
+      -I</span> parameter allows overriding the .ti2 calibration curves
+    placed in the resulting .ti3 file with the actual calibration that
+    was used for that particular print.<br>
+    <br>
+    <a name="F"></a>The <b>-F</b> options allows configuring the
+    instrument to have a particular filter fitted to it. Some
+    instruments (i.e. the Gretag Spectrolino) allow the fitting of
+    various filters, such as a polarizing filter, D65 illuminant
+    simulation, or Ultra Violet Cut filter, and this option allows the
+    instrument to be configured appropriately.<br>
+    <br>
+    <a name="A"></a>The <b>-A</b> options allows overriding the default
+    or environment variable set <a href="XRGA.html">XRGA</a>
+    conversion:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <b>-A N|A|X|G</b><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>N</b> argument sets
+    the calibration to Native (default).<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>A</b> argument sets
+    the calibration to XRGA.<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>X</b> argument sets
+    the calibration to XRDI.<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; The <b>G</b> argument sets
+    the calibration to GMDI.<br>
+    <br>
+    <a name="N"></a> <span style="font-weight: bold;">-N</span> Any
+    instrument that requires regular calibration will ask for
+    calibration on initial start-up. Sometimes this can be awkward if
+    the instrument is being mounted in some sort of measuring jig, or
+    annoying if several sets of readings are being taken in quick
+    succession. The -<span style="font-weight: bold;">N</span>
+    suppresses this initial calibration if a valid and not timed out
+    previous calibration is recorded in the instrument or on the host
+    computer. It is advisable to only use this option on the second and
+    subsequent measurements in a single session.<br>
+    <br>
+    <a name="B"></a> <span style="font-weight: bold;">-B</span> Some
+    strip instruments (i.e.. Eye-One Pro, Color Munki) when used with
+    Argyll will automatically recognize a strip when read in the reverse
+    direction by matching the patch readings against their expected
+    values. If the expected values are not known accurately enough, this
+    may cause erroneous reverse recognition, so the <span
+      style="font-weight: bold;">-<span style="font-weight: bold;">B</span></span>
+    flag allows this to be turned off, forcing strips to only be read in
+    the forward direction. (Note that the DTP20 always allows
+    bi-directional strip reading.) If the randomized patch layout has
+    not been used, then&nbsp; bi-directional strip recognition will
+    automatically turned off, and a warning issued if the -B flag is not
+    used.<br>
+    <br>
+    <a name="H"></a> The -<span style="font-weight: bold;">H</span>
+    option turns on high resolution spectral mode, if the instrument
+    supports it. See <a href="instruments.html">Operation of particular
+      instruments</a> for more details.<br>
+    <br>
+    <a name="X1"></a> The -<span style="font-weight: bold;">X <span
+        style="font-style: italic;">file.ccmx</span></span> option reads
+    a <a href="File_Formats.html#.ccmx">Colorimeter Correction Matrix</a>
+    from the given file, and applies it to the colorimeter instruments
+    readings. This can improve a colorimeters accuracy for a particular
+    type of display. A list of contributed <span style="font-weight:
+      bold;">ccmx</span> files is <a href="ccmxs.html">here</a>.<br>
+    <br>
+    <a name="X2"></a> The -<span style="font-weight: bold;">X <span
+        style="font-style: italic;">file.ccss</span></span> option reads
+    a <a href="File_Formats.html#.ccss">Colorimeter Calibration
+      Spectral Sample</a> from the given file, and uses it to set the
+    colorimeter instruments calibration. This will only work with
+    colorimeters that rely on sensor spectral sensitivity calibration
+    information (ie. the X-Rite <span style="font-weight: bold;">i1d3</span>,
+    or the DataColor <span style="font-weight: bold;">Spyder4 &amp;
+      Spyder 5</span>).This can improve a colorimeters accuracy for a
+    particular type of display. A list of contributed <span
+      style="font-weight: bold;">ccss</span> files is <a
+      href="ccsss.html">here</a>.<br>
+    <br>
+    <a name="T"></a> The -<span style="font-weight: bold;">T ratio</span>
+    argument modifies the patch consistency tolerance threshold for some
+    strip reading instruments (ie. the Eye-One Pro). In recognizing
+    patches in a strip, an instrument may take multiple readings as the
+    strip is read, and then divide the readings up into each patch. It
+    may then check the consistency of the multiple readings
+    corresponding to each patch, and reject the measurement if they are
+    too inconsistent. For some media (ie. a coarser screens, fabric
+    etc.) the default tolerance may be unreasonably tight, so the <span
+      style="font-weight: bold;">-T ratio</span> argument can be used to
+    modify this criteria. To loosen the tolerance, use a number greater
+    than 1.0 (ie. 1.5, 2.0).<br>
+    <br>
+    <a name="Q"></a> The <b>-Q</b> flag allows specifying a tristimulus
+    observer for a colorimeter when using CCSS instrument calibration
+    capability. The following choices are available:<br>
+    <b>&nbsp; 1931_2</b> selects the standard CIE 1931 2 degree
+    observer. The default.<br>
+    &nbsp; <b>1964_10</b> selects the standard CIE 1964 10 degree
+    observer.<br>
+    <b>&nbsp; 2012_2</b> selects the proposed CIE 2012 2 degree
+    observer.<br>
+    &nbsp; <b>2012_10</b> selects the proposed CIE 2012 10 degree
+    observer.<br>
+    &nbsp; <b>1955_2</b> selects the Stiles and Birch 1955 2 degree
+    observer<br>
+    &nbsp; <b>1978_2 </b>selects the Judd and Voss 1978 2 degree
+    observer<br>
+    &nbsp; <b>shaw</b> selects the Shaw and Fairchild 1997 2 degree
+    observer<br>
+    &nbsp; <i><b>file.cmf</b></i> selects an observer specified by the
+    given <a href="File_Formats.html#.cmf">.cmf</a> file.<br>
+    <br>
+    <a name="S"></a>The <b>-S</b> flag causes the normal "wrong strip"
+    and "unexpected value" warnings to be suppressed. There may be a lot
+    of these warnings if the expected patch value in the .ti2 file is in
+    fact far from the values actually being measured. It is probably
+    advisable to also use the <span style="font-weight: bold;">-B</span>
+    flag if warnings are turned off, since many warnings indicate that
+    the expected values are not to be relied on. With warnings
+    suppressed, greater care must be taken to read the correct strip. If
+    the randomized patch layout has not been used, then "wrong strip"
+    warnings will automatically be suppressed, and bi-directional strip
+    recognition turned off.<br>
+    <br>
+    <a name="W"></a>The <b>-W</b> <span style="font-weight: bold;">n|h|x</span>
+    parameter overrides the default serial communications flow control
+    setting. The value <span style="font-weight: bold;">n</span> turns
+    all flow control off, <span style="font-weight: bold;">h</span>
+    sets hardware handshaking, and <span style="font-weight: bold;">x</span>
+    sets Xon/Xoff handshaking. This commend may be useful in workaround
+    serial communications issues with some systems and cables. <br>
+    <br>
+    <a name="D"></a>The <b>-D</b> flag causes communications and other
+    instrument diagnostics to be printed to stdout. A level can be set
+    between 1 .. 9, that may give progressively more verbose
+    information, depending on the instrument. This can be useful in
+    tracking down why an instrument can't connect.<br>
+    <br>
+    <a name="p1"></a> The <i>inoutfile</i> parameters should be the
+    base name of the .ti2 file, and chartread will output an .ti3 that
+    has the same basename and the .ti3 extension. If the incoming .ti2
+    file contains per-channel calibration curves, these will be passed
+    through to the .ti3 so that accurate ink limits can be computed
+    during profiling.<br>
+    <br>
+    <hr style="width: 50%; height: 2px;">
+    <h3>Discussion</h3>
+    For information about the operation of different instruments, see <a
+      href="instruments.html">Operation of particular instruments</a>.<br>
+    <br>
+    <br>
+  </body>
+</html>

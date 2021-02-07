@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Input vs. Output Referred images</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+  </head>
+  <body>
+    <h2 style="text-decoration: underline; font-weight: bold;">Input vs.
+      Output Referred Images<br>
+    </h2>
+    A lot of Photography related sources recommend that images be
+    encoded in a large gamut colorspace such as ProPhoto, but don't
+    explain the implications of doing this in in the process of
+    subsequently displaying such photo's. <br>
+    <h3> Input referred:</h3>
+    Images are encoded in a way that represents their unchanged or
+    originally captured values, in an encoding space that is larger
+    enough to store their gamut without clipping. The gamut of the
+    encoding space tells you nothing about the gamut of the images.<br>
+    <br>
+    Typical: L*a*b*, Raw, ProPhoto, RIMM etc.<br>
+    <h3>Output referred:</h3>
+    Images are modified (i.e. rendered) to fit within the gamut of a
+    specific real world output device (such as display or printer). This
+    means that typically the encoding space is a good representation of
+    the gamut of the images.<br>
+    <br>
+    Typical sRGB, AdobeRGB, printer profile, display profile, etc.<br>
+    <br>
+    <br>
+    Before displaying images that are Input Referred, they need to be
+    rendered to a smaller gamut. This may be done manually by adjusting
+    the images carefully to fit within the smaller gamut, or in some
+    automatic fashion such as by hard clipping them to the smaller
+    gamut, or by setting up a specific gamut mapping for each image or
+    set of images that occupy a similar gamut.<br>
+    <br>
+    <u><b>Note</b></u> that setting up a gamut mapping from the very
+    large Input referred encoding gamut to the smaller output device
+    gamut will almost certainly result in a disappointing loss of
+    saturation, because the images deliberately do not occupy the large
+    encoding gamut, and so get unnecessarily squashed down to allow for
+    colors that they do not actually contain.<br>
+    <br>
+    See also Scenarios.html#LP3.<br>
+  </body>
+</html>

@@ -1,0 +1,112 @@
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;
+
+#Products
+Libraries = libprof ;
+Executables = cb2ti3 kodak2ti3 txt2ti3 cxf2ti3 ls2ti3 splitti3 mppcheck mppprof
+              profcheck invprofcheck colverify colprof printcal applycal ;
+Headers = prof.h ;
+Samples = example.sp example121.sp 3dap5k.sp GTIPlus.sp Office.sp Trulux.sp TruluxPlus.sp
+		D50_0.0.sp D50_0.1.sp D50_0.3.sp D50_0.5.sp D50_0.7.sp D50_1.0.sp D50_1.2.sp
+		D50_1.5.sp D50_1.7.sp D50_2.0.sp D50_2.5.sp D50_3.0.sp CIE_C.sp F1.sp F5.sp F8.sp ;
+
+#Install
+InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+InstallFile $(DESTDIR)$(PREFIX)/$(REFSUBDIR) : $(Samples) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+HDRS = ../h ../icc ../cgats ../rspl
+       ../numlib ../gamut ../xicc ../spectro
+       ../target ../plot ;
+
+# PROF library
+Library libprof : profin.c profout.c ;
+
+
+LINKLIBS = ../rspl/librspl ../icc/libicc ../cgats/libcgats ../numlib/libnum ../plot/libplot
+           ../plot/libvrml ../numlib/libui ;
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+# Simple profile generator
+Main simpprof : simpprof.c ;
+
+#Kodak raw profile data to Argyll CGATS format converter
+Main kodak2ti3 : kodak2ti3.c ;
+
+#Colorblind raw profile data to Argyll CGATS format converter
+Main cb2ti3 : cb2ti3.c ;
+
+# the gcc linker is retarded, and can't link to things it's gone past, hence 2 x libxicc...
+LINKLIBS = ../xicc/libxicc ../spectro/libinsttypes ../spectro/libdisptechs ../xicc/libxicc ../gamut/libgamut $(LINKLIBS) ;
+
+#Gretag/Logo raw CMYK profile data to Argyll CGATS format converter
+Main txt2ti3 : txt2ti3.c ;
+
+#CxF to Argyll CGATS format
+Main cxf2ti3 : cxf2ti3.c : : : ../xml : : ../xml/libmxml ;
+
+#LightSpace to Argyll CGATS format
+Main ls2ti3 : ls2ti3.c : : : ../xml : : ../xml/libmxml ;
+
+#Split a .ti3 into two pieces randomly
+Main splitti3 : splitti3.c ;
+
+# Profile checker
+Main profcheck : profcheck.c ;
+
+# Reverse Profile checker
+Main invprofcheck : invprofcheck.c ;
+
+# Model Printer Profile generator
+Main mppprof : mppprof.c ;
+
+# Model Printer Profile checker
+Main mppcheck : mppcheck.c ;
+
+LINKLIBS = ../plot/libvrml $(LINKLIBS) ;
+
+# Verifyer 
+Main colverify : colverify.c ;
+
+LINKLIBS = libprof ../gamut/libgammap $(LINKLIBS) $(TIFFLIB) $(JPEGLIB) ;
+
+# Full profile generator
+Main colprof : colprof.c : : : $(TIFFINC) $(JPEGINC) ;
+
+# Print calibration
+Main printcal : printcal.c : : : $(TIFFINC) $(JPEGINC) ;
+
+# Applying calibration
+Main applycal : applycal.c ;
+
+# Optimised Separation Generator
+#Main sepgen : sepgen.c ;
+
+# Test code
+if $(HOME) = "d:\\usr\\graeme" && $(PWD) = "/src/argyll/profile" {
+    Main specinpprof : specinpprof.c ;
+}
+
+# Development code
+if [ GLOB [ NormPaths . ] : retargti3.c ]  {
+	Main retargti3 : retargti3.c ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

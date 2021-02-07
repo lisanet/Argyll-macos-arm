@@ -1,0 +1,1903 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>ccxxmake</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/ccxxmake</b></h2>
+    <h3>Summary</h3>
+    For Colorimeters that rely on a calibration matrix, <span
+      style="font-weight: bold;">ccxxmake</span> allows creation of a
+    correction matrix file (<a href="File_Formats.html#.ccmx">ccmx</a>)
+    for a particular <span style="font-weight: bold;">Colorimeter &amp;
+      Display</span> combination, by making use a reference <span
+      style="font-weight: bold;">Spectrometer</span> or Colorimeter
+    instrument. This can then be used to improve the accuracy of
+    subsequent measurements with that Colorimeter on that Display by
+    using it with the <a href="dispcal.html#X">dispcal</a>, <a
+      href="dispread.html#X">dispread</a> and <a href="spotread.html#X">spotread</a>
+    -X option. A ccmx file can also be <a href="oeminst.html">installed</a>,
+    and will then appear in the available display type selection (<b>-y</b>
+    option). See <a href="WideGamutColmters.html">Wide Gamut Displays
+      and Colorimeters</a> for more information on why this may be
+    useful. [ <span style="font-weight: bold;">Note</span> that to make
+    use of a <u>colorimeter</u> as a CCMX reference, you will have to
+    provide two .ti3 files rather than using interactive measurement-
+    see <a href="#f"><span style="font-weight: bold;">-f</span></a>. ]<br>
+    <br>
+    For Colorimeters that have sensor spectral sensitivity calibration
+    information built into them&nbsp; (ie. the X-Rite <span
+      style="font-weight: bold;">i1d3</span>, and<span
+      style="font-weight: bold;"><span style="font-weight: bold;"></span></span>
+    DataColor <span style="font-weight: bold;">Spyder4 &amp; Spyder5</span>),
+
+
+
+
+
+
+
+
+    <span style="font-weight: bold;">ccxxmake</span> allows a creation
+    of a calibration spectral sample (<a href="File_Formats.html#.ccss">ccss</a>)
+    for a particular <span style="font-weight: bold;">Display</span>,
+    by making use a reference <span style="font-weight: bold;">Spectrometer</span>
+    instrument. This can then be used to improve the accuracy of
+    subsequent measurements on that Display using such Colorimeters, by
+    using it with the <a href="dispcal.html#X">dispcal</a>, <a
+      href="dispread.html#X">dispread</a> and <a href="spotread.html#X">spotread</a>
+    -X option, or it can be <a href="oeminst.html">installed</a>, and
+    will then appear in the available display type selection (<b>-y</b>
+    option).<br>
+    <br>
+    The instrument manufacturer may supply spectral sample files (see <a
+      href="oeminst.html">oeminst</a>).<br>
+    <br>
+    There is a <a href="ccsss.html">list of contributed</a> <span
+      style="font-weight: bold;">ccss</span> (Colorimeter Correction
+    Spectral Sample) files for some displays.<br>
+    There is a <a href="ccmxs.html">list of contributed</a> <span
+      style="font-weight: bold;">ccmx</span> (Colorimeter Correction
+    Matrix) files.<br>
+    <h3>Usage Summary</h3>
+    <small style="font-family: monospace;">ccxxmake -t dtech [-options]
+      correction.ccmx<br>
+    </small><small style="font-family: monospace;">&nbsp;<a href="#v">-v</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp; &nbsp; &nbsp; Verbose mode</small><br>
+    &nbsp; <tt></tt><tt><a href="#S">-S</a></tt><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      Create CCSS rather than CCMX</tt><tt><br>
+    </tt><tt>&nbsp;</tt><tt><a href="#f">-f ref.ti3[,targ.ti3]</a></tt><tt>
+      Create from one or two .ti3 files rather than measure.</tt><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><font
+      style="font-family: monospace;" size="-1"><a href="#display">-display
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        displayname</a>&nbsp; [X11 only] Choose X11 display name</font><br
+      style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1"></font><font
+      style="font-family: monospace;" size="-1">&nbsp;<a href="#dnm">-d
+        n[,m]</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      [X11 only] Choose the display from the following list (default 1),</font><br
+      style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+and
+optionally
+choose
+a
+different
+display
+m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      for VideoLUT access.</font><br style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;<a href="#d">-d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        n</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Choose
+the
+display
+from
+the
+following
+list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (default 1)</font><br>
+    <span style="font-family: monospace;">&nbsp;<a href="#dweb">-d
+        web[:port]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Display via a web server at port (default 8080)<br>
+    </span><span style="font-family: monospace;"><tt>&nbsp;</tt><tt><a
+          href="#dcc">-d cc[:n]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+      </tt><tt>Display via n'th ChromeCast (default 1, ? for list)<br>
+      </tt></span>&nbsp; <span style="font-family: monospace;"><a
+        href="#dmadvr">-d madvr</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      [MSWin] Display via MadVR Video Renderer</span><br>
+    &nbsp; <span style="font-family: monospace;"><span
+        style="font-family: monospace;"><a href="#dummy">-d dummy</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Dummy (non-existant, invisible) display</span></span><br
+      style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;</font><font
+      style="font-family: monospace;" size="-1"><a href="#p">-p</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Use telephoto mode (ie. for a projector, if available)<br>
+    </font><font style="font-family: monospace;" size="-1"><font
+        style="font-family: monospace;" size="-1">&nbsp;</font><font
+        style="font-family: monospace;" size="-1"><a href="#a">-a</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Use ambient mode (ie. for a projector, if available)</font><br>
+    </font>&nbsp; <tt></tt><tt><font size="-1"><a href="#y">-y X</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Display type - instrument specific list to choose from.</font></tt><tt>
+      (CCMX)</tt><tt><br>
+    </tt><tt>&nbsp;<a href="#z">-z disptype</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+      Different display type for spectrometer (see -y)</tt><tt><br>
+    </tt><tt> </tt><tt>&nbsp;</tt><tt><a href="#P">-P ho,vo,ss[,vs]</a></tt><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+      Position test window and scale it</tt><br style="font-family:
+      monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ho,vi:
+0.0
+=
+left/top,
+0.5
+=
+center,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      1.0 = right/bottom etc.</font><br style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ss:
+0.5
+=
+half,
+1.0
+=
+normal,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      2.0 = double etc.</font><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ss,vs: = optional horizontal, vertical scale.</span></font><br
+      style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;</font><font
+      style="font-family: monospace;" size="-1"><a href="#F">-F</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Fill whole screen with black background</font><br
+      style="font-family: monospace;">
+    <small style="font-family: monospace;">&nbsp;<span
+        style="text-decoration: underline;"></span><a href="#n">-n</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[X11
+only]
+Don't
+set
+override
+redirect
+on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      test window<br>
+    </small><font style="font-family: monospace;" size="-1">&nbsp;<a
+        href="#N">-N</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Disable initial calibration of instrument</font><small
+      style="font-family: monospace;"> if possible<br>
+    </small><span style="font-family: monospace;">&nbsp;</span><font
+      style="font-family: monospace;" size="-1"><a href="#H">-H</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Use high resolution spectrum mode (if available)</font><font
+      style="font-family: monospace;" size="-1"></font><br
+      style="font-family: monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;<a href="#C">-C
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        "command"</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Invoke shell "command" each time a color is set</font><br>
+    <font style="font-family: monospace;" size="-1"><font
+        style="font-family: monospace;" size="-1">&nbsp;<a href="#M">-M
+          "command"</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </font></font><font style="font-family: monospace;" size="-1"><font
+        style="font-family: monospace;" size="-1"><font size="-1"><span
+            style="font-family: monospace;">Invoke shell "command" each
+            time a color is measured</span></font></font><br>
+    </font><small style="font-family: monospace;">&nbsp;<a href="#o">-o
+        <i>observ</i></a>&nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; Choose CIE Observer for CCMX spectral
+      data:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 1931_2 </small><small
+      style="font-family: monospace;"> (def.)</small><small
+      style="font-family: monospace;">, 1964_10, </small><small
+      style="font-family: monospace;"><tt><small>2012_2, 2012_10, </small></tt>S&amp;B
+
+
+
+
+
+      1955_2, shaw, J&amp;V 1978_2 or file.cmf<br>
+    </small><font style="font-family: monospace;" size="-1">&nbsp;<a
+        href="#s">-s steps</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Override
+default
+patch
+sequence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      combination steps (default 3)</font><br style="font-family:
+      monospace;">
+    <font style="font-family: monospace;" size="-1">&nbsp;<a href="#W">-W
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        n|h|x</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Override
+serial
+port
+flow
+control:
+n
+=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      none, h = HW, x = Xon/Xoff</font><br style="font-family:
+      monospace;">
+    <small style="font-family: monospace;">&nbsp;<a href="#D">-D [level]</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Print
+      debug diagnostics to stderr<br>
+    </small><small style="font-family: monospace;">&nbsp;<a
+        href="ccxxmake.html#E">-E "description"</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Override
+the
+default
+overall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      description</small><br>
+    <small style="font-family: monospace;">&nbsp;<a href="#I">-I
+        "displayname"</a> &nbsp;&nbsp;&nbsp;&nbsp; </small><span
+      style="font-family: monospace;">Set display make and model
+      description</span><small style="font-family: monospace;">
+      (optional)<br>
+      &nbsp;</small><small style="font-family: monospace;"><a href="#T">-t
+
+
+
+
+
+
+
+
+
+
+
+        dtech</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Set display technology type<br>
+      &nbsp; &nbsp;
+      c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      CRT<br>
+      &nbsp;&nbsp;&nbsp;
+      m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      Plasma<br>
+      &nbsp;&nbsp;&nbsp;
+      l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      LCD<br>
+      &nbsp;&nbsp;&nbsp;
+      1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      LCD CCFL<br>
+      &nbsp;&nbsp;&nbsp;
+      2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL Wide Gamut<br>
+      &nbsp;&nbsp;&nbsp;
+      5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL Wide Gamut IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL Wide Gamut VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      CCFL Wide Gamut TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      White LED<br>
+      &nbsp;&nbsp;&nbsp;
+      8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      White LED IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      White LED VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      White LED TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RGB LED<br>
+      &nbsp;&nbsp;&nbsp;
+      b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RGB LED IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RGB LED VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RGB LED TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RG Phosphor<br>
+      &nbsp;&nbsp;&nbsp;
+      e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RG Phosphor IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RG Phosphor VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LCD
+      RG Phosphor TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD PFS Phosphor<br>
+      &nbsp;&nbsp;&nbsp;
+      s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD PFS Phosphor IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD PFS Phosphor VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD PFS Phosphor TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD GB-R Phosphor<br>
+      &nbsp;&nbsp;&nbsp;
+      x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD GB-R Phosphor IPS<br>
+      &nbsp;&nbsp;&nbsp;
+      y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD GB-R Phosphor VPA<br>
+      &nbsp;&nbsp;&nbsp;
+      z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LCD GB-R Phosphor TFT<br>
+      &nbsp;&nbsp;&nbsp;
+      o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LED
+      OLED<br>
+      &nbsp;&nbsp;&nbsp;
+      a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>LED
+      AMOLED<br>
+      &nbsp;&nbsp;&nbsp;
+      w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      LED WOLED<br>
+      &nbsp;&nbsp;&nbsp;
+      p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>DLP
+      Projector<br>
+      &nbsp;&nbsp;&nbsp;
+      h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>DLP
+      Projector RGB Filter Wheel<br>
+      &nbsp;&nbsp;&nbsp;
+      i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>DPL
+      Projector RGBW Filter Wheel<br>
+      &nbsp;&nbsp;&nbsp;
+      j&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>DLP
+      Projector RGBCMY Filter Wheel<br>
+      &nbsp;&nbsp;&nbsp;
+      u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+    </small><small style="font-family: monospace;"><small
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; </small>Unknown<br>
+    </small> <tt>&nbsp;<a href="#U">-U c</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Set UI selection character(s)</tt><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;</span><a
+        style=" font-family: monospace;" href="#Yrn">-<font size="-1">Y</font>
+        r|n</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp; Override refresh, non-refresh display
+        mode</span></font><br>
+    <tt>&nbsp;<a href="#YR">-Y R:<i>rate</i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+      Override measured refresh rate with rate Hz</tt><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;</span><a
+        style=" font-family: monospace;" href="#YA">-<font size="-1">Y</font>A</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; Use non-adaptive integration time mode
+        (if available).</span></font><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;</span><font
+      style="font-family: monospace;" size="-1"><a href="#file1"><span
+          style="font-style: italic;">correction.ccmx</span></a> |&nbsp;<a
+        href="#file2"></a></font><font style="font-family: monospace;"
+      size="-1"><a href="ccxxmake.html#file2">calibration.ccss</a></font><font
+      style="font-family: monospace;" size="-1"><br>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; File to save result to.</font><br>
+    <h3>Usage Details and Discussion</h3>
+    <a name="v"></a>The <b>-v</b> flag causes extra information to be
+    printed out during chartread operation.<br>
+    <br>
+    <a name="S"></a><span style="font-weight: bold;">-S</span> By
+    default a Colorimeter Correction Matrix (<span style="font-weight:
+      bold;">CCMX</span>) will be created from both <span
+      style="font-weight: bold;">Colorimeter</span> and <span
+      style="font-weight: bold;">Spectrometer</span> readings, which
+    allows correction for errors with a particular Colorimeter and
+    Display combination. If the <span style="font-weight: bold;">-S</span>
+    flag is used, then instead a Colorimeter Calibration Spectral Set (<span
+      style="font-weight: bold;">CCSS</span>) file is created from just
+    the <span style="font-weight: bold;">Spectrometer</span> readings,
+    that allows calibrating any suitable Colorimeter to the Display.<br>
+    <br>
+    <a name="f"></a><span style="font-weight: bold;">-f <span
+        style="font-style: italic;">ref.ti3[,targ.ti3]</span></span> By
+    <span style="text-decoration: underline;">default</span> <span
+      style="font-weight: bold;">ccxxmake</span> creates a <span
+      style="font-weight: bold;">CCMX</span> file by displaying test
+    patches on the screen, and then prompting you to measure them
+    interactively with the two instruments. An alternative is to create
+    a small number of test values using <span style="font-weight:
+      bold;">targen</span> suitable for display profiling (or use the <span
+      style="font-weight: bold;">ref/ccxx.ti1</span> file provided with
+    ArgyllCMS), and then measure them with the two instruments using <span
+      style="font-weight: bold;">dispread</span> to create a reference
+    and target .ti3 files, and then provide the two files as arguments
+    to <span style="font-weight: bold;">ccxxmake -f</span>. Normally
+    the reference file will be created using a spectral instrument and
+    you will want to use the <span style="font-weight: bold;">-s</span>
+    flag with dispread for this. If you want to use a colorimeter as a
+    reference instrument, then make sure that it is the first file
+    provided to the ccxxmake <span style="font-weight: bold;">-f</span>
+    option. The filenames should be concatenated with a <span
+      style="font-weight: bold;">","</span> separator without spaces.
+    You will also have to supply a display name using the <span
+      style="font-weight: bold;">-I</span> option and/or technology
+    description using <span style="font-weight: bold;">-T</span>.<br>
+    When creating a <span style="font-weight: bold;">CCSS</span> file,
+    only spectral readings from the display measured with the reference
+    instrument are needed, and a single <span style="font-weight:
+      bold;">.ti3</span> file should be provided.<br>
+    <br>
+    <a name="display"></a>When running on a UNIX based system that used
+    the X11 Windowing System, <b>ccxxmake</b> will by default use the
+    $DISPLAY environment variable to determine which display and screen
+    to read from. This can be overridden by supplying an X11 display
+    name to the <span style="font-weight: bold;">-display</span>
+    option. Note that if Xinerama is active, you can't select the screen
+    using $DISPLAY or -display, you have to select it using the <span
+      style="font-weight: bold;">-d</span> parameter.<br>
+    <br>
+    <a name="d"></a> By default the main display will be the location of
+    the test window. If the system has more than one display or screen,
+    an alternate display/screen can be selected with the <span
+      style="font-weight: bold;">-d</span> parameter. If you invoke <b>ccxxmake</b>
+    so as to display the usage information (i.e. "dispcal -?" or
+    "dispcal --"), then the discovered displays/screens will be listed.
+    Multiple displays may not be listed, if they appear as a single
+    display to the operating system (ie. the multi-display support is
+    hidden in the video card driver). On UNIX based system that used the
+    X11 Windowing System, the <span style="font-weight: bold;">-d</span>
+    parameter will override the screen specified by the $DISPLAY or
+    parameter.<br>
+    <br>
+    <a name="dnm"></a>Because of the difficulty cause by TwinView and
+    MergedFB in X11 based systems, you can optionally specify a separate
+    display number after the display that is going to be used to present
+    test patches, for accessing the VideoLUT hardware. This must be
+    specified as a single string, e.g. <span style="font-weight: bold;">-d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      1,2</span> . Some experimentation may be needed using <a
+      href="dispwin.html">dispwin</a> on such systems, to discover what
+    screen has access to the VideoLUT hardware, and which screens the
+    test patches appear on.<br>
+    <br>
+    <span style="font-weight: bold;"><a name="dweb"></a>-dweb</span> or
+    <span style="font-weight: bold;">-dweb:port</span> starts a
+    standalone web server on your machine, which then allows a local or
+    remote web browser to display the the color test patches. By default
+    port <span style="font-weight: bold;">8080</span> is used, but this
+    can be overridden by appending a <span style="font-weight: bold;">:</span>
+    and the port number i.e. <span style="font-weight: bold;">-dweb:8001</span>.
+    The URL will be <span style="font-weight: bold;">http://</span>
+    then name of the machine or its I.P. address followed by a colon and
+    the port number - e.g something like <span style="font-weight:
+      bold;">http://192.168.0.1:8080</span>. If you use the verbose
+    option (<span style="font-weight: bold;">-v</span>) then a likely
+    URL will be printed once the server is started, or you could run <span
+      style="font-weight: bold;">ipconfig</span> (MSWin) or <span
+      style="font-weight: bold;">/sbin/ifconfig</span> (Linux or OS X)
+    and identify an internet address for your machine that way. You may
+    have to modify any firewall to permit port 8080 to be accessed on
+    your machine.<br>
+    <br>
+    <a name="dcc"></a><span style="font-weight: bold;">-dcc</span> or <b>-dcc:<i>no</i></b>
+    causes test patches to be displayed using and available <a
+      href="http://en.wikipedia.org/wiki/Chromecast">ChromeCast</a> to
+    your TV. Use <b>-dcc:?</b> to display a list of ChromeCasts on your
+    local network. You may have to modify any firewall to permit port
+    8081 to be accessed on your machine if it falls back to the Default
+    receiver.<br>
+    <br>
+    <a name="dmadvr"></a><span style="font-weight: bold;">-dmadvr</span>
+    [MSWin only] causes test patches to be displayed using the MadVR
+    video renderer. Note that will have to start <b>MadTPG</b> before
+    running ccxxmake, and that while you can adjust the "Test Pattern
+    Configuration" controls, you should <u>not</u> normally alter the
+    "Existing Calibration" controls, as ccxxmake will set these
+    appropriately. <br>
+    <br>
+    <a name="dummy"></a><span style="font-weight: bold;">-ddummy</span>
+    causes test patches not to be displayed at all. This is useful when
+    used with the these appropriately. This is useful when patch values
+    are going to be displayed via the <a href="#C">-<span
+        style="font-weight: bold;">C</span></a><span style="font-weight:
+      bold;"> </span>option.<br>
+    <br>
+    <a name="p"></a>The <span style="font-weight: bold;">-p</span> flag
+    allows measuring in telephoto mode, using instruments that support
+    this mode, e.g. the ColorMunki. Telephoto mode is one for taking
+    emissive measurements from a distance (ie. telespectometer,
+    tele-colorimeter) mode, and typically would be used for measuring
+    projector type displays. If a device does not support a specific
+    telephoto mode, then the normal emissive mode may be suitable for
+    measuring projectors.<br>
+    <br>
+    <a name="a"></a>The <span style="font-weight: bold;">-a</span> flag
+    allows measuring in ambient mode, using instruments that support
+    this mode. This typically would be used for measuring projector type
+    displays when the light levels reflected from the projection surface
+    are very low. Note that this means that the color value will not be
+    quite as accurate, because the effect the projection surface has on
+    the color is not taken into account.<br>
+    <br>
+    <a name="y"></a> The <span style="font-weight: bold;">-y</span>
+    flag allows setting the Display Type used as a base for color
+    correction matrix CCMX creation. Only base calibration display types
+    will be listed. The selection typically determines two aspects of of
+    the instrument operation: <span style="font-weight: bold;">1)</span>
+    It may set the measuring mode to suite <a
+      href="http://en.wikipedia.org/wiki/Comparison_of_display_technology"><span
+        style="font-weight: bold;">refresh</span> or <span
+        style="font-weight: bold;">non-refresh</span> displays</a>.
+    Typically only LCD (Liquid Crystal) displays have a non-refresh
+    nature. <span style="font-weight: bold;">2)</span> It may select an
+    instrument internal calibration matrix suitable for a particular
+    display type. The selections available depends on the type and model
+    of instrument, and a list of the options for the discovered
+    instruments will be shown in the <a href="ArgyllDoc.html#CmdLine">usage</a>
+    information. For more details on what particular instruments support
+    and how this works, see <a href="instruments.html">Operation of
+      particular instruments</a>. Any CCMX created will work on top of
+    the selected Display Type, so to be valid, the same Display Type
+    must be selected whenever the CCMX is used with this instrument.
+    Installed CCMX files will automatically select the appropriate base
+    type.<br>
+    <br>
+    <a name="z"></a>The <b>-z</b> flag allows setting a different
+    Display Type for the reference spectral instrument, such as refresh
+    or non-refresh type, if it supports it. You may have to use this if
+    you are setting a specific base type for the colorimeter using -y,
+    and the spectrometer doesn't have this display type.<br>
+    <br>
+    <a name="P"></a> The <span style="font-weight: bold;">-P</span>
+    parameter allows you to position and size the test patch window. By
+    default it is places in the center of the screen, and sized
+    appropriately for the type of instrument. The <span
+      style="font-weight: bold;">ho</span> and <span
+      style="font-weight: bold;">vo</span> values govern the horizontal
+    and vertical offset respectively. A value of 0.0 positions the
+    window to the far left or top of the screen, a value of 0.5
+    positions it in the center of the screen (the default), and 1.0
+    positions it to the far right or bottom of the screen. If three
+    parameters are provided, then the <span style="font-weight: bold;">ss</span>
+    parameter is a scale factor for the test window size. A value of 0.5
+    for instance, would produce a half sized window. A value of 2.0 will
+    produce a double size window. If four parameters are provided, then
+    the last two set independent horizontal and vertical scaling
+    factors. Note that the ho,vo,ss or ho,vo,hs,vs numbers must be
+    specified as a single string (no space between the numbers and the
+    comma). For example, to create a double sized test window at the top
+    right of the screen, use <span style="font-weight: bold;">-P 1,0,2</span>
+    . To create a window twice as wide as high: <span
+      style="font-weight: bold;">-P 1,0,2,1</span>.<br>
+    <br>
+    <a name="F"></a> The <span style="font-weight: bold;">-F</span>
+    flag causes the while screen behind the test window to be masked
+    with black. This can aid black accuracy when measuring CRT displays
+    or projectors.<br>
+    <br>
+    <a name="n"></a><span style="font-weight: bold;">-n</span> When
+    running on a UNIX based system that used the X11 Windowing System, <b>dispcal</b>
+    normally selects the override redirect so that the test window will
+    appear above any other windows on the display. On some systems this
+    can interfere with window manager operation, and the <b>-n</b>
+    option turns this behaviour off.<br>
+    <br>
+    <a name="N"></a><span style="font-weight: bold;">-N</span> Any
+    instrument that requires regular calibration will ask for
+    calibration on initial start-up. Sometimes this can be awkward if
+    the instrument is being mounted in some sort of measuring jig, or
+    annoying if several sets of readings are being taken in quick
+    succession. The -<span style="font-weight: bold;">N</span>
+    suppresses this initial calibration if a valid and not timed out
+    previous calibration is recorded in the instrument or on the host
+    computer. It is advisable to only use this option on the second and
+    subsequent measurements in a single session.<br>
+    <br>
+    <a name="L"></a> The -<span style="font-weight: bold;">H</span>
+    option on high resolution spectral mode, if the instrument supports
+    it, such as the Eye-One Pro. See <a href="instruments.html">Operation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      of particular instruments</a> for more details. This may give
+    better accuracy for display measurements.<br>
+    <br>
+    <a name="C"></a> The -<span style="font-weight: bold;">C</span> <span
+      style="font-weight: bold;">"command" </span>option allows a
+    method of relaying each test value to some other display than that
+    on the system running dispcal (for instance, a photo frame, PDA
+    screen etc.), by causing the given command to be invoked to the
+    shell, with six arguments. The first three arguments are the RGB
+    test color as integers in the range 0 to 255, the second three
+    parameters are the RGB test color as floating point numbers in the
+    range 0.0 to 1.0. The script or tool should relay the given color to
+    the screen in some manner (e.g. by generating a raster file of the
+    given color and sending it to the display being profiled), before
+    returning. Note that a test window will also be created on the
+    system running ccxxmake.<br>
+    <br>
+    <a name="M"></a>The -<span style="font-weight: bold;">M</span> <span
+      style="font-weight: bold;">"command" </span>option allows a
+    method of gathering each test value from some external source, such
+    as an instrument that is not directly supported by Argyll. The given
+    command is invoked to the shell, with six arguments. The first three
+    arguments are the RGB test color as integers in the range 0 to 255,
+    the second three parameters are the RGB test color as floating point
+    numbers in the range 0.0 to 1.0. The script or tool should create a
+    file called <span style="font-weight: bold;">"command.meas</span>"
+    that contains the XYZ values for the given RGB (or measured from the
+    test window) in cd/m^2 as three numbers separated by spaces, before
+    returning. If the command returns a non-zero return value, cxxmake
+    will abort. Note that a test window will also be created on the
+    system running ccxxmake.<br>
+    <br>
+    <a name="o"></a> (CCMX creation) The <b>-o</b> flag allows
+    specifying a tristimulus observer, and is used to compute
+    tristimulus values from spectral readings.&nbsp; The following
+    choices are available:<br>
+    <b>&nbsp; 1931_2</b> selects the standard CIE 1931 2 degree
+    observer. The default.<br>
+    &nbsp; <b>1964_10</b> selects the standard CIE 1964 10 degree
+    observer.<br>
+    <b>&nbsp; 2012_2</b> selects the proposed CIE 2012 2 degree
+    observer.<br>
+    &nbsp; <b>2012_10</b> selects the proposed CIE 2012 10 degree
+    observer.<br>
+    &nbsp; <b>1955_2</b> selects the Stiles and Birch 1955 2 degree
+    observer<br>
+    &nbsp; <b>1978_2 </b>selects the Judd and Voss 1978 2 degree
+    observer<br>
+    &nbsp; <b>shaw</b> selects the Shaw and Fairchild 1997 2 degree
+    observer<br>
+    &nbsp; <i><b>file.cmf</b></i> selects an observer specified by the
+    given <a href="File_Formats.html#.cmf">.cmf</a> file.<br>
+    <br>
+    <a name="s"></a>The <b>-s steps</b><span style="font-weight: bold;"></span>
+    parameter overrides the default number of test patch combination
+    steps used in measuring a colorimeter &amp; display combination.<span
+      style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span
+      style="font-weight: bold;"></span>&nbsp; The steps are those out
+    of every combination of R,G &amp; B values of the given number of
+    steps that have at least one colorant at 100%. So 2 steps gives 7
+    test patches, 3 gives 19, 4 gives 37, 5 gives 61, 6 gives 91 etc.
+    Note that typically this won't make much difference to the resulting
+    calibration, since it depends primarily on the underlying spectral
+    characteristics of the display.<br>
+    <br>
+    <a name="W"></a>The <b>-W</b> <span style="font-weight: bold;">n|h|x</span>
+    parameter overrides the default serial communications flow control
+    setting. The value <span style="font-weight: bold;">n</span> turns
+    all flow control off, <span style="font-weight: bold;">h</span>
+    sets hardware handshaking, and <span style="font-weight: bold;">x</span>
+    sets Xon/Xoff handshaking. This commend may be useful in workaround
+    serial communications issues with some systems and cables. <br>
+    <br>
+    <a name="D"></a>The <b>-D</b> flag causes communications and other
+    instrument diagnostics to be printed to stdout. A level can be set
+    between 1 .. 9, that may give progressively more verbose
+    information, depending on the instrument. This can be useful in
+    tracking down why an instrument can't connect.<br>
+    <br>
+    <a name="E"></a>The <b>-E</b> parameter allows overriding the <span
+      style="font-weight: bold;">ccmx/ccss</span> files overall
+    description tag. Normally this is not necessary. With most command
+    line shells, it will be necessary to enclose the parameter with
+    double quotes, so that spaces and other special characters are
+    included in the parameter, and not mistaken for the start of another
+    flag, or as a final command line parameter. <br>
+    <br>
+    <a name="I"></a>The <b>-I</b> parameter allows optional setting of
+    the display description string in the resulting <span
+      style="font-weight: bold;">ccmx/ccss</span> file. Since the
+    default display description is probably very generic, it is <span
+      style="font-weight: bold;">highly recommended</span> that a
+    description of the make and model of the display be provided here.
+    The default or given display description will be printed before the
+    menu. With most command line shells, it will be necessary to enclose
+    the parameter with double quotes, so that spaces and other special
+    characters are included in the parameter, and not mistaken for the
+    start of another flag, or as a final command line parameters.<br>
+    <br>
+    <a name="T"></a>The <b>-t</b> parameter allows setting of the
+    display technology type from the available list. You can get a usage
+    that includes the list using "ccxxmake -??". This is a required
+    parameter, since it conveys information about the refresh type and
+    settling time of the display. If the specific details of the display
+    are not known (i.e. backlight type, pannel type etc.), then choose
+    the next most generic type. If none of these are applicable, choose
+    "Unknown".<br>
+    <br>
+    <a name="U"></a>The <b>-U</b> parameter allows setting of the user
+    interface selection character this display type can be selected by,
+    if installed. This character will only be used if there is no clash
+    with any preceding selections. Characters in the range 0-9, A-Z a-z
+    can be used.<br>
+    <br>
+    <a name="Yrn"></a>The -<span style="font-weight: bold;">Y r </span>and
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <b>-Y n</b> options overrides the refresh display mode set by the <a
+      href="spotread.html#y">-y display type selection</a>, with <b>-Y</b><span
+      style="font-weight: bold;"> r</span> forcing refresh display mode,
+    and <b>-Y n</b> forcing a non-refresh display mode. Not all
+    instruments support a display measurement refresh mode, or the
+    ability to override the mode set by the display type selection.<br>
+    <br>
+    <a name="YR"></a> The -<span style="font-weight: bold;">Y R:<i>rate</i></span>
+    options overrides calibration of the instrument refresh rate. This
+    may be useful if the instrument supports this function and the
+    refresh rate cannot be accurately calibrated from the display
+    itself.<br>
+    <br>
+    <a name="YA"></a> The -<span style="font-weight: bold;">Y A</span>
+    option uses a non-adaptive integration time emission measurement
+    mode, if the instrument supports it, such as the Eye-One Pro or
+    ColorMunki. By default an adaptive integration time measurement mode
+    will be used for emission measurements, but some instruments support
+    a fixed integration time mode that can be used with display devices.
+    This may give increased consistency and faster measurement times,
+    but may also give less accurate low level readings.<br>
+    <br>
+    <a name="file1"></a>The <span style="font-weight: bold; font-style:
+      italic;">correction.ccmx</span> is the name of the file to save
+    the resulting <a href="File_Formats.html#.ccmx">Colorimeter
+      Correction Matrix</a> to. It is best to give it a short but
+    informative name that includes the Colorimeter model and the display
+    make and model. By convention it should have a <span
+      style="font-weight: bold;">.ccmx</span> file extension.<br>
+    <br>
+    <a name="file2"></a>The <span style="font-weight: bold; font-style:
+      italic;">correction.ccss</span> is the name of the file to save
+    the resulting <a href="File_Formats.html#.ccss">Colorimeter
+      Calibration Spectral Samples</a> to. It is best to give it a short
+    but informative name that includes the display technology or model.
+    By convention it should have a <span style="font-weight: bold;">.ccss</span>
+    file extension.<br>
+    <br>
+    If you are going to use the same CCMX or CCSS file all the time,
+    then you may want to set the <a href="Environment.html">ARGYLL_COLMTER_CAL_SPEC_SET</a>
+    environment variable.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;">
+    <h3>Instrument Communications:</h3>
+    Unlike the other measurement utilities,<span style="font-weight:
+      bold;"> ccxxmake</span> doesn't connect to the instrument until it
+    is about to make a measurement. This allows for the possibility of
+    using a different instrument for each measurement.<br>
+    <br>
+    It will display a menu:<span style="font-style: italic;"></span><br>
+    <br>
+    Press 1 .. 4:<br>
+    1) Select an instrument, Currently 1 'usb:/bus4/dev2/ (GretagMacbeth
+    i1 Pro)'<br>
+    2) Measure test patches with current instrument<br>
+    3) [ Compute Colorimeter Correction Matrix &amp; save it ]<br>
+    4) Exit<br>
+    <br>
+    For creating a CCMX there are two measurements to be made, after
+    which the correction matrix can be computed and saved. Before each
+    measurement, the instrument may need calibrating. For creating a
+    CCSS a single measurement is needed.<br>
+    <br>
+    &nbsp;A spectral measurement using a spectral instrument is always
+    needed.<br>
+    <br>
+    &nbsp;A measurement using the Colorimeter that the correction matrix
+    is being created for is needed in the case of creating a CCMX, but <span
+      style="font-weight: bold;">not</span> needed when creating a CCSS.<br>
+    <br>
+    There will be a message before the menu indicating which of the
+    measurements has been completed.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;">
+    <h4>Display Setup:</h4>
+    Because ccmx/ccss is measuring spectral matching, the exact levels
+    of each channel is not important, so the display settings or
+    calibration state shouldn't make any difference to the result, as
+    long as it is the same for the readings of both instruments.
+    Similarly, the number and variety of test patches shouldn't make a
+    huge difference, as long as there is at least Red, Green, Blue and
+    White test patches.<br>
+    &nbsp;<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

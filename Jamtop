@@ -1,0 +1,202 @@
+
+# This holds the common definitions for Argyll that all the
+# subdirectory jam's will include (even if run in the sub directory) 
+
+Echo "Argyll Jamrules has been read" ;
+
+# Default install base directory is same directory as Jamtop,
+# but can be overriden in the command line.
+DESTDIR ?= [ NormPaths  . ] ;
+
+# Default prefix is empty, but can be overriden in the command line.
+PREFIX ?= "" ;
+
+# Default ref file sub-directory is "ref", but can be overriden in the command line.
+REFSUBDIR ?= "ref" ;
+
+Echo "DESTDIR = '$(DESTDIR)', PREFIX = '$(PREFIX)', REFSUBDIR = '$(REFSUBDIR)'" ;
+
+# Keep this DESTDIR anchored to Jamtop. PREFIX is used literally
+ANCHORED_PATH_VARS = DESTDIR ;
+
+
+# Should we also allow CFLAGS, CXXFLAGS, CPPFLAGS & LDFLAGS env. variables
+# to have effect ?
+
+
+# Tell standalone libraries that they are part of Argyll:
+DEFINES += ARGYLLCMS ;
+
+# enable serial instruments & support
+USE_SERIAL = true ;	
+
+# enable fast serial instruments & support
+USE_FAST_SERIAL = true ;		# (Implicit in USE_SERIAL too)	
+
+# enable USB instruments & support
+USE_USB = true ;	
+
+# enable dummy Demo Instrument (only if code is available)
+USE_DEMOINST = true ;
+
+# enable Video Test Patch Generator and 3DLUT device support 
+# (V2.0.0 and above)
+USE_VTPGLUT = false ;
+
+# enable Printer device support 
+USE_PRINTER = false ;
+
+# enable CMF Measurement device support
+USE_CMFM = true ;	
+
+# Use ArgyllCMS version of libusb (deprecated - don't use)
+USE_LIBUSB = false ;
+
+if $(USE_LIBUSB) = true {
+
+	# Use libusb1 rather than libusb0 & libusb0-win32 (deprecated)
+	USE_LIBUSB1 = true ;
+
+	# Make the USB V1 library static
+	LIBUSB_IS_DLL = false ;
+
+	# Always use DLL for MSWin, because driver install expects it (.inf)
+	if $(NT) {
+		LIBUSB_IS_DLL = true ;
+	}
+
+	# Set the libubs1 library name.
+	LIBUSB1NAME = libusb-1.0A ;
+}
+
+# For testing CCast
+#DEFINES += CCTEST_PATTERN ;
+
+# Information for compiling and linking GUI programs
+
+if $(UNIX) {
+	if $(OS) = MACOSX {
+		LINKFLAGS += -framework IOKit ;
+		LINKFLAGS += -framework CoreFoundation ;
+		LINKFLAGS += -framework AppKit ;
+		LINKFLAGS += -framework AudioToolbox ;
+
+	# Hmm. Would be nice to use pkg-config here, if system has it.
+	} else {
+		if [ GLOB /usr/X11R6/include/X11 : X.h ] {
+			LibWinH = /usr/X11R6/include ;
+		} else if [ GLOB /usr/include/X11 : X.h ] {
+			LibWinH = /usr/include ;
+		} else if [ GLOB /usr/local/include/X11 : X.h ] {
+			LibWinH = /usr/local/include ;
+		} else {
+			EXIT Unable to locate the X11 include files ;
+		}
+
+		if $(HOST64) {
+			if [ GLOB /usr/X11R6/lib : libX11.so libX11.a ] {
+				LibWinD = /usr/X11R6/lib ;
+			} else if [ GLOB /usr/lib/x86_64-linux-gnu : libX11.so libX11.a ] {
+				LibWinD = /usr/lib/x86_64-linux-gnu ;
+			} else if [ GLOB /usr/lib64 : libX11.so libX11.a ] {
+				LibWinD = /usr/lib64 ;
+			} else if [ GLOB /usr/lib : libX11.so libX11.a ] {
+				LibWinD = /usr/lib ;
+			} else if [ GLOB /usr/local/lib : libX11.so libX11.a ] {
+				LibWinD = /usr/local/lib ;
+			} else {
+				ECHO Unable to locate the 64 bit X11 library files ;
+			}
+		} else {
+			if [ GLOB /usr/X11R6/lib : libX11.so libX11.a ] {
+				LibWinD = /usr/X11R6/lib ;
+			} else if [ GLOB /usr/lib/i386-linux-gnu : libX11.so libX11.a ] {
+				LibWinD = /usr/lib/i386-linux-gnu ;
+			} else if [ GLOB /usr/lib : libX11.so libX11.a ] {
+				LibWinD = /usr/lib ;
+			} else if [ GLOB /usr/local/lib : libX11.so libX11.a ] {
+				LibWinD = /usr/local/lib ;
+			} else {
+				ECHO Unable to locate the 32 bit X11 library files ;
+			}
+		}
+		if $(OS) = FREEBSD {
+			LINKFLAGS += -g -lrt -lusb ;
+			GUILINKFLAGS += -L$(LibWinD) -g -lX11 -lXext -lXxf86vm -lXinerama -lXrandr -lXau -lXdmcp -lXss  ;
+		} else if $(OS) = OPENBSD {
+			LINKFLAGS += ;
+			GUILINKFLAGS += -L$(LibWinD) -g -lX11 -lXext -lXxf86vm -lXinerama -lXrandr -lXau -lXdmcp -lXss -L/usr/local/lib ;
+		} else {
+			LINKFLAGS += -ldl -lrt ;
+			GUILINKFLAGS += -L$(LibWinD) -lX11 -lXext -lXxf86vm -lXinerama -lXrandr -lXau -lXdmcp -lXss ;
+		}
+		# HDRS += $(LibWinH) ; 
+	}
+}
+
+# Standard system library support:
+
+# Check rule. $(<) is library name, $(>) is optional alternate library name
+# $(3) is optional #include sub-directory, i.e. "/openssl"
+rule CheckForLibrary {
+	UCASE = $(<:U) ;
+	lcase = $(<:L) ;
+	libname = $(lcase) ;
+	subd = "" ;
+
+	if $(>) {
+		libname = $(>) ;
+	}
+
+	if $(3) {
+		subd = $(3) ;
+	}
+
+	if ! $(BUILTIN_$(UCASE)) && $(UNIX) {
+		if  [ GLOB /usr/include$(subd) : $(lcase).h $(lcase)lib.h ]
+	     || [ GLOB /usr/local/include$(subd) : $(lcase).h $(lcase)lib.h ]
+		 || [ GLOB /usr/include/x86_64-linux-gnu$(subd) : $(lcase).h $(lcase)lib.h ]
+	     || [ GLOB /usr/include/i386-linux-gnu$(subd) : $(lcase).h $(lcase)lib.h ] {
+			if  [ GLOB /usr/lib : lib$(lcase).so ] || [ GLOB /usr/lib : lib$(lcase).a ]
+			 || [ GLOB /usr/local/lib : lib$(lcase).so ] || [ GLOB /usr/local/lib : lib$(lcase).a ]
+			 || [ GLOB /usr/lib64 : lib$(lcase).so ] || [ GLOB /usr/lib64 : lib$(lcase).a ]
+			 || [ GLOB /usr/lib/x86_64-linux-gnu : lib$(lcase).so ]
+			 || [ GLOB /usr/lib/x86_64-linux-gnu : lib$(lcase).a ]
+	         || [ GLOB /usr/lib/i386-linux-gnu : lib$(lcase).so ]
+	         || [ GLOB /usr/lib/i386-linux-gnu : lib$(lcase).a ] {
+				echo "Using system $(UCASE) library" ;
+				$(UCASE)LIB = ;
+				$(UCASE)INC = ;
+				LINKFLAGS += $(LINKFLAG)$(lcase) ;
+				HAVE_$(UCASE) = true ;
+			}
+		}
+	}
+	
+	# If nothing else, use Argyll supplied $(UCASE) library
+	if ! $(HAVE_$(UCASE)) || $(BUILTIN_$(UCASE)) {
+		echo "Using Argyll $(UCASE) library" ;
+		$(UCASE)LIB = ../$(libname)/lib$(lcase).lib ;
+		$(UCASE)INC = ../$(libname) ;
+	}
+}
+
+# See if we have a system TIFF, JPEG, PNG or ZLIB library.
+# Note this generates: $(TIFFLIB) $(TIFFINC) $(JPEGLIB) $(JPEGINC) $(PNGLIB)
+# $(PNGINC) $(ZLIBLIB) $(ZINC)
+# !!!!! Add to makepackagebin.sh -sBUILTIN_XXX=true !!!!!
+CheckForLibrary "TIFF" ;
+CheckForLibrary "JPEG" ;
+CheckForLibrary "PNG" ;
+CheckForLibrary "Z" : "zlib" ;
+
+CheckForLibrary "SSL" : : "/openssl" ;
+# if OpenSSL not found:
+if $(SSLLIB) {
+	SSLINC = ../ccast/axTLS ; 
+	SSLLIB = ../ccast/axTLS/libaxtls ; 
+}
+
+# testing
+#DSTDIR = var ;
+#SRCDIR = .. ;

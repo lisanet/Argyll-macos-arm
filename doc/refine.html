@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>refine</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>tweak/refine</b></h2>
+    <h3>Summary</h3>
+    <span style="font-weight: bold;">Refine</span> creates an abstract
+    profile, by comparing CIE measurement values from two test charts.
+    The charts will usually be in <a href="File_Formats.html#.ti3">.ti3</a>
+    format, but only XYZ, Lab or spectral values will be used (ie. all
+    device space values are ignored). Typically the charts would be
+    printed on a target system (the one being emulated, say a printing
+    press, or created using an ideal target profile such as Rec709), and
+    the proofing system (the device that is being profiled). The
+    abstract profile that <span style="font-weight: bold;">refine</span>
+    produces will be a correction that makes the proofing system behave
+    more like the target. This can then be used to recreate the proofing
+    systems ICC profile, or device link. By feeding a previous abstract
+    correction profile in as well, iterative improvement can be made to
+    the proofing reproduction.<br>
+    <br>
+    <a href="colverify.html">colverify</a> is a useful tool to use on
+    the two test charts, to check how well the refinement is proceeding.
+    If a white point relative match is being created (refine -R), then
+    use veryify -N.<br>
+    <h3>Usage Summary</h3>
+    <tt><small>usage: refine [-options] cietarget ciecurrent [outdevicc]
+        [inabs] outabs<br>
+        &nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        Verbose<br>
+        &nbsp;-c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Create
+
+
+
+
+
+        initial abstract correction profile<br>
+        &nbsp;-g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Don't
+
+
+
+
+
+        impose output device gamut limit<br>
+        &nbsp;-r res&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set
+        abstract profile clut resolution (default 33)<br>
+        &nbsp;-d factor&nbsp;&nbsp;&nbsp;&nbsp; Override default damping
+        factor (default 0.950000)<br>
+        &nbsp;-R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Aim
+
+
+
+
+
+        for white point relative match rather than absolute<br>
+        &nbsp;</small></tt><tt><small><small><small>-f
+            [illum]&nbsp;&nbsp;&nbsp; Use Fluorescent Whitening Agent
+            compensation [opt. simulated inst. illum.:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+            M0, M1, M2, A, C, D50 (def.), D50M2, D65, F5, F8, F10 or
+            file.sp]<br>
+            &nbsp;-i illum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose
+            illuminant for computation of CIE XYZ from spectral data
+            &amp; FWA:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+            A, C, D50 (def.), D50M2, D65, F5, F8, F10 or file.sp</small></small><br>
+        &nbsp;-o observ&nbsp;&nbsp;&nbsp;&nbsp; Choose CIE Observer for
+        spectral data:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1931_2,
+
+
+
+
+
+        1964_10, </small></tt><tt><small><tt><small>2012_2 (def.),
+            2012_10, </small></tt>S&amp;B 1955_2, J&amp;V 1978_2 or
+        file.cmf<br>
+        &nbsp;<span style="font-style: italic;">cietarget&nbsp;</span>&nbsp;&nbsp;&nbsp;
+
+
+
+
+        Target CIE or spectral values, CGATS file (e.g. .ti3)<br>
+        &nbsp;<span style="font-style: italic;">ciecurrent</span>&nbsp;&nbsp;&nbsp;
+
+
+
+
+        Actual CIE or spectral values, CGATS file (e.g. .ti3)<br>
+        &nbsp;[<span style="font-style: italic;">outdevicc</span>]&nbsp;&nbsp;
+
+
+
+
+        Output device ICC profile to set gamut limit (not used if -g)<br>
+        &nbsp;[<span style="font-style: italic;">inabs</span>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous
+
+
+
+
+
+        abstract correction ICC profile (not used if -c)<br>
+        &nbsp;<span style="font-style: italic;">outabs</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Created/refined
+
+
+
+
+
+        abstract correction ICC profile</small></tt><br>
+    <h3>Usage Details</h3>
+    <b>refine</b> provides a way of improving the profile accuracy of a
+    proofing system.<br>
+    <br>
+    The <b>-v</b> flag prints out extra information during the
+    checking, and prints each patch value, rather than just a summary.<br>
+    <br>
+    The <b>-c</b> option is used when refine is being used for the
+    first time, and there is no previous abstract profile to continue
+    refining. If <span style="font-weight: bold;">-c</span> is used,
+    then the name of the previous abstract correction profile should not
+    be supplied.<br>
+    <br>
+    If the <b>-g </b>flag indicates that an output device profile is
+    not being supplied, and that corrections should be attempted, even
+    if the colors are outside the devices gamut. Normally an output
+    device profile is supplied, and corrections aren't applied to colors
+    outside the devices gamut, since this will not achieve anything
+    useful, and can distort the results.<br>
+    <br>
+    If the <b>-r </b>parameter overrides the resolution of the CLUT
+    grid used in the abstract profile. By default the value is 33, but
+    other<br>
+    values can be chosen. An odd number is recommended. <br>
+    <br>
+    If the <b>-d </b>parameter sets how aggressively refine should try
+    and correct errors. Normally it will try and exactly compensate for
+    the color errors revealed in comparing the two measurement files,
+    but if the device behaviour is unusual, or not very repeatable, this
+    may result in successive applications of refine making things worse,
+    rather than better. If this is the case, try using a smaller number,
+    such as 0.8, or 0.5.<br>
+    <br>
+    If the <span style="font-weight: bold;">-R</span> flag is used,
+    then refine creates an abstract profile for improving the match of
+    the patch values when&nbsp; interpreted in a white point relative
+    (ie. Relative Colorimetric) intent. If used to create a corrected
+    device link profile using <a href="collink.html">collink</a>,
+    remember to create a Relative colorimetric intent device link
+    profile.<br>
+    <br>
+    The <b>-f</b> flag enables Fluorescent Whitening Agent (FWA)
+    compensation. This only works if spectral data is available and, the
+    instrument is not UV filtered.&nbsp; FWA compensation adjusts the
+    spectral samples so that they appear to have been measured using an
+    illuminant that has a different level of Ultra Violet to the one the
+    instrument actually used in the measurement. The optional
+    illumination parameter allows specifying a standard or custom
+    illumination spectrum to be used as the similated instrument
+    illuminant, overriding the default <b>D50</b> or CIE computation
+    illuminant used for FWA (see <b>-i</b> below<b>). </b>See <a
+      href="colprof.html#f">colprof -f</a> for a fuller explanation. The
+    same value should be used as was used during the creation of the
+    profile.<br>
+    <br>
+    The <b>-i</b> flag allows specifying a standard or custom
+    illumination spectrum, applied to the spectral test point values to
+    compute CIE tristimulus values. <b>A</b>, <b>D50</b>, <b>D50M2,
+      D65</b>, <b>F5</b>, <b>F8</b>, <b>F10</b> are a selection of
+    standard illuminant spectrums, with <b>D50</b> being the default.
+    If a filename is specified instead, it will be assumed to be an
+    Argyll specific <a href="File_Formats.html#.sp">.sp</a> spectrum
+    file. If FWA compensation is used during measurement, this
+    illuminant will be used by default as the simulated instrument
+    illuminant. The same value should be used as was used during the
+    creation of the profile.<br>
+    <br>
+    The <b>-o</b> flag allows specifying a tristimulus observer, and is
+    used to compute CIE tristimulus values. The following choices are
+    available:<br>
+    <b>&nbsp; 1931_2</b> selects the standard CIE 1931 2 degree
+    observer.<br>
+    &nbsp; <b>1964_10</b> selects the standard CIE 1964 10 degree
+    observer.<br>
+    <b>&nbsp; 2012_2</b> selects the proposed CIE 2012 2 degree observer<br>
+    &nbsp; <b>2012_10</b> selects the proposed CIE 2012 10 degree
+    observer<br>
+    &nbsp; <b>1955_2</b> selects the Stiles and Birch 1955 2 degree
+    observer<br>
+    &nbsp; <b>1978_2 </b>selects the Judd and Voss 1978 2 degree
+    observer<br>
+    &nbsp; <b>shaw</b> selects the Shaw and Fairchild 1997 2 degree
+    observer<br>
+    &nbsp; <i><b>file.cmf</b></i> selects an observer specified by the
+    given <a href="File_Formats.html#.cmf">.cmf</a> file.<br>
+    <br>
+    If both CIE and spectral values are present in the input files, the
+    CIE values will be used by default. Using the <span
+      style="font-weight: bold;">-i</span>, <span style="font-weight:
+      bold;">-o</span> or <span style="font-weight: bold;">-f</span>
+    flag will force spectral values to be used. The the <span
+      style="font-weight: bold;">-i</span>, <span style="font-weight:
+      bold;">-o</span> or <span style="font-weight: bold;">-f</span>
+    flags will apply to both the target and measured input files.<br>
+    <br>
+    <span style="font-style: italic; font-weight: bold;">cietarget</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Is
+
+
+
+
+
+    the filename of the target CIE or spectral values. This is a <a
+      href="File_Formats.html#CGATS">CGATS</a> file (e.g. a <a
+      href="File_Formats.html#.ti3">.ti3</a> made using <a
+      href="chartread.html">chartread</a>). These are the color values
+    wanted for each patch in the test chart, typically the product of
+    the target print system.<br>
+    <br>
+    <span style="font-style: italic; font-weight: bold;">ciecurrent</span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Is the filename of the
+    actual, current measured CIE or spectral values. This is a <a
+      href="File_Formats.html#CGATS">CGATS</a> file (e.g. a <a
+      href="File_Formats.html#.ti3">.ti3</a> made using <a
+      href="chartread.html">chartread</a>). The errors between these
+    patches and the patches in the <span style="font-style: italic;
+      font-weight: bold;">cietarget</span> file will be used to create a
+    correction profile.<br>
+    <br>
+    &nbsp;[<span style="font-style: italic; font-weight: bold;">outdevicc</span>]&nbsp;&nbsp;&nbsp;&nbsp;
+If
+
+
+
+
+
+    the <span style="font-weight: bold;">-g</span> flag is not used,
+    then the output device ICC profile should be supplied here, to allow
+    <span style="font-weight: bold;">refine</span> to limit its
+    corrections to colors that are within the gamut of the device.<br>
+    <br>
+    &nbsp;[<span style="font-weight: bold; font-style: italic;">inabs</span>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+After
+
+
+
+
+
+    the first correction has been created, subsequent corrections need
+    to improve upon previous ones, so the previous correction profile
+    should be provided here. For the first correction, the <span
+      style="font-weight: bold;">-c</span> flag should be used, and this
+    argument is omitted.<br>
+    <br>
+    &nbsp;<span style="font-weight: bold; font-style: italic;">outabs</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The
+
+
+
+
+
+    name of the created or refined abstract correction ICC profile<br>
+    <br>
+    <h3> Discussion</h3>
+    <span style="font-weight: bold;">Refine</span> is typically used in
+    a proofing situation, in which a verification chart is being used to
+    check the accuracy of a proofing system. (It might also be used for
+    more arbitrary color alterations by created two test chart files by
+    hand.) By using the errors between the target chart and the measured
+    values, refine attempts to improve the match between the proofing
+    system and its target.<br>
+    <br>
+    There is facility in <a href="collink.html">collink</a>, <a
+      href="colprof.html">colprof</a> and <a href="revfix.html">revfix</a>
+    to incorporate an abstract profile. <br>
+    <br>
+    For systems using two device profiles or a device link to convert
+    between the target space printing files and the proofing device
+    space, the following would be a typical scenario:<br>
+    <br>
+    <div style="margin-left: 40px;">We have a reference set of test
+      chart values, read from the target system <span
+        style="font-weight: bold;">reference.ti3</span>. The ICC profile
+      for the target system is <span style="font-weight: bold;">target.icm</span>.
+      The ICC profile for the proofing system is <span
+        style="font-weight: bold;">proofer.icm</span>. If using a device
+      link, the device link used to print proofer test charts is
+      currently <span style="font-weight: bold;">target_proofer.icm</span>:<br>
+      <br>
+      <br>
+      First we print the test chart out on the proofing system and read
+      it in, resulting in a <span style="font-weight: bold;">chart1.ti3</span>
+      file.<br>
+      <br>
+      Lets check how well the proofing system current matches using
+      colverify:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; colverify&nbsp; reference.ti3 chart1.ti3<br>
+      <br>
+      We then create our initial abstract correction fix profile <span
+        style="font-weight: bold;">fix1.icm</span> using refine:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; refine -v -c&nbsp; reference.ti3 chart1.ti3
+      proofer.icm fix1.icm<br>
+      <br>
+      Applying this to your process for creating the proofer device
+      profile or target to proofing device link (choose one of the three
+      options below, depending whether you are using the proofer profile
+      and just want to alter its colorimetric B2A table using <span
+        style="font-weight: bold;">revfix</span>, whether you are going
+      to recreate the proofer file from the original measurement data
+      using&nbsp; <span style="font-weight: bold;">colprof</span>, or
+      whether you are using a device link profile created using <span
+        style="font-weight: bold;">collink</span>):<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; revfix -v -1 -ke -p fix1.icm proofer.icm
+      proofer_fix1.icm<br>
+      or<br>
+      &nbsp;&nbsp;&nbsp; copy proofer.ti3 proofer_fix1.ti3<br>
+      &nbsp;&nbsp;&nbsp; colprof -v -p fix1.icm proofer_fix1<br>
+      or<br>
+      &nbsp;&nbsp;&nbsp; collink -v -s -ia -oa -p fix1.icm target.icm
+      proofer.icm target_proofer_fix1.icm<br>
+      <br>
+      Note that the above example is a simple one - you should use all
+      the same options as you used to create your initial <span
+        style="font-weight: bold;"><span style="font-weight: bold;"></span>proofer.icm&nbsp;
+
+
+
+
+
+      </span>or <span style="font-weight: bold;">target_proofer.icm</span>,
+      with the addition of the "-p fix1.icm" option to specify the
+      abstract correction profile be applied.<br>
+      <br>
+      Use the <span style="font-weight: bold;">proofer_fix1.icm</span>
+      or <span style="font-weight: bold;">target_proofer_fix1.icm</span>
+      to print out the test chart again, and read it in, resulting in <span
+        style="font-weight: bold;">chart2.ti3</span> file.<br>
+      <br>
+      Lets check how well the proofing system matches after this first
+      round of refinement using colverify:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; colverify&nbsp; reference.ti3 chart2.ti3<br>
+      <br>
+      <br>
+      <span style="font-weight: bold;"><span style="font-weight: bold;">&gt;&gt;&gt;</span></span><br>
+      <span style="font-weight: bold;"><span style="font-weight: bold;"></span></span><br>
+      <span style="font-weight: bold;"><span style="font-weight: bold;">&nbsp;</span></span>We
+can
+
+
+
+
+
+      then start another round of improvement:<br>
+      <br>
+      We refine our previous abstract correction fix profile using
+      refine:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; refine -v&nbsp; reference.ti3 chart2.ti3
+      proofer.icm fix1.icm fix2.icm<br>
+      <br>
+      Applying this new abstract profile to our process for creating the
+      proofing device profile or link again:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; revfix -v -1 -ke -p fix2.icm proofer.icm
+      proofer_fix2.icm<br>
+      or<br>
+      &nbsp;&nbsp;&nbsp; copy proofer.ti3 proofer_fix2.ti3<br>
+      &nbsp;&nbsp;&nbsp; colprof -v -p fix2.icm proofer_fix2<br>
+      or<br>
+      &nbsp;&nbsp;&nbsp; collink -v -s -ia -oa -p fix2.icm target.icm
+      proofer.icm target_proofer_fix2.icm<br>
+      <br>
+      Use the <span style="font-weight: bold;">proofer_fix2.icm</span>
+      or <span style="font-weight: bold;">target_proofer_fix2.icm</span>
+      to print out the test chart again, and read it in, resulting in <span
+        style="font-weight: bold;">chart3.ti3</span> file.<br>
+      <br>
+      Check again how well the proofing system matches after this first
+      round of refinement using colverify:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; colverify&nbsp; reference.ti3 chart3.ti3<br>
+      <br>
+      Rounds of improvements can be continues by looping back to <span
+        style="font-weight: bold;">&gt;&gt;&gt;</span>, being careful to
+      increment the names of the <span style="font-weight: bold;">fixN.icm</span>,&nbsp;
+
+
+
+
+
+      <span style="font-weight: bold;">proofer_fixN.icm</span> or <span
+        style="font-weight: bold;">target_proofer_fixN.icm</span> and <span
+        style="font-weight: bold;">chartN.ti3</span>files. Stop when
+      exhausted, or if it looks like things are getting worse, rather
+      than better. If the latter happens, it might be good to revert to
+      the results from a previous round.<br>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+
+# JAM style makefile for libusb-win32, to create .inf files.
+
+# This doesn't make the drivers themselves.
+# (you need the Server 2003 DDK 64 & 32 bit build enironmantes,
+#  and then run  ddk_build.cmd. This will then run
+#  build in libusb/os. )
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS    = $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+#Libraries = ;
+#Executables = ;
+#Headers = ;
+
+#Install
+#InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+if [ GLOB $(PATH) : sed sed.exe ] {
+	Echo "sed seems to be available" ;
+	CREATE_INFS = true ;
+} else {
+	CREATE_INFS = false ;
+}
+
+# Create ArgyllCMS.inf from the template and device list
+if $(CREATE_INFS) = true {
+	local _i _t _d ;
+	NDepends files : ArgyllCMS.inf ;
+	NDepends install : ArgyllCMS.inf ArgyllCMS.cat ArgyllCMS_x64.cat ;
+
+	_i  = [ NormPaths ArgyllCMS.inf ] ;
+	_t  = [ NormPaths ArgyllCMS.inf.t ] ;
+	_d  = [ NormPaths ArgyllCMS.inf.d ] ;
+
+	File ArgyllCMS.inf : ArgyllCMS.inf.t ;
+	GenFileNND ArgyllCMS.inf : "sed s/#PLAT#// $(_d) >> $(_i)" : ArgyllCMS.inf.t ArgyllCMS.inf.d ;
+	GenFileNND ArgyllCMS.inf : "sed s/#PLAT#/.NTx86/ $(_d) >> $(_i)" : ArgyllCMS.inf.t ArgyllCMS.inf.d ; 
+	GenFileNND ArgyllCMS.inf : "sed s/#PLAT#/.NTamd64/ $(_d) >> $(_i)" : ArgyllCMS.inf.t ArgyllCMS.inf.d ;
+
+	# If we have the tools and the .inf file has changed,
+	# create valid (but unsigned) .cat files.
+	if $(NT) && [ GLOB $(PATH) : inf2cat.exe ] {
+		_b  = [ NormPaths makecat.bat ] ;
+		# echo "SUBDIR = '" $(SUBDIR) "'" ;
+		GenFileNNDnc ArgyllCMS.cat : $(_b) $(SUBDIR) : ArgyllCMS.inf ;
+	}
+}
+
+
+
+
+
+
+

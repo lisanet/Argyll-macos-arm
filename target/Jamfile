@@ -1,0 +1,74 @@
+
+# Print Calibration Target Data File generator
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS     += $(CCHEAPDEBUG) ;     # Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;	# Link debugging flags
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile link flags
+
+#Products
+Executables = targen printtarg ;
+Samples = ECI2002.ti2
+          ECI2002R.ti2
+	      ColorChecker.ti2
+          FograStrip2.ti1 FograStrip2_2.ti2
+          FograStrip3.ti1 FograStrip3_3.ti2
+          i1_RGB_Scan_1.4.ti2 ;
+
+#Install
+InstallBin $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+InstallFile $(DESTDIR)$(PREFIX)/$(REFSUBDIR) : $(Samples) ;
+
+HDRS = ../h ../numlib ;
+
+Objects alphix.c randix.c ;
+
+HDRS += ../plot ../rspl ../cgats ../icc ../gamut ../xicc ../spectro ../render $(TIFFINC) ;
+
+LINKLIBS = ../xicc/libxcolorants ../spectro/libconv ../xicc/libxicc ../spectro/libinsttypes
+           ../spectro/libdisptechs
+           ../gamut/libgamut ../rspl/librspl ../render/librender ../cgats/libcgats
+           ../plot/libplot ../plot/libvrml ../icc/libicc ../numlib/libnum ../numlib/libui 
+           $(TIFFLIB) $(JPEGLIB) $(PNGLIB) $(ZLIB) $(LibWin) ;
+
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+#target generator
+Main targen : targen.c ofps.c ifarp.c simplat.c simdlat.c prand.c ;
+
+# Film Calibration Target File generator
+Main filmtarg : filmtarg.c : : : $(TIFFINC) : alphix randix : $(TIFFLIB) $(JPEGLIB) ;
+
+# Print Calibration Target Postscript File generator
+Main printtarg : printtarg.c : : : : alphix randix : ;
+
+# Individual stand alone test of sample point classes
+
+# Percepttual point distribution
+#MainVariant ppoint : ppoint.c : : STANDALONE_TEST ;
+
+# Optimised farthest point sampling class
+MainVariant ofps : ofps.c : : STANDALONE_TEST ;
+
+# Incremental far point class
+MainVariant ifarp : ifarp.c : : STANDALONE_TEST ;
+
+MainVariant simplat : simplat.c : : STANDALONE_TEST ;
+
+# Device space simplex lattice
+MainVariant simdlat : simdlat.c : : STANDALONE_TEST ;
+
+if $(BUILD_JUNK) {
+
+	# Test program
+	Main test : test.c : : : : alphix ;
+
+	# Test program
+	Main temp : temp.c ;
+
+	# Test lmean experiment
+	Main lmean : lmean.c ;
+}

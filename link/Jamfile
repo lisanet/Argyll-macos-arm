@@ -1,0 +1,39 @@
+
+# JAM style makefile for collink and friends
+ 
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	    += $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile flags
+#PREF_CCFLAGS	+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+Executables = collink ;
+
+#Install
+InstallBin $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+
+HDRS = ../h ../icc ../rspl ../plot ../numlib $(TIFFINC) ;
+LINKLIBS = $(TIFFLIB) $(JPEGLIB) ../icc/libicc ../plot/libplot
+../numlib/libnum ../numlib/libui $(LibWin) ;
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+# K only reprocessor
+#Main icc2ko : icc2ko.c ;
+
+# Monochrome transfer curve plotter
+Main monoplot : monoplot.c ;
+
+HDRS += ../cgats ../xicc ../spectro ../gamut ; 
+LINKLIBS = ../xicc/libxicc ../xicc/libxcolorants ../gamut/libgamut.c
+           ../gamut/libgammap ../rspl/librspl ../cgats/libcgats
+           ../plot/libvrml $(LINKLIBS) ;
+
+# ICC linker
+Main collink : collink.c ;
+
+# Device path L curve plotter
+Main pathplot : pathplot.c ;
+

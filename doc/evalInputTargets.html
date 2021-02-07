@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Evauating Input Targets</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta content="Graeme Gill" name="author">
+</head>
+<body>
+<h2 style="text-decoration: underline; font-weight: bold;">Evaluating
+input targets<br>
+</h2>
+There are a variety of color profiling targets available for
+characterizing input targets, and it is sometimes hard to decide which
+one will be best for your particular purpose. Listed here are some
+criteria to evaluate:<br>
+<h4>Color gamut</h4>
+The resulting profile will only be accurate between or near the color
+values contained on the chart. This means that if the colors you are
+actually processing with your device go outside the gamut of your test
+chart, the color values will have been extrapolated by the profile, and
+are therefore likely to be not very accurate. <br>
+<h4>Color Resolution</h4>
+The profile will be most accurate for colors that are near those
+contained on the chart. This means that the more closely and evenly
+spaced within the color gamut the value of<br>
+the test chart are, the more accurate overall the chart will be. So
+typically the greater the number of test values, the better.<br>
+<h4>Dynamic range and White point</h4>
+Similar to color gamut, the profile will only be accurate over the
+range of lightness levels exercised by the chart. At the dark end the
+ideal black test value will be a light trap. At the white end the ideal
+white test value would be the perfect 100% reflective diffuser. In
+practice there is another consideration, which is that by default the
+white point of the profile is set by the white value of the test chart,
+and any values over this may be clipped by the profile. So ideally the
+white patches should represent the white value of the work you will be
+using the input device for.<br>
+<h4>Spectral similarity</h4>
+One of the fundamental problems with colorimetrically characterizing
+input devices, is that typically input devices don't have the same
+spectral sensitivity as a human observer. This means that it "sees"
+color differently, and that there is no way to perfectly compensate for
+this in a device profile. [There will be some spectral values that look
+the same to the device but appear different to us, and visa-versa.] A
+colorimetric profile will best compensate for such differences when the
+target test colors have the same spectral reflectance characteristics
+as the the intended work. What this translates to is that you will get
+best results when the test chart uses a similar printing process to
+whatever work you will be using the input device for. So if you are
+intending to scan photographic prints, you should use a photographic
+based test chart. If you were scanning artworks, then you should use a
+test chart that has pigments that are similar to paint used on such
+artworks, etc. When characterizing camera's, an additional source of
+spectral differences is the illuminating light source used. Once again,
+it will be best to choose a light source to characterize the camera
+that is going to be most similar to the light source you will typically
+shoot photographs under. <br>
+<br>
+</body>
+</html>

@@ -1,0 +1,127 @@
+Misc technical notes
+--------------------
+
+
+Things I'd like to standardise
+------------------------------
+
+ICC:
+	Tag for TAC. Should include all combination of colorant
+	summs limits. Should be min and max ?
+	Option for LUT for abitrary limit (similar to gamut LUT).
+
+	Tag for 3D gamut Hull using triangles.
+
+	Standard rendering intent encodings, to be used as basis
+	of extra per color component attribute. Backward compatible
+	with current ICC rendering intents ?
+	Use "schemes" too, to allow for future changes.
+
+	Spectral sub-tag for spectrum encoding.
+
+	New named color using spectral.
+
+	New colorant tag using spectral.
+
+Other:
+	Add rendering intent plane support to TIFF etc.
+
+
+ICC profile locations in various operating systems.
+---------------------------------------------------
+
+Someone emailed me about a standard Linux location for ICC profiles,
+and I decided to research this a little more than has been done in
+the past, so though others might be interested in the results.
+
+> I was wondering if you are aware of any standard location in the Linux
+> filesystem to put ICC profiles?
+
+There was some discussion about this on the OpenICC mailing list a while
+back:
+
+Stefan Klein wrote:
+> Marti Maria, developer of littlecms (www.littlecms.com), suggested
+> /usr/share/color/icc and ~/.color/icc as intuitive paths. We decided to
+> go along with this.
+
+Kai-Uwe Behrmann wrote:
+> I followed the suggestions of using
+>  /usr/share/color           for global configuration data and
+>  /usr/share/color/icc       for global ICC profiles
+>  ~/.color and ~/.color/icc  as user pendant.
+
+Googling for "common Linux ICC profile directory" brings up other references.
+
+For instance Scribus puts its profiles in
+
+    /usr/local/share/Scribus/profiles
+
+
+SUN has been implementing CMM's on its Solaris system
+for a long while (using Kodaks KCMS), and have already
+established other conventions in its part of the the Unix world:
+> 1. The current directory
+> 2. Directories listed by the KCMS_PROFILES environment variable, which is a
+> colon-separated list of directories
+> 3. /etc/openwin/devdata/profiles
+> 4. /usr/openwin/etc/devdata/profiles
+as well as having extensive support for ICC profiles in Java, on multiple
+platforms (again using KCMS and the native platform CMM's it seems).
+
+
+SGI has a CMM called Coloratura on their IRIX Unix system, and uses
+yet another convention:
+> The Coloratura CMS searches for a file sequentially in the directories specified
+> by the environment variable CMS_DEFAULT_PATH, which is a colon-separated list of
+> pathnames similar to that used in the environment variable MANPATH.
+> The value of CMS_DEFAULT_PATH defined in cms.h is
+> /var/cms/profiles/local:/var/cms/profiles:.,
+> which allows you to place profiles you prefer in /var/cms/profiles/local,
+> and generic profiles, which might have the same names, in
+> /var/cms/profiles or your working directory.
+
+
+Apple in OSX (another Unix based system) chooses
+
+    /Library/ColorSync/Profile
+    /System/Library/Colorsync/Profiles
+    /Network/Library/ColorSync/Profiles
+    ~/Library/ColorSync/Profiles
+
+and individual drivers store relevant profiles in their application
+resources: eg.
+
+    /Library/Image Capture/Devices/EPSON SScanner.app/Contents/Resources/
+and
+    /Library/Printers/Canon/BJPrinter/PMs/BJC8200PM.plugin/Contents/Resources/
+and
+    /Library/Printers/hp/Profiles
+and many other places.
+
+Microsoft Windows chooses:
+
+\WINDOWS\SYSTEM\COLOR
+\WINNT\SYSTEM32\COLOR
+\WINNT\SYSTEM32\SPOOL\DRIVERS\COLOR
+
+depending on the operating system version.
+Photoshop on MSWindows seems to use its own location:
+
+\Program Files\Common Files\Adobe\Color\Profiles
+
+Note that Apple ColorSync, Microsoft ICM2.0 and KCMS as implemented
+by SUN are all existing CMM's with detailed technical documentation
+available via the web (as examples of how it has been done, and the variety
+of facilities a CMM may make available.)
+
+
+============================================================================
+Autotools and some Linux systems expect env vars:
+
+CFLAGS: C flags, passed during compile AND link (e.g., -O2 -std=c99)
+CXXFLAGS: C++ flags, passed during compile AND link (e.g., -O2 -std=c++98)
+CPPFLAGS: pre-processor flags, passed ONLY during compile (e.g., -DNDEBUG=1 -Iadditional/include)
+LDFLAGS: linker flags, passed ONLY during link (e.g., -export_dynamic -Ladditional/libdir -llib)
+
+to have effect.

@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>filmread</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+</head>
+<body>
+<h2><b>spectro/filmread</b></h2>
+<h3>Summary</h3>
+Read film colorimetric values using a Gretag SpectroScanT spectrometer.<br>
+<h3>Usage</h3>
+<small><span style="font-family: monospace;">filmread [-v] [-s] [-c
+comport] outfile</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose mode</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Gather spectral data also</span><br style="font-family: monospace;">
+&nbsp;
+<span style="font-family: monospace;"></span></small><small
+ style="font-family: monospace;"><span style="font-family: monospace;"></span><span
+ style="font-family: monospace;">-c listno</span><span
+ style="font-family: monospace;"> &nbsp; &nbsp;&nbsp; Set communication
+port from the following list (default 1)</span></small><small><span
+ style="font-family: monospace;"></span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;outfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Base
+name for input[</span><a style="font-family: monospace;"
+ href="File_Formats.html#.ti2">.ti2</a><span
+ style="font-family: monospace;">]/output[</span><a
+ style="font-family: monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+ style="font-family: monospace;">] file</span></small><br>
+<h3>Comments</h3>
+This tool allows reading of film test patches, one at a time using
+the
+transparent mode of the Gretag SpectroscanT. <br>
+<br>
+The instrument is assumed to communicate through a
+serial
+communication port, and the port can be selected with the <b>-c</b>
+option,
+if the instrument is not connected to the first port. If you invoke <span
+ style="font-weight: bold;">filmread</span> so as to display the usage
+information (i.e. "filmread -?" or "filmread --"), then the discovered
+serial ports will be listed on Windows and Mac OSX systems.<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

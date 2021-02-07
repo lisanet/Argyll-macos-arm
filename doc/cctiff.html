@@ -1,0 +1,372 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>cctiff</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>imdi/cctiff</b></h2>
+    <h3>Summary</h3>
+    Color convert a TIFF or JPEG file using a sequence of compatible ICC
+    device profiles, abstract profiles, device link profiles and
+    calibration files. The sequence may be zero length, facilitating
+    format conversion and ICC profile embedding without otherwise
+    altering the pixel values.<br>
+    <h3>Usage<br>
+    </h3>
+    <small><span style="font-family: monospace;"></span> <span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;">cctiff [-options] { [-i intent] <span
+          style="font-style: italic;">profile.icm</span> | [-d dir]
+        calibration.cal ...} <span style="font-style: italic;">infile.tif
+
+
+          outfile.tif</span></span></small><small><span
+        style="font-family: monospace;"></span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;"></span><span
+        style="font-family: monospace;"></span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+
+
+        &nbsp;&nbsp; Verbose</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#c">-c</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+
+
+        &nbsp;&nbsp; Combine linearisation curves into one transform</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#p">-p</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+
+
+        &nbsp;&nbsp; Use slow precise floating point conversion, rather
+        than fast integer routines.</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#k">-k</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+
+
+        &nbsp;&nbsp; Check fast result against precise, and report
+        differences.<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#r">-r n<span
+          style="font-style: italic;"></span></a><span
+        style="font-family: monospace;">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override
+        the default CLUT resolution</span></small><small><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"><br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#t">-t n<span
+          style="font-style: italic;"></span></a><span
+        style="font-family: monospace;">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose
+        output encoding from 1..n<br>
+        &nbsp;<a href="#f">-f [T|J]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        Set output format to Tiff or Jpeg (Default is same as input)<br>
+        &nbsp;<a href="#q">-q quality</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        Set JPEG quality 1..100 (Default 80)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#a">-a</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; Read and Write planes &gt; 4 as
+        alpha planes<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;<a
+          href="#I">-I</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Ignore
+
+
+        any file or profile colorspace mismatches<br>
+        &nbsp;<a href="#D">-D</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Don't
+
+
+        append or set the output TIFF description<br>
+        &nbsp;<a href="#N">-N</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Output uncompressed TIFF (default LZW)<br>
+        <br>
+      </span></small><small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;"><br>
+        &nbsp;</span></small><small><a style="font-family: monospace;"
+        href="#e"><i>-e profile.[ic<span style="font-family: monospace;">m
+            | tiff | jpg]</span></i></a><span style="font-family:
+        monospace;"></span></small><small><span style="font-family:
+        monospace;">&nbsp; Optionally embed a profile in the destination
+        TIFF or JPEG file.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      </span></small><small><span style="font-family: monospace;">This
+        may be an ICC file or TIFF or JPEG file with embedded profile.</span></small><br>
+    <small><span style="font-family: monospace;"><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Then
+
+
+        for each profile in the linked sequence:<br style="font-family:
+          monospace;">
+      </span></small><small><span style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;">&nbsp; </span><a style="font-family: monospace;"
+        href="#i">-i <span style="font-style: italic;">intent</span></a><span
+        style="font-family: monospace;">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; Profile intent</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp; &nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; p =
+        perceptual, r = relative colorimetric,</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+
+
+        &nbsp;&nbsp;&nbsp; s = saturation, a = absolute colorimetric<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;
+      </span><a style="font-family: monospace;" href="#o">-o order<span
+          style="font-style: italic;"></span></a><span
+        style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; n = normal (priority: lut
+        &gt; matrix &gt; monochrome)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+r
+
+
+        = reverse (priority: monochrome &gt; matrix &gt; lut)</span></small><small><span
+        style="font-family: monospace;"></span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#p1"><i>profile.[ic<span
+            style="font-family: monospace;">m | tiff | jpg]</span></i></a><span
+        style="font-family: monospace;">&nbsp; A Device, Link or
+        Abstract profile. This may be an ICC file<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(May
+
+
+        be embedded profile in TIFF or JPEG file)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+or
+
+
+        each calibration file in sequence:<br style="font-family:
+          monospace;">
+      </span></small><small><span style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;">&nbsp; </span><a style="font-family: monospace;"
+        href="#d">-d <span style="font-style: italic;"><span
+            style="font-family: monospace;">dir</span></span></a><span
+        style="font-family: monospace;">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Calibration direction</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp; &nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; f =
+        forward cal. (default), b = backwards cal.</span><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"></span></small><small><span style="font-family:
+        monospace;"></span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#p2"><i>calibration.cal<span
+            style="font-family: monospace;"></span></i></a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+        A calibration file.</span></small><br>
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"></span><span style="font-family: monospace;"></span><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; Then finally:<br style="font-family:
+        monospace;">
+      &nbsp;<span style="font-family: monospace;"></span><a
+        style="font-family: monospace;" href="#p3"><i>infile.tif</i></a><span
+        style="font-family: monospace;"> &nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp; A </span><a style="font-family: monospace;"
+        href="File_Formats.html#TIFF">TIFF</a><span style="font-family:
+        monospace;"> or <a href="File_Formats.html#JPEG">JPEG</a>
+        Raster file that will be the input raster to be transformed.</span><br
+        style="font-family: monospace;">
+      &nbsp;<span style="font-family: monospace;"></span><a
+        style="font-family: monospace;" href="#p4"><i>outfile.tif</i></a><span
+        style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; A </span><a style="font-family: monospace;"
+        href="File_Formats.html#TIFF">TIFF</a><span style="font-family:
+        monospace;"> or <a href="File_Formats.html#JPEG">JPEG</a>
+        Raster file created from the input raster, using the given color
+        transform.</span></small><b><br>
+    </b><b><br>
+      Examples</b><br>
+    <br>
+    Convert an RGB file to a CMYK file using perceptual intent:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cctiff -ip sRGB.icm -i cmyk.icm rgbinfile.tif
+    cmykoutfile.tif<br>
+    <br>
+    Same as above, but use the source file embedded profile, and embed
+    the resulting colorspace profile in the output:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cctiff -e cmyk.icm -ip rgbfile.tif -ip
+    cmyk.icm&nbsp; rgbinfile.tif cmyout.tif<br>
+    <br>
+    Convert a raster file using a device link:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cctiff devicelink.icm infile.tif outfile.tif<br>
+    <br>
+    Convert an RGB source to CMYK via an abstract adjustment, and then
+    convert the CMYK to CMYK using a device link, also apply CMYK
+    calibration:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cctiff -ir sRGB.icm abstract.icm -ir CMYK.icm
+    devlink.icm CMYKcal.cal infile.tif outfile.tif<br>
+    <br>
+    Convert an RGB source file into a CIELab raster file:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cctiff -t1 -ir sRGB.icm rgbfile.tif labfile.tif<br>
+    <h3>Comments<br>
+    </h3>
+    <a name="v"></a> The <span style="font-weight: bold;">-v</span>
+    flag reports extra information about the ICC profile.<br>
+    <br>
+    <a name="c"></a><a name="p"></a><a name="k"></a><a name="r"></a> The
+    <span style="font-weight: bold;">-c</span>, <span
+      style="font-weight: bold;">-p</span>, <span style="font-weight:
+      bold;">-k</span> and <span style="font-weight: bold;">-r</span>
+    options are intended to aid debugging.<br>
+    <br>
+    <a name="t"></a><span style="font-weight: bold;"></span><span
+      style="font-weight: bold;">-t </span>Some colorspaces can be
+    encoded in more than one way. If there is a choice, the choice
+    should be specified the <span style="font-weight: bold;">-t</span>
+    parameter. If this parameter is not given, then cctiff will print
+    the possible choices and choose the default. For TIFF LAB output
+    there are two choices <span style="font-weight: bold;">1</span> for
+    CIELab encoding (Default), and <span style="font-weight: bold;">2</span>
+    for ICCLab encoding. For JPEG RGB output there are two choices: <span
+      style="font-weight: bold;">1</span> for YCbCr encoding with
+    sub-sampled Cb and Cr (Default)\n", and <span style="font-weight:
+      bold;">2</span> RGB encoding which does not use sub sampling. For
+    JPEG CMYK output there are two choices: <span style="font-weight:
+      bold;">1</span> for YCCK encoding with sub-sampled C and C
+    (Default)\n", and <span style="font-weight: bold;">2</span> CMYK
+    encoding which does not use sub sampling<br>
+    <br>
+    <a name="f"></a><span style="font-weight: bold;"></span> <span
+      style="font-weight: bold;">-f</span> By default the output raster
+    file format will be the same as the input, and the <span
+      style="font-weight: bold;">-f</span> parameter will override this.
+    <span style="font-weight: bold;">-f T</span> will select <span
+      style="font-weight: bold;">TIFF</span> format output, and <span
+      style="font-weight: bold;">-f J</span> will select <span
+      style="font-weight: bold;">JPEG</span> format output.<span
+      style="font-weight: bold;"> </span><br>
+    <br>
+    <a name="q"></a><span style="font-weight: bold;"></span> <span
+      style="font-weight: bold;">-q</span> JPEG raster files use lossy
+    compression, and the <span style="font-weight: bold;">-q</span>
+    parameter controls how much compression is used in creating a JPEG
+    output file. The value can be between 1 and 100, with 1 being the
+    lowest quality and highest compression, and 100 being the highest
+    quality and lowest compression. The default value is 80.<br>
+    <br>
+    <a name="a"></a><span style="font-weight: bold;"></span> Normally
+    colorspaces that have more than 4 channels will be read and written
+    as multichannel TIFF files. These are not handled well by all
+    applications, so the <span style="font-weight: bold;">-a</span>
+    option causes extra channels above 4 to be stored as alpha planes,
+    providing more flexibility in using such files.<br>
+    <br>
+    <a name="I"></a>The <span style="font-weight: bold;">-I</span> flag
+    causes any mismatch between the color spaces of the image files and
+    each profile in the sequence to be ignored. The results might be
+    unpredictable unless you know exactly what you are doing.<br>
+    <br>
+    <a name="D"></a>The <span style="font-weight: bold;">-D</span> flag
+    stops the description tag being set or appended to by cctiff.<br>
+    <br>
+    <a name="N"></a>By default any TIFF output file will be LZW
+    compressed, but the <span style="font-weight: bold;">-N</span> flag
+    will cause any TIFF file to be saved uncompressed.<br>
+    <br>
+    <small><a name="e"></a></small><small>The <span style="font-weight:
+        bold;">-e profile.[icm | tiff | jpg]</span> option allows an ICC
+      profile to be embedded in the </small>destination TIFF or JPEG
+    file. The profile may either be an <small>ICC file or a TIFF or
+      JPEG file with embedded profile.</small><br>
+    <br>
+    Following these global options, you should specify the chain of
+    profiles and calibrations you want to apply. Each link of the chain
+    consists of the (optional) intent to be used for device profiles and
+    the filename of the profile, or the optional direction to be used
+    for the calibration and the filename of the calibration. The first
+    profile or calibrations input colorspace must be compatible with the
+    input TIFF file, and each profile or calibration output space must
+    be compatible with the next profile or calibrations input space. An
+    error will result if this is not the case.<br>
+    <br>
+    <div style="margin-left: 40px;"><a name="i"></a>The <span
+        style="font-weight: bold;">-i</span> parameters selects the
+      intent for the following device profile. Normally the same intent
+      should be used for all device profiles, but other combinations
+      allow special uses such as mixed proofing workflows.<br>
+      <br>
+      <a name="o"></a>The <span style="font-weight: bold;">-o</span>
+      parameter changes the order the profiles tags are searched in. A
+      profile is allowed to contain more than the minimum number of
+      elements or table needed to describe a certain transform, and may
+      contain redundant descriptions. &nbsp;By default, lut based table
+      information will be used first if present, followed by
+      matrix/shaper information, and only using monochrome information
+      if it is all that is present. <b>-o r</b> reverses this order. <br>
+      <br>
+      <a name="p1"></a>The file that will be the source of the ICC
+      profile. This can be either an ICC profile or a TIFF or JPEG file
+      that contains an embedded profile. Typically the first profile in
+      the chain might be taken from an embedded profile from the source
+      TIFF or JPEG file.<br>
+      <br>
+      <a name="d"></a>The <span style="font-weight: bold;">-d</span>
+      parameters selects the direction for the following calibration.
+      The default direction is the normal forward calibration, but if
+      -db is used, then a backwards (inverse) calibration will be
+      applied.<br>
+      <br>
+      <a name="p2"></a>The file that will be the source calibration.
+      This will be an Argyll <a href="File_Formats.html#.cal">.cal</a>
+      format file.<span style="font-weight: bold;"></span><br>
+    </div>
+    <br>
+    <a name="p3"></a>The second last argument should be the name of the
+    source TIFF or JPEG file that is to be processed.<br>
+    <br>
+    <a name="p4"></a>The last argument should be the name of the
+    destination TIFF or JPEG file to hold the results.<br>
+    <br>
+    <span style="font-weight: bold;">cctiff</span> uses very fast
+    integer conversion routines to process the raster. Both 8 and 16 bit
+    per component files can be handled, and up to 8 color channels (The
+    limit can be lifted to 15 re-compiling). JPEG files with no more
+    than 8 bit per component can be handled.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

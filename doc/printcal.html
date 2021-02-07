@@ -1,0 +1,412 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>printcal</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme W. Gill">
+  </head>
+  <body>
+    <h2> profile/printcal</h2>
+    <h3>Summary</h3>
+    Create a printer linearization calibration file from <a
+      href="File_Formats.html#.ti3">.ti3</a> test chart patch values.<br>
+    <h3>Usage Summary</h3>
+    &nbsp;<span style="font-family: monospace;">printcal</span><small
+      style="font-family: monospace;"> [-<i>options</i>] [prevcal]
+      inoutfile<br>
+      &nbsp;<a href="#v">-v verbosity</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Set verbosity level<br>
+    </small><small style="font-family: monospace;">&nbsp;<a href="#p">-p</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; Plot graphs.<br>
+      &nbsp;<a href="#i">-i</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+      &nbsp; &nbsp; &nbsp;&nbsp; Initial calibration, set targets,
+      create .cal<br>
+    </small><small style="font-family: monospace;">&nbsp;<a href="#r">-r</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp;&nbsp; Re-calibrate against previous .cal and create new
+      .cal</small><br style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><small
+      style="font-family: monospace;">&nbsp;<a href="#e">-e</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+
+
+      &nbsp; &nbsp;&nbsp; Verify against previous .cal<br>
+    </small><small style="font-family: monospace;">&nbsp;<a href="#I">-I</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp;&nbsp; Create imitation target from .ti3 and null
+      calibration</small><br>
+    <small style="font-family: monospace;">&nbsp;<a href="#d">-d</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp;&nbsp; Go through the motions but don't write any files</small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#A">-A "manufacturer"</a><span
+        style="font-family: monospace;">&nbsp; Set the manufacturer
+        description string</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#M">-M "model"</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set the model
+        description string</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#D">-D "description"</a><span
+        style="font-family: monospace;">&nbsp;&nbsp; Set the profile
+        Description string </span><br style="font-family: monospace;">
+      <tt>&nbsp;</tt><tt><a href="#C">-C "copyright"</a></tt><tt>
+        &nbsp;&nbsp;&nbsp; Set the copyright string</tt><tt><br>
+      </tt><tt> </tt><tt>&nbsp;</tt><tt><a href="#x">-x# percent</a></tt><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+initial
+
+
+        maximum device % target (override auto)</tt><tt><br>
+      </tt></small><small><span style="font-family: monospace;"><small>&nbsp;<a
+            href="#m">-m# percent</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+          Set initial dev target to % of auto maximum<br>
+        </small>&nbsp;<a href="#n">-n# deltaE</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set initial white
+        minimum deltaE target<br>
+        &nbsp;<a href="#t">-t# percent</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+initial
+
+
+        50% transfer curve percentage target<br style="font-family:
+          monospace;">
+        <span style="font-family: monospace;">&nbsp;&nbsp; # = c, r,
+          0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; First channel</span><br
+          style="font-family: monospace;">
+        <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+m,
+g,
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+          Second channel</span><br style="font-family: monospace;">
+        <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+y,
+b,
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+          Third channel</span><br style="font-family: monospace;">
+        <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+k,&nbsp;&nbsp;&nbsp;
+3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Fourth
+
+
+          channel, etc.<br>
+          &nbsp;<a href="#a">-a</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Create
+an
+
+
+          Adobe Photoshop .AMP file as well as a .cal<br
+            style="font-family: monospace;">
+        </span><span style="font-family: monospace;">&nbsp;</span><a
+          style="font-family: monospace;" href="#p1">prevcal</a><span
+          style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Base
+name
+
+
+          of previous .cal file for recal or verify.</span><br
+          style="font-family: monospace;">
+        <span style="font-family: monospace;">&nbsp;</span><a
+          style="font-family: monospace;" href="#p2">inoutname</a><span
+          style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Base
+name
+
+
+          of input .ti3 file, output .cal file</span><br>
+      </span><span style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"></span><span style="font-family: monospace;"></span></small><br>
+    <h3>Options<br>
+    </h3>
+    <b><a name="v"></a>-v</b>&nbsp; Turn on verbose mode. Gives progress
+    information as the calibration is created. An argument greater than
+    1 increases the verbosity. Will also report the ideal power value to
+    apply to the test chart in targen.<br>
+    <br>
+    <a name="p"></a><span style="font-weight: bold;">-p</span> Turns on
+    plot mode. This causes various graphs to be plotted as the
+    calibration is created. The channels will be plotted in the graph
+    colors: Blue, Red, Yellow, Black, Green, Purple, Brown, Orange,
+    Grey, White.<br>
+    <br>
+    <a name="i"></a><span style="font-weight: bold;">-i</span> Select
+    initial calibration mode. Initial calibration mode allows setting
+    the targets for the calibration, such as maximum device percentage,
+    minimum white level, and the transfer curve shape. The second last
+    parameter <span style="font-weight: bold;"><span
+        style="font-weight: bold;"></span>prevcal</span> is not used in
+    this mode.<br>
+    <br>
+    <a name="r"></a><span style="font-weight: bold;">-r</span> Turns on
+    re-calibration mode. This is used for calibrations after the initial
+    one, where the aim is to return the devices response to the same
+    state as it was after the initial caibration. Parameters that affect
+    the calibration targets are ignored. The second last parameter <span
+      style="font-weight: bold;"><span style="font-weight: bold;"></span>prevcal</span>
+    is used to establish what the targets for the calibration are.<br>
+    <br>
+    <a name="e"></a><span style="font-weight: bold;">-e</span> Turns on
+    verify mode. In this mode the test chart input is verified agains
+    the expected response in the <span style="font-weight: bold;"><span
+        style="font-weight: bold;"></span>prevcal</span> file.<br>
+    <br>
+    <a name="I"></a><span style="font-weight: bold;">-I</span> Similar
+    to <span style="font-weight: bold;">-i</span>, except that rather
+    than creating a linear target curve and corresponding calibration,
+    it takes the given behaviour as an absolute target and create a
+    corresponding set of calibration curves. This .cal can then be used
+    to recalibrate a similar device (or the same device at some other
+    time) to imitate the behaviour of the initial device. The second
+    last parameter <span style="font-weight: bold;"><span
+        style="font-weight: bold;"></span>prevcal</span> is not used in
+    this mode. Parameters that affect the calibration targets are
+    ignored.<br>
+    <br>
+    <a name="d"></a><span style="font-weight: bold;">-d</span> Disables
+    the writing of any files, causing printcal to go through the motions
+    without changing anything.<br>
+    <br>
+    <a name="A"></a>The <b>-A</b> parameter allows setting of the
+    device manufacturer description string in the calibration file. The
+    parameter should be a string that identifies the manufacturer of the
+    device being profiled. With most command line shells, it will be
+    necessary to enclose the parameter with double quotes, so that
+    spaces and other special characters are included in the parameter,
+    and not mistaken for the start of another flag or as a final command
+    line parameters. By default no device manufacturer description
+    string will be put in the calibration file.<br>
+    <br>
+    <a name="M"></a>The <b>-M</b> parameter allows setting of the
+    device mode description string in the calibration file. The
+    parameter should be a string that identifies the particular model of
+    device being profiled. With most command line shells, it will be
+    necessary to enclose the parameter with double quotes, so that
+    spaces and other special characters are included in the parameter,
+    and not mistaken for the start of another flag or as a final command
+    line parameters. By default no model description string will be put
+    in the calibration file.<br>
+    <br>
+    <a name="D"></a>The <b>-D</b> parameter allows setting of the
+    profile description string in the calibration file. The parameter
+    should be a string that describes the device and profile. On many
+    systems, it will be this string that will be used to identify the
+    profile from a list of possible profiles. With most command line
+    shells, it will be necessary to enclose the parameter with double
+    quotes, so that spaces and other special characters are included in
+    the parameter, and not mistaken for the start of another flag or as
+    a final command line parameter. By default no profile description
+    string will be put in the calibration file.<br>
+    <br>
+    <a name="C"></a>The <b>-C</b> parameter allows setting of the
+    profile copyright string in the calibration file. The parameter
+    should be a string that describes the copyright (if any) claimed on
+    the profile being generated. With most command line shells, it will
+    be necessary to enclose the parameter with double quotes, so that
+    spaces and other special characters are included in the parameter,
+    and not mistaken for the start of another flag or as a final command
+    line parameters. By default no copyright string will be put in the
+    calibration file.<br>
+    <br>
+    <a name="x"></a> The <b>-x</b> parameter allows overriding the
+    default auto maximum device target value computed from the raw
+    device response for the initial calibration. The default uses a
+    heuristic to decide when the response of the device to each channels
+    colorant value reaches the point of diminishing returns, while the <span
+      style="font-weight: bold;">-x</span> parameter allows this default
+    to be overridden. The <span style="font-weight: bold;">-x</span>
+    paramater can be used multiple times, once for each channel that is
+    being set. The <span style="font-weight: bold;">-x</span> should be
+    followed by the channel number between 0 and 15, or the aliases <span
+      style="font-weight: bold;">r</span>, <span style="font-weight:
+      bold;">g</span> or <span style="font-weight: bold;">g</span>, or
+    <span style="font-weight: bold;">c</span>, <span
+      style="font-weight: bold;">m</span>, <span style="font-weight:
+      bold;">y</span> or <span style="font-weight: bold;">k,</span> and
+    the channel number should then be followed by the device value as a
+    percentage. <span style="font-weight: bold;">NOTE</span> that you
+    will probably get sub-optimal results if you force a device maximum
+    that is beyond the point of maximum response of a device channel,
+    since this will have the effect of <span style="text-decoration:
+      underline;">reducing</span> the device response. If you want to
+    set a conservative target to allow for recalibration later, see the
+    <b>-m</b> flag below.<br>
+    <br>
+    <a name="m"></a> The <b>-m</b> parameter allows modifying the
+    default auto maximum device target value for the initial
+    calibration. The auto maximum is computed as described above, and is
+    then scaled by the <b>-m</b> parameter value. Typically this will
+    be a scale down (ie. <b>90%</b>) to allow some margin to increase
+    the channel value if the channel density drops in a future
+    recalibration. Scaling the maximum down will reduce gamut, but
+    allows scope for stable behaviour using calibration. The <span
+      style="font-weight: bold;">-m</span> paramater can be used
+    multiple times, once for each channel that is being set. The <span
+      style="font-weight: bold;">-m</span> should be followed by the
+    channel number between 0 and 15, or the aliases <span
+      style="font-weight: bold;">r</span>, <span style="font-weight:
+      bold;">g</span> or <span style="font-weight: bold;">g</span>, or
+    <span style="font-weight: bold;">c</span>, <span
+      style="font-weight: bold;">m</span>, <span style="font-weight:
+      bold;">y</span> or <span style="font-weight: bold;">k,</span> and
+    the channel number should then be followed by the deltaE value.<span
+      style="font-family: monospace;"></span><br>
+    <br>
+    <a name="n"></a> The <b>-n</b> parameter allows overriding the
+    default minimum deltaE of a colorant to white of 0. This can be used
+    to set a minimum colorant level in order to emulate media darker or
+    of a different tint. The <span style="font-weight: bold;">-n</span>
+    paramater can be used multiple times, once for each channel that is
+    being set. The <span style="font-weight: bold;">-n</span> should be
+    followed by the channel number between 0 and 15, or the aliases <span
+      style="font-weight: bold;">r</span>, <span style="font-weight:
+      bold;">g</span> or <span style="font-weight: bold;">g</span>, or
+    <span style="font-weight: bold;">c</span>, <span
+      style="font-weight: bold;">m</span>, <span style="font-weight:
+      bold;">y</span> or <span style="font-weight: bold;">k,</span> and
+    the channel number should then be followed by the deltaE value.<span
+      style="font-family: monospace;"></span><br>
+    <br>
+    <a name="t"></a> The <b>-t</b> parameter allows setting a target
+    linearization curve that is other than purely visual linear. The
+    default is to create a calibration curve that results in a perfectly
+    even change in output for each change in the calibrated device
+    value, as measured by steps in delta E94. The <span
+      style="font-weight: bold;">-x</span> parameter allows setting a
+    target curve above or below the perfectly visual linear, by setting
+    the aim value at 50% input. An aim higher than 50% will cause that
+    channel to become more intense by the 50% mark, while a value lower
+    than 50% will cause the channel to become less intense by the 50%
+    mark than perfectly linear.The <span style="font-weight: bold;">-x</span>
+    should be followed by the channel number between 0 and 15, or the
+    aliases <span style="font-weight: bold;">r</span>, <span
+      style="font-weight: bold;">g</span> or <span style="font-weight:
+      bold;">g</span>, or <span style="font-weight: bold;">c</span>, <span
+      style="font-weight: bold;">m</span>, <span style="font-weight:
+      bold;">y</span> or <span style="font-weight: bold;">k,</span> and
+    the channel number should then be followed by the device value as a
+    percentage.<br>
+    <br>
+    <a name="a"></a><span style="font-weight: bold;">-a</span> Creates
+    an Adobe Photoshop <span style="font-weight: bold;">.AMP</span>
+    format curves file as well as a .cal.<br>
+    <span style="font-weight: bold;"></span><br>
+    <a name="p1"></a> The optional second last parameter is the file
+    base name for a previous <a href="File_Formats.html#CAL">.cal</a>
+    calibration file, used as the target reference for recalibrate and
+    verify modes. <br>
+    <br>
+    <a name="p2"></a> The final parameter is the file base name for the
+    <a href="File_Formats.html#.ti3">.ti3</a> input test point data, and
+    the resulting <a href="File_Formats.html#CAL">.cal</a> calibration
+    file output. <br>
+    <h3><a name="DISCUSSION"></a>Discussion</h3>
+    <span style="font-weight: bold;">Printcal</span> is a tool for
+    creating per device channel linearization curves for printing
+    devices.<br>
+    <br>
+    As input it takes a .ti3 file containing the results of printing a
+    test chart on the <span style="text-decoration: underline;">non-color
+
+
+      managed</span>, <span style="text-decoration: underline;">non-calibrated</span>
+    device, and measuring it. The test chart consists of step wedges for
+    each of the device primary colors, from the media white to full
+    individual colorant intensity.<br>
+    <br>
+    For the initial calibration (<span style="font-weight: bold;">-i</span>),
+the
+range
+
+
+    of device values to be used and the shape of the target
+    linearization curve are established, as well as creating the first
+    set of calibration curves. For subsequent re-calibrations (<span
+      style="font-weight: bold;">-r</span>), the calibration curves aim
+    to reproduce the same response as the original calibration. If a
+    test chart is printed with calibration enabled and then is measured,
+    it can be used to verify the calibration against the expected
+    response (<span style="font-weight: bold;">-e</span>).<br>
+    <br>
+    As each colorant steps through the test wedge patches from media
+    white, they trace out a measured locus in CIE L*a*b* colorspace.
+    Each channel response is evaluated by computing the CIE DeltaE to
+    media white of the response to a change in each individual channel
+    of each locus. This measure is used to determine when the devices
+    response to a colorant level is reaching diminishing returns,
+    setting a maximum colorant value. This measure can also be used to
+    set a minimum colorant value for the purposes of emulating a
+    different media color. The default maximum and minimum values for
+    each colorant can be overridden using the <span style="font-weight:
+      bold;">-x</span> and <span style="font-weight: bold;">-n</span>
+    parameters. The automatically determined maximum may be modified
+    (scaled) using the <b>-m</b> parameter, which can be useful in
+    allowing some margin for future calibrations to compensate for a
+    drop in density.<br>
+    <br>
+    The actual linearization uses a subtly different measure, which is
+    the CIE DelataE 94 along each colorant response locus, ensuring that
+    after linearization each step in colorant value is subjectively
+    even. The linearization aim can be altered from a purely linear
+    curve by using the <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-t</span></span> parameters.<br>
+    <br>
+    After the initial calibration, the device can be re-calibrated (<span
+      style="font-weight: bold;">-r</span>) by printing a calibration
+    test chart under the same conditions as the initial one, but with
+    the calibration aimed at reproducing the same response as the
+    initial calibration, rather that setting new targets.<br>
+    <br>
+    The calibration can be verified (<span style="font-weight: bold;">-e</span>)
+    by printing a calibration test chart on <span
+      style="text-decoration: underline;">non-color managed</span>, <span
+      style="text-decoration: underline;"></span>but calibrated device,
+    the verification evaluating any discrepancy between the device
+    response achieved, and the device response expected. For a numerical
+    evaluation the verbose flag (<span style="font-weight: bold;">-v</span>)
+    should be used, and for a visual evaluation the plot flag (<span
+      style="font-weight: bold;">-p</span>) should be used.<br>
+    <br>
+    If there are several devices of the same or similar model, then one
+    device can be used to set the initial calibration target, and then
+    the other devices can be re-calibrated against the same .cal file,
+    to create matching responses. An alternative to creating an initial
+    linear target for calibration, is to use the <span
+      style="font-weight: bold;">-I</span> option with an initial
+    device, which sets the initial target to be that devices absolute
+    response. Naturally the corresponding calibration will be linear
+    (null). The calibration target can then be used to later return that
+    device to its initial response, or to make another similar device
+    have the same response. Note though, that bad things will happen if
+    the imitated devices response is non-monotonic, or if on
+    re-calibration the device is unable to reach the same density
+    levels.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

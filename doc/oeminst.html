@@ -1,0 +1,353 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>oeminst</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/oeminst</b></h2>
+    <h3>Summary</h3>
+    A special purpose tool that installs Instruments Manufacturers
+    support files to enable various instrument operations when used with
+    Argyll, as well as install colorimeter calibration and spectral
+    sample files so that they appear in the display type list (<b>-y</b>
+    option).<br>
+    For the Spyder 2, it can install the instrument manufacturers PLD
+    firmware pattern, which is necessary for it to operate.<br>
+    For the Spyder 4 or 5, it can enable the full range of manufacturers
+    colorimeter calibration selections, as well as install CCSS files.<br>
+    For the eye-one display 3 it can&nbsp; locate and translate X-Rite
+    .EDR files to CCSS files and install them to enable a full range of
+    colorimeter calibration selections, as well as install CCSS files.<br>
+    For all colorimeters it can install CCMX files make for that model
+    of colorimeter.<br>
+    <h3>Usage summary<br>
+    </h3>
+    <small><span style="font-family: monospace;">oeminst [-options] [<span
+          style="font-style: italic;">inputfile</span></span>s]<span
+        style="font-family: monospace;"></span></small><br>
+    <span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+      Verbose</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+      Don't install, show where files would be installed</span><br>
+    <span style="font-family: monospace;">&nbsp;-c
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+      Don't install, save files to current directory</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-S
+      d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+      Specify the install scope u = user (def.), l = local system]</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;infile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Manufacturers setup.exe install file(s) or .dll(s) containing
+      install files</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;infile.[edr|ccss|ccmx]&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+      EDR file(s) to translate and install or CCSS or CCMX files to
+      install</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+    </span><small><span style="font-family: monospace;">If no file is
+        provided, oeminst will look for the install CD.</span></small>
+    <h3></h3>
+    <h3>Flags and Parameters</h3>
+    The <span style="font-style: italic;">inputfiles</span> arguments
+    are optional, and and can be used to specify the MSWindows setup.exe
+    file from the installation CD or other files to install. If files
+    are specified, then they can be any combination of the setup.exe
+    file, .dll libraries that contain the files to be installed, or
+    X-Rite .edr files to convert or the equivalent to an Argyll .ccss
+    files, or<br>
+    .ccss or .ccmx files created using <a href="ccxxmake.html">ccxxmake</a>.<br>
+    <br>
+    The <b>-v</b> flag enables verbosity. This may be of use in
+    figuring out what went wrong if it doesn't work, and where files
+    have been installed.<br>
+    <br>
+    The <span style="font-weight: bold;">-n</span> flag causes oeminst
+    to show where the files would be installed or saved to, rather than
+    actually doing it.<br>
+    <br>
+    The <span style="font-weight: bold;">-c</span> flag causes oeminst
+    to save the files to the current directory, rather than the install
+    location.<br>
+    <br>
+    The <span style="font-weight: bold;">-S</span> option allows
+    installing the file(s) in a local system location, rather than the
+    default user accessible location. With this option you may need to
+    run this as superuser using the "sudo" command on OS X and Linux
+    systems.<span style="font-weight: bold;"><span style="font-weight:
+        bold;"><span style="font-weight: bold;"></span></span></span><br>
+    <h3>Usage Details and Discussion</h3>
+    <p>The <span style="font-weight: bold; text-decoration: underline;">Spyder
+
+
+
+
+
+
+
+
+
+
+
+
+        2</span> instrument cannot function without the presence of the
+      instrument vendors PLD firmware pattern for the device. This
+      firmware is not provided with Argyll, since it has not been made
+      available under a compatible license.<br>
+      <br>
+      The purchaser of a Spyder 2 instrument should have received a copy
+      of this firmware along with their instrument from the original
+      vendor, and <span style="font-weight: bold;">oeminst</span>
+      enables their instrument, by locating the firmware in the users
+      copy of the instrument install files.<br>
+      <br>
+      On Microsoft Windows or Apple OS X platforms, <span
+        style="font-weight: bold;">oeminst</span> will look to see if
+      the vendors drivers have been installed on the users machine, and
+      locate the firmware pattern from there. If the vendors drivers
+      have not been installed, or the user does not wish to install
+      them, or no vendors drivers are available for the users platform
+      (i.e. Linux), then <span style="font-weight: bold;">oeminst</span>
+      will also attempt to locate the Spyder 2 installation CDROM, and
+      make use of the firmware pattern from there.<br>
+      <br>
+      If the instrument firmware pattern is successfully located, then
+      oeminst will create a <span style="font-weight: bold;">spyd2PLD.bin</span>
+      file in a subdirectory of the users home directory, or if the <span
+        style="font-weight: bold;">-S l</span> option is used, will
+      store it in a system wide location. (the <a
+href="http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html">XDG
+
+
+
+
+
+
+
+
+
+
+
+
+        Base Directory specifications</a> are used as a basis for
+      storing the file). Programs that access instruments such as&nbsp;
+      <span style="font-weight: bold;">spotread</span>, <span
+        style="font-weight: bold;">dispcal</span> and <span
+        style="font-weight: bold;">dispread</span>, can then locate and
+      load the firmware into the instrument.<br>
+      <br>
+      <span style="font-weight: bold;">Note</span> that the <span
+        style="font-weight: bold;">spyd2PLD.bin</span> file created by
+      oeminst contains the proprietary and copyrighted firmware provided
+      by the instrument vendor, and while the vendor has provided the
+      firmware to the end user to facilitate the use of their purchased
+      instrument, the instrument vendor (typically) does not permit the
+      user to distribute such a file or make copies for purposes other
+      than making use of their own instrument.<br>
+    </p>
+    <p><br>
+      The <span style="font-weight: bold; text-decoration: underline;">Spyder
+
+
+
+
+
+
+
+
+
+
+
+
+        4</span>&nbsp; or <u><b>Spyder 5</b></u> instrument does not
+      have the full range of vendor instrument calibration options
+      without the presence of the instrument vendors calibration
+      information for the device. This calibration information is not
+      provided with Argyll, since it has not been made available under a
+      compatible license.<br>
+      <br>
+      The purchaser of a Spyder 4 or 5 instrument should have received a
+      copy of this calibration information along with their instrument
+      from the original vendor, and <span style="font-weight: bold;">oeminst</span>
+      enables the full range of calibration choice for their instrument,
+      by locating the necessary information in the users copy of the
+      instrument install files.</p>
+    <p>On Microsoft Windows or Apple OS X platforms, <span
+        style="font-weight: bold;">oeminst</span> will look to see if
+      the vendors drivers have been installed on the users machine, and
+      locate the calibration information from there. If the vendors
+      drivers have not been installed, or the user does not wish to
+      install them, or no vendors drivers are available for the users
+      platform (i.e. Linux), then <span style="font-weight: bold;">oeminst</span>
+      will also attempt to locate the Spyder 4 or 5 installation CDROM,
+      and make use of the calibration information from there. If you
+      have downloaded the OEM software from the vendors website, then
+      you should run <b>oeminst</b> on the install package you
+      downloaded.<br>
+    </p>
+    <br>
+    <span style="font-weight: bold;"></span>The <span
+      style="font-weight: bold; text-decoration: underline;">i1d3</span>
+    family of instruments can make use of display specific spectral
+    calibration information, which improves their accuracy when used on
+    displays of a similar type. The manufacturer provides 5 of these <b>.edr</b>
+    calibration files that cover various projectors and LCD displays
+    with the instrument on the install CD. The <span
+      style="font-weight: bold;">oeminst</span> utility allows you to
+    translate these files into Argyll <span style="font-weight: bold;">CCSS</span>
+    format, and install them where the measurement tools can
+    automatically find them, so that they can be selected using the <span
+      style="font-weight: bold;">-y</span> option.<br>
+    Also provided with Argyll in the ref directory is <span
+      style="font-weight: bold;">CRT.ccss</span> to cover CRT type
+    displays. <span style="font-weight: bold;">oeminst</span> allows
+    this file to be installed too.<br>
+    <br>
+    On Microsoft Windows or Apple OS X platforms, <span
+      style="font-weight: bold;">oeminst</span> will look to see if the
+    manufacturers files have been installed on the users machine, and
+    locate them from there. If the manufacturers files have not been
+    installed, or the user does not wish to install them, or no
+    manufacturers installation is available for the users platform (i.e.
+    Linux), then <span style="font-weight: bold;">oeminst</span> will
+    also attempt to locate the i1d3 installation CDROM, and make use of
+    the .edr files from there.<br>
+    <br>
+    If the .edr files are successfully located, then oeminst will
+    translate them to .ccss files and copy them into a <span
+      style="font-weight: bold;"></span> subdirectory of the users home
+    directory, or if the <span style="font-weight: bold;">-S l</span>
+    option is used, will store it in a system wide location. (the <a
+href="http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html">XDG
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Base Directory specifications</a> are used as a basis for storing
+    the file). Programs that access instruments such as&nbsp; <span
+      style="font-weight: bold;">spotread</span>, <span
+      style="font-weight: bold;">dispcal</span> and <span
+      style="font-weight: bold;">dispread</span>, can then locate and
+    list the installed .ccss as possible choices for the <span
+      style="font-weight: bold;">-y</span> option.<br>
+    <br>
+    You can also install <b>CCSS</b> and <b>CCMX</b> files that you
+    have created using <a href="ccxxmake.html">ccxxmake</a>, and these
+    will then be listed and selected as a display type selection using
+    the <b>-y</b> option of the utilities that access colorimeter
+    devices. Note that <b>CCMX</b> selections will only show up for the
+    colorimeter model that they were created for.<br>
+    <br>
+    If you are going to use the same CCSS or CCMX file all the time,
+    then you may want to set the <a href="Environment.html">ARGYLL_COLMTER_CAL_SPEC_SET</a>
+    environment variable.<br>
+    <br>
+    <br>
+    To allow <span style="font-weight: bold;">oeminst</span> to install
+    files from the CDROM, it should be in a CD drive prior to running
+    oeminst. If your Linux system is not running automount, or your
+    automount is setup to mount CDROM's somewhere other than <span
+      style="font-style: italic;">/media</span>,<span style="font-style:
+      italic;"> /mnt/cdrom</span>, <span style="font-style: italic;">/media/cdrom</span>
+    or <span style="font-style: italic;">/cdrom</span>, then you will
+    have to mount the CDROM manually, and give oeminst the path to the
+    CDROM setup/setup.exe file as the argument <span style="font-style:
+      italic;">inputfile</span>.<span style="font-weight: bold;"><br>
+    </span><br>
+    If you have not been provided with a CDROM, then you may be able to
+    download an MSWindows install package from the Manufacturers <b>website</b>,
+    and then run <b>oeminst</b> on that file.<span style="font-weight:
+      bold;"><br>
+      <br>
+      NOTE </span>that under <span style="font-weight: bold;">OS X
+      10.6</span> (Snow Leopard) and latter, you may need to run oeminst
+    as root to be able to mount the CDROM's ISO partition. The simplest
+    way of doing this is to use the "sudo" commands. e.g. "sudo
+    oeminst", which will then ask you to enter the root password.<br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

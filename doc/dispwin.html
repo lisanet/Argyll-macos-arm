@@ -1,0 +1,1064 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>dispwin</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/dispwin</b></h2>
+    <h3>Summary</h3>
+    This tool has several different but related functions. When given as
+    a file argument an ICC profile containing vcgt "gamma" curves, or an
+    Argyll video calibration .cal file, it will load that calibration
+    into the chosen display. It can also install or uninstall a profile
+    in the system for the chosen display, or set the display calibration
+    to that in the currently installed system profile. By default it
+    displays a test window the same as that used by dispcal and
+    dispread, to test this functionality. It can also be used to test
+    the ability to load video card LUT curves to each display, and to
+    test how the console Bell will sound when used with some instruments
+    (ie. Eye-One Pro).<br>
+    <br>
+    [Note that in OS X 10.7 Lion, changes to the default system profile
+    permissions mean that you can't set a calibration persistently when
+    the default system profile is being used, unless you run as root
+    (ie. use sudo). Note that you do <span style="font-weight: bold;">not</span>
+    need to run as root to install a user profile (-Su, the default
+    install type.)]<br>
+    <h3>Usage</h3>
+    <font size="-1"><span style="font-family: monospace;">dispwin
+        [options] [<span style="font-style: italic;">calfile</span>]</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        mode<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;</span><a style="font-family: monospace;"
+        href="#display">-display displayname</a><span
+        style="font-family: monospace;"> [<span style="font-weight:
+          bold;">X11 only</span>] Choose X11 display name<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#dnm">-d n[,m]</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        [<span style="font-weight: bold;">X11 only</span>] Choose the
+        display from the following list (default 1),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+and
+optionally
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        choose a different display m for Video LUT access.<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#d">-d n</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[Not
+X11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Choose the display from the following list (default 1)<br>
+      </span></font><span style="font-family: monospace;">&nbsp;<a
+        href="#dweb">-d web[:port]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      Display via a web server at port (default 8080)<br>
+    </span><span style="font-family: monospace;"><tt>&nbsp;</tt><tt><a
+          href="#dcc">-d cc[:n]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      </tt><tt>Display via n'th ChromeCast (default 1, ? for list)<br>
+      </tt></span>&nbsp; <span style="font-family: monospace;"><a
+        href="#dmadvr">-d madvr</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      [MSWin] Display via MadVR Video Renderer</span><br>
+    &nbsp; <tt><a href="#dummy">-d dummy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      Display via dummy (non-existant, invisible) display<br
+        style="font-family: monospace;">
+    </tt> <font size="-1"><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;<a href="#P">-P
+          ho,vo,ss[,vs]</a>&nbsp;&nbsp;&nbsp;&nbsp; Position test window
+        and scale it</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ho,vi:
+0.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        = left/top, 0.5 = center, 1.0 = right/bottom etc.</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ss:
+0.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        = half, 1.0 = normal, 2.0 = double etc.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ss,vs: = optional horizontal, vertical scale.<br>
+        &nbsp;</span></font><font size="-1"><span style="font-family:
+        monospace;"><a href="#F">-F</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Fill
+whole
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        screen with black background</span></font><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;</span></font><font
+      size="-1"><span style="font-family: monospace;"><a href="#E">-E</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></font><small><span style="font-family: monospace;">Video
+        encode output as (16-235)/255 "TV" levels</span></small><br
+      style="font-family: monospace;">
+    <font size="-1"><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#i">-i</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; Run forever with random values<br>
+        &nbsp;<a href="#G">-G <span style="font-style: italic;">filename</span></a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Display RGB
+        colors from CGATS file<br>
+        &nbsp;</span></font><font size="-1"><a style="font-family:
+        monospace;" href="#m">-m</a><span style="font-family:
+        monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; Manually step through colors</span></font><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;<a
+          href="#r">-r</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Test
+just
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        video LUT loading &amp; Beeps<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#n">-n</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Test
+native
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        display values (rather than through Video LUT&nbsp; and C.M.)<br>
+        &nbsp;<a href="#s">-s <span style="font-style: italic;">filename.cal</span></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Save
+the
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        currently loaded Video LUT to 'filename'<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#c">-c</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Load
+a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        linear display calibration (clear calibration)</span></font><font
+      size="-1"><span style="font-family: monospace;"><br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#V">-V</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verify
+that
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        calfile/profile cal. is currently loaded in LUT<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#I">-I</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">Install profile for display and use its calibration<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;<a href="#U">-U</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">Un-install profile for display<br>
+        &nbsp;<a href="#S">-S d</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Specify
+the
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        install/uninstall scope for OS X [nlu] or Vista [lu]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+d
+is
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        one of: n = network, l = local system, u = user (default)<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;"></span></font><font size="-1"><span
+        style="font-family: monospace;">&nbsp;<a href="#L">-L</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">Load installed profiles cal. into Video LUT<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;"><font size="-1"><span style="font-family:
+            monospace;">&nbsp;<a href="#x">-x</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            [<span style="font-weight: bold;">X11 only</span>] Load all
+            profiles for given X11 server<br>
+            &nbsp;</span></font></span></font><font size="-1"><span
+        style="font-family: monospace;"><a href="#X">-<font size="-1">X</font></a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [<span style="font-weight: bold;">X11 only</span>] Run in daemon
+        loader mode for given X11 server <br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;</span><a style="font-family: monospace;"
+        href="#D">-D [level]</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Print
+debug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        diagnostics to stderr</span></font><font size="-1"><span
+        style="font-family: monospace;"></span></font><font size="-1"><span
+        style="font-family: monospace;"></span><span style="font-family:
+        monospace;"><br>
+        &nbsp;</span></font><a style="font-family: monospace;"
+      href="#p1"><font size="-1"><span style="font-family: monospace;"></span></font></a><font
+      size="-1"><a style="font-family: monospace;" href="#p1"><i>calfile</i></a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Load
+display
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        calibration (<a href="cal_format.html">.cal</a> or .icm) into
+        LUT, and exit.</span><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;"></span></font><br>
+    <br>
+    <h3>Comments<br>
+    </h3>
+    <a name="v"></a> The <b>-v</b> flag makes the program more
+    verbose..<br>
+    <br>
+    <a name="display"></a><span style="font-weight: bold;">display</span>:
+    When running on a UNIX based system that used the X11 Windowing
+    System, <b>dispwin</b> will by default use the $DISPLAY environment
+    variable to determine which display and screen to read from. This
+    can be overridden by supplying an X11 display name to the <span
+      style="font-weight: bold;">-display</span> option. Note that if
+    Xinerama is active, you can't select the screen using $DISPLAY or
+    -display, you have to select it using the <span style="font-weight:
+      bold;">-d</span> parameter.<br>
+    <br>
+    <a name="d"></a><span style="font-weight: bold;">-d</span>: By
+    default the location of the test window will be the main display. If
+    the system has more than one display or screen, an alternate
+    display/screen can be selected with the <span style="font-weight:
+      bold;">-d</span> parameter. If you invoke <span
+      style="font-weight: bold;">dispwin</span> so as to display the
+    usage information (i.e. "dispcal -?" or "dispcal --"), then the
+    discovered displays/screens will be listed. Multiple displays may
+    not be listed if they appear as a single display to the operating
+    system (ie. the multi-display support is hidden in the video card
+    driver). On UNIX based system that used the X11 Windowing System,
+    the <span style="font-weight: bold;">-d</span> parameter will
+    override the screen specified by the $DISPLAY or <span
+      style="font-weight: bold;">-display</span> parameter.<br>
+    <span style="font-weight: bold;"></span><br>
+    <span style="font-weight: bold;">Note</span> that if VideoLUTs for a
+    display are not accessible (i.e. no hardware calibration
+    capability), <span style="font-weight: bold;">dispwin</span> will
+    will issue a warning or fail when it attempts to access them.<br>
+    <br>
+    On X11 the inability to access VideoLUTs could be because you are
+    trying to access a remote display, and the remote display doesn't
+    support the XF86VidMode extension, or perhaps you are running
+    multiple monitors using NVidia TwinView, or MergedFB, and trying to
+    access anything other than the primary monitor. TwinView and
+    MergedFB don't properly support the XF86VidMode extension for
+    multiple displays. You can use <a href="dispwin.html#r">dispwin -r</a>
+    to test whether the VideoLUTs are accessible for a particular
+    display. See also below, on how to select a different display for
+    VideoLUT access. Also note that dispcal will fail if the Visual
+    depth doesn't match the VideoLUT depth. Typically the VideoLUTs have
+    256 entries per color component, so the Visual generally needs to be
+    24 bits, 8 bits per color component.<br>
+    <br>
+    More modern X11 systems support the XRANDR extension, which handles
+    multiple displays much more gracefully, but note that there are
+    limitations in profiling and calibrating Mirrored or Cloned
+    Displays. Mirrored displays share the same frame buffer space
+    (Separate CRTC's with overlapping pixel locations) but can have
+    different calibration curves, while Cloned displays share both frame
+    buffer space and calibration curves (A single CRTC feeding multiple
+    Outputs). <b>dispwin</b> will show different display selections for
+    each output, but calibration or application of color management may
+    only be correct for the last set display (i.e. if frame buffer space
+    overlaps, or there is only a single CRTC to hold calibration curves,
+    and a single _ICC_PROFILE_xxx root atom holding the profile, if the
+    application is using the Xinerama convention for obtaining a
+    profile, rather than the Xrandr per Output property _ICC_PROFILE
+    convention.) <br>
+    <br>
+    <a name="dnm"></a><span style="font-weight: bold;">-d n[,m]</span>Because
+of
+the
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    difficulty cause by TwinView and MergedFB in X11 based systems, you
+    can optionally specify a separate display number after the display
+    that is going to be used to present test patches, for accessing the
+    VideoLUT hardware. This must be specified as a single string, e.g. <span
+      style="font-weight: bold;">-d 1,2</span> . Some experimentation
+    may be needed on such systems, to discover what screen has access to
+    the VideoLUT hardware, and which screens the test patches appear on.
+    You may be able to calibrate one screen, and then share the
+    calibration with another screen. Profiling can be done independently
+    to calibration.<br>
+    <br>
+    <a name="dweb"></a><span style="font-weight: bold;">-dweb</span> or
+    <span style="font-weight: bold;">-dweb:<i>port</i></span> starts a
+    standalone web server on your machine, which then allows a local or
+    remote web browser to display the the color test patches. By default
+    port <span style="font-weight: bold;">8080</span> is used, but this
+    can be overridden by appending a <span style="font-weight: bold;">:</span>
+    and the port number i.e. <span style="font-weight: bold;">-dweb:8001</span>.
+    The URL will be <span style="font-weight: bold;">http://</span>
+    then name of the machine or its I.P. address followed by a colon and
+    the port number - e.g something like <span style="font-weight:
+      bold;">http://192.168.0.1:8080</span>. If you use the verbose
+    option (<span style="font-weight: bold;">-v</span>) then a likely
+    URL will be printed once the server is started, or you could run <span
+      style="font-weight: bold;">ipconfig</span> (MSWin) or <span
+      style="font-weight: bold;">/sbin/ifconfig</span> (Linux or OS X)
+    and identify an internet address for your machine that way. <b>JavaScript</b>
+    needs to be enabled in your web browser for this to work. You may
+    have to modify any firewall to permit port 8080 to be accessed on
+    your machine.<br>
+    <br>
+    Note that if you use this method of accessing a display, that there
+    is no access to the display Video Lookup tables, and that any
+    operation that depends on accessing the VideoLUTs will either
+    generate a warning or fail.<br>
+    <br>
+    <a name="dcc"></a><span style="font-weight: bold;">-dcc</span> or <b>-dcc:<i>no</i></b>
+    causes test patches to be displayed using and available <a
+      href="http://en.wikipedia.org/wiki/Chromecast">ChromeCast</a> to
+    your TV. Use <b>-dcc:?</b> to display a list of ChromeCasts on your
+    local network. Note that the ChromeCast as a test patch source is
+    probably the<b> least accurate</b> of your choices, since it
+    up-samples the test patch and transforms from RGB to YCC and back,
+    but should be accurate within ± 1 bit. You may have to modify any
+    firewall to permit port 8081 to be accessed on your machine if it
+    falls back to the Default receiver (see <a href="Installing.html">installation
+
+
+
+
+
+
+
+
+      instructions</a> for your platform).<br>
+    <br>
+    <a name="dmadvr"></a><span style="font-weight: bold;">-dmadvr</span>
+    [MSWin only] causes test patches to be displayed using the MadVR
+    video renderer. Note that will have to start <b>MadTPG</b> before
+    running dispread, and that while you can adjust the "Test Pattern
+    Configuration" controls, you should <u>not</u> normally alter the
+    "Existing Calibration" controls, as dispread will set these
+    appropriately. See <a
+      href="dispwin.html#n">-n</a> flag.<br>
+    <br>
+    <a name="dummy"></a><span style="font-weight: bold;">-ddummy</span>
+    causes test patches not to be displayed at all. <br>
+    <br>
+    <a name="P"></a> The <span style="font-weight: bold;">-P</span>
+    parameter allows you to position and size the test patch window. By
+    default it is places in the center of the screen, and sized
+    appropriately for the type of instrument, or 10% of the width of the
+    display if the display size is unknown.. The <span
+      style="font-weight: bold;">ho</span> and <span
+      style="font-weight: bold;">vo</span> values govern the horizontal
+    and vertical offset respectively. A value of 0.0 positions the
+    window to the far left or top of the screen, a value of 0.5
+    positions it in the center of the screen (the default), and 1.0
+    positions it to the far right or bottom of the screen. If three
+    parameters are provided, then the <span style="font-weight: bold;">ss</span>
+    parameter is a scale factor for the test window size. A value of 0.5
+    for instance, would produce a half sized window. A value of 2.0 will
+    produce a double size window. If four parameters are provided, then
+    the last two set independent horizontal and vertical scaling
+    factors. Note that the ho,vo,ss or ho,vo,hs,vs numbers must be
+    specified as a single string (no space between the numbers and the
+    comma). For example, to create a double sized test window at the top
+    right of the screen, use <span style="font-weight: bold;">-P 1,0,2</span>
+    . To create a window twice as wide as high: <span
+      style="font-weight: bold;">-P 1,0,2,1</span>.<br>
+    <br>
+    <a name="F"></a> The <span style="font-weight: bold;">-F</span>
+    flag causes the while screen behind the test window to be masked
+    with black. This can aid black accuracy when measuring CRT displays
+    or projectors.<br>
+    <br>
+    <a name="E"></a> The <span style="font-weight: bold;">-E</span>
+    flag causes the test values to be scaled to the Video RGB encoding
+    range of 16/255 to 235/255. Note that this is not applicable if the
+    MadVR render is being used to display patches, as MadVR should be
+    configured for Video encoding instead.<br>
+    <br>
+    By default <span style="font-weight: bold;">dispwin</span> will put
+    a test window on the selected display, and display some test colors,
+    before darkening&nbsp; then brightening the screen by loading video
+    LUT values, test the bell sounds, then restore the original values
+    and exit.<br>
+    <br>
+    If the&nbsp;<a name="i"></a><span style="font-weight: bold;">-i</span>
+    flag is set, then <span style="font-weight: bold;">dispwin</span>
+    will display the preset sequence, then random test colors forever.<br>
+    <br>
+    If the&nbsp;<a name="G"></a><span style="font-weight: bold;">-G</span>
+    parameter is set, then <span style="font-weight: bold;">dispwin</span>
+    will display the sequence of RGB color in the supplied CGATS file,
+    e.g. a .ti1 file. Typically this might the used with the <span
+      style="font-weight: bold;">-m</span> option to manually measure a
+    set of test patches.<br>
+    <br>
+    If the&nbsp;<a name="m"></a><span style="font-weight: bold;">-m</span>
+    flag is set, then <span style="font-weight: bold;">dispwin</span>
+    will display the preset sequence then exits, but advances manually
+    after each return key.<br>
+    <br>
+    If the&nbsp;<a name="r"></a><span style="font-weight: bold;">-r</span>
+    flag is set, then <span style="font-weight: bold;">dispwin</span>
+    will test just the loading of video LUT values by first darkening,
+    then lightening the screen, before exiting.<br>
+    <br>
+    If the&nbsp;<a name="n"></a><span style="font-weight: bold;">-n</span>
+    flag is set, then <span style="font-weight: bold;">dispwin</span>
+    will display the colors directly on the display, rather than having
+    the color values translated through the currently loaded Video LUTs.
+    In the case of using the MadVR renderer to display the patches, any
+    3dLut will also be disabled.<br>
+    <br>
+    <a name="s"></a> If a <span style="font-weight: bold;">-s <span
+        style="font-style: italic;">filename.cal</span></span> option is
+    used, then rather than displaying a test window, <span
+      style="font-weight: bold;">dispwin</span> will save the currently
+    loaded calibration curves to the given calibration file. Note that
+    other functions such as clearing or loading a calibration can be
+    performed after this action.<br>
+    <br>
+    <a name="c"></a> If a <span style="font-weight: bold;">-c</span>
+    flag is used, then rather than displaying a test window, <span
+      style="font-weight: bold;">dispwin</span> will load the selected
+    display with a linear set of Video LUT curves, effectively clearing
+    the calibration, and will then exit. Note that other functions such
+    as loading a calibration can be performed after this action.<span
+      style="font-style: italic;"></span><br>
+    <br>
+    <a name="V"></a> If a <span style="font-weight: bold;">-V</span>
+    flag is used, then rather than loading the calibration specified as
+    the final argument, the currently loaded calibration will be
+    verified as being the same as the given calibration file. If this is
+    combined with the <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-L</span></span> flag, the currently
+    loaded calibration will be verified as being the same as the
+    installed system profile for the display.<br>
+    <br>
+    <a name="I"></a><span style="font-weight: bold;">-I</span>: The ICC
+    profile specified as the final argument will be installed as the
+    default operating system profile for the chosen display, and the
+    display calibration will be set to the calibration tag ('vcgt' tag,
+    if any) in that profile. On MSWindows and OS X this means that the
+    profile will be copied to the appropriate color profile directory
+    and registered with the operating system. <br>
+    <br>
+    For Linux X11 systems, the profile will be installed using&nbsp;<span style="white-space: pre;"> using </span>the
+
+
+
+
+
+
+    <a href="ucmm.html">ucmm</a> convention by default, and this
+    associates the display hardware identification (EDID) of the
+    selected display, with the profile. The X11 _ICC_PROFILE property
+    will be set in the root window, and also the the XrandR 1.2 X11
+    _ICC_PROFILE output property on systems that are running XrandR 1.2
+    or later. The use of atoms is following this <a
+      href="http://www.burtonini.com/computing/x-icc-profiles-spec-0.2.html">convention</a>
+    for allowing applications to locate the display profile for a
+    particular X11 display, and expands it to accomodate XrandR 1.2.
+    Note that for X11 systems, the properties are not persistent, and
+    will need to be loaded each time the X11 server is started (see the
+    <a href="#L">-L</a> flag).<br>
+    <br>
+    If the <b>ARGYLL_USE_COLORD</b> environment variable is set (ie.
+    set it to "yes"), then on Gnome systems running <b>colord</b><span style="white-space: pre;">, dispwin will attempt to store and retrieve display ICC profiles using<br>colord.<br><br></span>
+    To make sure that the profile calbration 'vcgt' tag gets loaded into
+    the Graphics Card at system start, please read the guide <a
+      href="dispprofloc.html">here</a>.<br>
+    <br>
+    <a name="U"></a><span style="font-weight: bold;">-U</span>: The ICC
+    profile specified as the final argument will be un-installed as the
+    default operating system profile for the chosen display. The display
+    calibration will remain unchanged.<br>
+    <br>
+    <a name="S"></a><span style="font-weight: bold;">-S</span> d: Some
+    systems have more than one profile scope that an installed profile
+    will apply to, and this parameter allows overriding the default user
+    scope. On OS X, there is a choice of three scopes: <span
+      style="font-weight: bold;">n</span>: for network scope, if people
+    are sharing profiles over a network, <span style="font-weight:
+      bold;">l</span>: local system scope, which installs the profile
+    for all users of a system, and the default <span
+      style="font-weight: bold;">u</span>, which covers just the user
+    installing the profile. On Linux or Microsoft Vista, just the local
+    system <span style="font-weight: bold;">l</span> and user <span
+      style="font-weight: bold;">u</span> scope are available. Note that
+    you may need to run dispwin with elevated privileges(sudo) to be
+    able to successfully use network or local system scope. This option
+    also applies to uninstalling a profile. Note that to install a user
+    profile for the root account, you will have to login as root (sudo
+    will not achieve this).<br>
+    <br>
+    <a name="L"></a> <span style="font-weight: bold;">-L</span>: This
+    option fetches the current installed system profile for the chosen
+    display, and sets the display to the calibration tag ('vcgt' tag, if
+    any) in the profile. This is a convenient way of initializing the
+    display on system startup from the installed display profile, if the
+    system doesn't not do this automatically .<br>
+    <br>
+    <a name="x"></a> <span style="font-weight: bold;">-x</span>: When
+    running on a UNIX based system that used the X11 Windowing
+    System,&nbsp; it will load the installed profiles of all the screens
+    of the given X11 server. This may be useful on startup, or when
+    called from a udev script triggered by attachment of a display.<br>
+    <br>
+    <a name="X"></a> <span style="font-weight: bold;">-X</span>: Daemon
+    mode (experimental). When running on a UNIX based system that used
+    the X11 Windowing System, this option runs dispwin in a "daemon"
+    mode where it monitors the given X11 server, waiting for any changes
+    in monitors that may require loading a matching ICC profile (ie.
+    such as re-configuring, plugging in a different monitor etc.)&nbsp;
+    This only works if XRandR 1.2 is available on the server. By default
+    dispwin runs silently, and will not terminate. If the <span
+      style="font-weight: bold;">-v</span> option is given, it will emit
+    messages to stdout to show what it is doing. When it is first
+    invoked, it will load the installed profiles of all the screens of
+    the given X11 server.<br>
+    <br>
+    <a name="D"></a>The <b>-D</b> flag causes diagnostics to be printed
+    to stdout. A level can be set between 1 .. 9, that may give
+    progressively more verbose information. This can be useful in
+    tracking down why an operation fails.<br>
+    <br>
+    <a name="p1"></a> The final optional parameter on the command line
+    is the name of an ICC profile that contains a Video LUT <span
+      style="font-weight: bold;">vcgt</span> tag, or an Argyll <a
+      href="cal_format.html">.cal</a> format display calibration. If
+    this parameter is provided, then the selected display will be loaded
+    with the given calibration. If the <span style="font-weight: bold;">-V</span>
+    flag was given, then it is verified that this calibration is the
+    currently loaded one.&nbsp; This may be useful in initializing a
+    system to the current calibration on system startup, although a
+    better way may be to install the profile (<span style="font-weight:
+      bold;">-I</span> option), and then just use <span
+      style="font-weight: bold;">-L</span>. Note that the vcgt tag
+    interpretation within Argyll is consistent with that of the
+    originators of the tag. Other ICC profile vcgt implementations may
+    not be so consistent.<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that on an X11 system,
+    if the environment variable <span style="font-weight: bold;">ARGYLL_IGNORE_XRANDR1_2</span>
+    is set (ie. set it to "yes"), then the presence of the XRandR 1.2
+    extension will be ignored, and other extensions such as Xinerama and
+    XF86VidMode extension will be used. This may be a way to work around
+    buggy XRandR 1.2 implementations.<br>
+    <span style="font-weight: bold;"><br>
+      NOTE</span> on MSWin systems that you will have to disable any
+    other calibration installer program if you want to be able to
+    control calibration using dispwin. Note also that there are other
+    programs that will interfere with calibration loading, such as
+    igfxpers.exe that gets installed with nVidia "Optimus" technology.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>txt2ti3</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>profile/txt2ti3</b></h2>
+    <h3>Summary</h3>
+    <small><big>Convert Gretag/Logo/X-Rite/Barbieri or other CGATS
+        format RGB or CMYK test chart results into</big></small>
+    Argyll&nbsp;<a href="File_Formats.html#.ti3">.ti3</a> CGATS format.<br>
+    txt2ti3 will also cope with source files that don't contain device
+    values, and will emit a file that is not strictly a .ti3, but can be
+    useful as input to spec2cie or scanin.<br>
+    <h3>Usage Summary</h3>
+    <small><span style="font-family: monospace;">txt2ti3 [-v] [-l limit]
+        [-d] [devfile] infile [specfile] outbase</span><br
+        style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">-2<span style="font-style:
+          italic;"> &nbsp; &nbsp; &nbsp;</span> &nbsp;&nbsp;&nbsp;&nbsp;
+        create a dummy .ti2 file as well.<br>
+      </span></small><small><span style="font-family: monospace;">-l </span><i
+        style="font-family: monospace;">limit</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        set ink limit, 0 - 400% (default max in file)<br>
+        -d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+
+
+
+
+        type of device as Display, rather than Output<br>
+        -D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Set type of device as Display and not normalized<br>
+        -i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+
+
+
+
+        type of device as Input, not Output</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;">-T
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Transpose sample name Letters and Numbers<br>
+      </span></small><small><span style="font-family: monospace;"></span><i
+        style="font-family: monospace;">[devfile]</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; Input
+        Device CMYK target file (typically file.txt)</span><br
+        style="font-family: monospace;">
+      <i style="font-family: monospace;">infile&nbsp;</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Input
+CIE,
+
+
+
+
+        Spectral or Device &amp; Spectral file (typically file.txt)</span><br
+        style="font-family: monospace;">
+      <i style="font-family: monospace;">[specfile]</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp; Input
+        Spectral file (typically file.txt)</span><br style="font-family:
+        monospace;">
+      <i style="font-family: monospace;">outbasefile</i><span
+        style="font-family: monospace;">&nbsp;&nbsp; Base name for
+        output</span><a style="font-family: monospace;"
+        href="File_Formats.html#.ti3">.ti3</a><span style="font-family:
+        monospace;"> and <a href="File_Formats.html#.ti2">.ti2</a> file</span></small>
+    <br>
+    <h3>Usage Details and Discussion</h3>
+    txt2ti3 takes the Gretag/Logo/X-Rite/Barbieri/etc. test chart
+    results, and converts them into Argyll&nbsp;<a
+      href="File_Formats.html#.ti3">.ti3</a> CGATS files.<br>
+    It is quite common to find profile test chart data from various
+    standards bodies and industry organizations in one of these formats,
+    so it is useful to be able to convert them for use with Argyll. ICC
+    profiles created using Gretag Profile Maker also commonly contain
+    the test chart results embedded in the profile, inside an ICC tag.<br>
+    <br>
+    A variety of different packaging of Gretag/Logo/X-Rite/Barbieri data
+    can be accepted: <br>
+    <br>
+    1&nbsp;source files, consisting of a combined device value and CIE
+    and/or spectral values.<br>
+    2 source files, consisting of &nbsp;a file containing the device
+    values, and a file containing the CIE and/or spectral values.<br>
+    2 source files, consisting of a file containing the device values
+    and the CIE values, and a file containing the spectral values.<br>
+    3 source files, consisting of a file containing the device values, a
+    file containing the CIE values, and a file containing the spectral
+    values.<br>
+    <br>
+    X-Rite ColorPort seems to produce a single source file containing
+    combined device value and CIE and/or spectral values.<br>
+    <br>
+    The Gretag/Logo test chart results format seem to change with each
+    minor release of Profile Maker, so this tool may not work in all
+    cases.<br>
+    <br>
+    Use the Barbieri .CIE file<br>
+    <br>
+    The <span style="font-style: italic;">outbasefile</span> is the
+    base of the output file(s), to which txt2ti3 will automatically
+    append a .ti3 and .ti2 extension.<br>
+    <br>
+    The input files may have data that is scaled to one of three levels:
+    1.0, 100.0 or 255.0, and txt2ti3 attempts to guess what the
+    appropriate range is, in order to scale to Argyll's standard range 0
+    .. 100.0.<br>
+    <br>
+    If the -T flag is used, then the patch location will be transposed
+    from letter/number to letter/numer - i.e.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; B5 -&gt; E2 <br>
+    <br>
+    <br>
+  </body>
+</html>

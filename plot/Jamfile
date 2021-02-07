@@ -1,0 +1,46 @@
+
+# Jamfile for plot library and test program
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
+
+# Compile .c as .m
+if $(OS) = MACOSX {
+	ObjectCcFlags plot : -ObjC ;
+	ObjectCcFlags plot_plot : -ObjC ;
+}
+
+# Stop MS compiler running out of heap space 
+if $(MSVCNT) {
+	CCFLAGS += "/Zm400" ;
+}
+
+# PLOT library
+Library libplot : plot.c : : : ../h ../numlib ../spectro ;
+if $(UNIX) && $(OS) != MACOSX {
+  ObjectHdrs plot : $(LibWinH) ;
+}
+
+# VRML plot library
+Library libvrml : vrml.c : : : ../h ../icc ../cgats ../numlib ../gamut ;
+
+
+# X3DOM files x3dom.css & x3dom.js are from /src/x3dom/dist after using
+# /src/x3dom/src/Makefile python script to assemble them.
+if [ GLOB $(PATH) : xxd xxd.exe ] {
+    Echo "xxd seems to be available" ;
+
+	GenFileNNDnc x3dom.css.h : xxd -i "<" [ NormPaths x3dom.css ] ">" [ NormPaths x3dom.css.h ] ;
+	GenFileNNDnc x3dom.js.h : xxd -i "<" [ NormPaths x3dom.js ] ">" [ NormPaths x3dom.js.h ] ;
+}
+
+# Individual stand alone test of plot library
+LINKFLAGS += $(GUILINKFLAGS) ;
+MainVariant plot : plot.c : : STANDALONE_TEST : ../h ../numlib ../spectro : : ../spectro/libconv.lib ../numlib/libnum.lib ../numlib/libui.lib ;
+
+#MainsFromSources ttt.c : : : ../numlib ;
+#Main ttt : ttt.c : : : ../numlib : : ../numlib/libnum libplot : ;
+
+#MainsFromSources t.c ;
+

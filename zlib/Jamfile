@@ -1,0 +1,30 @@
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
+
+Libraries = libz ;
+Executables = ;
+Headers = zlib.h ;
+
+# zlib library
+LIBSRCS = 
+	adler32.c
+	compress.c
+	zcrc32.c
+	deflate.c
+	gzclose.c
+	gzlib.c
+	gzread.c
+	gzwrite.c
+	infback.c
+	inffast.c
+	inflate.c
+	inftrees.c
+	trees.c
+	uncompr.c
+	zutil.c
+	;
+
+Library libz : $(LIBSRCS) ;
+

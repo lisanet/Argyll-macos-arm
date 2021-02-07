@@ -1,0 +1,26 @@
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
+
+# Run configure if it seems to be needed
+if $(UNIX) {
+	GenFileNND jconfig.h : "(cd $(SUBDIR); chmod +x configure ; ./configure)" : configure ;
+}
+
+# else copy them
+if $(NT) {
+	File jconfig.h : jconfig.vc ;
+}
+
+# jpg library
+LIBSRCS = jcapimin.c jcapistd.c jdapimin.c jdapistd.c jcomapi.c jcparam.c jctrans.c
+          jdtrans.c jcinit.c jcmaster.c jcmainct.c jcprepct.c jccoefct.c jccolor.c
+          jcsample.c jcdctmgr.c jfdctint.c jfdctfst.c jfdctflt.c jchuff.c jcarith.c
+          jcmarker.c jdatadst.c	jdmaster.c jdinput.c jdmainct.c jdcoefct.c jdpostct.c
+          jdmarker.c jdhuff.c jdarith.c jddctmgr.c jidctint.c jidctfst.c jidctflt.c
+          jdsample.c jdcolor.c jdmerge.c jquant1.c jquant2.c jdatasrc.c jaricom.c
+          jerror.c jmemmgr.c jutils.c jmemmgr.c jmemnobs.c ;
+
+Library libjpeg : $(LIBSRCS) ;
+

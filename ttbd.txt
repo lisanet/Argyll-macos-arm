@@ -1,0 +1,347 @@
+Argyll - Things To Be Done & odeas (in no particular priority)
+--------------------------
+
+Next release:
+
+	Fix LUT loading to have +/- 1 margine
+
+	Add new JETI instrument support 
+
+
+--------------------
+
+Categories:
+
+1)  Ideas list
+2)  General
+3)  Documentation
+4)  Charts
+5)  Readings/Instruments
+6)  Profiles
+6a) icclib
+7)  Linking, gamut mapping
+7a) Profile/Link speedups
+8)  Raster conversion
+9)  Scanin
+10) Calibration
+11) Bugs
+
+===================================================================
+Recent suggestions:
+
+	Add troublshooting section to tutorial:
+		colprof report fit DE's	
+		iccgamut
+		transplot
+		xicclu fwd & bwd and both
+		cctiff through test chart path
+		cctiff soft proof
+
+	Add flat field support to scanin
+
+	Add DICOM support to dispcal.
+
+	Change CIECAM02 to simplified & improved version
+
+	add filtered mode for tiffgamut (done ?)
+
+	add dispcal option to set white point to closest point
+	on the white locus to RBB 1 1 1
+
+	add option to dark cal spectro's every N readings in dispsup.
+
+	Add some i1pro RevE UV support for improved FWA
+
+	Add "single pixel chart" mode to printtarg and scanin.
+
+--------------------------------------------------------
+1) List 2
+
+
+1a) Candidate list:
+
+* Get optimised separations working for CMY->CMYK & smoothed sep. option
+
+* Implement ICC V4
+
+* Add monochrome suppport
+
+* Fix plot to have seperate thread etc, and
+  add "save spectrum support" in spotread.
+
+* Fix xmatrix.c to allow for curve offset - this will
+  improve quality of non-calibrated display matrix profiles greatly.
+
+
+2) General:
+
+* Add full support for use as DLL/SO libraries
+
+* Check all executables & libraries with valgrind, and
+  clean up leaks and unitialised memory.
+
+* Merge changes from Rhett Sutphin into iccdump that support
+  dumping embeded profiles from known file formats.
+
+* Create a utility for converting color profiles to monochrome.
+  ie. CMYK -> K only, RGB -> R=G=B profile.
+  Have option for forcing the profile to be a color profile
+  but monochrome output.
+  Have an option for outputing a clut based or ICC monochrome profile.
+
+* Add support for ink-subset profiling, e.g.
+  Monochrome like inks only (light + K etc.).
+  For full support, would have to support gamut mapping
+  of 2D colorspaces.
+
+* Add support for an Argyll private ICC tag, and use it to
+  convey the device ink limit, and other profile creation
+  information for improved linking checking and convenience.
+
+* Add support for a (private tag) real gamut clut as a 3D
+  surface in profile.
+
+* Add > 4 color device optimised separations creation support.
+
+* Add optimised separations handling for CMYK profile generation option.
+
+* Switch to balltree acceleration for gamut and rspl rev code.
+
+* Switch to ball tree for targen spatial acceleration ??
+
+* Re-code all of argyll to be a consistent set of APIs,
+  to make it a full "library". Python interface ?
+
+* Fixup error and allocation code in all the Argyll libraries.
+  Add a better error reporting mechanism ?
+
+* Write utilities to convert ICC profiles into PostScript CSD and
+  CRD's.
+
+* Define an open operating system color service API, and reate
+  an example implementation with Argyll.
+
+* Make printspot more flexible - load spectrums, compare them
+  etc. - similar to Xrites DTP41 utility.
+
+* Create a device "linearity" measure utlity. Read in a CLUT
+  profile and compute the first and second differences of the grid.
+  Report grid res. scaled average & maximums ?
+  (What about input and output curve effects ? - sample overall
+   chacateristics ??)
+
+3) Documentation:
+
+* Add page on viewing condition parameters and typical values,
+  to link to from colprof, collink etc.
+
+* Add help in generating greyscale test charts into targen doco.(-f0 etc.)
+
+* Add doco on intependent verification of profile accuracy.
+
+* Document icclib api (Do this with V4 release!)
+
+* Document cgatslib api
+
+* Add "advanced scenarios" section to Argyll, to explain custom lighting,
+  FWA, proofing fine tuning, etc.
+
+
+
+4) Charts:
+
+* Fix i1pro chart to allow for arbitrary long paper.
+
+* Create a test chart specifically for establishing an ink limit ?
+
+* Should create a .ti2 template file for some standard charts,
+  such as an IT8.7/3, ECI2002 random and non-random etc.
+  Scanner recognition files too ??
+
+* Add an option to targen, that allows generation of
+  test points down the neutral axis (how does this work
+  for CMYK, since there are many possible values ?? -
+  use ppoint with 1D target and 2D device ??)
+  - try enhancing current CIE94 effect ??
+  + other memory colors like skin tones etc.
+  
+* Started work on tiffsamp.c, but not complete.
+  Utility for creating representativ test points
+  from sample device images.
+
+* Create tool workflow to allow creating a "worst case"
+  verification chart based on the veronoi locations of
+  a chart used to create the profile needing verifying.
+
+
+5) Readings & Instruments:
+
+* In chartread, add RGB and Monochrome "generic"
+  profiles, so that bad readings can be recognised (??)
+
+* Create utility that translates between an XYZ only .ti3 and
+  an estimated spectral .ti3, based on a spectral .mpp,
+  to allow applying WFA compensation using non-spectral
+  instruments. (is this technically feasible ?)
+
+6) Profiles:
+
+* Determine typical statistical distribution of errors
+  in relation to Lab space, and use per sample point
+  weightings to apply more uncertaintly specific smoothing 
+  factors.
+
+* Add option to use XYZ as PCS, and matrix in B2A table
+  to improve efficiency of B2A conversion (hence acuracy).
+
+* Investigate why using a black ink limit slows inversion down so much,
+  and see if the performance can be improved. Shift black ink limit
+  to be a calibration function ??
+
+* Add support in ICC profile for embedding the .ti3 CGATS data within
+  the profile. Add support for extracting it again in profile.
+
+* Add a custom tag that can encode a spectral A2B profile,
+  to support illunimant specification at link time ?
+
+* Add xicc support for creating monochrome profiles from
+  raw data.
+
+* Add support for regenerating perceptual and saturation
+  B2A tables in revfix. Rename utility ?
+
+* Can FWA compensation be improved in accuracy ? It seems to
+  over estimate FWA effect at high density of inks.
+  Is this due to scattering effects, asymetry in the filtering
+  effects of the colorant, or due to errors in estimating the
+  colorants filtering effects into the UV region ?
+
+* Modify rspl thin plate spines to have a "simplex" data
+  interpolation mode, rather than its "n-linear" one, for better
+  correspondence with how data is interpolated within the grid ?
+  (Is this really worth it ?)
+
+* Add smoothing for K locus generation for transtion to
+  ink limiting. Need to detect region near ink limit,
+  and then generate non-limited and limited values,
+  and then regenerate reverse value with blended K locus
+  target. Probably not important since ink limiting region
+  is often very dark, and optimised separations could be used as
+  an alternative mechanism.
+  [ Use optimized separations to fix this. ]
+
+* Add an option for input (and display ??) profiles to
+  include both matrix and Lut tables by default. (What PCS
+  should it use, XYZ for the matrix, or Lab for the
+  best quality Lut ?? What other CMS need such things ?) 
+
+* Modify the rspl simplex code (and possibly imdi code)
+  to orient the simplexes in each cell to minimse the
+  expected curvature error at the center of each cell.
+  [ Partially implemented, but not complete.
+    Optimized separations is more important. ]
+
+
+6a) Icclib:
+
+* Re-architect icclib to allow for unknown datatypes,
+  dynamic custom tags, and full ICC V4 support.
+  [ In progress. icclib now supports unknown data types,
+    after back porting code from icclib4.]
+
+* Add full spot color library support
+
+* Change iccdump of Luts to dump PCS values as well as
+  normalised integer values (table entries and indexes ?)
+
+
+7) Linking, gamut mapping:
+
+* Add optimized per channel input/output curves
+  generation, rather than relying on the per channel
+  curves provided by the profiles (ie. xicc.c approach).
+
+* Would be nice to be able to weigh L errors more in
+  gamut clipping. Would have to introduce scaling factors
+  in rspl values to fake this without changing the
+  insides of RSPL.
+
+* Fix xicc library to handle matrix/shaper profile inversion
+  correctly, when the target is out of gamut. Don't clip in
+  device space, clip to nearest in CAM space ! (Fix after
+  iccV4 changes ?)
+
+* Fix xicc library to do better clipping for inputs that
+  are out of range of the core ICC lookup mechanisms. 
+
+* Add flag to work with "preserve black" that forces K only
+  input to map to pure K only output, to suite use on press
+  re-targeting. How about creating a gamut mapping to do
+  this for arbatrary colorants ? - Can use "weak default mapping"
+  to help curve shape ? How to handle resulting gamut shape change ??
+
+* Add proper support for a "filtering" mode of black generation,
+  that smooths the black colorant target to take into account
+  gamut boundary issues. ie. revisit auxsmth.c ? Use optimised
+  separations mechansim instead ??
+
+* Add support in collink for linking with monochrome in and out
+  profiles. Gamut mapping needs to have monochrome bypass of
+  3D mapping.
+
+* Add support for setting arbitrary colorant constraints
+  (ie. min/max/target, sum combinations)
+  This is linked with the ideas of culling the gamut to
+  avoid CMYK+ aliasing problems.
+
+7a) Profile/Link speedups
+
+* Investigate why rev_nnfind() is so slow. Can it be
+  improved ? 
+
+* Add adaptive sampling reverse interpolation mode, to speedup
+  high res inverse tables. Look at approach Done Bone used
+  in adaptively measuring samples.
+
+* Add support in collink and colprof, for multi-threading
+  the reverse interpolation calculations. This will allow
+  great speedups when more than one processor is available.
+  Simplest approach is to have multiple instances of rspl,
+  and partition the problem into separate spaces (not interleaved).
+  Cache contents shouldn't duplicate then.
+  Multi-threading within rspl/rev would be complicated, and
+  may be slow due to contentions.
+
+
+8) Raster conversion:
+
+* Add support in IMDI for an auxiliary "calibration" or
+  "linearisation" table as a parameter to the setup.
+  [Calibration creation should allow for arbitrary curve
+  manipulation, such as limiting maximums (to replace
+  max K function), and other arbitrary curves.]
+
+* Add optimized per channel input/output curves
+  generation, rather than relying on the per channel
+  curves provided by the profiles (ie. xicc.c approach).
+
+9) Scanin
+
+* Add check in scanin that prints warning message if
+  patch variance is too high (probable faulty read).
+
+* Add spectral fix options to scanin code to allow compensation
+  for scanner and media errors when using a scanned image to
+  measure color.
+  This means figuring out how it will work, as well as creating
+  to tools to create the spectral fix data (or just add general
+  tweak/abstract profile support ?).
+
+* Modify scanin reference .cht format to be more robust (ie. CGATS)
+
+
+10) Bugs
+
+* filmtarg  doesn't work any more with latest .ti1 data format.
+  Need to fix it.
+

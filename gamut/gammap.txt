@@ -1,0 +1,259 @@
+
+Author: Graeme W. Gill
+Date:   2000/10/28
+Updated: 2006/1/17
+
+Discussion of the gamut mapping algorithm used in Argyll:
+
+
+	Jam Morovic provides an extensive summary of previous Gamut Mapping Algoriths
+	(GMA) in his thesis "To Develop a Universal Gamut Mapping Algorithm".
+
+	Mark Fairchild and Gustav Braun also discuss some interesting aspects of
+	gamut mapping in "General-Purpose Gamut-Mapping Algorithms: Evaluation
+	of Contrast-Preserving Rescaling Functions for Color Gamut Mapping".
+
+	One thing that is striking in reading the current Gamut Mapping
+	literature, is the schism between gamut mapping, and gammut clipping.
+
+	A number of studies have indicated the satisfactory results from performing
+	gamut clipping by mapping out of gamut points to the closest point
+	within gamut, using a minumim delta E criteria. Ideally this would be
+	in a perceptually uniform space, and in practical spaces (ie L*a*b* space),
+	it appears a mapping that weightes luminance errors twice as much as
+	hue and saturation errors is the most satisfactory
+	(ie. Katoh & Ito 1996, Ebner & Fairchild 1997).
+	This approach makes perfect sense if the perceptually linear
+	delta E spaces is working as its should :- providing a means of
+	computing the minimal perceptual error between two colors.
+
+	Almost all the gamut mapping algorithms on the other hand, take a
+	completely different approach. They are dominated by algorithms with
+	appeal for their mathematical and algorithmic simplicity, rather than
+	any objective sense. Clipping along a line of constant hue, in a
+	particular direction, with some sort of compression along line
+	length curve seems to be a favourite.
+	My own experience with such an approach used for gamut clipping
+	shows up the logical flaws in this approach.  In printed media, for
+	instance, the yellow dye tends to have a very sharp cusp in (say) Lab
+	space.  When mapping along a line towards the neutral axis, it is almost
+	impossible to come up with a choice of line direction that
+	doesn't severly distort the clipped color. It is often extremely
+	de-saturated at the point the line hits the gamut boundary. Line
+	directions that take some account of the equivalent yellow cusp
+	in the target gamut improve the situation, but it seems highly
+	illogical to choosing an algorithm that gives a result with such
+	high delta E's, measured in any colorspace !
+
+	My conclusion is this: If we are working in a good perceptually
+	uniform space (ie. L*a*b*, Luv or CIECAM02), then we want to minimise
+	the delta E of the gamut mapped points at all times (this is the point
+	of using a perceptually uniform space !). This means that points
+	on the source gamut surface, should map to the target surface in
+	a very similar way to which they would be mapped using gamut clipping,
+	ie. minimum delta E. The distinction between gamut mapping and clipping
+	only becomes evident then, when we consider points that fall within
+	both gamuts. For pure gamut clipping, these points should not be
+	modified. For gamut mapping they should be modified in a way that
+	trades off increased absolute delta E, for reduced delta E relative
+	to surrounding colors.
+
+	[ Saturation intent brings some factors other than minimum
+	  delta E into the picture, but minumum delta E is a good
+	  starting point. ]
+
+	Gamut clipping should not be something separate to gamut mapping,
+	but should just be one extreme in a continuum of gamut mapping
+	choices.
+
+	A consideration revealed by Jam Morovic's work, is that it may be
+	desirable to treat colors on and close to the neutral axis a little
+	differently that those saturated colors near the gamut surface.
+	It seems desirable to align and compress the neutral axis to
+	give a good gray-scale mapping, as well as preserving the
+	relative colorimetry of low saturation colors.
+
+	Mark fairchild's work also indicates the desirablility of
+	trying to maintain the relative contrast of image data after
+	compression. This can be achieved by using a sigmoidal
+	mapping during compression (often called a soft knee compression
+	characteristic), rather than linear compression. Gamut
+	clipping can be considered to be an extreme example of
+	knee compression, where the knee is "hard".
+
+	A final consideration is how the various user intents are going
+	to be accomodated. One of the nice features of a consistent
+	clipping/compression approach is that many of the distinctions
+	between different intents seems to disappear.
+
+ Description of algorithms used:
+
+	The algorithm chosen here is (as far as I am aware) a new one,
+	that tries to combine all the considerations made above.
+
+	The gamut mapping is divided into two parts, mapping the luminance
+	axis orthogonally to other considerations, and then dealling
+	with any remaining gamut compression or expansion.
+
+	The basic transform mechanism is broken down into three part;
+	Aligning the neutral axes, mapping the luminence coordinate,
+	performing an overall 3D -> 3D mapping to compress and/or
+	expand the gamut surface. The rotation uses a matrix, the 1D -> 1D
+	luminence mapping uses a RSPL regular spline that is available
+	in Argyll, and the 3D -> 3D mapping also uses a RSPL.
+	By controlling the number, extent and strength of the sample
+	point mapping used to create the RSPL, it is possible to arrive
+	at a smooth mapping that has (controllable) areas of influence
+	between different regions, and can achieve sigmoid like "soft"
+	clipping curves.
+
+
+    Aligning the neutral axes.
+
+	The first step is to align the neutral axes. If the
+	colorspace used is an appearance space (Such as CIECAM02 Jab),
+	then the white points will already be close together, but may not
+	exactly cooincide. The black points will also probably differ.
+	There are a number of options for dealing with this. One
+	option would be to assume that people adapt to black points
+	the same way they adapt to the white points of a colorspace
+	or image. Research and experiemnce indicates that this
+	may not be the case though. If we assume that people
+	do not in general adapt to the black points of a colorspace,
+	then a consequence is that it is difficult to fully exploit
+	the full dynamic range of the colorspace, since an
+	source black that is misaligned with the destination black
+	will probably not be able to achieve as low a J value,
+	and this can noticably affect the percieved quality of
+	an image.
+
+	The compromise deemed the best in Argyll, is to
+	assume that people do not adapt to black points,
+	and that therefore only the white points should be
+	aligned by rotating the source space around 0,0,0
+	to line them up. The minimum J value on the other hand,
+	is mapped as if the black points were being fully
+	adapted to, and at the point that the source
+	neutral axis would leave the destination gamut,
+	it is clipped to the destination.
+
+	This gives a neutral axis in the destination that looks
+	the same as that of the source, while fully exploiting the
+	dynamic range of the destination colorspace. Since
+	the departure of the mapped neutral axis from neutral
+	only occurs in very dark colors, its deviation is not
+	usually visible.
+
+	[ The code allows for 4 possible black point/neutral
+	axis mapping algorithm, set by the value of bph:
+    Adapt source black point to destination, giving full black range.
+    Don't adapt black point to destination, giving compromised black range.
+    Don't adapt black point, bend it to dest. at end, giving full black range.
+    Don't adapt black point, clip it to dest. at end, giving full black range.
+	]
+
+	Note that the black point mapping is performed by manipulating
+	J independently of the color components (a & b). In adapting
+	color from one space to another, this proves to be the correct
+	approach, maintaining the appearance of an image when
+	transformed to different device colorspaces.
+	This should not be confused with the situation where
+	optical flare or haze is being removed or simulated,
+	in which case the black point mapping should be done in a
+	linear light colorspace (such as XYZ), and will have an
+	effect simulaniously on lightness and saturation.
+
+
+	Mapping the luminence range.
+
+	The luminence mapping is acheived by created a small number of
+	mapping points, and then created a detailed RSPL (Regular Spline)
+	based on the points. The end points (which are heavily weighted
+	to ensure the overall range mapping is useful) are created
+	simply from the known J values of the source and destination
+	white and black points (taking into consuideration what
+	J values will result from possible gamut boundary clipping).
+
+	Middle points are introduced to either give a linear mapping (in J),
+	or to introduce a slight range compression aimed at preserving
+	the contrast ratio of the image. 
+
+
+	Maping 3D gamut points.
+
+	The mapping points created for determinining the 3D compression or
+	expansioin are created from the source gamut surface verticies
+	that lie outside the destinatio gamut. The raw mapping for the
+	outside of the gamut is created by itterative optimisation,
+	that strikes a weighted balance between three different
+	factors: Mapping to the closest point on the destination surface,
+	Mapping in a way that is smoothly consistent with neighbour
+	mapping rays, and Mapping radially to the center of the colorspace.
+	By manipulating the weighting factors (held in a gammapweights
+	structure), it is possible to control to some degree the
+	nature of the gamut mapping. 
+
+	Some compensation is applied to the vectors to try and counteract
+	the effects of the vector and (subsequent) RSPL smoothing.
+	This smoothing may cause the mapping to end up outside the
+	destination gamut, so we try and make sure that such smoothing
+	effects over rather than under-compress.
+	
+	In addition to the suface mapping points, the 1D neutral axis 
+	mapping is maintained by introducing a string of points
+	down the 3D neutral axis, to ensure that the 3D surface mappings
+	do not alter it. 
+
+	Closer to the surface, optional "knee" mapping points
+	are also added, in an attempt to cause the inner
+	3D mapping to be more linear, with the compression (or
+	expansion) being concentrated near the surface of the
+	gamuts ("Sigma" compression).
+	
+Limitations and future challenges:
+
+	After re-working the gamut mapping in December 2005/January 2006,
+	the following challenges remain:
+
+	1) For saturation mapping in particular, the handling of hue
+	mapping using the "nearest" weighting isn't very flexible.
+	It's not possible to map RGB Cyan to CMYK Cyan without
+	introducing unacceptable side effects.
+
+	To solve this, I would have to add some extra mapping controls
+	and gamut information. For each gamut the 6 major "cusps" would
+	have to be identified (either directly from the colorant
+	combinations, or indrectly by locating the point on the gamut
+	surface with the largest C (?) in each hextant), and
+	then a means of warping the hue angle (and Luminence ??)
+	in each hextant. 
+
+	The gammapweights structure would be expanded to add a weight
+	as to how much the source hue cusps would be distorted.
+
+	[Done by Feb '06]
+
+
+	2) There is not much flexibility in what the gammapweights
+	weightings can achive. Some controls simply don't work
+	very well. Often increases in saturation in one area (at
+	the transitions between major colors) are bought at the
+	expense of the middle of the major colors becomming
+	very "flat" and desaturated. This is generally when we
+	are in a region in which the source gamut is within the
+	destination gamut. 
+
+	3) Geting smoothness and saturation is very difficult
+	for some reason. The "relative error" weights do spread
+	things out, but at the cost of obvious banding (why ? -
+	possible answer - reflects the roughness of the gamut surface.
+	Solution is to use better algorithm for gamut surface extraction ?? ).
+	Increasing the 3D RSPL smoothness seems to have no
+	effect (why ?). Reducing absolute chroma weight improves
+	smoothness, but at the cost of reduced saturation and increased
+	lightness.
+
+
+
+
+

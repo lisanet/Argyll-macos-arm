@@ -1,0 +1,197 @@
+
+Notes on changes needed for V4.2
+
+--------------------------------------------
+Spec name/version/file version relationship.
+This is more complicated that it really should be:
+
+Spec. Name		Spec. Version	File Version
+----------      -------------   ------------
+ICC.1:2004-10	4.2				4.2.0      <-- target icclib4
+ICC.1:2003-09	4.1				4.1.0
+ICC.1:2001-12	4.0				4.0.0
+ICC.1:2001-04	(3.7?)			2.4.0
+ICC.1A:1999-04	(3.6?)			2.3.0
+ICC.1:1998-09	(3.5?)			2.2.0
+(Version 3.4)	3.4				2.1.0 (a)	<-- current icclib
+(Version 3.3)	3.3				2.1.0
+(Version 3.2)	3.2				2.0.0 (b)
+(Version 3.01)	3.01			2.0.0 (a)
+(Version 3.0)	3.0				2.0.0
+
+-----------------------------
+There are other changes from V2.1 in later versions,
+such as:
+
+	2.3.0
+		Chromaticity Tag added
+
+	2.4.0
+		Lut tables now allowed for monochrome
+
+		Added chromaticAdaptationTag
+
+		Input, Display, Output and Colorspace LUT profiles
+		now support all 3 intents.
+
+Can this be made backwards compatible without
+messing about with specific code for other versions ??
+
+This doesn't seem possible. The profile generator code and icclib
+would seem to need to know which version they were generating,
+for assured backwards compatibility with other CMMs.
+-----------------------------
+Should add "guess ink limit" support to ease gamut finding
+from profiles. (Implemented in xicc at the moment) ? 
+-----------------------------
+
+Add usage of #def icVersionNumberV41 when "V4" flag is active.
+
+Tags needed since V2.1
+
+    icSigChromaticAdaptationTag         = 0x63686164L,  /* 'chad' V2.4+ */
+    icSigChromaticityTag                = 0x6368726DL,  /* 'chrm' V2.3+ */ 
+    icSigColorantOrderTag               = 0x636C726FL,  /* 'clro' V4.0+ */
+    icSigColorantTableTag               = 0x636C7274L,  /* 'clrt' V4.0+ */
+    icSigColorantTableOutTag            = 0x636C6F74L,  /* 'clot' V4.0+ */
+    icSigDeviceSettingsTag              = 0x64657673L,  /* 'devs' V2.2 - V4.0 */
+    icSigOutputResponseTag              = 0x72657370L,  /* 'resp' V2.2+ */
+
+
+Tag types needed since V2.1
+
+    icSigDeviceSettingsType             = 0x64657673L,  /* 'devs' V2.2 - V4.0 */
+    icSigChromaticityTag                = 0x6368726DL,  /* 'chrm' V2.3+ */ 
+	icSigColorantOrderType              = 0x636C726FL,  /* 'clro' V4.0+ */
+	icSigColorantTableType              = 0x636C7274L,  /* 'clrt' V4.0+ */
+    icSigLutAtoBType                    = 0x6d414220L,  /* 'mAB ' V4.0+ */
+    icSigLutBtoAType                    = 0x6d424120L,  /* 'mBA ' V4.0+ */
+    icSigMultiLocalizedUnicodeType      = 0x6D6C7563L,  /* 'mluc' V4.0+ */
+    icSigParametricCurveType            = 0x70617261L,  /* 'para' V4.0+ */
+    icSigResponseCurveSet16Type         = 0x72637332L,  /* 'rcs2' V2.2 - V4.0 */
+
+Stuff to deal with in implementing ICCV4:
+-------------------
+
+Make sure DLL/SO version is compilable ??
+
+Add V4 flag in main icc struct (DONE), and some way of setting it before tags
+are added.
+
+Date & time being UTC.
+	- add flag when setting ?
+	- display both when dumping ?
+	- have both in structure when reading ?
+    - or simply not handle this ??
+
+Check all padding is zero during writing - DONE
+
+Implement MD5 generation on profile writing - DONE
+Implement MD5 check method on read profile ?
+Cross check MD5 against external V4 profiles. Cross check with cygwin md5sum!
+
+Colorant table tag needed in V4 for xCLR devices.
+colorantTableTag requirement for xCLR device link profiles.
+
+Add check that tags are unique within a profile ?
+
+Configure conformance to run as V4.2 or V2.4 on writing, and accept V4.X or V2.X on
+reading. Don't try and implement detailed minor version behaviour.
+
+Have some sort of table to embody valid tags and tag types within the two major
+version numbers (2 & 4) ??
+
+Check that non A2B0 and B2A0 intents are allowed for Input, Display & Colorspace
+profiles ??
+
+V4 mandates a chromatic adaptation tag for any profile that requires a white point
+tag & not D50. Add to V4 check, & generate chromatic adaptation tag for V2 & V4
+creation (method ?). Need to carefully read spec. to understand what chromatic
+adaptation tag is meant to represent.
+Implement absolute<->PCS object to represent functionality of chramatic adaptation,
+analogous to conversion object.
+
+
+Check mono profile black and white interpretation.
+
+
+Matrix/shaper in V4 has clipping requirements. Should these be honoured ??
+Maybe make this optional via a run time flag ?
+May be best to have multiple conformance flags (Absolute Intent etc. ?)
+
+Check icclink set header rendering intents correctly for device links.
+
+Implemenmt parametric curve type as extra icmCurveStyle(s), and use icmCurve object to
+do the work.
+
+
+Implement MultiLocalizedUnicodeType as overload of icmTextDescription, or new tagtype ??
+
+
+
+- - - - - 
+Implement icSigLutAtoBType and icSigLutBtoAType as overloads of icmLut ??
+If so, add new icmLuAlgType types for AtoB and BtoA conversions (NO - more complicated)
+
+	- OR -
+
+switch to single superset Lut type ?? (YES - best solution) :-
+
+Should a more extensive general model be considered, as a superset of V4 ?? (YES)
+
+	pcs/abs -> Curves -> matrix -> curves -> lut -> curves -> matrix -> curves -> pcs/abs
+
+[ or asymetric ??: (NO)
+
+	pcs->curves->lut->3x3+3matrix->curves->pcs/abs		(dev->PCS, PCS->PCS, dev->dev)
+	pcs/abs->curves->3x3+3matrix->curves->lut->curves	(PCS->dev) ]
+
+Could use this as universal transform method, even for matrix profiles (don't use old style
+matrix/shaper or LUT at all internaly ?) (YES - need to accomodate V2 & V4 though).
+
+Add new methods to setup the transform stages, with current set mathods implemented
+as backwards compatible ? Have multiple methods rather than a single "set" ?
+( - how are ranges determined in latter case ?)
+
+Finish support for generic 3 stage conversion view (input per chan, cross chan, output per chan.),
+and support this in icclib4.
+
+Use bit flags to indicate which stages are valid.
+Flags effectively replace "algorithm" flag.
+Flag combination set determines how transform can be represented by a profile
+(Mono, Matrix, V2Lut, V4Lut etc.).
+
+Have flags for "separable" (i.e. channel independent) and
+"reversable".
+
+Support implementing a universal transform both forwards and
+backwards from a given set of ICC tags (backwards won't be
+valid for some tags, ie. Lut).
+
+lookup object acts as ideal abstract above exact tag representation within
+a profile. Use this model for other aspects of ICC profiles.
+Extend to simplify xicc/icc relationship - make xicc a true inheriting
+class, and add whatever hooks are needed into icclib4 to make this work.
+ICC tags -> luo -> transform
+ICC tags <- luo <- Set transform
+
+What impact does this have on memory usage though ?
+- Makes sure transform is completely independent of
+  tags or profile after setting up, so that tags and/or
+  profile can be released.
+
+- - - - - - 
+
+Split icc.c into 3 levels:
+
+ 1 Basic support (I/O, primitives)
+   Toolkit for buiding ICC like file formats, but not
+   specic to the actual ICC file. Can be used to
+   create custom tags, and custom ICC like files (e.g. calibration)
+
+ 2 Specific to ICC format, tags etc.
+
+ 3 ICC color transform objects etc.
+   Allow for inheretance, so that xicc can be implemented
+   much more elegantly.
+

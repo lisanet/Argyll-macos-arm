@@ -1,0 +1,6 @@
+       INCLUDES = -I$(TOP)
+        DEPLIBS = $(DEPXLIB)
+LOCAL_LIBRARIES = $(XLIB)
+  SYS_LIBRARIES = -lm
+
+SimpleProgramTarget(plot)

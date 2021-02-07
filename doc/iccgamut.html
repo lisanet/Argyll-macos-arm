@@ -1,0 +1,433 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>iccgamut</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>xicc/iccgamut</b></h2>
+    <br>
+    Create a gamut file or X3DOM file &nbsp;of the color gamut of an ICC
+    profile.<br>
+    <span style="font-weight: bold;"> iccgamut</span> allows creation of
+    gamut files from the forward or backwards table of an ICC profile,
+    in Lab or CIECAM02 Jab colorspace, and can also representing the
+    gamut as a X3DOM file.<br>
+    <br>
+    See <a href="3dformat.html">3D Viewing Format</a> for switching to
+    VRML or X3D output format.<br>
+    <h3>Usage<br>
+    </h3>
+    <span style="font-family: monospace;">iccgamut [-options] </span><i
+      style="font-family: monospace;">profile</i><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+      Verbose</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-d
+      sres&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Surface resolution
+      details 1.0 - 50.0</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+emit
+
+
+
+      X3DOM .x3d.html file as well as CGATS .gam file</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Don't
+
+
+
+
+
+
+
+      add X3DOM axes or white/black point</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;-k&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Add
+
+
+
+      X3DOM markers for prim. &amp; sec. "cusp" points</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-f function&nbsp;&nbsp;
+      f = forward*, b = backwards</span><br style="font-family:
+      monospace;">
+    &nbsp; <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;">-i intent&nbsp;&nbsp;&nbsp;&nbsp;
+      p = perceptual, r = relative colorimetric,</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+s
+
+
+
+
+
+
+
+      = saturation, a = absolute (default), d = profile default</span><span
+      style="font-family: monospace;"></span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;">&nbsp;-o
+      order&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n = normal (priority: lut &gt;
+      matrix &gt; monochrome)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+r
+
+
+
+
+
+
+
+      = reverse (priority: monochrome &gt; matrix &gt; lut)<br>
+    </span><span style="font-family: monospace;">&nbsp;</span><span
+      style="font-family: monospace;">-p oride</span><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l =
+      Lab_PCS (default), j = CIECAM02 Appearance Jab</span><span
+      style="font-family: monospace;"></span><span style="font-family:
+      monospace;"></span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-l
+      tlimit&nbsp;&nbsp;&nbsp;&nbsp; set total ink limit, 0 - 400%
+      (estimate by default)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-L
+      klimit&nbsp;&nbsp;&nbsp;&nbsp; set black ink limit, 0 - 100%
+      (estimate by default)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-c viewcond&nbsp;&nbsp;
+      set viewing conditions for CIECAM02,</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+either
+
+
+
+
+
+
+
+      an enumerated choice, or a series of parameters:value changes</span><br>
+    <tt>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; </tt><tt><tt>pc
+        - Critical print evaluation environment (ISO-3664 P1)</tt><tt><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+      </tt>pp - Practical Reflection Print (ISO-3664 P2)<br>
+      &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; pe - Print
+      evaluation environment (CIE 116-1995)<br>
+    </tt><tt>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; pm - Print
+      evaluation with partial Mid-tone adaptation</tt><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp; &nbsp; mt - Monitor in typical work environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+      &nbsp; mb - Monitor in bright work environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; md - Monitor in darkened work
+      environment</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; jm - Projector in dim environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; jd - Projector in dark environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; pcd - Photo CD - original scene outdoors</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; ob - Original scene - Bright Outdoors</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; cx - Cut Sheet Transparencies on a
+      viewing box</span><span style="font-family: monospace;"></span><span
+      style="font-family: monospace;"></span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+s:surround&nbsp;&nbsp;
+
+
+
+
+
+
+
+      n = auto, a = average, m = dim, d = dark,</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+      &nbsp; &nbsp;&nbsp; c = transparency (default average)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+w:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+      Adapted white point as XYZ (default media white)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+w:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+      Adapted white point as x, y</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a:adaptation
+
+
+
+
+
+
+
+      Adaptation luminance in cd.m^2 (default 50.0)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+b:background
+Background
+
+
+
+
+
+
+
+      % of image luminance (default 20)<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; l:imagewhite Image
+      white in cd.m^2 if surround = auto (default 250)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"><span style="font-family:
+        monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        f:flare&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Flare light % of image
+        luminance (default 0)<br>
+      </span>&nbsp;</span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      g:glare&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare light % of ambient
+      (default 5)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+      g:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare color as XYZ (default
+      media white)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+      g:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare color as x,
+      y</span><br>
+    <span style="font-family: monospace;"><tt><span style="font-family:
+          monospace;"><tt><span style="font-family: monospace;"><span
+                style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                h:hkscale&nbsp;&nbsp;&nbsp; Helmholtz-Kohlrausch effect
+                scale factor (default 1.0)<br>
+              </span></span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              m:mtaf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone
+              partial adaptation factor (default 0.0)</span><br
+              style="font-family: monospace;">
+            <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+              m:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone Adaptation
+              white as XYZ (default D50)</span><br style="font-family:
+              monospace;">
+            <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+              m:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone
+              Adaptation white as x, y</span></tt></span></tt><br>
+      &nbsp;-x pcent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expand/compress
+      gamut cylindrically by percent<br>
+      &nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Create
+
+
+
+
+
+
+
+      special cube surface topology plot<br style="font-family:
+        monospace;">
+    </span><i style="font-family: monospace;">profile</i><span
+      style="font-family: monospace;"> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+      The name of the </span><a style="font-family: monospace;"
+      href="File_Formats.html#ICC">ICC</a><span style="font-family:
+      monospace;"> profile, as well as the basename of the </span><a
+      style="font-family: monospace;" href="File_Formats.html#.gam">gamut</a><span
+      style="font-family: monospace;"> [.gam] and/or </span><a
+      style="font-family: monospace;" href="File_Formats.html#X3DOM">X3DOM</a><span
+      style="font-family: monospace;"> [.x3d.html] file.</span> <br>
+    <h3>Comments</h3>
+    The parameters are all those that control which table in the ICC
+    profile to use, as well as what color space to convert it to. <br>
+    <br>
+    The<b> -v</b> flag dumps out the ICC profile header information.
+    Using <b>-v</b> <b>-w</b> will also print the gamut volume in
+    cubic L*a*b* units.<br>
+    <br>
+    The <b>-d</b> parameter controls the level of detail displayed in
+    the surface. The parameter roughly corresponds to a deltaE value, so
+    smaller values give greater detail. The default value is around 10,
+    and is a good place to start. Small values may take a lot of time to
+    generate, and will produce big files.<br>
+    <br>
+    The <b>-w</b> flag causes a X3DOM file to be produced, as well as a
+    gamut file.<br>
+    <br>
+    The <b>-n</b> flag suppresses the L*a*b* axes being created in the
+    X3DOM.<br>
+    <br>
+    The <span style="font-weight: bold;">-k</span> flag adds markers
+    for each of the primary and secondary "cusp" points (Red, Yellow,
+    Green, Cyan, Blue &amp; Magenta). No markers will be displayed if
+    the cusps cannot be determined.<br>
+    <br>
+    The <b>-f </b>parameter allows choosing the ICC table to be used
+    in plotting the gamut. The backwards tables generally incorporate
+    gamut compression, and therefore don't reflect the native
+    capabilities of the device.<br>
+    <br>
+    The <b>-i</b> flag selects the intent transform used for a lut
+    based profile. It also selects between relative and absolute
+    colorimetric for non-lut base profiles. Note that anything other
+    than colorimetric may not represent the native capabilities of the
+    device. The default intent will be absolute colorimetic for L*a*b*
+    output, and CIECAM02 appearance for Jab output.<br>
+    <br>
+    An ICC profile is allowed to contain more than the minimum number of
+    elements or table needed to describe a certain transform, and may
+    contain redundant descriptions. &nbsp;By default, lut based table
+    information will be used first if present, followed by matrix/shaper
+    information, and only using monochrome information if it is all that
+    is present. The <b>-o</b> flag, reverses this
+    order.&nbsp;&nbsp;&nbsp; <br>
+    <br>
+    <span style="font-weight: bold;">-p</span>: By default the gamut
+    will be created in L*a*b* colorspace. If&nbsp; <span
+      style="font-weight: bold;">-pj</span> is selected, then CIECAM02
+    appearance space Jab will be used for the output, and the viewing
+    conditions will be taken into account. Jab space is what is normally
+    needed to be compatible with the default intents used in <a
+      href="colprof.html">colprof</a>. <span style="font-weight: bold;"><br>
+    </span>Note that the CIECAM02 output space selection by default uses
+    the colorimetric transform of the profile resulting in the
+    appearance of the native device, but that the perceptual or
+    saturation transforms may be used by selecting them using the <span
+      style="font-weight: bold;">-i</span> parameter, which may give a
+    different result with some profiles. This may be desirable if an
+    image is to be transformed through the perceptual or saturation
+    tables of a profile as part of a link with an Argyll generated
+    output profile, since it will then represent the apparent gamut of
+    the image when subject to these tables. If the absolute colorimetric
+    intent is chosen using <span style="font-weight: bold;">-ia</span>
+    in combinations with <span style="font-weight: bold;">-pj</span>,
+    then&nbsp; Jab with a fixed white reference is used, which emulates
+    an absolute CIECAM02 Jab appearance space. <br>
+    <br>
+    The <b>-l</b> parameter allows setting a total ink limit (TAC) for
+    printing devices. If a device has a total ink limit, and hasn't been
+    characterised with device values above this limit, then plotting the
+    gamut in these areas will almost certainly be misleading. tables. By
+    default, a total ink limit will be estimated from the profile
+    tables. The ink limit will be in final calibrated device values if
+    the profile includes calibration information.<br>
+    <br>
+    The <b>-L</b> parameter allows setting a black ink limit for
+    printing devices. If a device is to be used with a black ink limit,
+    then it is useful to evaluate the gamut with the limit in place. By
+    default, a black ink limit will be estimated from the profile
+    tables. The ink limit will be in final calibrated device values if
+    the profile includes calibration information.<br>
+    <br>
+    The <b>-c</b> parameter allows setting the CIECAM02 viewing
+    conditions, either by choosing a typical viewing environment, or
+    controlling particular viewing condition parameters.<br>
+    <br>
+    The <b>-x</b> parameter allows expanding or compressing the
+    resulting gamut in a cylindrical direction by the given percentage
+    :- i.e "-x 120" will expand by 20%. This may be useful for creating
+    a general compression gamut mapping by using such an expanded device
+    gamut as input to <a href="collink.html#g">collink -g or -G</a>.<br>
+    <br>
+    The <span style="font-weight: bold;">-s</span> flag creates a
+    special hyper-cube surface plot that is artificially colored. This
+    can be useful for identifying the topology of the black ink color
+    response.<br>
+    <h3>Example<br>
+    </h3>
+    To create a view in L*a*b* of the absolute gamut of a CMYK file with
+    an ink limit of 260%, one might use:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">iccgamut -w
+      -ff -ia -l260 profile.icm</span><br>
+    <br>
+    and the resulting files will be <span style="text-decoration:
+      underline;">profile.gam</span> and <span style="text-decoration:
+      underline;">profile.x3d.html</span>.<br>
+    <br>
+    To create a gamut suitable for CIECAM02&nbsp; gamut mapping space in
+    colprof or collink, something like<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; iccgamut -ir -pj -cmt&nbsp; profile.icm<br>
+    <br>
+    where the viewing conditions "mt" should the same as the source
+    conditions in colprof or collink.<br>
+    <br style="font-weight: bold;">
+    <span style="font-weight: bold;"></span><br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Fluorescent Whitener Additive Compensation</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+  </head>
+  <body>
+    <h2><u>Fluorescent Whitener Additive Compensation (FWA Compensation)</u></h2>
+    <br>
+    <h3>Introduction</h3>
+    To make paper look "whiter" without increasing the cost of
+    production, paper manufactures often employ a couple of different
+    techniques. One technique is to add "shading agents" to the paper,
+    that absorb a little of the middle wavelengths, thereby changing the
+    color of the paper to be a little less green. By far the most
+    powerful way of making the paper appear more white is to add
+    Fluorescent Whitener Additive (FWA, or Optical Brightening Agents -
+    OBA) to the paper. This is basically a fluorescent material that
+    absorbs light at Ultra Violet (U.V.) wavelengths, and re-emits it at
+    a slightly longer blue wavelengths. Subjectively something that
+    appears more blue, is regarded as being "whiter".<br>
+    <br>
+    For more technical treatment of this topic, please refer to this
+    excellent paper: &lt;<a
+      href="http://www.axiphos.com/BrightnessReview.pdf">http://www.axiphos.com/BrightnessReview.pdf</a>&gt;<br>
+    <br>
+    <h3>Fluorescence</h3>
+    Fluorescent materials absorb light radiation at one wavelength, and
+    then almost instantaneously re-emit some of that energy at a longer
+    wavelength. Typical FWA absorbs wavelengths in the U.V. between
+    about 300 and 400 nm, and re-emit it between 400 and 460nm. The
+    visual effect of FWA depends on the amount of it present in the
+    paper, and the amount of U.V. in the illumination compared to the
+    level of normal, visible light. Generally better quality papers have
+    lower levels of whitening agents, and cheaper papers more. <br>
+    <br>
+    <h3>Reflection Models and Spectro-colorimetry</h3>
+    The way a spectrometer measures the effect of ink on paper, depends
+    on a model of how an illuminant is reflected by the ink and the
+    paper. Typically a spectrometer instrument illuminates the sample
+    with a known illumination, often a incandescent tungsten lamp having
+    a color temperature of&nbsp; 2800 degrees Kelvin. It measures the
+    amount of light reflected by the sample at each wavelength, and then
+    converts that to spectral reflectance value between 0 and 100% by
+    dividing by it's measurement illuminant's intensity at each
+    wavelength. When it comes time to use that measurement to create an
+    ICC profile, the intensity of the assumed viewing illumination at
+    each wavelength (typically D50 for standard ICC profiles) is then
+    multiplied by the reflectance at each wavelength, and the overall
+    spectral reflectance is in this way converted into CIE tri-stimulus
+    values using an observer model.<br>
+    <br>
+    So while the instrument measures with one type of light (type A, or
+    a white LED), it returns a measurement as if it had been measured
+    under a different kind of light (D50) by making use of a simple
+    model of light reflection off the media.<br>
+    <br>
+    Notice that a key assumption of this simple model is that the light
+    that impinges on the sample at a given wavelength is reflected back
+    at exactly the same wavelength at a diminished intensity. Notice
+    also that any sort of fluorescent material (such as FWA) breaks this
+    model, since fluorescent materials emit light a different
+    wavelengths to which they absorb it. So the color measurements do
+    not accurately portray the appearance of the media when FWA is
+    present. A more complicated bi-spectral measurement (2 dimensional
+    spectral reflectance) is actually needed to fully characterize
+    fluorescent materials.<br>
+    <br>
+    <h3>What Argyll's FWA compensation does</h3>
+    The FWA compensation function in Argyll improve on this simple model
+    of spectral reflection by taking into account the action of FWA. To
+    do this, it needs to measure the amount and nature of the FWA in the
+    media, and then have enough information about the viewing
+    environment to model how that FWA will behave.<br>
+    <br>
+    To be able to measure the level of FWA in the media, the instrument
+    needs to be able to "see" the FWA in action, so the instrument needs
+    to be illuminating the samples with some level of U.V. Typically all
+    instruments do this, unless they have been fitted with a filter that
+    filters out any U.V. illumination (so called "UV cut" instruments),
+    or use an illumination source such as a "white" LED that doesn't
+    emit any U.V.<br>
+    Such UV excluded instruments are not suitable for use with FWA
+    compensation.<br>
+    The effects of FWA are modeled spectrally, so a spectral reading
+    instrument is also required.<br>
+    <br>
+    Argyll can compute a model for the effects of FWA given the media's
+    spectral characteristics, and the illuminations spectral
+    characteristic, which must include the levels of U.V. in the
+    illuminant. Given these two things, Argyll can calculate how much
+    effect the FWA will have on the light being reflected and emitted by
+    the media under the intended illumination.<br>
+    <br>
+    Ideally the level of FWA would be measured by comparing the paper
+    spectrum with and without U.V. present in the instruments
+    illumination. Because not all instruments allow these two
+    measurements to be done without some sort of manual intervention,
+    Argyll avoids the need for an FWA inactive (UV cut) or extra UV (UV
+    LED) measurement by employing a heuristic to estimate the FWA
+    inactive spectrum from the spectrum of the paper with FWA active.
+    Being a heuristic, it can sometimes be fooled by certain paper
+    colors into estimating more or less FWA content than is actual
+    present. The heuristic works best with high quality papers with an
+    essentially flat non-FWA enhanced spectrum. Papers with colored
+    tints or particularly off white appearance may not work well with
+    FWA compensation, unless the instrument has the capability of
+    measuring with two different levels of UV.<br>
+    <br>
+    <img alt="Graph showing FWA effect on UV vs. UV cut measurement."
+      src="FWA_measure.jpg" style="width: 387px; height: 284px;"><br>
+    <br>
+    Note that typically in Argyll, if a viewing illuminant is specified,
+    then it is used for computing the appearance under that illumination
+    (CIE XYZ values), and if FWA compensation is used, then that same
+    illuminant will be assumed for the simulated measurement illuminant.
+    This results in measurements that better reflects the appearance as
+    the media as if it was being viewed under that illuminant, FWA
+    effects and all.<br>
+    <br>
+    &nbsp;It is possible to also simulate the measurement of a media
+    under one illuminant, while then computing the tristimulus values as
+    if being viewed under a different illuminant, but this scenario is
+    only really useful for reproducing standardized measurement
+    conditions such as ISO 13655:2009 M0, M1 and M2, and is less useful
+    than the normal FWA compensation scenario in modelling real world
+    situations.<br>
+    <br>
+    [The Argyll FWA compensation algorithm is described in the paper: <font
+      color="#000000"><font face="Times, serif"><font style="font-size:
+          8pt;" size="1"><a
+            href="http://www.imaging.org/IST/store/epub.cfm?abstrid=22190">A
+            Practical Approach to Measuring and Modelling Paper
+            Fluorescense for Improved Colorimetric Characterisation of
+            Printing Processes", <i>Graeme W. Gill, Proc. IS&amp;T/SID
+              11th Color Imaging Conference</i></a><span
+            style="font-style: normal;"><a
+              href="http://www.imaging.org/IST/store/epub.cfm?abstrid=22190">,
+              Scottsdale, Arizona; November 2003; p. 248-254</a><font
+              size="1">, and <font size="1">w<font size="1">as f<font
+                    size="1">irst publi<font size="1">shed <font
+                        size="1">on December 2, 2002</font></font></font></font></font></font></span></font></font></font>
+    in the argyllu_2002_12_02 source code. ]<br>
+    <br>
+    <h3>Using FWA Compensation with proofing</h3>
+    The most common situation for employing FWA compensation, is in
+    proofing. This is when you have one printing device, the target (say
+    a printing press), and wish to emulate the behaviour of it with a
+    different device, the proofer (say an inkjet printer). The aim is to
+    be able to put both prints next to each other in a viewing booth,
+    and have them look identical. Typically the printing process, the
+    inks, and the media will be different between the target device and
+    the proofer. The aim of applying color profiling is to compensate
+    for these differences. Since the printing process can only darken a
+    white media, the selection of the proofing stock is critical.
+    Ideally it should be exactly the same color as the target, or if not
+    possible, lighter, so that the proofer can tint the proofing media
+    to match the target. If the two media had identical levels and types
+    of FWA in them, then there would be no need to use FWA compensation,
+    since the appearance of the media would match under any viewing
+    condition. Typically though, the levels and types of FWA are
+    different between the target paper and the proofing paper. A
+    limitation imposed by tri-stimulus colorimetry is that the
+    differences between the two media, inks and FWA can only be
+    compensated for perfectly, under a fixed and known illuminant.<br>
+    <br>
+    By allowing Argyll to model the effects of FWA for both the source
+    profile (the target device), and the destination profile (the
+    proofing device), the effects can be accounted for, modeled
+    accurately, and incorporated in the profiles, so that a subsequent
+    transformation from source to destination device spaces using
+    absolute colorimetric intent, achieves a (hopefully) perfect
+    colorimetric reproduction. Since this is a closed system, where both
+    the source and destination profiles are made for each other,
+    non-standard parameters such as illuminant and observer models can
+    be used, as long as they are the same for both profiles. For
+    proofing, FWA should be applied identically to both profiles, by
+    specifying the same illuminant, and (optionally) the same observer
+    model.<br>
+    <br>
+    [ In practice it is possible to compensate for the color shift that
+    results in viewing the media under non-D50 illumination or using a
+    non 1931_2 observer, or allowing for FWA effects without severe
+    incompatibility because all rendering intents except absolute
+    rendering normalize to the media color, rendering the media white as
+    white, even though the absolute values are not measured using a D50
+    illuminant. ]<br>
+    <h3>Using FWA compensation for single, general use profiles</h3>
+    For creating ICC profiles that will be interchanged with other
+    unknown ICC profiles, or used with non-print source or destination
+    profiles, there is less flexibility, since ICC profiles by
+    convention assume that all media is being viewed under D50
+    illumination. The implication of this is that to be fully
+    interchangeable, it's not really possible to make the profile for
+    your actual viewing environment. Note that the D50 values that are
+    calculated without FWA compensation do not actually reflect the
+    appearance of a media under real D50, because they fail to take into
+    account the different levels of FWA activity between the
+    illumination using by the instrument to measure the media, and real
+    D50. To allow for this and actually meet the letter of the ICC
+    specifications, FWA compensation should ideally be used when
+    building a interchangeable ICC profile, by selecting the D50
+    illuminant, and the 1931_2 observer model (ISO 13655:2009 M1). Note
+    however that this is likely to make profiles <b><span
+        style="text-decoration: underline;">less</span></b>
+    interchangeable rather than more, since few if any other profiles
+    will represent the appearance under real D50, since few if any
+    instruments use a real D50 illuminant that will trigger the correct
+    level of FWA response, and few if any other packages will compensate
+    for the differences in FWA activity between the instrument
+    illuminant used and real D50 (ie. most instruments are actually
+    returning&nbsp; ISO 13655:2009 M0 measurements).<br>
+    <br>
+    Similarly, the effects of viewing the media in an environment with a
+    UV filter fitted over the D50 illuminant can be simulated by using
+    FWA compensation with the D50M2 illuminant, and the 1931_2 observer,
+    thereby simulating the results one would get if the media had been
+    measured with a "UV cut" type instrument, although such profiles are
+    not technically ICC compatible.<br>
+    <br>
+    <h3>Measuring the illuminant</h3>
+    For FWA compensation to work well, it is necessary to know what the
+    spectral shape of the illuminant used for viewing is. While many
+    instruments provide an illuminant measurement capability over the
+    visible spectrum, for FWA compensation it is desirable to know the
+    Ultra Violet (UV) component of the illuminant. Few color instruments
+    are capable of reading to such short wavelengths though (the <a
+      href="instruments.html#specbos">JETI specbos 1211</a> is an
+    exception). Argyll provides an indirect way of estimating the UV
+    component of an illuminant using its <a href="illumread.html">illumread</a>
+    utility. Using illumread in combination with FWA compensation is the
+    recommended approach to modelling real world appearance of paper
+    containing FWA.<br>
+    <br>
+    <h3>FWA myths</h3>
+    Amongst the user (and to some degree) vendor community, there is a
+    widely held belief that the solution to fluorescent whitener
+    affecting color profiles is to simply use a UV filter fitted
+    instrument. Exactly what the origin of the legend is, is hard to
+    tell. Possibly it is a misinterpretation of the&nbsp; ANSI
+    CGATS.5-1993 Annex B recommendations for measuring the impact of
+    fluorescent effects, a translation of some of paper whiteness
+    measurement standards into the color profiling world, or possibly in
+    some common situations, if the viewing environment is very poor in
+    UV, then adding a UV filter to the tungsten instrument illuminant
+    makes for a better instrument/viewing illuminant match. There seems
+    to be no scientific or practical basis for believing that a UV
+    filter fitted instrument magically makes all FWA induced problems go
+    away.<br>
+    <br>
+    <h3>Instrument UV filters</h3>
+    Note that to be able to measure the FWA in the paper, the instrument
+    has to be able to trigger Fluorescence, which it cannot do if it is
+    fitted with a UV filter, or uses a light source that emits no UV
+    (e.g. a white LED). So UV excluded instruments are not suitable for
+    use with FWA compensation.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,1895 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>targen</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>target/targen</b></h2>
+    <h3>Summary</h3>
+    Generate a profiling test target values&nbsp;<a
+      href="File_Formats.html#.ti1">.ti1</a> file. &nbsp;<b>targen</b>
+    is used to generate the device channel test point values for
+    grayscale, RGB, CMY, CMYK or N-color output or display devices. <br>
+    <br>
+    [ Note though that colprof will only create RGB, CMY or CMYK
+    profiles. ]<br>
+    <h3>Usage Summary</h3>
+    <small><span style="font-family: monospace;">targen [options]
+        outfile</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v [level]</a><span
+        style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;&nbsp;
+        Verbose mode [optional verbose level, 1..n]</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#d">-d col_comb</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; choose
+        colorant combination from the following:</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        0: Print grey</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 1: Video grey</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2: Print RGB</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3: Video RGB</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4: CMYK<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        5: CMY<br style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6: CMYK +
+        Light CM</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7:
+        CMYK + Light CMK</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+8:
+CMYK
++
+Red
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        + Blue</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9: CMYK +
+        Orange + Green</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10: CMYK + Light CMK
+        + Light Light K</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11: CMYK +
+        Orange + Green + Light CM</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12:
+        CMYK + Light CM + Medium CM</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#D">-D colorant</a><span
+        style="font-family: monospace;"> &nbsp;&nbsp;&nbsp; Add or
+        delete colorant from combination:</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        0: Additive</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        1: Cyan</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2:
+        Magenta</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3:
+        Yellow</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4: Black</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5:
+        Orange</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        6: Red</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        7: Green</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        8: Blue</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        9: White</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        10: Light Cyan</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        11: Light Magenta</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        12: Light Yellow</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp; 13: Light Black</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        14: Medium Cyan</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        15: Medium Magenta</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        16: Medium Yellow</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; 17:
+        Medium Black</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 18: Light
+        Light Black<br>
+        &nbsp;<a href="#G">-G</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Generate good optimzed points rather than Fast<br
+          style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#e">-e patches</a><span
+        style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;&nbsp; White
+        color test patches (default 4)</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;</span><a
+            style="font-family: monospace;" href="#B">-B patches</a><span
+            style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;&nbsp;
+            Black test patches (default 4 Grey/RGB, else 0)<br>
+          </span></small></span>&nbsp; <span style="font-family:
+        monospace;"></span><a style="font-family: monospace;" href="#s">-s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        steps</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Single channel steps (default 0)</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#g">-g steps</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Gray
+axis
+RGB
+or
+CMY
+steps
+(default
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        0)<br>
+      </span></small><small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;</span><a
+            style="font-family: monospace;" href="#n">-n steps</a><span
+            style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Neutral axis steps (based on profile, default 0)<br>
+          </span></small></span>&nbsp; <span style="font-family:
+        monospace;"></span><a style="font-family: monospace;" href="#m">-m
+        steps</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Multidimensional device space cube steps (default 0)<br>
+      </span></small><small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;</span><a
+            style="font-family: monospace;" href="#M">-M steps</a><span
+            style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Multidimensional device space cube surface steps (default 0)<br>
+          </span></small></span></small>&nbsp; <small><span
+        style="font-family: monospace;"><small><span style="font-family:
+            monospace;"></span><a style="font-family: monospace;"
+            href="#b">-b steps</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Multidimensional body centered cubic steps (default 0)<br>
+          </span></small></span>&nbsp; <span style="font-family:
+        monospace;"></span><a style="font-family: monospace;" href="#f">-f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        patches</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Add iterative &amp; adaptive full spread patches to total
+        (default 836)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Default is Optimised Farthest Point Sampling (OFPS)<br
+          style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#t">-t</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Use
+incremental
+far
+point
+for
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        full spread</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#r">-r</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Use
+device
+space
+random
+for
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        full spread</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#R">-R</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Use
+perceptual
+space
+random
+for
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        full spread</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#q">-q</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Use
+device
+space-filling
+quasi-random
+for
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        full spread<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;
+      </span><a style="font-family: monospace;" href="#Q">-Q</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp; &nbsp; Use perceptual space-filling quasi-random for full
+        spread</span></small><br style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#i">-i</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Use
+device
+space
+body
+centered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        cubic grid for full spread</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#I">-I</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+Use
+perceptual
+space
+body
+centered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        cubic grid for full spread</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#a">-a angle</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Simplex
+grid
+angle
+0.0
+-
+0.5
+for
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        B.C.C. grid, default 0.333300</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp; </span><a
+        style="font-family: monospace;" href="#A">-A adaptation</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Degree of adaptation of OFPS 0.0 - 1.0 (default 0.1, 1.0 if -c
+        profile provided)</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#t">-t</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+incremental
+far
+point
+for
+full
+spread
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        (default iterative)</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#l">-l ilimit</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Total
+ink
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        limit in %(default = none, or estimated from profile)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#p">-p power</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Optional
+power-like
+value
+applied
+to
+all
+device
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        values.</span></small><br style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#c">-c profile</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Optional device ICC or MPP pre-conditioning profile filename<br>
+        &nbsp;<a href="#N">-N nemphasis</a>&nbsp;&nbsp;&nbsp; Degree of
+        neutral axis patch concentration 0-1. (default 0.50)</span></small><br>
+    <small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;<a href="#V">-V
+              demphasis</a>&nbsp;&nbsp;&nbsp; dark region patch
+            concentration 1.0-4.0 (default 1.0 = none)</span></small><br
+          style="font-family: monospace;">
+      </span>&nbsp; <a style="font-family: monospace;" href="#F">-F
+        L,a,b,rad</a><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Filter out samples outside Lab sphere.<br>
+        &nbsp;<a href="#O">-O</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+        Don't re-order display RGB patches for minimum delay</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;<a href="#U">-U</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Don't filter out duplicate patches<br>
+          </span></small>&nbsp;</span><span style="font-family:
+        monospace;"></span><a style="font-family: monospace;" href="#w">-w</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Dump diagnostic outfile.x3d.html file (Lab locations)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#W">-W</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Dump diagnostic outfile.x3d.html file (Device locations)</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#p1">outfile</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Base name for output(.ti1)</span></small> <br>
+    <h3>Usage Details and Discussion<br>
+    </h3>
+    The number of target patches needs to be chosen, depending on the
+    media size, the type of device, and the quality of profile required.
+    For an inkjet device, something like 3000 test points or more is
+    desirable for high quality profiles, while 500-1000 will probably
+    suffice for a medium quality profile. A few hundred may be
+    sufficient for a preliminary profile. Well behaved printing devices
+    (such as a chemical proof, or a high quality printing press) may
+    produce good profiles with 1000 to 2000 test points. Well behaved
+    RGB devices such as CRT monitors may need only a few hundred points,
+    if a shaper/matrix type profile is to be produced, while pseudo RGB
+    printers, or other RGB devices that a CLUT type profile may be used
+    with, should probably choose somewhere between 500 and 3000 patches.
+    For 'N' color profile creation, 3000 or more test points should
+    probably be used.<br>
+    <br>
+    <a name="v"></a> The <b>-v</b> flag turns on extra verbosity when
+    generating patch values. Extra diagnostics and verbosity may be
+    available if a parameter is provided with a value greater than 1.<br>
+    <br>
+    <a name="d"></a> The <b>-d</b> parameter sets the colorspace the
+    test values will be generated in. Video gray space is assumed to be
+    an additive space, where a zero device value will be black, and a
+    maximum device value will be white. A print gray space is assumed to
+    be a subtractive space, in which a zero device value will be white,
+    and a maximum device value will be black. If no colorspace is
+    specified, subtractive CMYK is assumed as a default.<br>
+    <br>
+    <a name="D"></a> The <b>-D</b> parameter modifies the colorspace
+    set by <span style="font-weight: bold;">-d</span> by allowing
+    individual colorants to be added or subtracted from the colorspace.<br>
+    <br>
+    <a name="G"></a> The <b>-G</b> flag changes the Incremental Far
+    Point Distribution algorithm from fast to good mode. Fast mode uses
+    a limited number of iterations to optimize the patch locations,
+    while good mode strives for a more even patch distribution by using
+    more iterations.<br>
+    <br>
+    The composition of the test patches is controlled by the following
+    flags and parameters:<br>
+    <br>
+    <a name="e"></a> The <b>-e</b> parameter sets the number of white
+    colored test patches, defaulting to 4 if the -e flag isn't used. The
+    white patches are usually very important in establishing white point
+    that the ICC data is made relative to, so it improves robustness to
+    use more than a single point.<br>
+    <br>
+    <a name="B"></a> The <b>-B</b> parameter sets the number of black
+    colored test patches, defaulting to 4 if the -B flag isn't used and
+    the colorspace is grey or RGB. The black point can be very important
+    for characterizing additive color spaces, so measuring more than one
+    black patch improves robustness over measuring just a single point.<br>
+    <br>
+    <a name="s"></a> The <b>-s</b> parameter sets the number of patches
+    in a set of per colorant wedges. The steps are evenly spaced in
+    device space by default, and the total number of test patches will
+    be the number of colorants times the value specified with the -s
+    flag. If the <span style="font-weight: bold;">-p</span> parameter
+    is provided, then, then the steps will be distributed according to
+    the power value. e.g. the option <span style="font-weight: bold;">-s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      5</span> will generate steps at 0.0 0.25 0.5 0.75 and 1.0, while
+    the option <span style="font-weight: bold;">-s 5 -p 2.0</span> will
+    generate steps at 0.0 0.0625 0.25 0.5625 and 1.0. By default, no per
+    colorant test wedge values are generated. When creating a test chart
+    for a device that will be used as a source colorspace, it is often
+    useful to generated some per colorant wedge values.<br>
+    <br>
+    <a name="g"></a> The <b>-g</b> parameter sets the number of patches
+    in a set of combined (nominally gray) wedges. This will typically be
+    equal RGB or CMY values, and by default will be equally spaced steps
+    in device space. If the <span style="font-weight: bold;">-p</span>
+    parameter is provided, then, then the steps will be distributed
+    according to the power value. e.g. the option <span
+      style="font-weight: bold;">-g 5</span> will generate steps at 0.0
+    0.25 0.5 0.75 and 1.0, while the option <span style="font-weight:
+      bold;">-g 5 -p 2.0</span> will generate steps at 0.0 0.0625 0.25
+    0.5625 and 1.0. By default, no gray combination values are
+    generated. When creating a test chart for a device that will be used
+    as a source colorspace, it is often useful to generated some per
+    colorant wedge values.<br>
+    <br>
+    <a name="n"></a>The <b>-n</b> parameter sets the number of patches
+    in a set of neutral axis wedge steps. This uses the <a href="#c">pre-conditioning
+      profile</a>, to lookup the assumed neutral axis device values. By
+    default, no neutral axis values are generated. If you have a
+    previous profile for a device as a reference, adding some neutral
+    axis values can improve the neutral axis rendering of the subsequent
+    profiles.<br>
+    <br>
+    <a name="m"></a> The <b>-m</b> parameter sets the edge size of the
+    multidimensional grid of test values. The total number of patches of
+    this type will be the -m parameter value to the power of the number
+    of colorants. The grid steps are evenly spaced in device space by
+    default, but if the <span style="font-weight: bold;">-p</span>
+    parameter is provided, then, then the steps will be distributed
+    according to the power value. e.g. the option <span
+      style="font-weight: bold;">-m 5</span> will generate steps at 0.0
+    0.25 0.5 0.75 and 1.0, while the option <span style="font-weight:
+      bold;">-m 5 -p 2.0</span> will generate steps at 0.0 0.0625 0.25
+    0.5625 and 1.0. By default, all the device primary color
+    combinations that fall within the ink limit are generated.<br>
+    <br>
+    <a name="M"></a>Similarly to the <a href="#m">-m</a> parameter, the
+    <b>-M</b> parameter sets the edge size of the multidimensional grid
+    of test values, but where only the surface points of the cube is
+    generated. These may be useful for exploring just the expected gamut
+    surface of a space.<br>
+    <br>
+    <a name="b"></a> The <b>-b</b> parameter sets the outer edge size
+    of the multidimensional body centered grid of test values. The total
+    number of patches of this type will be the -b parameter value to the
+    power of the number of colorants plus the (number-1) to the power of
+    the number of colorants. The grid steps are evenly spaced in device
+    space by default, but if the <span style="font-weight: bold;">-p</span>
+    parameter is provided, then, then the steps will be distributed
+    according to the power value. A body centered grid is a regular grid
+    (see <b>-m</b>) with another smaller regular grid within it, at the
+    centers of the outer grid. This grid arrangement is more space
+    efficient than a regular grid (ie. for a given number of test
+    points, it fills the space better.)<br>
+    <br>
+    The behavior of the <b>-e</b>, <b>-s</b>, <b>-g</b> <b>-m </b>and
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <b>-b</b> flags, is not to duplicate test values already created by
+    a previous type.<br>
+    <br>
+    <a name="f"></a> The <b>-f</b> parameter sets the number of full
+    spread test patches. Full spread patches are distributed according
+    to the default or chosen algorithm. The default algorithm will
+    optimize the point locations to minimize the distance from any point
+    in device space, to the nearest sample point. This is called
+    Optimized Farthest Point Sampling (OFPS) . This can be overridden by
+    specifying the <b>-t. -r, -R, -q, -i or -I</b> flags. If the
+    default OFPS algorithm is used, then adaptive test point
+    distribution can be fully enabled by supplying a previous or typical
+    profile with the <span style="font-weight: bold;">-c</span> option.
+    The total number patches specified will include any patches
+    generated using the <b>-e</b>, <b>-s</b>, <b>-g</b> <b>-m</b>
+    and <b>-b</b> flags (i.e. full spread patches will be added to
+    bring the total number of patches including those generated using
+    the <b>-e</b>, <b>-s</b>, <b>-g</b> <b>-m </b>and <b>-b</b>
+    flags up to the specified number). When there are more than four
+    device channels, the full spread distribution algorithm can't deal
+    with so many dimensions, and <b>targen</b> falls back on an
+    incremental far point distribution algorithm by default, that
+    doesn't generate such evenly spread points. This behaviour can be
+    forced using the <b>-t</b> flag. A <a href="#Table">table</a> of
+    useful total patch counts for different paper sizes is shown below.
+    Note that it's occasionally the case that the OFPS algorithm will
+    fail to complete, or make very slow progress if the <span
+      style="font-weight: bold;">-c</span> profile is poor, non-smooth,
+    or has unusual behaviour. In these cases a different algorithm
+    should be chosen (ie. <span style="font-weight: bold;">-Q</span> or
+    <span style="font-weight: bold;">-I</span>), or perhaps a smoother
+    or lower resolution ("quality") previous profile may overcome the
+    problem. <br>
+    <br>
+    <a name="t"></a> The <b>-t</b> flag overrides the default full
+    spread test patch algorithm, and makes use of the Incremental Far
+    Point Distribution algorithm, which incrementally searches for test
+    points that are as far away as possible from any existing points.
+    This is used as the default for dimensions higher than 4.<br>
+    <br>
+    <a name="r"></a> The <b>-r</b> flag overrides the default full
+    spread test patch algorithm, and chooses test points with an even
+    random distribution in device space.<br>
+    <br>
+    <a name="R"></a> The <b>-R</b> flag overrides the default full
+    spread test patch algorithm, and chooses test points with an even
+    random distribution in perceptual space.<br>
+    <br>
+    <a name="q"></a> The <b>-q</b> flag overrides the default full
+    spread test patch algorithm, and chooses test points with a
+    quasi-random, space filling distribution in device space.<br>
+    <br>
+    <a name="Q"></a> The <b>-Q</b> flag overrides the default full
+    spread test patch algorithm, and chooses test points with a
+    quasi-random, space filling distribution in perceptual space.<br>
+    <br>
+    <a name="i"></a> The <b>-i</b> flag overrides the default full
+    spread test patch algorithm, and chooses test points with body
+    centered cubic distribution in device space.<br>
+    <br>
+    <a name="I"></a> The <b>-I</b> flag overrides the default full
+    spread test patch algorithm, and chooses test points with body
+    centered cubic distribution in perceptual space.<br>
+    <br>
+    <a name="a"></a> The <b>-a <i>angle</i></b> parameter sets the
+    overall angle that the body centered grid distribution has.<br>
+    <br>
+    <a name="A"></a> The <b>-A <i>adaptation</i></b> parameter sets
+    the degree of adaptation to the known device characteristics, used
+    by the default full spread OFPS algorithm. A profile should be
+    provided using the <span style="font-weight: bold;">-c</span>
+    parameter if <span style="font-weight: bold; font-style: italic;">adaptation</span>
+    is set above a low level. By default the adaptation is 0.1 (low),
+    and 1.0 (maximum) if <span style="font-weight: bold;">-c profile</span>
+    is provided, but these defaults can be overridden using this option.
+    For instance, if the <span style="font-weight: bold;">-c profile</span>
+    doesn't represent the device behavior very well, a lower adaption
+    than 1.0 might be appropriate.<br>
+    <br>
+    <a name="l"></a> The <b>-l</b> flag and parameter sets a total ink
+    limit (Total Area Coverage or TAC), which is adhered to for all the
+    generated points. It is generally good practice to set a test chart
+    ink limit at least 10% higher than the ink limit that will be
+    applied when making the resulting profile. In the case of device
+    cube points, this can generate extra test values that lie at the ink
+    limit boundary. For gray wedge values, any that exceed the ink limit
+    are omitted. Full spread test values are all generated to lie within
+    the ink limit. Although it doesn't make much sense, this parameter
+    has an affect on additive device spaces (such as RGB), but should
+    not normally be used with such devices. The total ink limit value
+    will be written to the .ti1 file, and carried through automatically
+    to the .ti3 file, so that it can be used during profile creation. If
+    a profile is provided using the <span style="font-weight: bold;">-c</span>
+    flag, then this will be used to estimate an ink limit, if none is
+    provided with the <span style="font-weight: bold;">-l</span> flag.
+    Ink limits are, as far as possible, always in final calibrated
+    device values, and the calibration curves from the profile provided
+    to the <span style="font-weight: bold;">-c</span> flag will be used
+    to estimate the equivalent limit in the underlying pre-calibration
+    device space values that targen creates.<br>
+    <br>
+    <a name="p"></a> The <b>-p</b> flag and parameter sets a power-like
+    value applied to all of the device values after they are generated,
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;"></span>the spacer colors. This can be useful in creating
+    calibration charts for very non-linearly behaved devices. A value
+    greater than 1.0 will cause a tighter spacing of test values near
+    device value 0.0, while a value less than 1.0 will cause a tighter
+    spacing near device value 1.0. <span style="font-weight: bold;">printcal</span>
+    will recommend a power-like value if the verbose option is used. [ <span
+      style="font-weight: bold;">Note</span> that for Print RGB space
+    this is reversed, since internally a Print RGB space is treated as a
+    CMY space. ]. <span style="font-weight: bold;">Note</span> that the
+    device model used to create the expected patch values will not take
+    into account the applied power, nor will the more complex full
+    spread algorithms correctly take into account the power in
+    generating values up to the ink limits. (A power-like function is
+    used, to avoid the excessive compression that a real power function
+    would apply).<br>
+    <br>
+    <a name="c"></a> The <b>-c</b> flag and parameter is used to
+    specify an <a href="File_Formats.html#ICC">ICC</a> or <a
+      href="File_Formats.html#MPP">MPP</a> pre-conditioning profile, for
+    estimating perceptual distances and colorspace curvature, used in
+    optimizing the full spread test point placement,or in creating
+    perceptualy spaced distributions. Normally a previous profile for
+    this or a similar device will be used, or a simpler, preliminary
+    profile will be created and used. If no such profile is specified, a
+    default device space model is used. Note that this will only have an
+    effect if an algorithm that uses perceptual placement (such as <span
+      style="font-weight: bold;">-R, -Q, -I</span> or the default OFPS
+    with an <span style="font-weight: bold;">-A</span> value &gt; 0.0)
+    is being used.<br>
+    <br>
+    <a name="N"></a> The <b>-N nemphasis</b> parameter allows changing
+    the degree to which the patch distribution should emphasise the
+    neutral axis. Since the neutral axis is regarded as the most
+    visually critical are of the color space, it can help maximize the
+    quality of the resulting profile to place more measurement patches
+    in this region. This emphasis is only effective for perceptual patch
+    distributions, and for the default OFPS distribution if the <a
+      href="#A">adaptation</a> parameter is set to a high value. It is
+    also most effective when a <a href="#c">pre-conditioning</a>
+    profile is provided, since this is the only way that neutral can be
+    determined. The default value of 0.5 provides an affect about twice
+    the emphasis of the CIE94 Delta E formula.<br>
+    <br>
+    <a name="V"></a> The <b>-V demphasis</b> parameter allows changing
+    the degree to which the patch distribution should emphasis dark
+    region of the device response. Display devices used for video or
+    film reproduction are typically viewed in dark viewing environments
+    with no strong white reference, and typically employ a range of
+    brightness levels in different scenes. This often means that the
+    devices dark region response is of particular importance, so
+    increasing the relative number of sample points in the dark region
+    may improved the balance of accuracy of the resulting profile for
+    video or film reproduction. This emphasis is only effective for
+    perceptual patch distributions where a <a href="targen.html#c">pre-conditioning</a>
+    profile is provided. The default value of 1.0 provides no emphasis
+    of the dark regions. A value somewhere around <b>1.5 - 2.0</b> is a
+    good place to start for video profile use. A scaled down version of
+    the -V parameter will be passed on through the .ti3 file to colprof
+    where it will set a default value for the corresponding <a
+      href="colprof.html#V">colprof -V</a> parameter.&nbsp; Note that
+    increasing the proportion of dark patches will typically lengthen
+    the time that an instrument takes to read the whole chart.
+    Emphasizing the dark region characterization will reduce the
+    accuracy of measuring and modelling the lighter regions, given a
+    fixed number of test points and profile quality/grid resolution. The
+    parameter will also be used in an analogous way to the <small><a
+        href="targen.html#p">-p power</a> value in changing the
+      distribution of </small><small><a href="targen.html#s">-s steps</a>,
+    </small><small><a href="targen.html#g">-g steps</a>, </small><small><a
+        href="targen.html#m">-m steps</a></small> and <small><small><a
+          href="targen.html#b">-b steps</a></small></small> patches.<br>
+    <br>
+    <a name="F"></a> The <b>-F</b> flag and parameters is used to
+    define an L*a*b* sphere to filter the test points through. Only test
+    points within the sphere (defined by it's center and radius) will be
+    written to the .ti1 file. This can be good for targeting
+    supplemental test points at a troublesome area of a device. The
+    accuracy of the L*a*b* target will be best when the <span
+      style="font-weight: bold;">-c</span> option is used to specify a
+    reasonably accurate profile for the device. Note that the actual
+    number of points generated can be hard to predict, and will depend
+    on the type of generation used. All means of generating points
+    except the -f N &amp; -r, -R and -q will generate a smaller number
+    of test points than expected. If the -f N &amp; -r, -R and -q
+    methods are used, then the target number of points will be achieved.
+    For this reason, the -f N -q method is probably the easiest to use.<br>
+    <br>
+    <a name="O"></a> The <b>-O</b> flag disables the normal patch
+    re-ordering used for display RGB sets. Displays are assumed to have
+    a "settling time", and the delay needed for this settling time can
+    be minimzed by sort the patches so that they are in an order which
+    minimizes the change in levels between patches. <b>-O</b> disables
+    this re-ordering, leaving the patches in whatever order they were
+    generated.<br>
+    <br>
+    <a name="U"></a> The <b>-U</b> flag disables the normal filtering
+    out of duplicate patches.<br>
+    <br>
+    <a name="w"></a> The <b>-w</b> flag causes a diagnostic <a
+      href="File_Formats.html#X3DOM">X3DOM</a> .x3d.html file to be
+    created, in which the test points are plotted as small spheres in
+    L*a*b* colorspace. Note that for a CMYK device, the point spacing
+    may seem strange, since the extra K dimension is compressed into the
+    3 dimensional L*a*b* space. <a name="W"></a>If the <span
+      style="font-weight: bold;">-W</span> flag is given, the plot will
+    be in device space, with only the first 3 dimensions of each point
+    being plotted.<br>
+    <br>
+    <a name="p1"></a> The final parameter on the command line is the
+    base filename for the <a href="File_Formats.html#.ti1">.ti1</a>
+    output file. <b>targen</b> will add the .ti1 extension
+    automatically.<br>
+    <br>
+    Some typical total patch number/paper size combinations are shown
+    below. These "magic" numbers are found by using <a
+      href="printtarg.html">printtarg</a> to compute the row length and
+    number of rows, and then adjusting the total number of patches to
+    fill the last row or paper size, in a trial and error fashion.<br>
+    <br>
+    Note that some people create charts with larger numbers of patches
+    for the ColorMunki by altering an Eye-One Pro chart, and making
+    scanning jigs to guide the instrument more accurately. This may
+    reduce patch reading accuracy unless suitable care is taken.<br>
+    <br>
+    <a name="Table"></a> &nbsp;&nbsp; &nbsp; Size (mm/Standard Name),
+    &nbsp; No. Patches<br>
+    <br>
+    DTP20:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 540<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4 &nbsp; &nbsp; &nbsp; 1080<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 3 x A4&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 1620<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 4 x A4&nbsp; &nbsp; &nbsp;&nbsp; 2160<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x Letter &nbsp;&nbsp; 570<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter&nbsp;&nbsp; 1140<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;3 x Letter&nbsp;&nbsp; 1710<br>
+    &nbsp; &nbsp; &nbsp; 4 x Letter&nbsp;&nbsp; 2280<br>
+    <br>
+    DTP 22:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 782<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4 &nbsp; &nbsp; &nbsp; 1564<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x Letter &nbsp;&nbsp; 736<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter&nbsp;&nbsp; 1472<br>
+    <br>
+    &nbsp; DTP41:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; 375<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 x A4 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 750<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 x A4 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1125<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 x A4 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1500<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; 345<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp;&nbsp; 690<br>
+    &nbsp; &nbsp; &nbsp; 3 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 1035<br>
+    &nbsp; &nbsp; &nbsp; 4 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 1380<br>
+    <br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 1 x A3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 836<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 2 x A3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 1672<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x 11x17 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 780<br>
+    &nbsp; &nbsp; &nbsp; 2 x 11x17 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; 1560<br>
+    <br>
+    <br>
+    &nbsp; DTP51:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 266<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 x A4 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 532<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 x A4 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 798<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 x A4 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1064<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 252<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 504<br>
+    &nbsp; &nbsp; &nbsp; 3 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 756<br>
+    &nbsp; &nbsp; &nbsp; 4 x Letter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; 1008<br>
+    <br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 1 x A3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 580<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 2 x A3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1160<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x 11x17 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; 570<br>
+    &nbsp; &nbsp; &nbsp; 2 x 11x17 &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;&nbsp; 1140<br>
+    <br>
+    &nbsp; SpectroScan with square patches:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4R&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 1014<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4R &nbsp; &nbsp; &nbsp; 2028<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 3 x A4R&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    3042<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 4 x A4R&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+    4056<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x LetterR &nbsp;&nbsp; 999<br>
+    &nbsp; &nbsp; &nbsp; 2 x LetterR&nbsp;&nbsp; 1998<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;3 x LetterR&nbsp;&nbsp; 2997<br>
+    &nbsp; &nbsp; &nbsp; 4 x LetterR&nbsp;&nbsp; 3996<br>
+    <br>
+    &nbsp; SpectroScan with hexagonal patches:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4R&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 1170<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4R &nbsp; &nbsp; &nbsp; 2340<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 3 x A4R&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    3510<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 4 x A4R&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+    4680<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x LetterR&nbsp;&nbsp; 1092<br>
+    &nbsp; &nbsp; &nbsp; 2 x LetterR&nbsp;&nbsp; 2184<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;3 x LetterR&nbsp;&nbsp; 3276<br>
+    &nbsp; &nbsp; &nbsp; 4 x LetterR&nbsp;&nbsp; 4368<br>
+    <br>
+    &nbsp; Eye-One Pro:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 441<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4 &nbsp; &nbsp; &nbsp;&nbsp; 882<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 3 x A4&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 1323<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 4 x A4&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 1764<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x Letter &nbsp;&nbsp; 462<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter&nbsp;&nbsp;&nbsp; 924<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;3 x Letter&nbsp;&nbsp; 1386<br>
+    &nbsp; &nbsp; &nbsp; 4 x Letter&nbsp;&nbsp; 1848<br>
+    <br>
+    &nbsp; ColorMunki:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp; 90<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4 &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 180<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 3 x A4&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; 270<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 4 x A4&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp; 360<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x Letter &nbsp;&nbsp;&nbsp;&nbsp; 98<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter&nbsp;&nbsp;&nbsp;&nbsp; 196<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;3 x Letter&nbsp;&nbsp;&nbsp;&nbsp; 294<br>
+    &nbsp; &nbsp; &nbsp; 4 x Letter&nbsp;&nbsp;&nbsp;&nbsp; 392<br>
+    <br>
+    &nbsp; ColorMunki -h:<br>
+    <br>
+    &nbsp; &nbsp; &nbsp; 1 x A4&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 210<br>
+    &nbsp; &nbsp; &nbsp; 2 x A4 &nbsp; &nbsp; &nbsp;&nbsp; 420<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 3 x A4&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp; 630<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; 4 x A4&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp; 840<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp; 1 x Letter &nbsp;&nbsp; 196<br>
+    &nbsp; &nbsp; &nbsp; 2 x Letter&nbsp;&nbsp;&nbsp; 392<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;3 x Letter&nbsp;&nbsp;&nbsp; 588<br>
+    &nbsp; &nbsp; &nbsp; 4 x Letter&nbsp;&nbsp;&nbsp; 784<br>
+    <br>
+    &nbsp; Scanner (printtarg with -iSS -s options):<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 1 x A4R &nbsp; &nbsp;&nbsp; 1014<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;2 x A4R &nbsp; &nbsp;&nbsp; 2028<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;3 x A4R &nbsp; &nbsp;&nbsp; 3042<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;4 x A4R &nbsp; &nbsp;&nbsp; 4056<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; 1 x LetterR&nbsp;&nbsp; 962<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;2 x LetterR&nbsp; 1924<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;3 x LetterR&nbsp; 2886<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;4 x LetterR&nbsp; 3848<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

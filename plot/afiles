@@ -1,0 +1,14 @@
+Readme.txt
+License.txt
+Jamfile
+Imakefile
+afiles
+plot.c
+plot.h
+vrml.c
+vrml.h
+X3DOM_LICENSE.txt
+x3dom.css
+x3dom.css.h
+x3dom.js
+x3dom.js.h

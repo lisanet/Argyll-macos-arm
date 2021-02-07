@@ -1,0 +1,6 @@
+bin/libusb-win32-bin-README.txt
+bin/x86/libusb0.sys
+bin/amd64/libusb0.sys
+ArgyllCMS.cat
+ArgyllCMS.inf
+ArgyllCMS_x64.cat

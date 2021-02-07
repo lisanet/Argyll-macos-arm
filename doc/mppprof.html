@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>mppprof</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+</head>
+<body>
+<h2><b>profile/mppprof</b></h2>
+<h3>Summary</h3>
+Create a Model Printer Profile (<a href="File_Formats.html#MPP">MPP</a>)
+from the&nbsp;<a href="File_Formats.html#.ti3">.ti3</a> test data.<br>
+<h3>Usage summary</h3>
+<small><span style="font-family: monospace;">mppprof [options] outfile</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose mode</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-q [lmhs]&nbsp;&nbsp;
+Quality - Low, Medium (def), High, Simple</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-l limit&nbsp;&nbsp;&nbsp;
+override default ink limit, 1 -
+n00%</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Generate spectral model too</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Generate ink mixing model</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verify profile<br>
+&nbsp;-L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Output
+Lab values<br style="font-family: monospace;">
+</span><span style="font-family: monospace;">&nbsp;</span><i
+ style="font-family: monospace;">inoutfile</i><span
+ style="font-family: monospace;">&nbsp;&nbsp; Base name for input</span><a
+ style="font-family: monospace;" href="File_Formats.html#.ti3">.ti3</a><span
+ style="font-family: monospace;">/output.</span><a
+ style="font-family: monospace;" href="File_Formats.html#MPP">MPP</a><span
+ style="font-family: monospace;"> file</span></small><br>
+<h3>Usage Details and Discussion</h3>
+This is an analogous tool to&nbsp;<a href="colprof.html">colprof</a>,
+but applying to
+<a href="File_Formats.html#MPP">MPP</a> profiles, rather than <a
+ href="File_Formats.html#ICC">ICC</a> profiles. This tool creates an
+MPP profile given the <a href="File_Formats.html#.ti3">.ti3</a> test
+chart information. The model based device profile is an Argyll specific
+format, used to hold the parameters to a general model based device
+characterization.
+This is a less precise and general format than and ICC profile, but is
+a compact way of representing a devices response when it has a large
+number
+of color channels, or when very few measured data points are available
+for its construction.<br>
+<br>
+The <b>-v</b> flag causes extra information to be printed as the
+profile is being created, including the delta E statistics for the test
+data fit against the profile.<br>
+<br>
+The <b>-q</b> parameter sets the level of effort and hence quality in
+the resulting profile. Different quality profile use different numbers
+of
+model parameters.<br>
+&nbsp;&nbsp;&nbsp; <b>s &nbsp; &nbsp; &nbsp;</b>simple - use a close
+variation
+of the Neugenbauer model, with a single parameter, per device
+linearisation curve.<br>
+&nbsp;&nbsp;&nbsp; <b>l</b> &nbsp;&nbsp; &nbsp; &nbsp;low quality
+profiles
+have more detail terms to account for device linearisation.<br>
+&nbsp;&nbsp;&nbsp; <b>m</b> &nbsp; &nbsp; medium quality profiles, add
+color channel cross mixing terms, as well as using more detail
+parameters.<br>
+&nbsp;&nbsp;&nbsp; <b>h</b> &nbsp;&nbsp; &nbsp; high quality profiles,
+use more detail terms and more profile refinement iterations.<br>
+<br>
+The <b>-l</b> flag overrides any default ink limit (Total Area
+Coverage) recorded in the .ti3 file.<br>
+<br>
+The <b>-s</b> flag enables the creation of spectral model values, as
+well as the tri-stimulus model.<br>
+<br>
+The <b>-m</b> flag is currently not implemented.<br>
+<br>
+The <b>-y</b> flag causes each test value and its error to be printed.<br>
+<br>
+The <b>-L</b> flag causes the CGATS output file to contain D50 L*a*b*
+parameters rather than XYZ.<br>
+<br>
+The <i>inoutfile</i> parameters should be the base name of the .ti3
+file, and mppprof will output an mpp that has the same basename and the
+.mpp extension.<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

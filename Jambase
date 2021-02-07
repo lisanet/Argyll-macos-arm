@@ -1,0 +1,4686 @@
+#
+# /+\
+# +\		Copyright 1993-2002 Christopher Seiwald and Perforce Software, Inc.
+# \+/
+#
+# This file is part of Jam - see jam.c for Copyright information.
+#
+
+# The Copyright information in jam.c reads:
+#
+#/*
+# * /+\
+# * +\   Copyright 1993-2002 Christopher Seiwald and Perforce Software, Inc.
+# * \+/
+# *
+# * This file is part of jam.
+# *
+# * License is hereby granted to use this software and distribute it
+# * freely, as long as this copyright notice is retained and modifications
+# * are clearly marked.
+# *
+# * ALL WARRANTIES ARE HEREBY DISCLAIMED.
+# */
+
+# MODIFIDED version of jam 2.5 Jambase, for the ArgyllCMS project by Graeme W. Gill.
+#           These modifications are herebye licensed under the same conditions
+#           as as the rest of Jam, as detailed above.
+#           Moved to a "Normalized" scheme, where Jamfile UNIX style target paths
+#			are converted to platform specific, Jamfile relative, Gristed/SEARCH/LOCATE
+#			form internally. Creating the tree is simplified by eliminating the SubDir
+#           rule. Better support for MingW, OS X. More comprehensive ruleset.
+#           Renamed Jamrules to Jamtop.
+#
+# JAMBASE - jam 2.5 ruleset providing make(1)-like functionality
+#
+# Supports UNIX, NT, and VMS.
+#
+# Special targets defined in this file:
+#
+# all				- parent of first, shell, files, lib, exe
+# first				- first dependent of 'all', for potential initialization
+# shell				- parent of all Shell targets 
+# files				- parent of all File targets
+# lib				- parent of all Library targets
+# exe				- parent of all Main targets
+# dirs				- parent of all MkDir targets
+# install			- parent of all Install targets
+# clean				- removes all Shell, File, Library, and Main targets
+# uninstall			- removes all Install targets
+#		
+
+# Rules defined by this file:
+#
+# As obj : source.s ;					.s -> .o
+# Bulk dir : files ;					populate directory with many files
+# Cc obj : src.c : flags : defines : hdrpaths 
+#										.c -> .o
+# C++ obj : src.cc : flags : defines : hdrpaths
+#										.cc -> .o
+# Clean clean : sources ;				remove sources with 'jam clean'
+# File dest : source ;					copy file
+# FileNoClean dest : source ;			copy file, but don't delete dest during clean
+# FakeFile dest : source ;				Fudge to say dest is created with source
+# Fortran obj.o : source.f ;			.f -> .o
+# GenFile target : program args ;		make custom file
+# GenFileND target : program args : extra_dependecies ;
+#										make custom file, program dependent & args not
+# GenFileNND target : program args : extra_dependecies ;
+#                                       make custom file, program & args not dependent
+# GenFileNNDnc target : program args : extra_dependecies ;
+#                                       Same as GenFileNND but don't clean the target.
+# CatToFile dest : strings ;			save the arguments to the file
+# GuiBin image ;						Mark executable as GUI applications
+#                                       (Needs to go before other declarations of image) 
+# HardLink target : source ;			make link from source to target
+# HdrRule source : headers ;			handle #includes
+# InstallInto dir : sources ;			install any files
+# InstallBin dir : sources ;			install binaries
+# InstallLib dir : sources ;			install files
+# InstallShLib dir : sources ;			install files
+# InstallFile dir : sources ;			install files
+# InstallMan dir : sources ;			install man pages
+# InstallShell dir : sources ;			install shell scripts
+# Lex source.c : source.l ;				.l -> .c
+# Library library : sources : flags : defines : hdrpaths : objects
+#										static library from compiled sources
+# LibraryFromLibraries lib : libs ;		static library from static libraries
+# LibraryFromObjects lib : objects ;	static library from objects
+# LinkLibraries images : libraries ;	add static libraries onto Mains
+# LinkObjects images : objects ;		add objects onto Mains
+# LinkShLibraries images : shlibraries ;	add shared libraries onto Mains
+# Main image : sources : flags : defines : hdrpaths : objects : libs : shlibs ;
+# 										create exe from compiled sources
+# MainsFromSources sources ;			create exes each from their source
+# MainFromObjects image : objects : libs : shlibs ;
+#										create executable from objects
+# MainVariant image : sources : flags : defines : hdrpaths : objects : libs : shlibs ;
+# 										create exe from compiled sources with separate named objs
+# MainLinkFlags mains : flags ;			add linker flags for object
+# MkDir dir ;							make a directory, if not there
+# Mod target : mode ;					sets mode of file
+# NDepends dest : source ;				make Normalized dependency
+# NNoUpdate targ ;						create Normalized target if needed but never update it 
+# NIncludes dest : source ;				make Normalized co-dependency
+# Object object : sources : flags : defines : hdrpaths ; 	compile object from source
+# ObjectCcFlags objects : flags ;		add compiler flags for object
+# ObjectPrefCcFlags objects : flags ;	add preference compiler flags for object (overridable)
+# ObjectC++Flags objects : flags ;		add compiler flags for object
+# ObjectPrefC++Flags objects : flags ;	add preference compiler flags for object (overridable)
+# ObjectDefines objects : defines ;		add defines for object
+# ObjectHdrs objects : dirs ;			add include directories for object
+# ObjectKeep objects ;					mark objects to be kept after library build
+# Objects sources : flags : defines : hdrpaths 		compile sources
+# PeerInclude dir ;						include peer Jamfile
+# FindTop ; 							Set TOP by locating JAMTOP file above SUBDIR
+# ProjTop d1 d2 .. ;					Set project TOP
+# RmTemps target : sources ;			remove temp sources after target made
+# Setuid images ;						mark executables Setuid
+#	set SHLINKDEFFILE on for Windows to define exports using .def file.
+#	set SHLINKSEARCHEXEPATH true on UNIX/OSX to have applications search exeutable location for it 
+# ShLibrary shlib : source ;				link shared library from compiled sources
+# ShLibraryFromObjects shlib : objects ;	link shared library from objects
+# ShLibraryLibraries shlib : libraries ;	add static libraries onto shared libraries link
+# ShLibraryObjects shlib : objects ;		add objects onto shared libraries link
+# ShLibraryShLibraries shlib : shlibraries ;	add shared libraries onto shared libraries link
+# SoftLink target : source ;			make symlink from source to target
+# SubInclude dir ;						include sub Jamfile
+# Shell exe : source ;					make a shell executable
+# Undefines images : symbols ;			save undef's for linking
+# UserObject object : source ;			handle unknown suffixes for Object
+# Yacc source.c : source.y ;			.y -> .c
+# Aswig : source.i ;					.i -> .h _i.c .hpp 
+#
+# Utility rules
+#
+# val = geton var : varname ;				return the value of varname on var 
+# paths = NormPaths paths [ : dir ] ;		normalize a set of paths relative to SUBDIR or dir
+# paths = NormSrcPaths paths [ : dir ] ;	NormPaths with SRCDIR
+# paths = NormDstPaths paths [ : dir ] ;	NormPaths with DSTDIR
+# paths = NormSrcTargets paths [ : dir ] ;	normalize source targets, set Grist NOMLOC SEARCH
+# paths = NormDstTargets paths [ : dir ] ;	normalize destination targets, set Grist NOMLOC LOCATE
+# paths = NormISrcTargets paths [ : dir ] ;	Same as NormSrcTargets but ignore SRCDIR
+# paths = NormIDstTargets paths [ : dir ] ;	Same as NormDstTargets but ignore DSTDIR
+#
+# More utility rules that have no side effects :
+#
+# FAppendSuffix f1 f2 ... : $(SUF) ;	return $(<) with suffixes if no current suffixes
+# FStripCommon v1 : v2 ;				strip common initial parts of v1 v2
+# FReverse a1 a2 ... ;					return ... a2 a1 
+# FDelEmpty a1 a2 ... ;					return a1 a2 ... with any empty elements deleted
+#
+# Variables:
+#
+# Sub-Jamfile build variables, optionaly set in each Sub-Jamfile. They will
+# be picked up by subsequent rules that set target relationships and
+# creation rules. They are added to any Parent-Jamfile variables,
+# and become the Parent-Jamfile variables of any SubIncludes.
+# Relative file/path variables are anchored by the Jamfile location.
+#
+# ASFLAGS      - Flags for the assembler.
+# CCFLAGS      - Flags for the C compiler.
+# C++FLAGS     - Flags for the C++ compiler.
+# LINKFLAGS    - Flags for the executable linker.
+# SHLINKFLAGS  - Flags for the shared library linker.
+# HDRS         - Complile header search directories
+# DEFINES      - Compile defines
+# LINKOBJS     - Link extra objects
+# LINKLIBS     - Link extra libraries
+# LINKSHLIBS   - Link extra shared libraries
+# SHLINKOBJS     - ShLibrary Linker extra objects
+# SHLINKLIBS     - ShLibrary Linker extra libraries
+# SHLINKSHLIBS   - ShLibrary Linker extra shared libraries
+#
+# Sub-directory preferred build flags, e.g. optimizations etc.  These will only
+# have effect if not set by a parent Jamfile (ie. involked from a leaf Jamfile).
+#
+# PREF_ASFLAGS
+# PREF_CCFLAGS
+# PREF_C++FLAGS
+# PREF_LINKFLAGS
+# PREF_SHLINKFLAGS
+#
+# Parent-Jamfile build variables. These are the accumulated
+# values from any Parent Jamfiles, and will be added to any
+# Sub-Jamfile variables when a rule picks them up. 
+# File/path variables will have been normalized.
+#
+# P_ASFLAGS      - Flags for the assembler.
+# P_CCFLAGS      - Flags for the C compiler.
+# P_C++FLAGS     - Flags for the C++ compiler.
+# P_LINKFLAGS    - Flags for the executable linker.
+# P_SHLINKFLAGS  - Flags for the shared library linker.
+# P_HDRS         - Complile header search directories
+# P_DEFINES      - Compile defines
+# P_LINKOBJS     - Link extra objects
+# P_LINKLIBS     - Link extra libraries
+# P_LINKSHLIBS   - Link extra shared libraries
+# P_SHLINKOBJS     - ShLibrary Linker extra objects
+# P_SHLINKLIBS     - ShLibrary Linker extra libraries
+# P_SHLINKSHLIBS   - ShLibrary Linker extra shared libraries
+#
+# Pre-defined values
+#
+# Pre-packaged flags that conceal platform dependence,
+# and are used to set CCFLAGS/C++FLAGS/LINKFLAGS/SHLINLFLAGS etc.
+#
+#	CCOPTFLAG       - CC/C++ flag for optimization
+#	CCDEBUGFLAG     - CC/C++ flag for debug
+#	CCPROFFLAG	    - CC/C++ flag for performance profiling
+#	CCSHOBJFLAG     - CC/C++ flag for compiling for a shared library (UNIX)
+#
+#	LINKOPTFLAG		- LINK flag for optimization of the binary/shared library
+#	LINKDEBUGFLAG	- LINK flag to support debugging
+#	LINKPROFFLAG	- LINK flag to support performance profiling
+#	LINKSTRIPFLAG	- LINK flag to strip binary of any symbols
+#
+# Location variables:
+#
+# DSTDIR	- puts all products in a subdirectory of their nominated location.
+#             Useful for storing variants in their own areas.                 
+#
+# SRCDIR    - Looks for all sources and Jamfiles in an alternate top level source
+#             location. Useful for accessing a read only source repository, or
+#             building a variant without copying all the sources.
+#             Note that at least the project Jamtop must be in the location
+#             that is the target for the build, and will most likely be where
+#             SRCDIR is set. SRCDIR is the location of the sources relative
+#             to where it is declared.
+#             (Not currently useful for a shadow build repository where the source
+#              is spread between the SRCDIR and the build dir, because Jam 2.5 fails
+#              to look at SEARCH if LOCATE is set).
+#
+# =========================================================================
+# ArgyllCMS Normalize mods:
+#
+# The main change is to locate and identify targets using their nominated location in the
+# filesystem. This eliminates the need to create Grist, or manipulate SEARCH, LOCATE etc.
+# when setting up a herachy of Jamfiles. 
+#
+# Whenever a path is provided as an argument to one of the public rules, its path is assumed
+# to be relative to the Jamfile that it is declared in. [ The NormPaths/NormTargets rules do this. ]
+# Naturally absolute paths are not affected by this.
+# During execution this means that all files are translated to paths that are
+# in a normalized form, with either an absolute path or one that is relative to
+# the directory that Jam was involked in. For simplicity it is assumed that
+# the Jamfile contains UNIX style paths, and these are converted to the
+# platform specific form on normalization.
+#
+# For a target, the normalized directory is then stripped from the name and
+# set as the Grist (path elements separated by !), and also set in the NOMLOC,
+# LOCATE and SEARCH variables "on" the target.  This gives a target a unique
+# identity for the whole of the build, determined by its nominated file system location.
+# The NOMLOC variable is a way of recovering it's location without having the reverse
+# the Grist strings.  The actual location of the target can then be varied by
+# augmenting it's LOCATE and/or SEARCH variables.
+#
+# Any include file discovered by header scanning is searched for using the 
+# search path that is expected to be used during compilation, and
+# its nominated location resolved this way. Any headers that are not
+# located this way or who's location isn't declared by another rule (the
+# latter being typical when headers are being generated) will be marked as
+# being in an __unknown__ directory and will not be scaned. Normally any
+# header files located in the STDHDRS directories will not be scanned either.
+#
+# [ Typically headers will be __unknown__ if the STDHDRS directories do
+#   not reflect the default paths actually searched by the compiler, or if a
+#   header is not actually going to be #included because it is protected
+#   by an #ifdef. ]
+
+# Argyll Jambase internal implementation rules:
+
+# IDs = _TargetIDs targpaths ;				return target ID's (gristed) from normalized paths
+# path = DeNormTargs target ;				return the original path 
+# CopyTarget dest : source ; 				duplicate a targets on NOMLOC LOCATE SEARCH variables.
+# NotTargets vars ;							ensure variables aren't treated as LOCATE etc targets
+
+# d1 d2 ... file = _SepPath path ;			separate a path into its components
+# path = _DirName d1 d2 ... ;				combine components into a path
+# d1 d2 .. = _RatPath d1 d2 .. 				rationalize a path
+# d1 d2 .. = _RootPath d1 d2 .. : p1 p2 ... re-root a path
+# paths = RatPaths paths ;					rationalize a set of paths
+# paths = RootPaths dir : paths ;			re-root a set of paths
+# targs = CreateIDstTargets targs : dir ;	create dest targets by locating targets in dir
+# paths1/paths = CatPaths path1 : paths ; 	concatenate paths separated by a / 
+# found = FindToRoot starting_dir : file ;	Try and locate file from directory up to root.
+
+# FindTop ;		# Look for a default project file 
+
+# DoInit ;									Do subdir initialization (done by JAMBASE)
+
+# public write/read Variables:
+#
+# TRACESTDHDRS				# Normally false, set to true to trace system path #include file dependenicies
+
+# public read only Variables:
+#
+# SUBDIR d1/d2/d3			# Current path from PWD to Jamfile
+# TOP d1/d2/d3				# Current path from PWD to the project Jamtop
+
+# internal variables
+#
+# _SUBDIR d1 d2 d3 ...		# Current path from PWD to Jamfile
+# _TOP d1 d2 d3				# Current path from PWD to the project Jamtop
+
+# - - - - - - - - - - - - - - -
+
+# NOTE:	Cross compiling support :-
+#	To fix this to support cross compilation, the setup needs to be
+#	modularised into 3 parts, making them all rules that can be re-involked:
+#	1) OS/Platform setup. System tools like copy, delete etc.
+#	2) Compiler setup. Basic compiler syntax etc.
+#	3) Target setup. Make this a rule, and allow switching
+#	   target by involking the rule. This will be simpler to
+#	   get working that per target 'on' variable (some
+#	   things are currently broken for 'on' variables, such
+#	   as library members, and it will be easier to do
+#	   things such as switch compilers.
+
+# - - - - - - - - - - - - - - -
+
+
+# Brief review of the jam language:
+#
+# Statements:
+#		rule RULE - statements to process a rule
+#		actions RULE - system commands to carry out target update
+#
+# Modifiers on actions:
+#		together - multiple instances of same rule on target get executed
+#				   once with their sources ($(>)) concatenated
+#		updated - refers to updated sources ($(>)) only
+#		ignore - ignore return status of command
+#		quietly - don't trace its execution unless verbose
+#		piecemeal - iterate command each time with a small subset of $(>)
+#		existing - refers to currently existing sources ($(>)) only
+#		bind vars - subject to binding before expanding in actions
+#
+# Special rules:
+#		Always - always build a target
+#		Depends - builds the dependency graph
+#                 NOTE: can have only one $(<), or parallel builds stuff up!!
+#                       Use FakeFile to work around the problem.
+#		Echo - blurt out targets on stdout
+#		Exit - blurt out targets and exit
+#		Includes - marks sources as headers for target (a codependency)
+#		NoCare - don't panic if the target can't be built
+#		NoUpdate - create the target if needed but never update it 
+#		NotFile - ignore the timestamp of the target (it's not a file)
+#		Temporary - target need not be present if sources haven't changed
+#
+# Special variables set by jam:
+#		$(<) - targets of a rule (to the left of the :)
+#		$(>) - sources of a rule (to the right of the :)
+#		$(xxx) - true on xxx (UNIX, VMS, NT, OS2, MAC)
+#		$(OS) - name of OS - varies wildly
+#		$(JAMVERSION) - version number (2.5)
+#
+# Special variables used by jam:
+#		SEARCH - where to find something (used during binding and actions)
+#		LOCATE - where to plop something not found with SEARCH
+#		HDRRULE - rule to call to handle include files
+#		HDRSCAN - egrep regex to extract include files
+#
+# Special targets:
+#		all - default if none given on command line
+#
+
+# for perforce use -- jambase version
+
+JAMBASEDATE = 2008.03.26 ;
+
+# Initialize variables
+#
+
+# ===========================================================
+#
+# OS specific variable settings
+#
+
+if $(NT)
+{
+	MV				?= move /y ;
+	CP				?= copy ;
+	RM				?= del /f/q ;
+	RMDIR			?= rmdir /s/q ;
+	SLASH			?= \\ ;
+	SUFLIB			?= .lib ;
+	SUFSHLIB		?= .dll ;
+	SUFIMPLIB		?= .lib ;
+	SUFOBJ			?= .obj ;
+	SUFEXE			?= .exe ;
+	SUFSH			?= .bat ;
+	CCSHOBJFLAG		?= ;
+
+	if $(BCCROOT)
+	{
+		AR				?= tlib /C /P64 ;
+		CC				?= bcc32 ;
+		CCFLAGS			?= -v -w- -q -DWIN -tWR -tWM -tWC ;
+		C++				?= $(CC) ;
+		C++FLAGS		?= $(CCFLAGS) -P ;
+		LINK			?= $(CC) ;
+		LINKFLAGS		?= ;
+		STDLIBPATH		?= $(BCCROOT)\\lib ;
+		STDHDRS			?= $(BCCROOT)\\include ;
+		NOARSCAN		?= true ;
+	}
+	else if $(MingW) || $(MINGW)
+	{
+		# We need to do something about adding -Wl,-subsystem,windows
+		# if WinMain is being used ? (it defaults to console)
+
+		MINGW           ?= $(MingW) ; 
+		TPFX             = "" ;
+
+		if [ GLOB $(MINGW)/bin : x86_64-w64-mingw32-gcc.exe ] {
+			MINGW64 = $(MINGW) ;
+        }
+		
+		# This doesn't work on a 32 bit system because we're cross
+		# compiling and need to create build system exe's
+		# (tiff/mkversion.exe, imdi/imdi_make.exe
+		# Will using -m32 for local exe's fix this ?
+		# What is multi-lib option ???
+		if $(MINGW64) {
+			ECHO "Compiler is MingW for 64 bit target" ;
+			TARGET64     = true ;
+			TPFX         = x86_64-w64-mingw32- ;
+			MINGW64_LIB32 = $(MINGW)/mingw/lib32 ;
+		} else {
+			ECHO "Compiler is MingW for 32 bit target" ;
+		}
+
+
+		# Basic C/C++ tools
+		AR				?= $(TPFX)ar rusc ;
+		AS				?= $(TPFX)as ;
+		CC				?= $(TPFX)gcc ;
+		CCFLAGS			?= -DNT -mwin32 -pipe ;
+		C++				?= $(CC) ;
+		C++FLAGS		?= $(CCFLAGS) ;
+
+		OLELIBS			?= -loleaut32 -luuid ;
+		BASELIBS		?= -lstdc++ -lgcc -lodbc32 -lwsock32 ;
+#		WINLIBS			?= -lwinspool -lwinmm -lshell32 -lcomctl32 -lctl3d32
+#						   -lodbc32 -ladvapi32 -lodbc32 -lwsock32 -lopengl32
+#		                   -lglu32 -lshlwapi -lsetupapi ;
+		WINLIBS			?= -lshlwapi -lsetupapi -lole32 -lws2_32 -lpsapi -lversion ;
+		GUILIBS			?= -lgdi32 -lmscms ;
+
+		LINK			?= $(TPFX)g++ ;		# In case we link to C++ files
+		LINKFLAGS		?= -static ;
+		SHLINKFLAGS		?= ;
+		STDLIBS			?= -lm $(OLELIBS) $(WINLIBS) $(GUILIBS) ;
+		SHSTDLIBS		?= $(STDLIBS) ;
+
+		STDHDRS			?= $(MINGW)\\include ;	
+
+		# Not sure whether linker -mconsole or -mwindow are needed ??
+
+		# Allow setting of flags, independent of compiler
+		DEFFLAG			?= -D ;
+		UNDEFFLAG		?= -U ;
+		CCOPTFLAG		?= -O2 ;
+		if $(PROCESSOR_LEVEL) = 15 
+		{	# -mtune seems faster than -march !!!
+#			CCOPTFLAG	+= -mtune=pentium4 ;
+#			CCOPTFLAG	+= -mtune=prescott ;
+			CCOPTFLAG	+= -mtune=nocona ;	# portable code for Pentium4 640
+#			CCOPTFLAG	+= -march=nocona -mfpmath=sse -msse3 ; # non-portable
+
+		}
+
+		CCDEBUGFLAG		?= -g ;				# default (TABS? DWARF2 ?) format
+		CCPROFFLAG		?= -pg ;
+		LINKDEBUGFLAG	?= -g ;
+		LINKPROFFLAG	?= -pg ; 
+		LINKOPTFLAG		?= -s -O ;			# Affects creating .so's ??
+		LINKSTRIPFLAG	?= -s ;	
+
+		# Other tools
+		AWK				?= awk ;
+		SED				?= sed ;
+
+#		YACC			?= yacc ;
+#		YACCFLAGS		?= -d ;
+#		YACCFILES		?= y.tab ;
+
+		YACC			?= bison -y ;
+		YACCGEN			?= .c ;
+		YACCFILES		?= y.tab ;
+		YACCFLAGS		?= -d ;
+
+# gcc assembler listing:
+# -g -O -Wa,-aslh source.cpp > list.txt
+# -save-temps
+# -fdump-tree-all'
+
+	}
+	else if $(MSVC)		# 
+	{
+		ECHO "Compiler is VC++ 16 bit" ;
+		AR				?= lib /nologo ;
+		CC				?= cl /nologo ;
+		CCFLAGS			?= /D \"WIN\" ;
+		C++				?= $(CC) ;
+		C++FLAGS		?= $(CCFLAGS) ;
+		LINK			?= $(CC) ;
+		LINKFLAGS		?= ;
+		STDLIBS			?= 
+							$(MSVC)\\lib\\mlibce.lib
+							$(MSVC)\\lib\\oldnames.lib
+							;
+		NOARSCAN		?= true ;
+		STDHDRS			?= $(MSVC)\\include ;
+		DEFFLAG		 	?= /D ;						
+		UNDEFFLAG		?= "/u _" ;
+	}
+	else if $(TARGET_ARCH)
+	{
+		# Intel C++ compiler (ICL) 
+
+		# No IA64 dir
+		local I ; I = "" ;
+
+		AR				?= lib /NOLOGO ;
+		AS				?= masm386 ;
+		CC              ?= icl /nologo ; 
+		CCFLAGS			?= /DNT /MD ;		# DLL compatible build by default
+
+		C++				?= $(CC) ;
+		C++FLAGS		?= $(CCFLAGS) /GX ;		# GX enables syncronous exception handling
+		LINK			?= xilink /nologo ; 
+		LINKOUTFLAG		?= /out: ;
+		LINKFLAGS       ?= ; 		# iclvars.bat [arch] sets this up
+
+		SHLINKFLAGS		?= ;
+
+		STDLIBS			?= 
+						oldnames.lib
+						kernel32.lib 
+						advapi32.lib		
+						user32.lib		
+						mscms.lib		
+						gdi32.lib		 
+						shlwapi.lib		 
+						shell32.lib		 
+						setupapi.lib
+						ole32.lib
+						oleaut32.lib
+						ws2_32.lib
+						Wbemuuid.lib
+						;
+		SHSTDLIBS		?= $(STDLIBS) ;
+		LINKFLAG		?= ;						
+		STDHDRS			?= $(ICPP_COMPILER14)\\Include ;
+		DEFFLAG		 	?= /D ;				
+		UNDEFFLAG		?= /U ;
+		CCOPTFLAG		?= /O2 ; 
+
+		if $(MSVCVER) = 6 {
+			CCDEBUGFLAG		?= /Od /Z7 ;		# Include debugging into in each object		
+			CCPROFFLAG		?= /Od /Z7 ;
+			LINKDEBUGFLAG	?= /DEBUGTYPE:BOTH /DEBUG /PDB:NONE ;		
+		} else {
+			CCDEBUGFLAG		?= /Od /Zi ;		# /Zi creates debugging database
+			CCPROFFLAG		?= /Od /Zi ;
+			LINKDEBUGFLAG	?= /DEBUG ;
+		}
+		LINKPROFFLAG	?= /PROFILE $(LINKDEBUGFLAG) ;		
+		LINKOPTFLAG		?= /OPT:REF ;	
+		LINKSTRIPFLAG	?= ;
+		YACC			?= bison -y ;
+		YACCGEN			?= .c ;
+		YACCFILES		?= y.tab ;
+		YACCFLAGS		?= -d ;
+	}
+	else if $(MSVCNT) || $(MSVCDIR) || $(MSVCDir) || $(VCINSTALLDIR)
+	{
+		# Visual C++ 8.0/9.0/10.0/11.0/12.0 uses VCINSTALLDIR
+		# We assume VC++ Express + XP32 SDK has been setup
+
+		if $(VCINSTALLDIR) {
+			MSVCNT		?= $(VCINSTALLDIR) ;		
+		} else if $(MSVCDir) {
+			MSVCNT		?= $(MSVCDir) ;		
+		} else {			# Visual C++ 6.0 uses MSVCDIR
+			MSVCNT		?= $(MSVCDIR) ;		
+		}
+
+		if [ MATCH 16\\.(.*) : $(VisualStudioVersion) ] {
+			ECHO "Compiler is VC++16 (AKA Community 2019)" ;
+			MSVCVER     = 16 ;
+		} else if [ MATCH 15\\.(.*) : $(VisualStudioVersion) ] {
+			ECHO "Compiler is VC++15 (AKA Community 2017)" ;
+			MSVCVER     = 15 ;
+		} else if [ MATCH 14\\.(.*) : $(VisualStudioVersion) ] {
+			ECHO "Compiler is VC++14 32 bit" ;
+			MSVCVER     = 14 ;
+		} else if [ MATCH 13\\.(.*) : $(VisualStudioVersion) ] {
+			ECHO "Compiler is VC++13 32 bit" ;
+			MSVCVER     = 13 ;
+		} else if [ MATCH 12\\.(.*) : $(VisualStudioVersion) ] {
+			ECHO "Compiler is VC++12 32 bit" ;
+			MSVCVER     = 12 ;
+		} else if [ MATCH 11\\.(.*) : $(VisualStudioVersion) ] {
+			ECHO "Compiler is VC++11 32 bit" ;
+			MSVCVER     = 11 ;
+		} else if $(VisualStudioVersion) {
+			ECHO "Compiler VC++, unknown version " ;
+			MSVCVER     = 15 ;
+		} else if [ MATCH (.*)VC\\+\\+10(.*) : $(MSVCNT) ] {
+			ECHO "Compiler is VC++10 32 bit" ;
+			MSVCVER     = 10 ;
+		} else if [ MATCH (.*)VC\\+\\+9(.*) : $(MSVCNT) ] {
+			ECHO "Compiler is VC++9 32 bit" ;
+			MSVCVER     = 9 ;
+		} else if [ MATCH (.*)VC\\+\\+8(.*) : $(MSVCNT) ] {
+			ECHO "Compiler is VC++8 32 bit" ;
+			MSVCVER     = 8 ;
+		} else {
+			ECHO "Compiler is VC++6 32 bit" ;
+			MSVCVER     = 6 ;
+		}
+
+		# Add the SDK include and lib if it is present
+		if $(MSSdk) {
+			MSNTSDK ?= $(MSSdk) ;
+		} else if $(MSSDK) {
+			MSNTSDK ?= $(MSSDK) ;
+		} else if $(MSVCNT) {
+			MSNTSDK ?= $(MSVCNT) ;
+		}
+
+		# bury IA64 in the path for the SDK ???
+		# (but MSSDK already has this ?
+#		local I ; if $(CPU) = "IA64" { I = ia64\\ ; } else { I = "" ; }
+		local I ; I = "" ;
+
+		AR				?= lib /NOLOGO ;
+		AS				?= masm386 ;
+		CC				?= cl /nologo ;
+		CCFLAGS			?= /DNT /MD ;		# DLL compatible build by default
+		if $(MSVCVER) >= 8 {
+			CCFLAGS		+= /D_CRT_SECURE_NO_DEPRECATE=1
+                           /D_CRT_NONSTDC_NO_DEPRECATE=1 ;
+		}
+		C++				?= $(CC) ;
+		C++FLAGS		?= $(CCFLAGS) /GX ;		# GX enables syncronous exception handling
+		LINK			?= link /nologo ;
+		LINKOUTFLAG		?= /out: ;
+		LINKFLAGS		?= /STACK:16000000 /INCREMENTAL:NO /LIBPATH:$(MSNTSDK)\\lib\\$(I) ;
+		SHLINKFLAGS		?= ;
+
+		STDLIBS			?= 
+						oldnames.lib
+						kernel32.lib 
+						advapi32.lib		
+						user32.lib		
+						mscms.lib		
+						gdi32.lib		 
+						shlwapi.lib		 
+						shell32.lib		 
+						setupapi.lib
+						ole32.lib
+						oleaut32.lib
+						ws2_32.lib
+						Wbemuuid.lib
+						Version.lib
+#						Winmm.lib
+						;
+		if $(MSVCVER) >= 8 {
+			STDLIBS += psapi.lib ;
+		}
+
+		SHSTDLIBS		?= $(STDLIBS) ;
+		LINKFLAG		?= ;						
+		STDHDRS			?= $(MSNTSDK)\\Include ;
+		DEFFLAG		 	?= /D ;				
+		UNDEFFLAG		?= /U ;
+		CCOPTFLAG		?= /O2 ;		# MSVC9 doesn't understamd GB, G6 ?
+		if $(MSVCVER) = 6 {
+			CCDEBUGFLAG		?= /Od /Z7 ;		# Include debugging into in each object		
+			CCPROFFLAG		?= /Od /Z7 ;
+			LINKDEBUGFLAG	?= /DEBUGTYPE:BOTH /DEBUG /PDB:NONE ;		
+		} else {
+			CCDEBUGFLAG		?= /Od /Zi ;		# /Zi creates debugging database
+			CCPROFFLAG		?= /Od /Zi ;
+			LINKDEBUGFLAG	?= /DEBUG ;
+		}
+		LINKPROFFLAG	?= /PROFILE $(LINKDEBUGFLAG) ;		
+		LINKOPTFLAG		?= /OPT:REF ;	
+		LINKSTRIPFLAG	?= ;
+		YACC			?= bison -y ;
+		YACCGEN			?= .c ;
+		YACCFILES		?= y.tab ;
+		YACCFLAGS		?= -d ;
+	}
+	else
+	{
+		EXIT On NT, set BCCROOT, MINGW, MSVCDIR, MSVCNT, MSVC or VCINSTALLDIR to the root
+				of the Borland, GCC or Microsoft directories. ;
+	}
+}
+else if $(OS2)
+{
+	WATCOM			?= $(watcom) ;
+	 
+	if ! $(WATCOM)
+	{
+		Exit On OS2, set WATCOM to the root of the Watcom directory. ;
+	}
+
+	AR				?= wlib ;
+	BINDIR			?= \\os2\\apps ;
+	CC				?= wcc386 ;
+	CCFLAGS			?= /zq /DOS2 /I$(WATCOM)\\h ; # zq=quiet
+	C++				?= wpp386 ;
+	C++FLAGS		?= $(CCFLAGS) ;
+	CP				?= copy ;
+	DOT				?= . ;
+	DOTDOT			?= .. ;
+	LINK			?= wcl386 ;
+	LINKFLAGS		?= /zq ; # zq=quiet
+	STDLIBS			?= ;
+	MV				?= move ;
+	NOARSCAN		?= true ;
+	RM				?= del /f ;
+	SLASH			?= \\ ;
+	STDHDRS			?= $(WATCOM)\\h ;
+	SUFEXE			?= .exe ;
+	SUFSH			?= .bat ;
+	SUFLIB			?= .lib ;
+	SUFOBJ			?= .obj ;
+	DEFFLAG		 	?= /D ;				
+	UNDEFFLAG		?= "/u _" ;
+
+}
+else if $(VMS)
+{
+	C++				?= cxx ;
+	C++FLAGS		?= ;
+	CC				?= cc ;
+	CCFLAGS			?= ;
+	CHMOD			?= set file/prot= ;
+	CP				?= copy/replace ;
+	CRELIB			?= true ;
+	DOT				?= [] ;
+	DOTDOT			?= [-] ;
+	EXEMODE			?= (w:e) ;
+	FILEMODE		?= (w:r) ;
+	HDRS			?= ;
+	LINK			?= link ;
+	LINKFLAGS		?= "" ;
+	STDLIBS			?= ;
+	MKDIR			?= create/dir ;
+	MV				?= rename ;
+	RM				?= delete ;
+	RUNVMS			?= mcr ;
+	SHELLMODE		?= (w:er) ;
+	SLASH			?= . ;
+	STDHDRS			?= decc$library_include ;
+	SUFEXE			?= .exe ;
+	SUFSH			?= .bat ;
+	SUFLIB			?= .olb ;
+	SUFOBJ			?= .obj ;
+
+	switch $(OS) 
+	{
+		case OPENVMS : CCFLAGS ?= /stand=vaxc ;
+		case VMS	 : STDLIBS ?= sys$library:vaxcrtl.olb/lib ;
+	}
+}
+else if $(MAC)
+{
+	local OPT ;
+	
+	CW		?= "{CW}" ;
+
+	MACHDRS ?=
+			"$(UMACHDRS):Universal:Interfaces:CIncludes"
+			"$(CW):MSL:MSL_C:MSL_Common:Include"
+			"$(CW):MSL:MSL_C:MSL_MacOS:Include" ;
+
+	MACLIBS ?=
+			"$(CW):MacOS Support:Universal:Libraries:StubLibraries:Interfacelib"
+			"$(CW):MacOS Support:Universal:Libraries:StubLibraries:Mathlib" ;
+
+	MPWLIBS ?= 
+			"$(CW):MacOS Support:Libraries:Runtime:Libs:MSL_MPWCRuntime_PPC.lib"
+			"$(CW):MSL:MSL_C:MSL_MacOS:Lib:PPC:MSL_C_PPC_MPW.Lib" ;
+
+	MPWNLLIBS ?= 
+			"$(CW):MacOS Support:Libraries:Runtime:Libs:MSL_MPWCRuntime_PPC.lib"
+			"$(CW):MSL:MSL_C:MSL_MacOS:Lib:PPC:MSL_C_PPC_MPW(NL).Lib" ;
+			
+	SIOUXHDRS ?= ;
+	
+	SIOUXLIBS ?= 
+			"$(CW):MacOS Support:Libraries:Runtime:Libs:MSL_Runtime_PPC.lib"
+			"$(CW):MSL:MSL_C:MSL_MacOS:Lib:PPC:MSL_SIOUX_PPC.Lib" 
+			"$(CW):MSL:MSL_C:MSL_MacOS:Lib:PPC:MSL_C_PPC.Lib" ;
+
+	C++				?= mwcppc ;
+	C++FLAGS		?= -w off ;
+	CC				?= mwcppc ;
+	CCFLAGS			?= -w off ;
+	CP				?= duplicate -y ;
+	DOT				?= ":" ;
+	DOTDOT			?= "::" ;
+	HDRS			?= $(MACHDRS) $(MPWHDRS) ;
+	LINK			?= mwlinkppc ;
+	LINKFLAGS		?= -mpwtool -warn ;								
+	STDLIBS			?= $(MACLIBS) $(MPWLIBS) ;								
+	SHSTDLIBS		?= $(STDLIBS) ;
+	MKDIR			?= newfolder ;
+	MV				?= rename -y ;
+	NOARSCAN		?= true ;
+	RM				?= delete -y ;
+	SLASH			?= ":" ;
+	STDHDRS			?= ; 
+	SUFLIB			?= .lib ;
+	SUFOBJ			?= .o ;
+}
+else if $(OS) = BEOS && $(OSPLAT) = PPC
+{
+	AR				?= mwld -xml -o ;
+	BINDIR			?= /boot/home/config/bin ;
+	CC				?= mwcc ;
+	CCFLAGS			?= -nosyspath ;
+	C++				?= $(CC) ;
+	C++FLAGS		?= -nosyspath ;
+	CHMOD			?= chmod ;
+	CHGRP			?= chgrp ;
+	CHOWN			?= chown ;
+	FORTRAN			?= "" ;
+	LEX				?= flex ;
+	LIBDIR			?= /boot/home/config/lib ;
+	LINK			?= mwld ;
+	LINKFLAGS		?= "" ;
+	MANDIR			?= /boot/home/config/man ;
+	NOARSCAN		?= true ;
+	RANLIB			?= ranlib ;
+	STDHDRS			?= /boot/develop/headers/posix ;
+	YACC			?= bison -y ;
+	YACCGEN			?= .c ;
+	YACCFILES		?= y.tab ;
+	YACCFLAGS		?= -d ;
+}
+else if $(OS) = BEOS 
+{
+	BINDIR			?= /boot/home/config/bin ;
+	CC				?= gcc ;
+	C++				?= $(CC) ;
+	CHMOD			?= chmod ;
+	CHGRP			?= chgrp ;
+	CHOWN			?= chown ;
+	FORTRAN			?= "" ;
+	LEX				?= flex ;
+	LIBDIR			?= /boot/home/config/lib ;
+	LINK			?= gcc ;
+	MANDIR			?= /boot/home/config/man ;
+	NOARSCAN		?= true ;
+	RANLIB			?= ranlib ;
+	STDHDRS			?= /boot/develop/headers/posix ;
+	YACC			?= bison -y ;
+	YACCGEN			?= .c ;
+	YACCFILES		?= y.tab ;
+	YACCFLAGS		?= -d ;
+}
+else if $(UNIX)
+{
+	switch $(OS)
+	{
+	case AIX :
+		STDLIBS			?= -lbsd ;
+
+	case AMIGA :
+		CC				?= gcc ;
+		YACC			?= bison -y ;
+
+	case CYGWIN :		
+		CC				?= gcc ;
+		CCFLAGS			+= -D__cygwin__ ;
+		LEX				?= flex ;
+		JAMSHELL		?= sh -c ;
+		RANLIB			?= "" ;
+		SUFEXE			?= .exe ;
+		YACC			?= bison -y ;
+
+	case DGUX :
+		RANLIB			?= "" ;
+		RELOCATE		?= true ;
+
+	case HPUX :
+		RANLIB			?= "" ;
+
+	case INTERIX :
+		CC				?= gcc ;
+		JAMSHELL		?= sh -c ;
+		RANLIB			?= "" ;
+
+	case IRIX :
+		RANLIB			?= "" ;
+
+	case MPEIX :
+		CC				?= gcc ;
+		C++				?= gcc ;
+		CCFLAGS			+= -D_POSIX_SOURCE ;
+		HDRS			+= /usr/include ;
+		RANLIB			?= "" ; 
+		NOARSCAN		?= true ;
+		NOARUPDATE		?= true ;
+
+	case MVS :
+		RANLIB			?= "" ; 
+
+	case NEXT :
+		AR				?= libtool -o ;
+		RANLIB			?= "" ;
+
+	case MACOSX :
+#		AR			  	?= libtool -o ;
+		AR			  	?= ar rusc ;
+		C++				?= c++ ;
+		MANDIR			?= /usr/local/share/man ;
+		RANLIB		  	?= "" ;
+		SUFSHLIB		?= .dylib ;
+		SUFIMPLIB		?= .dylib ;
+
+	case NCR :
+		RANLIB			?= "" ;
+
+	case PTX :
+		RANLIB			?= "" ;
+
+	case QNX :
+		AR				?= wlib ;
+		CC				?= cc ;
+		CCFLAGS			?= -Q ;		# quiet
+		C++				?= $(CC) ;
+		C++FLAGS		?= -Q ;		# quiet
+		LINK			?= $(CC) ;
+		LINKFLAGS		?= -Q ;		# quiet
+		NOARSCAN		?= true ;
+		RANLIB			?= "" ;
+
+	case SCO :
+		RANLIB			?= "" ;
+		RELOCATE		?= true ;
+
+	case SINIX :
+		RANLIB			?= "" ;
+
+	case SOLARIS :
+		RANLIB			?= "" ;
+		AR				?= "/usr/ccs/bin/ar ru" ;
+
+	case UNICOS :
+		NOARSCAN		?= true ;
+		CCOPTFLAG		?= -O0 ;
+
+	case UNIXWARE :
+		RANLIB			?= "" ;
+		RELOCATE		?= true ;
+	}
+
+	# UNIX defaults
+
+	CCFLAGS			?= -DUNIX -D_THREAD_SAFE -pipe ;
+	CCOPTFLAG		?= -O2 ;		
+	CCDEBUGFLAG		?= -g ;		
+	CCPROFFLAG		?= ;		
+	CCSHOBJFLAG		?= -fPIC ;			# Position independent is better for ShLibrary
+	C++FLAGS		?= $(CCFLAGS) ;
+	CHMOD			?= chmod ;
+	CHGRP			?= chgrp ;
+	CHOWN			?= chown ;
+	LEX				?= lex ;
+	LINKFLAGS		?= ;
+	LINKOPTFLAG		?= -O ;				# Affects creating .so's
+	LINKSTRIPFLAG	?= -s ;
+	LINKDEBUGFLAG	?= ;
+	LINKPROFFLAG	?= ;
+	SHLINKFLAGS		?= ;					# Flags for creation of shared library
+	STDLIBS			?= -lm -lpthread ;
+	SHSTDLIBS		?= $(STDLIBS) ;
+	LINKFLAG		?= -l ;
+	RANLIB			?= "" ;
+	YACC			?= yacc ;
+	YACCGEN			?= .c ;
+	YACCFILES		?= y.tab ;
+	YACCFLAGS		?= -d ;
+
+	HDRS			?= /usr/local/include ;
+
+	# Add some good defaults for OS X
+	if $(OS) = MACOSX {
+		CCFLAGS   		+= -Wno-sign-compare ;		# supress new gcc4 warnings ?
+		CCFLAGS   		+= -fpascal-strings ;		# for compatibility with the OSX API
+		LINKFLAGS 		+= -framework Carbon ;		# default for .c
+		LINKFLAGS       += -framework Cocoa ;		# default for .m
+	}
+
+	# Make things work on 64 bit Linux
+	# Because HOSTTYPE is not normally exported, check the uname() result
+	if ! $(HOSTTYPE) {
+		HOSTTYPE = $(JAMUNAME[1]) ;
+	}
+
+	if $(HOSTTYPE) = x86_64 
+	 || $(HOSTTYPE) = x86_64-linux
+	 || $(HOSTTYPE) = amd64 {
+		ECHO "We're on a 64 bit host" ;
+		HOST64     = true ;
+		CCFLAGS	   += -m64 ;
+		C++FLAGS   += -m64 ;
+	}
+
+
+	# Hmm. Newer linux gcc ar defaults to no timestamps
+	# and introduces a new option to get old behaviour,
+	# breaking the dependency determination.
+	# Older versions of ar will barf on the new option
+	# There seems no way of determining this short of checking
+	# the version of ar :-(:-(
+	# gcc seems oblivious to the pain caused by their change of behaviour.
+	# We use a hack - user has to set NEW_GNU_AR_OPTIONS
+	if $(JAM_NEW_GNU_AR_OPTIONS) != "" {
+		AR = ar ruscU ;
+	}
+
+	# Adding --hash-style=sysv to the compiler options
+	# might improve Linux compatibility with FC5 ?
+}
+
+#
+# General defaults; a lot like UNIX
+#
+
+	AR				?= ar rusc ;
+	AS				?= as ;
+	ASFLAGS			?= ;
+	AWK				?= awk ;
+	BINDIR			?= /usr/local/bin ;
+	C++				?= cc ;
+	C++FLAGS		?= ;
+	CC				?= cc ;
+	CCFLAGS			?= ;
+	CP				?= cp -f ;
+	CRELIB			?= ;
+	DOT				?= . ;
+	DOTDOT			?= .. ;
+	EXEMODE			?= 755 ;
+	FILEMODE		?= 644 ;
+	FORTRAN			?= f77 ;
+	FORTRANFLAGS	?= ;
+	HDRS			?= ;
+	INSTALLGRIST	?= installed ;
+	JAMFILE			?= Jamfile ;
+	JAMTOP			?= Jamtop ;
+	LEX				?= ;
+	LIBDIR			?= /usr/local/lib ;
+	LINK			?= $(CC) ;
+	LINKFLAGS		?= ;
+	SHLINKFLAGS		?= ;
+	STDLIBS			?= ;
+	SHSTDLIBS		?= $(STDLIBS) ;
+	LINKOUTFLAG	 	?= "-o " ;		
+	LN				?= ln ;
+	MANDIR			?= /usr/local/man ;
+	MKDIR			?= mkdir ;
+	MV				?= mv -f ;
+	RCP				?= rcp ;
+	RM				?= rm -f ;
+	RMDIR			?= $(RM) ;
+	RSH				?= rsh ;
+	SED				?= sed ;
+	SHELLHEADER		?= "#!/bin/sh" ;
+	SHELLMODE		?= 755 ;
+	SLASH			?= / ;
+	STDHDRS			?= /usr/include ;
+	SUFEXE			?= "" ;
+	SUFSH			?= .sh ;
+	SUFLIB			?= .a ;
+	SUFSHLIB		?= .so ;
+	SUFIMPLIB		?= .so ;
+	SUFOBJ			?= .o ;
+
+	DEFFLAG		 	?= -D ;				
+	UNDEFFLAG		?= -U ;
+	YACC			?= ;
+	YACCGEN			?= ;
+	YACCFILES		?= ;
+	YACCFLAGS		?= ;
+
+	# Scan both #include <xxx.h> and #include "xxx.h"
+	# HDRPATTERN = "^[		 ]*#[		 ]*include[		 ]*[<\"]([^\">]*)[\">].*$" ;
+
+	# Scan just #include "xxx.h"
+	# (Some linux systems hide standard .h files in directories that aren't in
+	# env. paths)
+	HDRPATTERN = "^[		 ]*#[		 ]*include[		 ]*[\"]([^\">]*)[\"].*$" ;
+
+	OSFULL = $(OS)$(OSVER)$(OSPLAT) $(OS)$(OSPLAT) $(OS)$(OSVER) $(OS) ;
+
+
+# ===========================================================
+
+#
+# Base dependencies - first for "bootstrap" kinds of rules
+#
+
+Depends all : shell files lib exe obj ;
+Depends all shell files lib exe obj install : first ;
+NotFile all first shell files lib exe obj dirs clean install uninstall ;
+Always clean uninstall ;
+
+# ===========================================================
+# ArgyllCMS Jambase building blocks:
+
+# Allow returning of a targets "on" variable 
+# Only the first variable in the list "on" variable is retrieved
+# ret = geton target : variable ;
+rule noop { return $(<) ; }
+rule geton {
+	local _rv ;
+	_rv = [ on $(<[1]) noop $($(>)) ] ;
+	return $(_rv) ;
+}
+
+# Separate a single path into it's components, irrespective of
+# whether a MSWindows or UNIX path separator is used.
+# d1 d2 ... file = _SepPath path ; 
+rule _SepPath
+{
+#Echo "_SepPath called with = '" $(<[1]) "'" ;
+
+	local _in = /$(<[1]) ;		# leading / is to detect absolute path
+	local split  = true ;
+	local _out = ;
+
+	if ! $(<) {
+#Echo "_SepPath returning '" "" "'" ;
+		return $(<) ;
+	}
+
+	split = [ MATCH (.*)[/\\](.*) : $(_in) ] ;
+	while $(split) {
+#Echo "Split = '" $(split[1]) "' and '" $(split[2]) "'" ;
+		_out = $(split[2]) $(_out) ;
+		_in = $(split[1]) ;
+		split = [ MATCH (.*)[/\\](.*) : $(_in) ] ;
+	}
+#Echo "After slplitting got '" $(_in) "' out '" $(_out) "'" ;
+
+	if $(_in) != ""  {		# No leading /
+#Echo "Setting _out to '" $(_in) "' plus '" $(_out) "'" ;
+		_out = $(_in) $(_out) ;
+	}
+
+#Echo "_SepPath initial sep =" $(_out) ;
+
+	# Deal with DOS drive letters
+	if $(NT) {
+		switch $(_out[1]) {
+			case *:* : {
+				split = [ MATCH (.*)[:](.*) : $(_out[1]) ] ;
+				if $(split[2]) != "" {
+					_out = $(split[1]): $(split[2]) $(_out[2-]) ;
+				} else {
+					_out = $(split[1]): $(SLASH) $(_out[2-]) ;
+				}
+			}
+		}
+#Echo "_SepPath after DOS letters _out =" $(_out) ;
+	}
+
+	# Make sure leading / is in the correct form 
+	if $(_out[1]) = "/" || $(_out[1]) = "\\" {
+		_out = $(SLASH) $(_out[2-]) ;
+	} 
+
+#Echo "_SepPath returning _out =" $(_out) ;
+
+	return $(_out) ;
+}
+
+# Turn a sequence of directories into a directory path.
+# Opposite of _SepPath
+# path = _DirName d1 d2 ... ;
+rule _DirName
+{
+	local _in = $(<) ;
+	local _out = "" ;
+
+#Echo "_DirName got '" $(_in) "'" ;
+
+	# Deal with DOS drive letters
+	if $(NT) {
+		switch $(_in[1]) {
+			case *:* : {
+#Echo "_DirName match x:" ;
+				_out = $(_in[1]) ;
+				_in = $(_in[2-]) ;
+			}
+		}
+#Echo "_DirName _in = '" $(_in) "' out = '" $(_out) "'" ;
+	}
+
+	# Deal with absolute path
+	if $(_in[1]) = "/" || $(_in[1]) = "\\" {
+		_out = $(_out)$(SLASH) ;
+		_in = $(_in[2-]) ;
+#Echo "_DirName abs in = '" $(_in) "' out = '" $(_out) "'" ;
+	}
+
+	while $(_in) {
+		_out = $(_out)$(_in[1]) ;
+		_in = $(_in[2-]) ;
+#Echo "_DirName in = '" $(_in) "' out = '" $(_out) "'" ;
+		if $(_in) {
+			_out = $(_out)$(SLASH) ;
+		}
+#Echo "_DirName sep in = '" $(_in) "' out = '" $(_out) "'" ;
+	}
+
+#Echo "_DirName returning '" $(_out) "'" ;
+	return $(_out) ;
+}
+
+# Rationalize a path (ie. cancell dirs & .. )
+# Currently paths that cancel out return " ".
+# d1 d2 .. file = _RatPath d1 d2 .. file ; 
+rule _RatPath
+{
+	local _in = $(<) ;
+	local _rio = ;		# reversed intermediate output
+	local _out = ;
+	local _gotdot = ;	# There was a dot in the input path
+	local _first = ;	# Fixed first elements 
+
+#Echo "_RatPath called with '" $(_in) "'" ;
+	
+	# Deal with DOS drive letters
+	if $(NT) {
+		switch $(_in[1]) {
+			case *:* : {
+				_first = $(_first) $(_in[1]) ;
+				_in = $(_in[2-]) ;
+			}
+		}
+#Echo "_RatPath got first '" $(_first) "' in = '" $(_in) "'" ;
+	}
+
+	# Deal with absolute path or single dot
+	if $(_in[1]) = / || $(_in[1]) = \\ {
+		_first = $(_first) $(SLASH) ;
+		_in = $(_in[2-]) ;
+#Echo "_RatPath got first '" $(_first) "' in = '" $(_in) "'" ;
+	} else {
+		if $(_in[1]) = $(DOT) && ! $(_in[2-]) {
+			_first = $(_first) $(DOT) ;
+			_in = $(_in[2-]) ;
+#Echo "_RatPath got first '" $(_first) "' in = '" $(_in) "'" ;
+		}
+	}
+	while $(_in) {
+#Echo "Next = " $(_in[1]) " and last = " $(_rio[1]) ;
+		if $(_in[1]) = $(DOT) {
+			_gotdot = true ;
+		}
+		# if the .. will cancel out the previous directory
+		if $(_in[1]) = $(DOTDOT) && $(_rio[1]) && $(_rio[1] != $(DOTDOT)  {
+			_rio = $(_rio[2-]) ;		# Remove previous
+#Echo "Found .. so removed previous and got _rio = " $(_rio) ;
+		} else {						# Add next
+			# If we're decending with a directory
+			if $(_in[1]) != $(DOT) {		
+				_rio = $(_in[1]) $(_rio) ;
+#Echo "Adding so _rio = " $(_rio) ;
+			} else {
+#Echo "Found . so ignoring got _rio = " $(_rio) ;
+			}
+		}
+		_in = $(_in[2-]) ;
+	}
+	# Make sure that a single dot is preserved
+	if $(_gotdot) && ! $(_rio) {
+		_rio = $(DOT) ;
+	}
+#Echo "Final _rio = " $(_rio) ;
+	# Reverse it 
+	for _i in $(_rio) {
+		_out = $(_i) $(_out) ;
+	}
+
+	# Preprent with first */
+	_out = $(_first) $(_out) ;
+
+#Echo "_RatPath rationalized to '" $(_out) "'" ;
+#Echo ;
+
+	return $(_out) ;
+}
+
+# Re-root a directory path by pre-pending the given path.
+# Don't do this if the path is absolute
+# Don't return anything if the path is empty.
+# p1 p2 .. file = _RootPath d1 d2 .. : p1 p2 ... file ; 
+rule _RootPath
+{
+	local _i _out = ;
+
+#Echo "_RootPath called with '" $(<) "' and '" $(>) "'" ;
+
+	if ! $(>[1]) {
+#Echo "_RootPath no RHS returning '" $(<) "'" ;
+		return $(<) ;
+	}
+
+	if $(>[1]) = "/" || $(>[1]) = "\\" {
+#Echo "_RootPath RHS = / returning '" $(<) "'" ;
+		return $(>) ;
+	}
+	if $(NT) {
+		switch $(>[1]) {
+			case *:* : {
+#Echo "_RootPath RHS = drive: returning '" $(<) "'" ;
+				return $(>) ;
+			}
+		}
+	}
+
+#Echo "_RootPath returning '" $(<) $(>) "'" ;
+	return $(<) $(>) ;
+
+}
+
+# Re-root a set of directory paths by pre-pending the given path.
+# Don't do this if the path is absolute
+# Don't return anything if the path is empty.
+# paths = RootPaths dir : paths ; 
+rule RootPaths
+{
+	local _d = [ _SepPath $(<[1]) ] ;
+	local _i _t ;
+	local _out = ;
+
+#Echo "RootPaths got dir '" $(<[1]) "' and paths '" $(>) "'" ;
+	for _i in $(>)
+	{
+		_t =    [ _SepPath $(_i) ] ;
+		_t =    [ _RootPath $(_d) : $(_t) ] ;
+		_t =    [ _RatPath $(_t) ] ;
+		_out += [ _DirName $(_t) ] ;
+	}
+
+#Echo "RootPaths returns to '" $(_out) "'" ;
+
+	return $(_out) ;
+}
+
+# - - - - - - - - - - - - - - 
+
+# Rationalize a set of paths (ie. cancell dirs & .. )
+# paths = RatPaths paths ;
+rule RatPaths
+{
+	local _i _t ;
+	local _out = ;
+
+#Echo "RatPaths got '" $(<) "'" ;
+	for _i in $(<)
+	{
+		_t =    [ _SepPath $(_i) ] ;
+		_t =    [ _RatPath $(_t) ] ;
+		_out += [ _DirName $(_t) ] ;
+	}
+
+#Echo "RatPaths returns to '" $(_out) "'" ;
+
+	return $(_out) ;
+}
+
+# Normalize a set of paths. This resolves the
+# paths location with respect to SUBDIR, and so
+# accounting for the location of the Jamfile
+# the path is declared, and rationalizes the result.
+# If the optional dir is present, use it to
+# locate their targets rather than SUBDIR.
+# If paths is empty, nothing is returned.
+# SRCDIR and DSTDIR are ignored.
+# paths = NormPaths paths : [ dir ] ;
+rule NormPaths
+{
+	return [ _NormPaths $(<) : $(>) : "none" ] ;
+}
+
+# Normalize a set of Source paths. This resolves the
+# paths location with respect to SUBDIR, and so
+# accounting for the location of the Jamfile
+# the path is declared, and rationalizes the result.
+# If the optional dir is present, use it to
+# locate thie targets rather than SUBDIR.
+# If paths is empty, nothing is returned.
+# paths = NormPaths paths : [ dir ] ;
+rule NormSrcPaths
+{
+	return [ _NormPaths $(<) : $(>) : "src" ] ;
+}
+
+# Normalize a set of destination paths. This resolves the
+# paths location with respect to SUBDIR, and so
+# accounting for the location of the Jamfile
+# the path is declared, and rationalizes the result.
+# If the optional dir is present, use it to
+# locate thie targets rather than SUBDIR.
+# If paths is empty, nothing is returned.
+# paths = NormPaths paths : [ dir ] ;
+rule NormDstPaths
+{
+	return [ _NormPaths $(<) : $(>) : "dst" ] ;
+}
+
+# Normalize a set of paths. This resolves the
+# paths location with respect to SUBDIR, and so
+# accounting for the location of the Jamfile
+# the path is declared, and rationalizes the result.
+# If the optional dir is present, use it to
+# locate thie targets rather than SUBDIR.
+# If paths is empty, nothing is returned.
+# paths = NormPaths paths : dir : type ;
+# (This and the other rules it calls, is probably a good candidate for speed optimization!)
+#
+#  ~~~~~ This isn't working correctly -
+#  i.e. given "." where . = ccast and "../ccast",
+#  it still returns "../ccast".
+rule _NormPaths
+{
+	local _p _i _t ;
+	local _out = ;
+	local _src _dst ;
+
+	if $(>) {
+		_p = [ _SepPath $(>[1]) ] ;
+		_p = [ _RatPath $(_p) ] ;
+	} else {
+		_p = $(_SUBDIR) ;
+	}
+
+	_src = [ _SepPath $(SRCDIR) ] ;
+	_dst = [ _SepPath $(DSTDIR) ] ;
+
+#Echo "_NormPaths got '" $(<) "' dir '" $(_p) "' type '" $(3) "'srcdir "' $(_src) "' dstdir '" $(_dst) "'" ;
+	for _i in $(<)
+	{
+#Echo "_i = '" $(_i) "'" ; 
+		_t =    [ _SepPath $(_i) ] ;
+#Echo "_SepPath _i = '" $(_t) "'" ; 
+		_t =    [ _RootPath $(_p) : $(_t) ] ;
+#Echo "_RootPath _t = '" $(_t) "'" ; 
+
+		if $(_src) && $(3) = "src" {
+			_t = [ _RootPath $(_src) : $(_t) ] ;
+#Echo "_src += _t = '" $(_i) "'" ; 
+
+		} else if $(_dst) && $(3) = "dst" {
+			local _f ;
+			_t = [ _DirName $(_t) ] ;
+			_f = [ _SepPath $(_t:BS) ] ;
+			_t = $(_t:D) ;
+			if ! $(_t) {
+				_t = $(DOT) ;
+			}
+			_t = [ _RootPath [ _SepPath $(_t) ] : $(_dst) ] $(_f) ;
+#Echo " _t += _dst = '" $(_t) "'" ; 
+		}
+		_t = [ _RatPath $(_t) ] ;
+#Echo "_RatPath _t = '" $(_t) "'" ; 
+		# Special case of complete cancelation that can occure for a pure
+		# directory path (?)
+		if $(_t) = "" {
+			_t = "." ;
+		}
+		_t = [ _DirName $(_t) ] ;
+		_out += $(_t) ;
+#Echo "_out += '" $(_t) "'" ; 
+	}
+
+#Echo "_NormPaths returns '" $(_out) "'" ;
+	return $(_out) ;
+}
+
+# Normalize a set of targets. 
+# This is the same as NormPaths except it
+# then strips the path out and uses it to set the
+# Grist, NOMLOC, LOCATE and SEARCH on the target.
+# If the optional dir is present, use it to
+# locate the targets rather than SUBDIR.
+# Ignore SRCDIR if present.
+# paths = NormTargets paths [ : dir ] ;
+rule NormISrcTargets
+{
+	return [ _NormTargets $(<) : $(>) : "isrc" ] ;
+}
+
+# Normalize a set of targets. 
+# This is the same as NormPaths except it
+# then strips the path out and uses it to set the
+# Grist, NOMLOC, LOCATE and SEARCH on the target.
+# If the optional dir is present, use it to
+# locate the targets rather than SUBDIR.
+# se DSTDIR if present.
+# paths = NormTargets paths [ : dir ] ;
+rule NormIDstTargets
+{
+	return [ _NormTargets $(<) : $(>) : "idst" ] ;
+}
+
+# Normalize a set of targets. 
+# This is the same as NormPaths except it
+# then strips the path out and uses it to set the
+# Grist, NOMLOC, LOCATE and SEARCH on the target.
+# If the optional dir is present, use it to
+# locate the targets rather than SUBDIR.
+# Use SRCDIR if present.
+# paths = NormTargets paths [ : dir ] ;
+rule NormSrcTargets
+{
+	return [ _NormTargets $(<) : $(>) : "src" ] ;
+}
+
+# Normalize a set of targets. 
+# This is the same as NormPaths except it
+# then strips the path out and uses it to set the
+# Grist, NOMLOC, LOCATE and SEARCH on the target.
+# If the optional dir is present, use it to
+# locate the targets rather than SUBDIR.
+# Use DSTDIR if present.
+# paths = NormTargets paths [ : dir ] ;
+rule NormDstTargets
+{
+	return [ _NormTargets $(<) : $(>) : "dst" ] ;
+}
+
+# Normalize a set of targets. 
+# This is the same as NormPaths except it
+# then strips the path out and uses it to set the
+# Grist, NOMLOC, LOCATE and SEARCH on the target.
+# If the optional dir is present, use it to
+# locate the targets rather than SUBDIR.
+# paths = NormTargets paths : dir : type ;
+rule _NormTargets
+{
+	local _p _i _t _d _ds ;
+	local _out = ;
+	local _src _dst ;
+
+	if $(>) {
+		_p = [ _SepPath $(>[1]) ] ;
+	} else {
+		_p = $(_SUBDIR) ;
+	}
+
+	if $(3) = "src" || $(3) = "dst" {
+		_src = [ _SepPath $(SRCDIR) ] ;
+		_dst = [ _SepPath $(DSTDIR) ] ;
+	}
+
+#Echo ;
+#Echo "_NormTargets got '" $(<) "' base = '" $(_p) "' type '" $(3) "' srcdir = '" $(_src) "' dstdirr = '" $(_dst) "'" ;
+	for _i in $(<)
+	{
+		_t = [ _SepPath $(_i) ] ;
+#Echo " _t = '" $(_t) "'" ;
+		_t = [ _RootPath $(_p) : $(_t) ] ;
+#Echo " _t = '" $(_t) "'" ;
+		_t = [ _RatPath $(_t) ] ;
+#Echo " _t = '" $(_t) "'" ;
+		_t = [ _DirName $(_t) ] ;
+#Echo " _t = '" $(_t) "'" ;
+		_d = $(_t:D) ;
+#Echo " _d = '" $(_d) "'" ;
+		_ds = [ _SepPath $(_d) ] ;
+#Echo " _ds = '" $(_ds) "'" ;
+		_t = $(_t:D=) ;
+#Echo " _t = '" $(_t) "'" ;
+		_t = $(_t:G=$(_ds:J=!)) ;
+#Echo " _t = '" $(_t) "'" ;
+
+		# dst trumps all the others
+		if $(3) = "dst" {
+			if $($(_t)-target) != "dst" {
+				NOMLOC on $(_t) = $(_d) ;
+				if $(_dst) {
+					if ! $(_ds) {
+						_ds = $(DOT) ;
+					}
+					_d = [ _DirName [ _RootPath $(_ds) : $(_dst) ] ] ;
+				}
+				if $(_d) = "/" || $(_d) = "\\" {	# Jam has a bug when locating in root
+					_d = $(_d). ;
+				}
+				LOCATE on $(_t) = $(_d) ;
+				$(_t)-target = "dst" ;
+			}
+
+		# idst trumps src and isrc
+		} else if $(3) = "idst" {
+			if $($(_t)-target) != "dst" && $($(_t)-target) != "idst" {
+				NOMLOC on $(_t) = $(_d) ;
+				if $(_d) = "/" || $(_d) = "\\" {	# Jam has a bug when locating in root
+					_d = $(_d). ;
+				}
+				LOCATE on $(_t) = $(_d) ;
+				$(_t)-target = "idst" ;
+			}
+
+		# src trumps isrc
+		} else if $(3) = "src" {
+			if $($(_t)-target) != "dst" && $($(_t)-target) != "idst"
+			                            && $($(_t)-target) != "src" {
+				local _d1 _d2 ;
+				NOMLOC on $(_t) = $(_d) ;
+				if $(_src) {
+					_d1 = [ _DirName [ _RootPath $(_src) : $(_ds) ] ] ;
+				} else {
+					_d1 = $(_d) ;
+				}
+				if $(_dst) {
+					if ! $(_ds) {
+						_ds = $(DOT) ;
+					}
+					_d2 = [ _DirName [ _RootPath $(_ds) : $(_dst) ] ] ;
+				}
+				if $(_d1) = "/" || $(_d1) = "\\" {	# Jam has a bug when locating in root
+					_d1 = $(_d1). ;
+				}
+				if $(_d2) = "/" || $(_d2) = "\\" {	# Jam has a bug when locating in root
+					_d2 = $(_d2). ;
+				}
+				# We assume that if we've got a DSTDIR here, then
+				# it may apply to this source, even if it is never
+				# gets labelled this way. - ie. it may be a dst of a
+				# Jamfile with the same DSTDIR that's not in scope.
+				SEARCH on $(_t) = $(_d2) $(_d1) ;
+				$(_t)-target = "src" ;
+			}
+
+		# isrc is lowest priority
+		} else if $(3) = "isrc" && ! $($(_t)-target) {
+			if $(_d) = "/" || $(_d) = "\\" {	# Jam has a bug when locating in root
+				_d = $(_d). ;
+			}
+			NOMLOC on $(_t) = $(_d) ;
+			SEARCH on $(_t) = $(_d) ;
+			$(_t)-target = "isrc" ;
+		}
+	
+#Echo "On '" $(_t) "' set LOCATE = '" [ geton $(_t) : LOCATE ] "' SEARCH = '" [ geton $(_t) : SEARCH ] "' NOMLOC = '" [ geton $(_t) : NOMLOC ] "'" ; 
+		_out += $(_t) ;
+	}
+
+#Echo "_NormTargets returns to '" $(_out) "'" ;
+	return $(_out) ;
+}
+
+# Given a set of normalized paths, return the Target ID's for
+# them (ie. Gristed version of path)
+# IDs = _TargetIDs targpaths ;
+rule _TargetIDs
+{
+	local _i _t _d _ds ;
+	local _out = ;
+
+#Echo "_TargetIDs got '" $(<) "'" ;
+	for _i in $(<)
+	{
+		_d = $(_i:D) ;
+		_ds = [ _SepPath $(_d) ] ;
+		_t = $(_i:D=) ;
+		_t = $(_t:G=$(_ds:J=!)) ;
+		_out += $(_t) ;
+	}
+
+#Echo "_TargetIDs returning '" $(_out) "'" ;
+	return $(_out) ;
+}
+
+
+# Copy the target related "on" variables from one
+# target to another.
+#rule CopyTarget dest : source ;
+rule CopyTarget 
+{
+	NOMLOC on $(<) = [ geton $(>) : NOMLOC ] ;
+	LOCATE on $(<) = [ geton $(>) : LOCATE ] ;
+	SEARCH on $(<) = [ geton $(>) : SEARCH ] ;
+}
+
+# Make sure a non-target isn't LOCATED or SEARCH'd by
+# setting LOCATE, SEARCH and NOMLOC to "" 
+#rule NotTargets vars ;
+rule NotTargets 
+{
+	NOMLOC on $(<) = "" ;
+	LOCATE on $(<) = "" ;
+	SEARCH on $(<) = "" ;
+}
+
+# Create a destination target by locating
+# the given files in the given directory.
+# The dir is assumed to be normalized.
+# SRCDIR and DSTDIR are ignored.
+# targs = SetTargetsLoc targs : dir ;
+rule CreateIDstTargets
+{
+	local _o ;
+#Echo "CreateIDstTargets got '" $(<) "' and '" $(>) "'" ;
+	_o = [ NormIDstTargets $(<:BS) : $(>[1]) ] ;
+#Echo "CreateIDstTargets returning '" $(_o) "'" ;
+	return $(_o) ;
+}
+
+# Given a normalized target, return the
+# orgiginal path to it. 
+# (We use NOMLOC to do this.)
+# path = DeNormTargs target ;
+rule DeNormTargs
+{
+	local _i _t _p _out = ;
+	
+	for _i in $(<) {
+		_p = [ geton $(_i) : NOMLOC ] ;
+		_t = $(_i:G=) ;
+		_out += $(_t:D=$(_p)) ;
+	}
+
+	return $(_out) ;
+}
+
+# Given a list of directories and a list of files,
+# simply concatenate them in combination separated by a / 
+# paths1/paths = CatPaths path1 : paths ;
+rule CatPaths
+{
+	return $(<)$(SLASH)$(>) ;
+}
+
+# Try and locate a given file pattern starting from the current
+# directory and working towards the root. 
+# We use a heuristic to figure out when to stop, since
+# Jam doesn't have pwd :-(
+# found = FindRoot starting_dir : file ;
+rule FindToRoot
+{
+	local dir = $(<[1]) ;
+	local dir_list, prev_list = ;
+	local dir_list;
+	local found = ;
+
+#Echo "FindToRoot got starting_dir '" $(<) "' file '" $(>) "'" ;
+    found = [ GLOB $(dir) : $(>[1]) ] ;
+
+	if $(found) {
+		return $(found) ;
+	}
+
+#Echo "dir_list = " $(dir_list) ;
+
+	dir_list = [ GLOB $(dir) : * ] ;
+	while $(dir_list:D="") != $(prev_list:D="") {
+		dir = $(dir)$(SLASH)$(DOTDOT) ;
+#Echo "dir = " $(dir) ;
+	    found = [ GLOB $(dir) : $(>[1]) ] ;
+
+		if $(found) {
+			return $(found) ;
+		}
+
+		prev_list = $(dir_list) ;
+		dir_list = [ GLOB $(dir) : * ] ;
+#Echo "dir_list = " $(dir_list) ;
+	}
+#Echo "returning " $(found) ;
+	return $(found) ;
+}
+
+# -----------------------------------------
+
+rule DoInit
+{
+	if ! $(DONEANCHORINIT) {
+	
+		SUBDIR ?= $(DOT) ;
+		_SUBDIR ?= $(DOT) ;
+
+		# initial "parent" settings
+		P_ASFLAGS = ;
+		P_CCFLAGS = ;
+		P_C++FLAGS = ;
+		P_LINKFLAGS = ;
+		P_SHLINKFLAGS = ;
+		P_HDRS = ;
+		P_DEFINES = ;
+
+		P_PREF_ASFLAGS = ;
+		P_PREF_CCFLAGS = ;
+		P_PREF_C++FLAGS = ;
+		P_PREF_LINKFLAGS = ;
+		P_PREF_SHLINKFLAGS = ;
+
+		FindTop ;		# Look for a default project file 
+
+		TRACESTDHDRS = false ;		# don't trace system path #include file dependenicies
+		DONEANCHORINIT = true ;
+	}
+}
+
+# Set the project top for this Jamfile and all sub Jamfiles
+# until another top is set or we return.
+# ProjTop d1 d2 .. ;
+rule ProjTop
+{
+#Echo "ProjTop got '" $(<) "'" ;
+
+	_TOP = [ _RatPath $(<) ] ;
+	TOP = [ _DirName $(_TOP) ] ;
+
+#Echo "ProjTop set TOP to '" $(TOP) "'" ;
+
+	if ! $($(TOP)-SET) {	# Not tried to read the project file
+
+		local found = [ GLOB $(_top) : $(JAMFILE) ] ;
+
+		if $(found) {
+			local save__SUBDIR = $(_SUBDIR) ;
+			local save__INVSUBDIR = $(_INVSUBDIR) ;
+			local save_SUBDIR = $(SUBDIR) ;
+
+			_SUBDIR = $(_TOP) ;
+			_INVSUBDIR = [ _InvertPath $(_SUBDIR) ] ;
+			SUBDIR = [ _DirName $(_SUBDIR) ] ;
+#Echo "_SUBDIR = '" $(_SUBDIR) "'" ; 
+#Echo "_INVSUBDIR = '" $(_INVSUBDIR) "'" ; 
+
+			# Translate SRCDIR for new SUBDIR
+			if $(SRCDIR) {
+#Echo "SRCDIR olddir '" $(SRCDIR) "'" ; 
+				SRCDIR = [ _SepPath $(SRCDIR) ] ;
+				SRCDIR = [ _RootPath $(_INVSUBDIR) : [ _RootPath $(SRCDIR) : $(_SUBDIR) ] ] ; 
+				SRCDIR = [ _DirName [ _RatPath $(SRCDIR) ] ] ;
+#Echo "SRCDIR newdir '" $(SRCDIR) "'" ; 
+			}
+
+#Echo "About to include Jamtop '" $(found) "'" ;
+			include $(found) ;
+
+			# Un Translate SRCDIR, in case it was set in the rules directory
+			if $(SRCDIR) {
+#Echo "_SUBDIR = '" $(_SUBDIR) "'" ; 
+#Echo "_INVSUBDIR = '" $(_INVSUBDIR) "'" ; 
+#Echo "SRCDIR newdir '" $(SRCDIR) "'" ; 
+				SRCDIR = [ _SepPath $(SRCDIR) ] ;
+				SRCDIR = [ _RootPath $(_SUBDIR) : [ _RootPath $(SRCDIR) : $(_INVSUBDIR) ] ] ; 
+				SRCDIR = [ _DirName [ _RatPath $(SRCDIR) ] ] ;
+#Echo "SRCDIR olddir '" $(SRCDIR) "'" ; 
+			}
+
+			# Restore things
+			_SUBDIR = $(save__SUBDIR) ;
+			_INVSUBDIR = $(save__INVSUBDIR) ;
+			SUBDIR = $(save_SUBDIR) ;
+		} else {
+			Echo "WARNING :- no project " $(TOP) "Jamtop found" ;
+		}
+		
+		$(TOP)-SET = true ;
+	}
+}
+
+# Search for the project top by looking for the Jamtop
+# starting at $(SUBDIR) and lookup upwards. 
+# FindTop ;
+rule FindTop
+{
+#Echo ;
+#Echo "FindTop called SUBDIR = '" $(SUBDIR) "'" ;
+
+	local _JRF = [ FindToRoot $(SUBDIR) : $(JAMTOP) ] ;
+
+#Echo "FindTop found '" $(_JRF) "'" ;
+	if $(_JRF) {
+
+		_TOP = [ _RatPath [ _SepPath $(_JRF:D) ] ] ;
+		TOP = [ _DirName $(_TOP) ] ;
+#Echo "ProjTop set TOP to '" $(TOP) "'" ;
+
+		if ! $($(TOP)-SET) {	# Not tried to read the project file
+			local save__SUBDIR = $(_SUBDIR) ;
+			local save__INVSUBDIR = $(_INVSUBDIR) ;
+			local save_SUBDIR = $(SUBDIR) ;
+
+			_SUBDIR = $(_TOP) ;
+			_INVSUBDIR = [ _InvertPath $(_SUBDIR) ] ;
+			SUBDIR = [ _DirName $(_SUBDIR) ] ;
+#Echo "_SUBDIR = '" $(_SUBDIR) "'" ; 
+#Echo "_INVSUBDIR = '" $(_INVSUBDIR) "'" ; 
+
+			# Translate SRCDIR for new SUBDIR
+			if $(SRCDIR) {
+#Echo "SRCDIR olddir '" $(SRCDIR) "'" ; 
+				SRCDIR = [ _SepPath $(SRCDIR) ] ;
+				SRCDIR = [ _RootPath $(_INVSUBDIR) : [ _RootPath $(SRCDIR) : $(_SUBDIR) ] ] ; 
+				SRCDIR = [ _DirName [ _RatPath $(SRCDIR) ] ] ;
+#Echo "SRCDIR newdir '" $(SRCDIR) "'" ; 
+			}
+
+#Echo "About to include Jamtop '" $(_JRF) "'" ;
+			include $(_JRF) ;
+			$(TOP)-SET = true ;
+
+			# Un Translate SRCDIR, in case it was set in the ruls directory
+			if $(SRCDIR) {
+#Echo "_SUBDIR = '" $(_SUBDIR) "'" ; 
+#Echo "_INVSUBDIR = '" $(_INVSUBDIR) "'" ; 
+#Echo "SRCDIR newdir '" $(SRCDIR) "'" ; 
+				SRCDIR = [ _SepPath $(SRCDIR) ] ;
+				SRCDIR = [ _RootPath $(_SUBDIR) : [ _RootPath $(SRCDIR) : $(_INVSUBDIR) ] ] ; 
+				SRCDIR = [ _DirName [ _RatPath $(SRCDIR) ] ] ;
+#Echo "SRCDIR olddir '" $(SRCDIR) "'" ; 
+			}
+
+			# Restore things
+			_SUBDIR = $(save__SUBDIR) ;
+			_INVSUBDIR = $(save__INVSUBDIR) ;
+			SUBDIR = $(save_SUBDIR) ;
+		}
+	} else {
+		Echo "WARNING :- no project Jamtop found, no TOP set !" ;
+
+		if ! $(TOP) {
+			TOP = $(DOT) ;		# set a default TOP 
+			_TOP = $(DOT) ;
+		}
+	}
+}
+
+# Given a path relative to CWD, return the inverse direction
+# path. Return nothing if the path is absolute.
+# [ we're using a hack here, since Jam 2.5 doesn't have
+#   any functions that will simply resolve a path relative
+#   to CWD into an absolute path. ]
+# d1 d2 .. = _InvertPath d1 d2 .. 
+rule _InvertPath
+{
+	local _i _o _d ;
+#Echo "_InvertPath got '" $(<) "'" ;
+	if $(<[1]) = "/" || $(<[1]) = "\\" {
+#Echo "_InvertPath returning nothing" ;
+		return "" ;
+	}
+	if $(NT) {
+		switch $(<[1]) {
+			case *:* : {
+#Echo "_InvertPath returning nothing" ;
+				return "" ;
+			}
+		}
+	}
+
+	for _i in $(<) {
+#Echo "_InvertPath _i = '" $(_i) "' _o = '" $(_o) "'" ;
+		# Ignore .
+		if $(_i) = $(DOT) {
+			continue ;
+		}
+		# The hard one. Look amongst all the
+		# sub directories for one that has the same
+		# contents as the directory we came from.
+		# Too bad if two directories have the same contents...
+		if $(_i) = $(DOTDOT) {
+			local _j;
+			local _d1 _d2 _l1, _l2 _l3 ;
+
+#Echo "_InvertPath inverting '" $(_i) "'" ;
+
+			_d1 = [ _DirName $(_d) ] ; 
+			_l1 = [ GLOB $(_d1) : * ] ;
+#Echo "_d1 = '" $(_d1) "'" ;
+			_d += $(_i) ;
+			_d2 = [ _DirName $(_d) ] ; 
+#Echo "_d2 = '" $(_d2) "'" ;
+			_l2 = [ GLOB $(_d2) : * ] ;
+
+			for _j in $(_l2) {
+				if $(_j) = $(DOT) || $(_j) = $(DOTDOT) {
+					continue ;
+				}
+#Echo "Checking _j = '" $(_j) "'" ;
+				_l3 = [ GLOB $(_j) : * ] ;
+#Echo "_l1 = '" $(_l1) "'" ;
+#Echo "_l3 = '" $(_l3:BS) "'" ;
+				if $(_l3:BS) = $(_l1) {
+#Echo "Found reverse = '" $(_j) "'" ;
+					_o = $(_j:BS) $(_o) ;
+					break ;
+				}
+			}
+
+		# The easy one. the opposite of a directory
+		# is ..
+		} else {
+			_o = $(DOTDOT) $(_o) ;
+			_d += $(_i) ;
+		}
+	}
+	if ! $(_o) {
+		_o = $(DOT) ;
+	}
+
+#Echo "_InvertPath returning '" $(_o) "'" ;
+	return $(_o) ;
+}
+
+# Variables containing (possible) relative paths that are to remain
+# anchored to where they were declared. This is to prevent
+# NormPath in a sub-Jamfile assuming they are relative to that Jamfile.
+# (This is a bit messy. How could it be avoided ? If there were
+#  a simple way of making paths absolute, rather than computing eveything
+#  relative to the invokation directory, it could help.)
+ANCHORED_PATH_VARS = ;
+
+# Variables to save before starting a new Jamfile, then
+# restore once it's finished. 
+
+SUBDIR_VARS = SUBDIR _SUBDIR TOP _TOP SRCDIR DSTDIR 
+              P_ASFLAGS P_CCFLAGS P_C++FLAGS P_LINKFLAGS P_SHLINKFLAGS
+              ASFLAGS CCFLAGS C++FLAGS LINKFLAGS SHLINKFLAGS
+              P_PREF_ASFLAGS P_PREF_CCFLAGS P_PREF_C++FLAGS P_PREF_LINKFLAGS
+              PREF_ASFLAGS PREF_CCFLAGS PREF_C++FLAGS PREF_LINKFLAGS PREF_SHLINKFLAGS
+              P_HDRS HDRS
+              P_DEFINES DEFINES
+              P_LINKOBJS LINKOBJS
+              P_LINKLIBS LINKLIBS
+              P_LINKSHLIBS LINKSHLIBS
+              P_SHLINKOBJS SHLINKOBJS
+              P_SHLINKLIBS SHLINKLIBS
+              P_SHLINKSHLIBS SHLINKSHLIBS
+              ;
+
+# Implement including a Jamfile from a sub or peer directory,
+# Sub includes cause flags/headers/options to be inhereted
+# from the calling Jamfile, while Peer includes do not.
+# The global _JAMINCLUDE_PEER variable controls whether
+# this is a sub or peer include.
+# _JamInclude dir ;
+rule _JamInclude
+{
+#Echo "_JamInclude called with '" $(<) "' SUBDIR '" $(SUBDIR) "' and _JAMINCLUDE_PEER '" $(_JAMINCLUDE_PEER) "'" ;
+
+	# Save certain variables so that sub-Jamfiles don't affect them
+	local _jamfile ;
+	local _SUBDIR_VARS = $(SUBDIR_VARS) $(ANCHORED_PATH_VARS) ;
+	local _i parent_$(_SUBDIR_VARS) ;
+
+	for _i in $(_SUBDIR_VARS) {
+		parent_$(_i) = $($(_i)) ;
+	}
+
+	if $(_JAMINCLUDE_PEER) != "true" {
+		# Incorporate this levels extra flags & header paths into the base 
+		P_ASFLAGS += $(ASFLAGS) ;
+		P_CCFLAGS += $(CCFLAGS) ;
+		P_C++FLAGS += $(C++FLAGS) ;
+		P_LINKFLAGS += $(LINKFLAGS) ;
+		P_SHLINKFLAGS += $(SHLINKFLAGS) ;
+		P_HDRS = [ NormPaths $(HDRS) ] $(P_HDRS) ;
+		P_DEFINES += $(DEFINES) ;
+		P_LINKOBJS = [ NormPaths $(LINKOBJS) ] $(P_LINKOBJS) ;
+		P_LINKLIBS = [ NormPaths $(LINKLIBS) ] $(P_LINKLIBS) ;
+		P_LINKSHLIBS = [ NormPaths $(LINKSHLIBS) ] $(P_LINKSHLIBS) ;
+		P_SHLINKOBJS = [ NormPaths $(SHLINKOBJS) ] $(P_SHLINKOBJS) ;
+		P_SHLINKLIBS = [ NormPaths $(SHLINKLIBS) ] $(P_SHLINKLIBS) ;
+		P_SHLINKSHLIBS = [ NormPaths $(SHLINKSHLIBS) ] $(P_SHLINKSHLIBS) ;
+
+		# Set parent flags no existing parent flags
+		if ! $(P_PREF_ASFLAGS) {
+			P_PREF_ASFLAGS = $(PREF_ASFLAGS) ; }
+		if ! $(P_PREF_CCFLAGS) {
+			P_PREF_CCFLAGS = $(PREF_CCFLAGS) ; }
+		if ! $(P_PREF_C++FLAGS) {
+			P_PREF_C++FLAGS = $(PREF_C++FLAGS) ; }
+		if ! $(P_PREF_LINKFLAGS) {
+			P_PREF_LINKFLAGS = $(PREF_LINKFLAGS) ; }
+		if ! $(P_PREF_SHLINKFLAGS) {
+			P_PREF_SHLINKFLAGS = $(PREF_SHLINKFLAGS) ; }
+	}
+	
+	# Set default for new Jamfile extra and preferred flags
+	ASFLAGS = ;
+	CCFLAGS = ;
+	C++FLAGS = ;
+	LINKFLAGS = ;
+	SHLINKFLAGS = ;
+	HDRS = ;
+	DEFINES = ;
+	LINKOBJS = ;
+	LINKLIBS = ;
+	LINKSHLIBS = ;
+	SHLINKOBJS = ;
+	SHLINKLIBS = ;
+	SHLINKSHLIBS = ;
+
+	PREF_ASFLAGS = ;
+	PREF_CCFLAGS = ;
+	PREF_C++FLAGS = ;
+	PREF_LINKFLAGS = ;
+	PREF_SHLINKFLAGS = ;
+
+	_SUBDIR = [ _RatPath [ _RootPath $(_SUBDIR) : [ _SepPath $(<) ] ] ] ;
+	_INVSUBDIR = [ _InvertPath $(_SUBDIR) ] ;
+	SUBDIR = [ _DirName $(_SUBDIR) ] ;
+
+#Echo "new _SUBDIR =" $(_SUBDIR) ;
+#Echo "new _INVSUBDIR =" $(_INVSUBDIR) ;
+
+	if $(_INVSUBDIR) != "." {
+		# Keep paths relative to where they were defined, so that
+		# NormPaths doesn't think they are relative to the sub-Jamfile.
+#Echo "Before ANCHORED_PATH_VARS = $(ANCHORED_PATH_VARS) vals $($(ANCHORED_PATH_VARS))" ;
+		for _i in $(ANCHORED_PATH_VARS) {
+			$(_i) = [ RootPaths $(_INVSUBDIR) : $($(_i)) ] ;
+		}
+#Echo "After ANCHORED_PATH_VARS = $(ANCHORED_PATH_VARS) vals $($(ANCHORED_PATH_VARS))" ;
+	}
+
+	# Translate SRCDIR for new SUBDIR
+#Echo "SRCDIR olddir '" $(SRCDIR) "'" ; 
+	if $(SRCDIR) {
+		local subdir = $(_SUBDIR[2-]) ;
+		local invsubdir = [ FReverse $(_INVSUBDIR) ] ;
+		invsubdir = [ FReverse $(invsubdir[2-]) ] ;
+#Echo "subdir-1 =" $(subdir) ;
+#Echo "invsubdir-1 =" $(invsubdir) ;
+		SRCDIR = [ _SepPath $(SRCDIR) ] ; 
+		SRCDIR = [ _RootPath $(invsubdir) : [ _RootPath $(SRCDIR) : $(subdir) ] ] ; 
+		SRCDIR = [ _DirName [ _RatPath $(SRCDIR) ] ] ;
+#Echo "SRCDIR newdir '" $(SRCDIR) "'" ; 
+	}
+
+	_jamfile = [ NormSrcPaths $(JAMFILE) ] ;
+
+#Echo "About to include " $(_jamfile) ;
+	include $(_jamfile) ;
+
+	# Restore variable before returning 
+	for _i in $(_SUBDIR_VARS) {
+		$(_i) = $(parent_$(_i)) ;
+	}
+
+#Echo "Done include " $(JAMFILE:D=$(_subdir)) ;
+#Echo "restored SUBDIR =" $(SUBDIR) ;
+#Echo "_JamInclude done" ;
+}
+
+# Invoke a Jamfile as a sub Jamfile
+# SubInclude dir ;
+rule SubInclude
+{
+#Echo "### SubInclude called with '" $(<[1]) "' and SUBDIR = '" $(SUBDIR) "'" ;
+	_JAMINCLUDE_PEER = "false" ;	# This is a sub include
+	return [ _JamInclude $(<) ] ;
+}
+
+# Invoke a Jamfile in as a peer Jamfile
+# PeerInclude dir ;
+rule PeerInclude
+{
+#Echo "### PeerInclude called with '" $(<[1]) "' and SUBDIR = '" $(SUBDIR) "'" ;
+	_JAMINCLUDE_PEER = "true" ;	# This is a peer include
+	return [ _JamInclude $(<) ] ;
+}
+
+# ===========================================================
+#
+# Rules
+#
+
+# Public As
+# As obj : source.s ;					.s -> .o
+rule As
+{
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]:S=$(SUFOBJ)) ] ;
+	local _s = [ NormSrcTargets $(>) ] ;
+
+	Depends $(_t) : $(_s) ;
+	Depends obj : $(_t) ;
+	MakeLocate $(_t) ;
+
+	HDRS on $(_t) = [ geton $(_t) : SEARCH ] [ NormPaths $(HDRS) ] $(P_HDRS) ;
+}
+
+# Internal As
+rule As_
+{
+	local pref_asflags = $(P_PREF_ASFLAGS) ;
+	pref_asflags ?= $(PREF_ASFLAGS) ;
+	ASFLAGS1 on $(<) = $(P_ASFLAGS) $(ASFLAGS) ;
+	ASFLAGS2 on $(<) = $(pref_asflags) ;
+	ASFLAGS on $(<) = [ geton $(<) : ASFLAGS1 ] [ geton $(<) : ASFLAGS2 ] ;
+	ASHDRS on $(<) = [ on $(<) FIncludes $(HDRS) ] ;
+}
+
+# copies sources into directory.
+# SRCDIR and DSTDIR will be ignored.
+# Bulk directory : sources ;
+rule Bulk
+{
+#Echo "Bulk got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+	local _is _it ;			# individual source and target
+
+	for _is in $(_s)
+	{
+		_it = $(_t[1]) ;
+		_t = $(_t[2-]) ;	# Track _is 
+
+		Depends files : $(_it) ;
+		Depends $(_it) : $(_is) ;
+		MakeLocate $(_it) ;
+		File_ $(_it) : $(_is) ;
+		MODE on $(_it) = $(FILEMODE) ;
+		Chmod_ $(_it) ;
+	}
+}
+
+# Cc object : source : flags : defines : hdrpaths ; 
+rule Cc
+{
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]:S=$(SUFOBJ)) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Depends $(_t) : $(_s) ;
+	Depends obj : $(_t) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+
+	HDRS on $(_t) = [ geton $(_t) : SEARCH ] [ NormPaths $(HDRS) ] $(P_HDRS) ;
+	SOURCE on $(_t) = $(_s) ;
+
+	HDRRULE on $(_s) = HdrRule ;
+	HDRSCAN on $(_s) = $(HDRPATTERN) ;
+	# Construct HDRSEARCH so that we can know where to look for headers
+	local _dot = [ geton $(_>) : NOMLOC ] ;
+	if ! $(_dot) { _dot = $(DOT) ; }
+	HDRSEARCH1 on $(_s) = $(_dot) ;
+	HDRSEARCH2 on $(_s) = [ NormPaths $(HDRS) ] $(P_HDRS) ;
+	HDRSEARCH3 on $(_s) = [ NormPaths $(STDHDRS) ] ;
+	HDRSEARCH on $(_s) = [ geton $(_s) : HDRSEARCH1 ] [ geton $(_s) : HDRSEARCH2 ]
+	                     [ geton $(_s) : HDRSEARCH3 ] ;
+#Echo "Cc set HDRSEARCH on '" $(_s) "' to '" [ geton $(_s) : HDRSEARCH ] "'" ;
+
+	# propagate target specific-defines
+
+	DEFINES on $(_t) = $(P_DEFINES) $(DEFINES) ;
+
+	Cc_ $(_t) : $(_s) : $(3) ;
+
+	if $(3) {
+		ObjectCcFlags $(<) : $(3) ;
+	}
+	if $(4) {
+		ObjectDefines $(<) : $(4) ;
+	}
+	if $(5) {
+		ObjectHdrs $(<) : $(5) ;
+	}
+}
+
+# Internal Cc
+# Cc_ object : sources ;
+rule Cc_
+{
+	# If the compiler's -o flag doesn't work, relocate the .o
+	if $(RELOCATE)
+	{
+		CcMv $(<) : $(>) ;
+	}
+
+	local pref_ccflags = $(P_PREF_CCFLAGS) ;
+	pref_ccflags ?= $(PREF_CCFLAGS) ;
+	# Make sure we incorporate any CCFLAGS[12] on object into total
+	CCFLAGS1 on $(<) += $(P_CCFLAGS) $(CCFLAGS) ;
+	CCFLAGS2 on $(<) += $(pref_ccflags) ;
+	CCFLAGS on $(<) = [ geton $(<) : CCFLAGS1 ] [ geton $(<) : CCFLAGS2 ] ;
+
+#Echo "Cc object '" $(<) "' got CCFLAGS1 '" [ geton $(<) : CCFLAGS1 ] "' and CCFLAGS2 '" [ geton $(<) : CCFLAGS2 ] "' for total CCFLAGS '" [ geton $(<) : CCFLAGS ] "'" ;
+
+	# Make sure the CCHDRS and CCDEFS are formatter correctly
+	CCHDRS on $(<) = [ on $(<) FIncludes $(HDRS) ] ;
+	CCDEFS on $(<) = [ on $(<) FDefines $(DEFINES) ] ;
+}
+
+# C++ object : source : flags : defines : hdrpaths ; 
+rule C++
+{
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]:S=$(SUFOBJ)) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Depends $(_t) : $(_s) ;
+	Depends obj : $(_t) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+
+	HDRS on $(_t) = [ geton $(_t) : SEARCH ] [ NormPaths $(HDRS) ] $(P_HDRS) ;
+	SOURCE on $(_t) = $(_s) ;
+
+	HDRRULE on $(_s) = HdrRule ;
+	HDRSCAN on $(_s) = $(HDRPATTERN) ;
+	# Construct HDRSEARCH so that we can know where to look for headers
+	local _dot = [ geton $(_>) : NOMLOC ] ;
+	if ! $(_dot) { _dot = $(DOT) ; }
+	HDRSEARCH1 on $(_s) = $(_dot) ;
+	HDRSEARCH2 on $(_s) = [ NormPaths $(HDRS) ] $(P_HDRS) ;
+	HDRSEARCH3 on $(_s) = [ NormPaths $(STDHDRS) ] ;
+	HDRSEARCH on $(_s) = [ geton $(_s) : HDRSEARCH1 ] [ geton $(_s) : HDRSEARCH2 ]
+	                     [ geton $(_s) : HDRSEARCH3 ] ;
+
+	# propagate target specific-defines
+
+	DEFINES on $(_t) = $(P_DEFINES) $(DEFINES) ;
+
+	C++_ $(_t) : $(_s) ;
+
+	if $(3) {
+		ObjectC++Flags $(<) : $(3) ;
+	}
+	if $(4) {
+		ObjectDefines $(<) : $(4) ;
+	}
+	if $(5) {
+		ObjectHdrs $(<) : $(5) ;
+	}
+}
+
+# Internal C++
+# C++_ object : sources ;
+rule C++_
+{
+	# If the compiler's -o flag doesn't work, relocate the .o
+	if $(RELOCATE)
+	{
+		CcMv $(<) : $(>) ;
+	}
+
+	local pref_c++flags = $(P_PREF_C++FLAGS) ;
+	pref_c++flags ?= $(PREF_C++FLAGS) ;
+	# Make sure we incorporate any C++FLAGS[12] on object into total
+	C++FLAGS1 on $(<) += $(P_C++FLAGS) $(C++FLAGS) ;
+	C++FLAGS2 on $(<) += $(pref_c++flags) ;
+	C++FLAGS on $(<) = [ geton $(<) : C++FLAGS1 ] [ geton $(<) : C++FLAGS2 ] ;
+
+	# Make sure the CCHDRS and CCDEFS are formatter correctly
+	CCHDRS on $(<) = [ on $(<) FIncludes $(HDRS) ] ;
+	CCDEFS on $(<) = [ on $(<) FDefines $(DEFINES) ] ;
+}
+
+rule Chmod_
+{
+#Echo "Chmod_ on '" $(<) "' with MODE = '" [ geton $(<) : MODE ] "'" ; 
+	if $(CHMOD) { Chmod1 $(<) ; }
+}
+
+# Public use Depends that does normalisation of its targets
+# (non-normalizing Depends is a built in)
+# NDepends dest : source ;			make dependency
+rule NDepends {
+	local _t _s ;
+	local _p = ;
+
+#Echo "NDepends got '" $(<) "' and '" $(>) "'" ;
+
+	# Don't anchor psuedo targets
+	switch $(<)
+	{
+       case all : _p = true ;
+       case first : _p = true ;
+       case shell : _p = true ;
+       case files : _p = true ;
+       case lib : _p = true ;
+       case exe : _p = true ;
+       case obj : _p = true ;
+       case dirs : _p = true ;
+       case clean : _p = true ;
+       case install : _p = true ;
+       case uninstall : _p = true ;
+	}
+
+	# Normalize target names and set Grist LOCATE and SOURCE
+	if ! $(_p) {
+		_t = [ NormDstTargets $(<) ] ;
+	} else {
+		_t = $(<) ;
+	}
+	_s = [ NormSrcTargets $(>) ] ;
+
+#Echo "Passing Depends '" $(_t) "' and '" $(_s) "'" ;
+
+	Depends $(_t) : $(_s) ;
+}
+
+# Public use NoUpdate that does normalisation of its targets
+# (non-normalizing NoUpdate is a built in)
+# NNoUpdate dest ;			Make sure created, but don't update
+rule NNoUpdate {
+	local _t ;
+	local _p = ;
+
+#Echo "NNoUpdate got '" $(<) "'" ;
+
+	# Don't anchor psuedo targets
+	switch $(<)
+	{
+       case all : _p = true ;
+       case first : _p = true ;
+       case shell : _p = true ;
+       case files : _p = true ;
+       case lib : _p = true ;
+       case exe : _p = true ;
+       case obj : _p = true ;
+       case dirs : _p = true ;
+       case clean : _p = true ;
+       case install : _p = true ;
+       case uninstall : _p = true ;
+	}
+
+	# Normalize target names and set Grist LOCATE and SOURCE
+	if ! $(_p) {
+		_t = [ NormDstTargets $(<) ] ;
+	} else {
+		_t = $(<) ;
+	}
+	_s = [ NormSrcTargets $(>) ] ;
+
+#Echo "Passing NoUpdate '" $(_t) "'" ;
+
+	NoUpdate $(_t) ;
+}
+
+# Public use Includes that does normalisation of its targets
+# (non-normalizing Includes is a built in)
+# NDepends dest : source ;			make dependency
+rule NIncludes {
+	local _t _s ;
+	local _p = ;
+
+#Echo "NIncludes got '" $(<) "' and '" $(>) "'" ;
+
+	# Normalize target names and set Grist LOCATE and SOURCE
+	_t = [ NormDstTargets $(<) ] ;
+	_s = [ NormSrcTargets $(>) ] ;
+
+#Echo "Passing Includes '" $(_t) "' and '" $(_s) "'" ;
+
+	Includes $(_t) : $(_s) ;
+}
+
+# sets mode of file
+# Mod target : mode ;
+rule Mod
+{
+	local _t = [ NormIDstTargets $(<[1]) ] ;
+	MODE on $(_t) = $(>) ;
+	Chmod_ $(_t) ;
+}
+
+# copies source onto target.
+# SRCDIR and DSTDIR will be ignored.
+# File target : source ;
+rule File
+{
+	local _t = [ NormIDstTargets $(<[1]) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Depends files : $(_t) ;
+	Depends $(_t) : $(_s) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+	File_ $(_t) : $(_s) ;
+	MODE on $(_t) = $(FILEMODE) ;
+	Chmod_ $(_t) ;
+}
+
+# copies source onto target, but doesn't clean source.
+# SRCDIR and DSTDIR will be ignored.
+# File target : source ;
+rule FileNoClean
+{
+	local _t = [ NormIDstTargets $(<[1]) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Depends files : $(_t) ;
+	Depends $(_t) : $(_s) ;
+	MakeLocate $(_t) ;
+	File_ $(_t) : $(_s) ;
+	MODE on $(_t) = $(FILEMODE) ;
+	Chmod_ $(_t) ;
+}
+
+# Fake file copy. Creates a dependence to work around
+# problem that Jam doesn't understand two products from one action.
+# FakeFile target : source ;
+rule FakeFile
+{
+	local _t = [ NormIDstTargets $(<[1]) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	FakeFile_ $(_t) : $(_s) ;
+}
+
+rule FakeFile_
+{
+	local _t = $(<) ;
+	local _s = $(>) ;
+
+	Depends files : $(_t) ;
+	Depends $(_t) : $(_s) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+}
+
+
+# Compile Fortran source file into object
+# Fortran object : source ; 
+rule Fortran
+{
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]:S=$(SUFOBJ)) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Depends $(_t) : $(_s) ;
+	Depends obj : $(_t) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+
+	Fortran_ $(_t) : $(_s) ;
+}
+
+# Internal Fortran
+rule Fortran_
+{
+}
+
+
+# NOTE! Perhaps GenFileND and GenFileNND could be replaced by a GenFile
+# with a $(3) for the dependecies ?
+
+# All > are assumed to be files that < is dependent on
+# with >[1] being an executable
+# SRCDIR and DSTDIR are ignored.
+rule GenFile 
+{
+#Echo "GenFile got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormIDstTargets $(<) ] ;
+	local _s = [ NormISrcTargets $(>[1]:S=$(SUFEXE)) ] ;
+	local _a = [ NormISrcTargets $(>[2-]) ] ;
+
+#Echo "GenFile normed '" $(_t) "' and '" $(_s) "' plus '" $(_a) "'" ;
+ 
+	Depends $(_t) : $(_s) $(_a) ;
+	if ! $(_s[1]:G) {		# In case PATH doesn't have . in it.
+		_s = $(DOT)$(SLASH)$(_s[1]:G=) $(_s[2-]) ;
+		NotTargets $(_s) ;
+		NoCare $(_s) ;
+		NotFile $(_s) ;
+	}
+	GenFile1 $(_t) : $(_s) $(_a) ;
+	Clean clean : $(_t) ;
+}
+
+rule GenFile1
+{
+	MakeLocate $(<) ;
+}
+
+# Only >[1] is assumed to be an executable that < is dependent on.
+# $(3) are optional extra dependecies
+# SRCDIR and DSTDIR are ignored.
+rule GenFileND 
+{
+#Echo "GenFileND got '$(<)' and '$(>)' and src targets '$(_d)'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormIDstTargets $(<[1]) ] ;
+	local _s = [ NormISrcTargets $(>[1]:S=$(SUFEXE)) ] ;
+	local _a = $(>[2-]) ;
+	_a = $(_a:J=" ") ;
+	local _d = [ NormSrcTargets $(3) ] ;
+
+#Echo "GenFileND normed '$(_t)' and '$(_s)' plus '$(_a)' and src targets '$(_d)'" ;
+
+	NotTargets $(_a) ;
+	NoCare $(_a) ;
+	NotFile $(_a) ;			# Supresses "independent target", but may mark a directory wrongly
+	Depends $(_t) : $(_s) $(_d) ;
+#Echo "GenFileND set Depends '$(_t)' and '$(_s)' and '$(_d)'" ;
+
+	if ! $(_s[1]:G) {		# In case PATH doesn't have . in it.
+		_s = $(DOT)$(SLASH)$(_s[1]) $(_s[2-]) ;
+		NotTargets $(_s) ;
+		NoCare $(_s) ;
+		NotFile $(_s) ;
+	}
+	GenFileND1 $(_t) : $(_s) $(_a) ;
+
+	Clean clean : $(_t) ;
+}
+
+rule GenFileND1
+{
+	MakeLocate $(<) ;
+}
+
+# GenFileNND target : program args : extra_dependecies ;
+# None of > is assumed to be a file.
+# $(3) are optional extra dependecies
+# SRCDIR and DSTDIR are ignored.
+rule GenFileNND 
+{
+#Echo "GenFileNND got '$(<)' and '$(>)' and src targets '$(3)' " ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormIDstTargets $(<) ] ;
+	local _a = $(>) ;
+	_a = $(_a:J=" ") ;		# Split up by space delimeter ?
+	local _d = [ NormSrcTargets $(3) ] ;
+
+#Echo "GenFileNND normed '$(_t)' plus '$(_a)' and src targets '$(_d)'" ;
+
+	Depends files : $(_t) ;
+	Depends $(_t) : $(_d) ;
+
+	NotTargets $(_a) ;
+	NoCare $(_a) ;
+	NotFile $(_a) ;			# Supresses "independent target", but may mark a directory wrongly
+	
+	GenFileNND1 $(_t) : $(_a) ;
+	Clean clean : $(_t) ;
+}
+
+rule GenFileNND1
+{
+#Echo "GenFileNND1 got "' $(<) "' and "' $(>) "'" ;
+	MakeLocate $(<) ;
+}
+
+# GenFileNNDnc target : program args : extra_dependecies ;
+# Same as GenFileNND but don't clean the target.
+# None of > is assumed to be a file.
+# $(3) are optional extra dependecies
+# SRCDIR and DSTDIR are ignored.
+rule GenFileNNDnc 
+{
+#Echo "GenFileNNDnc got '$(<)' and '$(>)' and src targets '$(3)' " ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormIDstTargets $(<) ] ;
+	local _a = $(>) ;
+	_a = $(_a:J=" ") ;		# Split up by space delimeter ?
+	local _d = [ NormSrcTargets $(3) ] ;
+
+#Echo "GenFileNNDnc normed '$(_t)' plus '$(_a)' and src targets '$(_d)'" ;
+
+	Depends files : $(_t) ;
+	Depends $(_t) : $(_d) ;
+
+	NotTargets $(_a) ;
+	NoCare $(_a) ;
+	NotFile $(_a) ;			# Supresses "independent target", but may mark a directory wrongly
+	
+	GenFileNND1 $(_t) : $(_a) ;
+}
+
+# Concatenate all the argument to the file 
+# Each argument to a separate line
+# If no arguments, create empty file
+# SRCDIR and DSTDIR are ignored.
+rule CatToFile 
+{
+#Echo "CatToFile got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormIDstTargets $(<) ] ;
+
+	MakeLocate $(_t) ;
+	Depends files : $(_t) ;
+	NotFile $(2) $(3) $(4) $(5) $(6) $(7) $(8) $(9) ;
+
+	Clean clean : $(_t) ;
+
+	if ! $(>) {
+		CreateCatFile_ $(_t) ;
+
+	} else {
+		if $(2) {
+			CatToFile_ $(_t) : $(2) ;
+		}
+		if $(3) {
+			CatToFile_ $(_t) : $(3) ;
+		}
+		if $(4) {
+			CatToFile_ $(_t) : $(4) ;
+		}
+		if $(5) {
+			CatToFile_ $(_t) : $(5) ;
+		}
+		if $(6) {
+			CatToFile_ $(_t) : $(6) ;
+		}
+		if $(7) {
+			CatToFile_ $(_t) : $(7) ;
+		}
+		if $(8) {
+			CatToFile_ $(_t) : $(8) ;
+		}
+		if $(9) {
+			CatToFile_ $(_t) : $(9) ;
+		}
+	}
+}
+
+rule HardLink
+{
+	local _t = [ NormDstTargets $(<) ] ;
+	local _s = [ NormSrcTargets $(>) ] ;
+
+	Depends files : $(_t) ;
+	Depends $(_t) : $(_s) ;
+
+	HardLink_ $(_t) : $(_s) ;
+}
+
+# Mark executable as GUI applications (ie. OS X Bundle)
+# GuiImages images ;
+rule GuiBin
+{
+	local _t = [ NormDstTargets $(<:S=$(SUFEXE)) ] ;
+	GUIAPP on $(_t) = "true" ;
+}
+
+rule GUIAPP
+{
+}
+
+# /HdrMacroFile
+#
+# this rule is specific to FT-Jam. It is used to indicate that a given file
+# contains definitions for filename macros (e.g. "#define MYFILE_H <myfile>.h")
+# that can later be used in #include statements in the rest of the source
+#
+# these files must be parsed before any make is tried.
+#
+rule HdrMacroFile
+{
+  HDRMACRO $(<) ;
+}
+
+# Handle #includes that are found.
+# Try and locate them to asociate them with declared targets, as
+# well as tracing any further #includes they may have.
+# HdrRule NormedSource : headers ;
+rule HdrRule
+{
+	# N.B.		This rule is called during binding, potentially after
+	# the fate of many targets has been determined, and must be
+	# used with caution: don't add dependencies to unrelated
+	# targets, and don't set variables on $(<).
+
+#Echo "HdrRule got '" $(<) "' and '" $(>) "'" ;
+
+	local _d = [ geton $(<) : NOMLOC ] ;		# Directory location of source file
+	local _schpath = [ geton $(<) : HDRSEARCH ] ;	# Search path used to find these
+	local _s _ts ;				# include source targets, sources to trace
+
+#Echo "HDRSEARCH on '" $(<) "' is = '" $(_schpath) "'" ; 
+
+	# See if we can locate the header amongst the generated files.
+#Echo "Checking for matches of known targets" ;
+	local _i _j _k _ss _sp _n ;
+	local _stdhdrs = [ NormPaths $(STDHDRS) ] ;
+	_st = ;
+	for _j in $(>) {
+		_sp = ;			# Search path
+		_ss = ;			# Resolved source target
+#Echo "Checking include '" $(_j) "'" ;
+		for _k in $(_schpath)  "__unknown__" {		# search path and plain
+			_n = [ NormPaths $(_j) : $(_k) ] ;		# Normalized path for that search path
+			_i = [ _TargetIDs $(_n) ] ;				# Target ID/name if it exitsts
+#Echo "Checking target ID '" $(_i)-target "' value '" $($(_i)-target) "'" ;
+			if $($(_i)-target) {				# Target exists
+				_ss = $(_i) ;
+				_s += $(_ss) ;
+#Echo "Found existing target '" $(_ss) "'" ;
+				break ;
+			} else if ! $($(_i)-target) {				# unknown state
+#Echo "Unknown statis target '" $(_i) "'" ;
+				_sp += [ NormPaths $(_j:D) : $(_k) ] ;	# paths to search
+			}
+		}
+		if ! $(_ss) && $(_sp) {		# We've not seen that target 
+			local _found = ;
+#Echo "Searching for '" $(_j) "' in paths '" $(_sp) "'" ;
+			# See if we can find the header
+			_found = [ GLOB $(_sp) : $(_j:BS) ] ;
+
+			# Hmm. This sort of works around Windows problem of std include files being upper case.
+			# It won't solve the problem of tracing them if TRACESTDHDRS is true though.
+			if $(NT) && ! $(_found) {
+				_found = [ GLOB $(_sp) : $(_j:UBS) ] ;
+				_found = $(_found:D)\\$(_found:LBS) ;
+			}
+			if $(_found) {
+				_ss = [ NormSrcTargets $(_found[1]) ] ;		# Add it to our list
+#Echo "Using new found target '" $(_ss) "'" ;
+				_s += $(_ss) ;
+			}
+			# Mark off not found targets
+			for _k in $(_schpath) {
+				_n = [ NormPaths $(_j) : $(_k) ] ;	# Normalized path for that search path
+				_i = [ _TargetIDs $(_n) ] ;			# Target ID/name if it exitsts
+				if $(_i) = $(_ss) {
+					break ;							# The one we found
+				}
+#Echo "marking off '" $(_i) "' as non-existant" ;
+				$(_i)-target = "false" ;			# That combination doesn't exist
+			}
+			if ! $(_found) {
+				_k = "__unknown__" ;
+				_ss = [ NormSrcTargets $(_j) : $(_k) ] ;
+				# ~~99 This would make good warning information ?
+#Echo "Include unresolved: '" $(_ss) "'" ;
+				_s += $(_ss) ;	# Use plain header name as target ID
+			}
+		}
+		# We're left with $(_ss_) being the target and $(_k) being the search path 
+
+		# Add this to our list that will also be scanned for #includes
+#Echo "Dealt with'" $(_j) "', _ss = '" $(_ss) "' and _k = '" $(_k) "'" ;
+		if  ( ! $(_k) in "__unknown__" )
+		 && ( $(TRACESTDHDRS) = true || ! $(_k) in $(_stdhdrs) )  {
+			_st += $(_ss) ;
+		} 
+	}
+
+#Echo "Normalized includes = '" $(_s) "'" ;
+#Echo "Includes to be traced = '" $(_st) "'" ;
+
+	# Propagate on $(<) to $(>)
+	# Compute header search path for any #includes in these #includes
+
+	if $(_st)  {
+		HDRSEARCH2 on $(_st) = [ geton $(<) : HDRSEARCH2 ] ;
+		HDRSEARCH3 on $(_st) = [ geton $(<) : HDRSEARCH3 ] ;
+		for _i in $(_st) {
+			# Replace file dot/HDRSEARCH1 with one for this file
+			local _dot = [ geton $(_i) : NOMLOC ] ;
+			if ! $(_dot) { _dot = $(DOT) ; }
+			HDRSEARCH1 on $(_i) = $(_dot) ;
+			HDRSEARCH on $(_i) = [ geton $(_i) : HDRSEARCH1 ] [ geton $(_i) : HDRSEARCH2 ]
+			                     [ geton $(_i) : HDRSEARCH3 ] ;
+		}
+		HDRSCAN on $(_st)   = [ geton $(<) : HDRSCAN ] ;
+		HDRRULE on $(_st)   = [ geton $(<) : HDRRULE ] ;
+		HDRGRIST on $(_st)  = [ geton $(<) : HDRGRIST ] ;
+#Echo "HdrRule SEARCH on '" $(_st) "' set to '" [ geton $(_st) : SEARCH ] "'" ;
+#Echo "HdrRule HDRSEARCH on '" $(_st) "' set to '" [ geton $(_st) : HDRSEARCH ] "'" ;
+#Echo "HdrRule HDRSCAN on '" $(_st) "' set to '" [ geton $(_st) : HDRSCAN ] "'" ;
+#Echo "HdrRule HDRRULE on '" $(_st) "' set to '" [ geton $(_st) : HDRRULE ] "'" ;
+	}
+
+	# Tell Jam that anything depending on $(<) also depends on $(>),
+	# set SEARCH so Jam can find the headers, but then say we don't
+	# care if we can't actually find the headers (they may have been
+	# within ifdefs),
+
+	NoCare $(_s) ;
+	SEARCH on $(_s) = $(_schpath) ;		# Use search path used to find these #includes as Jam SEARCH path.
+	Includes $(<) : $(_s) ;
+}
+
+# Public InstallInto 
+# InstallInto dir : sources ;		install any files
+rule InstallInto
+{
+#Echo "InstallInto got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+	_InstallInto $(_t) : $(_s) ;
+}
+
+# Private InstallInto
+# Note that the install rules ignore SRDDIR and DSTDIR.
+# InstallInto destinations : sources ;		install any files
+rule _InstallInto
+{
+#Echo "_InstallInto got '" $(<) "' and '" $(>) "'" ;
+
+	local _t = $(<) ;		# targets
+	local _s = $(>) ;		# sources
+	local _is _it ;			# individual source and target
+
+	# Arrange for jam install
+	# Arrange for jam uninstall
+	# targets are in dir
+
+	Depends install : $(_t) ;
+	Clean uninstall : $(_t) ;
+	MakeLocate $(_t) ;				# create directories
+
+	# For each source, Install, Chmod, Chown, and Chgrp
+
+	for _is in $(_s)
+	{
+		_it = $(_t[1]) ;
+		_t = $(_t[2-]) ;	# Track _is 
+
+#Echo "_InstallInto installing target '" $(_it) "' from src '" $(_is) "'" ;
+		Depends $(_it) : $(_is) ;
+		Install $(_it) : $(_is) ;
+		Chmod_ $(_it) ;
+
+		if $(OWNER) && $(CHOWN) 
+		{ 
+			Chown_ $(_it) ;
+			OWNER on $(_it) = $(OWNER) ;
+		}
+
+		if $(GROUP) && $(CHGRP) 
+		{ 
+			Chgrp_ $(_it) ;
+			GROUP on $(_it) = $(GROUP) ;
+		}
+	}
+}
+
+# InstallBin dir : sources ;		install binaries
+rule InstallBin
+{
+#Echo "InstallBin got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>:S=$(SUFEXE)) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+#Echo "InstallBin norm '" $(_d) "' and '" $(_s) "' and '" $(_t) "'" ;
+	MODE on $(_t) = $(EXEMODE) ;
+	_InstallInto $(_t) : $(_s) ;
+#Echo "InstallBin done " ;
+}
+
+# InstallFile dir : sources ;		install files
+rule InstallFile
+{
+#Echo "InstallFile got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+#Echo "InstallFile normed targ '" $(_t) "' src '" $(_s) "' and dir '" $(_d) "'" ;
+	MODE on $(_t) = $(FILEMODE) ;
+	_InstallInto $(_t) : $(_s) ;
+}
+
+# InstallLib dir : sources ;		install static library files
+rule InstallLib
+{
+#Echo "InstallLib got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>:S=$(SUFLIB)) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+	MODE on $(_t) = $(FILEMODE) ;
+	_InstallInto $(_t) : $(_s) ;
+}
+
+# InstallShLib dir : sources ;		install shared library files
+rule InstallShLib
+{
+#Echo "InstallShLib got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>:S=$(SUFSHLIB)) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+	MODE on $(_t) = $(FILEMODE) ;
+	_InstallInto $(_t) : $(_s) ;
+}
+
+# InstallShell dir : sources ;		install files
+rule InstallShell
+{
+#Echo "InstallShell got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ; # Directory
+	local _s = [ NormSrcTargets $(>) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+	MODE on $(_t) = $(SHELLMODE) ;
+	_InstallInto $(_t) : $(_s) ;
+}
+
+# InstallMan dir : sources ;		install files
+rule InstallMan
+{
+#Echo "InstallMan got '" $(<) "' and '" $(>) "'" ;
+	local _d = [ NormPaths $(<) ] ;	# Directory
+	local _s = [ NormSrcTargets $(>) ] ;	# Sources
+	local _t = [ CreateIDstTargets $(_s) : $(_d) ] ; # Relocate targs to dir
+
+	# Really this just strips the . from the suffix
+
+	local _is _it _tt _s _id ;
+
+	_tt = $(_t) ;
+	for _is in $(_s)
+	{
+		_it = $(_tt[1]) ;
+		_tt = $(_tt[2-]) ;
+
+		switch $(_is:S)
+		{
+			case .1 : s = 1 ; case .2 : s = 2 ; case .3 : s = 3 ;
+			case .4 : s = 4 ; case .5 : s = 5 ; case .6 : s = 6 ;
+			case .7 : s = 7 ; case .8 : s = 8 ; case .l : s = l ;
+			case .n : s = n ; case .man : s = 1 ;
+		}
+
+		_id = [ RootPaths $(_d) : man$(_s) ] ;
+		CreateIDstTargets $(_it) : $(_id) ;
+		MODE on $(_it) = $(FILEMODE) ;
+		_InstallInto $(_it) : $(_is) ;
+	}
+}
+
+# Lex 
+# Lex source.c : source.l ;
+rule Lex
+{
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Depends $(_t) : $(_s) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+
+	Lex_ $(_t) : $(_s) ;
+}
+
+# Internal Lex
+rule Lex_
+{
+	LexMv_ $(<) : $(>) ;
+}
+
+# Library - create a static library from sources.
+# Library library : sources : flags : defines : hdrpaths : objects ; 
+rule Library
+{
+	LibraryFromObjects $(<) : $(>) $(6) ;
+	Objects $(>) : $(3) : $(4) : $(5) ;
+}
+
+# LibraryFromObjects - create a static library from object files.
+# LibraryFromObjects library : objects ;
+rule LibraryFromObjects
+{
+	local _i ;
+
+#Echo "LibraryFromObjects got " $(<) "and" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _l = [ NormDstTargets $(<[1]:S=$(SUFLIB)) ] ;
+	local _s = [ NormSrcTargets $(>:S=$(SUFOBJ)) ] ;
+#Echo "LibraryFromObjects nomed = " $(_l) "and" $(_s) ;
+
+	Depends lib : $(_l) ;
+
+	MakeLocate $(_l) ;
+
+	if $(NOARSCAN) 
+	{ 
+		# If we can't scan the library to timestamp its contents,
+		# we have to just make the library depend directly on the
+		# on-disk object files.  
+
+		Depends $(_l) : $(_s) ;
+	}
+	else
+	{
+		# If we can scan the library, we make the library depend
+		# on its members and each member depend on the on-disk
+		# object file.
+
+		for _i in $(_s)
+		{
+			local _m ;
+			_m = $(_l:M=$(_i:BS)) ;
+			CopyTarget $(_m) : $(_l) ;	# Transfer LOCATE, SEARCH, NOMLOC
+			Depends $(_l) : $(_m) ;
+			Depends $(_m) : $(_i) ;
+		}
+	}
+
+	Clean clean : $(_l) ;
+
+	if $(CRELIB) {
+		CreLib $(_l) : $(_s[1]) ;
+	}
+
+	Archive $(_l) : $(_s) ;
+
+	if $(RANLIB) {
+		Ranlib $(_l) ;
+	}
+
+	# If we can't scan the library, we have to leave the .o's around.
+	if ! ( $(NOARSCAN) || $(NOARUPDATE) ) {
+		local _ds ;
+		for _i in $(_s) {
+			# Don't delete any objects that we've marked with KEEPOBJS
+			if ! [ geton $(_i) : KEEPOBJS ] {
+				_ds += $(_i) ;
+			}
+		}
+		if $(_ds) {
+			RmTemps_ $(_l) : $(_ds) ;
+		}
+	}
+}
+
+# LibraryFromLibraries - create a static library from object files and static libraries.
+# LibraryFromLibraries library : libraries ;
+rule LibraryFromLibraries
+{
+	local _i ;
+
+#Echo "LibraryFromLibraries got " $(<) "and" $(>) ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _l = [ NormDstTargets $(<[1]:S=$(SUFLIB)) ] ;
+	local _s = [ NormSrcTargets $(>:S=$(SUFLIB)) ] ;
+#Echo "LibraryFromObjects nomed = " $(_l) "and" $(_s) ;
+
+	Depends lib : $(_l) ;
+	Depends $(_l) : $(_s) ;
+
+	MakeLocate $(_l) ;
+
+	Clean clean : $(_l) ;
+
+	if $(CRELIB) {
+		CreLib $(_l) : $(_s[1]) ;
+	}
+
+	ArchiveArchive $(_l) : $(_s) ;
+}
+
+# ShLibrary - create a shared library from sources.
+# ShLibrary library : sources : flags : defines : hdrpaths : objects : libs : shlibs ; 
+rule ShLibrary
+{
+	ShLibraryFromObjects $(<) : $(>) $(6) : $(7) : $(8) ;
+	Objects $(>) : $(CCSHOBJFLAG) $(3) : $(4) : $(5) ;
+}
+
+# ShLibraryFromObjects - create a shared library from object files.
+# Both the import (if used on the system) and shared library will be created.
+# ShLibraryFromObjects shlib : objects : libs : shlibs ;
+rule ShLibraryFromObjects
+{
+	local _i _l ;
+
+#Echo "ShLibraryFromObjects got " $(<) "and" $(>) ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _sl = [ NormDstTargets $(<[1]:S=$(SUFSHLIB)) ] ;
+	if $(NT) {
+		_l = [ NormDstTargets $(<[1]:S=$(SUFIMPLIB)) ] ;
+	}
+	local _s = [ NormSrcTargets $(>:S=$(SUFOBJ)) ] ;
+#Echo "ShLibraryFromObjects nomed =" $(_sl) "and" $(_l) "and" $(_s) ;
+
+	Depends lib : $(_sl) ;
+#	Depends lib : $(_l) ;
+	MakeLocate $(_sl) ;
+
+	Depends $(_sl) : $(_s) ;
+	Clean clean : $(_sl) $(_l) ;
+
+	if $(_l) {
+		Depends $(_l) : $(_s) ;
+		Clean clean : $(_l:S=.exp) ;
+	}
+
+#Echo "ShLibraryFromObjects SHLINKFLAGS = '" $(SHLINKFLAGS) "' and P_SHLINKFLAGS ='" $(P_LSHINKFLAGS) "'" ;
+
+	if $(SHLINKFLAGS) || $(P_SHLINKFLAGS)
+	 || $(PREF_SHLINKFLAGS) || $(P_PREF_SHLINKFLAGS) {
+		local pref_shlinkflags = $(P_PREF_SHLINKFLAGS) ;
+		pref_shlinkflags ?= $(PREF_SHLINKFLAGS) ;
+		SHLINKFLAGS on $(_sl) += $(P_SHLINKFLAGS) $(SHLINKFLAGS) $(pref_shlinkflags) ;
+	}
+
+#Echo "ShLibraryFromObjects SHLINKOBJS = '" $(SHLINKOBJS) "' and P_SHLINKOBJS ='" $(P_SHLINKOBJS) "'" ;
+	if $(SHLINKOBJS) || $(P_SHLINKOBJS) {
+		local _o = [ NormSrcTargets $(SHLINKOBJS:S=$(SUFOBJ)) ] $(P_SHLINKOBJS:S=$(SUFOBJ)) ;
+		Depends $(_sl) : $(_o) ;
+		SHLINKOBJS on $(_sl) += $(_o) ;
+	}
+
+#Echo "ShLibraryFromObjects SHLINKLIBS = '" $(SHLINKLIBS) "' and P_SHLINKLIBS ='" $(P_SHLINKLIBS) "'" ;
+	if $(SHLINKLIBS) || $(P_SHLINKLIBS) {
+		local _l = [ NormSrcTargets $(SHLINKLIBS:S=$(SUFLIB)) ] $(P_SHLINKLIBS:S=$(SUFLIB)) ;
+		Depends $(_sl) : $(_l) ;
+		SHLINKLIBS on $(_sl) += $(_l) ;
+	}
+
+#Echo "ShLibraryFromObjects SHLINKSHLIBS = '" $(SHLINKSHLIBS) "' and P_SHLINKSHLIBS ='" $(P_SHLINKSHLIBS) "'" ;
+	if $(SHLINKSHLIBS) || $(P_SHLINKSHLIBS) {
+		local _l = [ NormSrcTargets $(SHLINKSHLIBS:S=$(SUFSHLIB)) ] $(P_SHLINKSHLIBS:S=$(SUFSHLIB)) ;
+		Depends $(_sl) : $(_l) ;
+		SHLINKSHLIBS on $(_sl) += $(_l) ;
+	}
+
+	if $(SHLINKDEFFILE) {	# Windows special option
+		SHLINKDEFFILE on $(_sl) $(_l) = [ NormSrcTargets $(SHLINKDEFFILE) ] ;
+		Depends $(_sl) : [ geton $(_sl) : SHLINKDEFFILE ] ;
+		FakeFile_ $(_l) : $(_sl) ;		# .lib is created with .dll
+		ShLinkDef_ $(_sl) $(_l) : $(_s) ;
+	} else {
+		if (SHLINKSEARCHEXEPATH) {		# UNIX special option
+	
+			if $(OS) = MACOSX {		# OS X version of ld
+				SHLINKSEARCHEXEPATH = @executable_path/ ;
+			} else {
+#				SHLINKSEARCHEXEPATH = \\$PATH/ ;
+				SHLINKSEARCHEXEPATH = \\$ORIGIN/ ;
+			}
+		}
+		ShLink_ $(_sl) $(_l) : $(_s) ;
+	}
+
+	# Try and make sure the objects are build with the correct flag
+	ObjectCcFlags $(>) : $(CCSHOBJFLAG) ;
+	ObjectC++Flags $(>) : $(CCSHOBJFLAG) ;
+
+	if $(3) {
+		ShLibraryLibraries $(<) : $(3) ;	
+	}
+	if $(4) {
+		ShLibraryShLibraries $(<) : $(4) ;	
+	}
+}
+
+# Internal link
+rule Link_
+{
+	MODE on $(<) = $(EXEMODE) ;
+	Chmod_ $(<) ;
+}
+
+# Make the shared library link with the given objects.
+# This is just a way of adding common object files to many shlibs.
+# ShLibraryObjects shlib : objects ;
+rule ShLibraryObjects
+{
+#Echo "ShLibraryObjects got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<:S=$(SUFSHLIB)) ] ;
+	local _o = [ NormSrcTargets $(>:S=$(SUFOBJ)) ] ;
+
+	Depends $(_t) : $(_o) ;
+
+	SHLINKOBJS on $(_t) += $(_o) ;
+}
+
+# Make the executables link with the given static libraries.
+# ShLibraryLibraries shlib : libraries ;
+rule ShLibraryLibraries
+{
+#Echo "ShLibraryLibraries got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<:S=$(SUFSHLIB)) ] ;
+	local _l = [ NormSrcTargets $(>:S=$(SUFLIB)) ] ;
+
+	Depends $(_t) : $(_l) ;
+
+	SHLINKLIBS on $(_t) += $(_l) ;
+}
+
+# Make the executables link with the given shared libraries.
+# ShLibraryShLibraries shlib : shlibraries ;
+rule ShLibraryShLibraries
+{
+#Echo "ShLibraryShLibraries got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<:S=$(SUFSHLIB)) ] ;
+	local _l = [ NormSrcTargets $(>:S=$(SUFSHIMPLIB)) ] ;
+
+	Depends $(_t) : $(_l) ;
+
+	SHLINKSHLIBS on $(_t) += $(_l) ;
+}
+
+# Add extra LINKFLAGS to mains
+# MainLinkFlags mains : flags ;
+rule MainLinkFlags
+{
+#Echo "MainLinkFlags got '" $(<) "' and '" $(>) "'" ;
+	local _t = [ NormDstTargets $(<:S=$(SUFEXE)) ] ;
+	local _i ;
+
+	for _i in $(_t) {
+		LINKFLAGS on $(_i) += $(>) ;
+#Echo "exes '" $(_i) "' got LINKFLAGS '" [ geton $(_i) : LINKFLAGS ] "'" ;
+	}
+}
+
+# Make an executable from sources
+# Main image : sources : flags : defines : hdrpaths : objects : libs : shlibs ; 
+rule Main
+{
+	MainFromObjects $(<) : $(>) $(6) : $(7) : $(8) ;
+	Objects $(>) : $(3) : $(4) : $(5) ;
+}
+
+# Make a variant executable from sources
+# Objects are distiguished by appending "_image" 
+# MainVariant image : sources : flags : defines : hdrpaths : objects : libs : shlibs ; 
+rule MainVariant
+{
+	local _i _t _o ;
+
+#Echo "MainVariant got '" $(<) "' and '" $(>) "'" ;
+	for _i in $(>) {
+		_t = $(_i:DB)_$(<[1]) ;
+		Object $(_t) : $(_i) : $(3) : $(4) : $(5) ;
+#Echo "MainVariant object '" $(_t) "' and src '" $(_i) "'" ;
+		_o += $(_t) ;
+	}
+#Echo "MainVariant image '" $(<) "' and objs '" $(_o) "'" ;
+	MainFromObjects $(<) : $(_o) $(6) : $(7) : $(8) ;
+}
+
+# Make an executable from objects
+# MainFromObjects image : objects : libs : shlibs ;
+rule MainFromObjects
+{
+#Echo "MainFromObjects got" $(<) "and" $(>) ;
+
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]:S=$(SUFEXE)) ] ;
+	local _s = [ NormSrcTargets $(>:S=$(SUFOBJ)) ] ;
+
+#Echo "MainFromObjects _t" $(_t) "and _s" $(_s) ;
+
+	# so 'jam foo' works when it's really foo.exe
+	if $(_t:S=) != $(_t)
+	{
+		Depends $(_t:S=) : $(_t) ;
+		NotFile $(_t:S=) ;
+	}
+
+	# make compiled sources a dependency of target
+
+	Depends exe : $(_t) ;
+	Depends $(_t) : $(_s) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+
+	if $(3) {
+		LinkLibraries $(<) : $(3) ;	
+	}
+	if $(4) {
+		LinkShLibraries $(<) : $(4) ;	
+	}
+
+#Echo "MainFromObjects LINKFLAGS = '" $(LINKFLAGS) "' and P_LINKFLAGS ='" $(P_LINKFLAGS) "'" ;
+#Echo "                PREF_LINKFLAGS = '" $(PREF_LINKFLAGS) "' and P_PREF_LINKFLAGS ='" $(P_PREF_LINKFLAGS) "'" ;
+	if $(LINKFLAGS) || $(P_LINKFLAGS)
+	 || $(PREF_LINKFLAGS) || $(P_PREF_LINKFLAGS) {
+		local pref_linkflags = $(P_PREF_LINKFLAGS) ;
+		pref_linkflags ?= $(PREF_LINKFLAGS) ;
+		LINKFLAGS on $(_t) += $(P_LINKFLAGS) $(LINKFLAGS) $(pref_linkflags) ;
+#Echo "LINKFLAGS on $(_t) = '" [ geton $(_t) : LINKFLAGS ] "'" ; 
+	}
+
+#Echo "MainFromObjects LINKOBJS = '" $(LINKOBJS) "' and P_LINKOBJS ='" $(P_LINKOBJS) "'" ;
+	if $(LINKOBJS) || $(P_LINKOBJS) {
+		local _o = [ NormSrcTargets $(LINKOBJS:S=$(SUFOBJ)) ] $(P_LINKOBJS:S=$(SUFOBJ)) ;
+		Depends $(_t) : $(_o) ;
+		LINKOBJS on $(_t) += $(_o) ;
+	}
+
+#Echo "MainFromObjects LINKLIBS = '" $(LINKLIBS) "' and P_LINKLIBS ='" $(P_LINKLIBS) "'" ;
+	if $(LINKLIBS) || $(P_LINKLIBS) {
+		local _l = [ NormSrcTargets $(LINKLIBS:S=$(SUFLIB)) ] $(P_LINKLIBS:S=$(SUFLIB)) ;
+		Depends $(_t) : $(_l) ;
+		LINKLIBS on $(_t) += $(_l) ;
+	}
+
+#Echo "MainFromObjects LINKSHLIBS = '" $(LINKSHLIBS) "' and P_LINKSHLIBS ='" $(P_LINKSHLIBS) "'" ;
+	if $(LINKSHLIBS) || $(P_LINKSHLIBS) {
+		local _l = [ NormSrcTargets $(LINKSHLIBS:S=$(SUFIMPLIB)) ] $(P_LINKSHLIBS:S=$(SUFIMPLIB)) ;
+		Depends $(_t) : $(_l) ;
+		LINKSHLIBS on $(_t) += $(_l) ;
+	}
+
+	Link_ $(_t) : $(_s) ;
+
+	# Some OS's need to post process GUI apps to work (ie. OS X bundle)
+	if [ geton $(_t) : GUIAPP ] = "true" {
+		GUIAPP $(_t) ;
+	}
+#Echo "MainFromObjects done" ;
+}
+
+# A rule to make several mains from each of their single source files.
+# MainsFromSources executables ;
+rule MainsFromSources
+{
+	local _i ;
+	for _i in $(<) {
+		Main $(_i) : $(_i) ;
+	}
+}
+
+# Make the executables link with the given objects.
+# This is just a way of adding common object files to many mains.
+# LinkObjects image : objects ;
+rule LinkObjects
+{
+#Echo "LinkObjects got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<:S=$(SUFEXE)) ] ;
+	local _o = [ NormSrcTargets $(>:S=$(SUFOBJ)) ] ;
+
+	Depends $(_t) : $(_o) ;
+
+	LINKOBJS on $(_t) += $(_o) ;
+}
+
+# Make the executables link with the given static libraries.
+# LinkLibraries image : libraries ;
+rule LinkLibraries
+{
+#Echo "LinkLibraries got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<:S=$(SUFEXE)) ] ;
+	local _l = [ NormSrcTargets $(>:S=$(SUFLIB)) ] ;
+
+	Depends $(_t) : $(_l) ;
+
+	LINKLIBS on $(_t) += $(_l) ;
+}
+
+# Make the executables link with the given shared libraries.
+# LinkShLibraries image : shlibraries ;
+rule LinkShLibraries
+{
+#Echo "LinkShLibraries got '" $(<) "' and '" $(>) "'" ;
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<:S=$(SUFEXE)) ] ;
+	local _l = [ NormSrcTargets $(>:S=$(SUFSHIMPLIB)) ] ;
+
+	Depends $(_t) : $(_l) ;
+
+	LINKSHLIBS on $(_t) += $(_l) ;
+}
+
+# Ensure that each targets directories are created
+# Makelocate targets ;
+rule MakeLocate
+{
+#Echo "MakeLocate got '" $(<) "'" ;
+	local _i ;
+	# Uses special variable LOCATE of targets, and arranges
+	# with MkDir to create target directory.
+	# The directory itself becomes a target
+
+	for _i in $(<) {
+		local _t = [ geton $(_i) : LOCATE ] ;
+		if $(_t) {
+			MkDir_ $(_t) : $(_i) ;
+		}
+	}
+}
+
+# Make the directories and all their parent directories.
+# MkDir directories ;
+rule MkDir
+{
+#Echo "MkDir got '" $(<) "'" ;
+	# Ignore timestamps on directories: we only care if they exist.
+	local _t= [ NormPaths $(<) ] ;
+	local _i ;
+
+	for _i in $(_t) {
+		MkDir_ $(_i) ;
+	}
+}
+
+# Internal MkDir
+# MkDir dir [ : dependency ] 
+rule MkDir_
+{
+#Echo "MkDir_ got '" $(<) "' : '" $(>) "'" ;
+
+	if ! $(<:BS) {
+		return ;
+	}
+
+	local _t ;
+	local _d = $(<:D) ;			# Form target id from path + last directory
+	if ! $(_d) {
+		_d = $(DOT) ;
+	}
+	local _t = [ NormIDstTargets $(<:BS) : $(_d) ] ;
+
+#Echo "MkDir_ target = '" $(_t) "' dependant = '" $(>) "'" ;
+
+	if $(>) {		# Thing that depends on this directory 
+		Depends $(>) : $(_t) ;
+	}
+	NoUpdate $(_t) ;
+
+	# Don't create . or any directory already created.
+
+	if $(_t) != $(DOT) && ! $($(_t)-mkdir) 
+	{
+		# Cheesy gate to prevent multiple invocations on same dir
+		# Arrange for jam dirs
+		# MkDir1 has the actions 
+
+#Echo "Making '" $(_t) "'" ;
+		$(_t)-mkdir = true ;
+		Depends dirs : $(_t) ;
+		MkDir1 $(_t) ;
+
+		# Recursively make parent directories.
+		# $(_t:P) = $(_t)'s parent, & we recurse until root
+
+		local _s = $(<:P) ;
+#Echo "parent = '" $(_s) "'" ;
+
+		# Don't try to create A: or A:\ on windows
+
+		if $(NT)
+		{
+			switch $(_s)
+			{
+				case *:   : _s = ;
+				case *:\\ : _s = ;
+				case *:/  : _s = ;
+			}
+		}
+
+#Echo "parent now = '" $(_s) "'" ;
+		if $(_s) = $(SLASH)		# Hmm. Was $(_s) = $(<). How could that work ?
+		{
+#Echo "At root, ignore '" $(_s) "' = '" $(<) "'" ;
+			# The parent is the same as the dir.
+			# We're at the root, which some OS's can't stat, so we mark
+			# it as NotFile.
+
+			NotFile $(_s) ;
+		}
+		else if $(_s)  
+		{
+			# There's a parent; recurse.
+
+#Echo "Doing Depends '" $(_t) "' with '" [ _TargetIDs $(_s) ] "'" ;
+			Depends $(_t) : [ _TargetIDs $(_s) ] ;
+#Echo "Recursing with parent '" $(_s) "'" ;
+			MkDir_ $(_s) ;
+		}
+	} else {
+#Echo "Not making '" $(_t) "' because it's dot, or it's been made before" ;
+	}
+}
+
+# Deal with a single source to object.
+# Object object : sources : flags : defines : hdrpaths 
+rule Object
+{
+	#Echo "Object got " $(<) "and" $(>) "' flags '" $(3) "' defs '" $(4) "' hds '" $(5) "'" ;
+
+	# Normalize target names and set Grist LOCATE and SOURCE
+	local _t = [ NormDstTargets $(<[1]:S=$(SUFOBJ)) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+	local _dot ;
+
+#Echo "Object norms " $(_t) "and" $(_s) ;
+
+	Depends $(_t) : $(_s) ;
+	Depends obj : $(_t) ;
+	Clean clean : $(_t) ;
+	MakeLocate $(_t) ;
+
+	#  HDRS is used to provide the -I$(HDRS) options on compile.
+
+#Echo "Object sets HDRS on '" $(_t) "' to HDRS '" $(HDRS) "' and P_HDRS '" $(P_HDRS) "'" ;
+	HDRS on $(_t) = [ geton $(_t) : SEARCH ] [ NormPaths $(HDRS) ] $(P_HDRS) ;
+#Echo "HDRS on '" $(_t) "' is now '" [ geton $(_t) : HDRS ] "'" ;
+
+	# we need to mark what the associated source is so
+	# that if we want to change HDRS we can propogate
+	# it to the  #include files.
+
+	SOURCE on $(_t) = $(_s) ;		# ~~99 should check source is the same as any previous ?
+
+	# handle #includes for source: Jam scans for headers with
+	# the regexp pattern $(HDRSCAN) and then invokes $(HDRRULE)
+	# with the scanned file as the target and the found headers
+	# as the sources.  HDRSEARCH is the value of SEARCH used for
+	# the found header files. 
+
+	HDRRULE on $(_s) = HdrRule ;
+	HDRSCAN on $(_s) = $(HDRPATTERN) ;
+
+	# Construct HDRSEARCH so that we can latter add to HDRS
+	local _dot = [ geton $(_s) : NOMLOC ] ;
+	if ! $(_dot) { _dot = $(DOT) ; }
+	HDRSEARCH1 on $(_s) = $(_dot) ;
+	HDRSEARCH2 on $(_s) = [ NormPaths $(HDRS) ] $(P_HDRS) ;
+	HDRSEARCH3 on $(_s) = [ NormPaths $(STDHDRS) ] ;
+	HDRSEARCH on $(_s) = [ geton $(_s) : HDRSEARCH1 ] [ geton $(_s) : HDRSEARCH2 ]
+	                     [ geton $(_s) : HDRSEARCH3 ] ;
+#Echo "Object: HDRSEARCH on '" $(_s) "' set to '" [ geton $(_s) : HDRSEARCH ] "'" ;
+
+	# propagate target specific-defines
+
+	DEFINES on $(_t) = $(P_DEFINES) $(DEFINES) ;
+
+	# if source is not .c, generate .c with specific rule
+
+	switch $(_s:S)
+	{
+		case .asm : As_ $(_t) : $(_s) ;
+
+		case .c :	Cc_ $(_t) : $(_s) ;
+
+		case .C :	C++_ $(_t) : $(_s) ;
+		case .cc :	C++_ $(_t) : $(_s) ;
+		case .cpp : C++_ $(_t) : $(_s) ;
+		case .cxx : C++_ $(_t) : $(_s) ;
+
+		case .m :	Cc_ $(_t) : $(_s) ;
+
+		case .f :	Fortran_ $(_t) : $(_s) ;
+
+		case .l :	{
+						local _c = $(_t:S=.c) ;
+						CopyTarget $(_c) : $(_t) ;	# Transfer LOCATE, SEARCH, NOMLOC
+						Lex_ $(_c) : $(_s) ;
+						Cc_ $(_t) : $(_c) ;
+					}
+
+		case .s :	As_ $(_t) : $(_s) ;
+
+		case .y :	{
+						local _c = $(_t:S=$(YACCGEN)) ;
+						CopyTarget $(_c) : $(_t) ;	# Transfer LOCATE, SEARCH, NOMLOC
+						Yacc_ $(_c) : $(_s) ;
+						Cc_ $(_t) : $(_c) ;
+					}
+		# Note user object gets normalized target and source
+		case * :	UserObject $(_t) : $(_s) : $(3) : $(4) : $(5) ;
+	}
+#Echo ;
+
+	if $(3) {
+		ObjectCcFlags $(<) : $(3) ;
+		switch $(_s:S)
+		{
+			case .c :	ObjectCcFlags $(_t) : $(3) ;
+
+			case .C :	ObjectC++Flags $(_t) : $(3) ;
+			case .cc :	ObjectC++Flags $(_t) : $(3) ;
+			case .cpp : ObjectC++Flags $(_t) : $(3) ;
+			case .cxx : ObjectC++Flags $(_t) : $(3) ;
+
+			case .l :	ObjectCcFlags $(_t) : $(3) ;
+			case .y :	ObjectCcFlags $(_t) : $(3) ;
+		}
+	}
+	if $(4) {
+		ObjectDefines $(<) : $(4) ;
+	}
+	if $(5) {
+		ObjectHdrs $(<) : $(5) ;
+	}
+}
+
+# Add extra CCFLAGS to objects
+# ObjectCcFlags objects : flags ;
+rule ObjectCcFlags
+{
+#Echo "ObjectCcFLags got '" $(<) "' and '" $(>) "'" ;
+	local _t = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+	local _i ;
+
+	for _i in $(_t) {
+		CCFLAGS1 on $(_i) += $(>) ;
+		CCFLAGS on $(_i) = [ geton $(_i) : CCFLAGS1 ] [ geton $(_i) : CCFLAGS2 ] ;
+#Echo "object '" $(_i) "' got CCFLAGS1 '" [ geton $(_i) : CCFLAGS1 ] "' and CCFLAGS2 '" [ geton $(_i) : CCFLAGS2 ] "' for total CCFLAGS '" [ geton $(_i) : CCFLAGS ] "'" ;
+	}
+}
+
+# Add extra PREF_CCFLAGS to objects
+# ObjectPrefCcFlags objects : flags ;
+rule ObjectPrefCcFlags
+{
+#Echo "ObjectPrefCcFLags got '" $(<) "' and '" $(>) "'" ;
+	if ! $(P_PREF_CCFLAGS) {
+		local _t = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+		local _i ;
+
+		for _i in $(_t) {
+			CCFLAGS2 on $(_i) += $(>) ;
+			CCFLAGS on $(_i) = [ geton $(_i) : CCFLAGS1 ] [ geton $(_i) : CCFLAGS2 ] ;
+#Echo "object '" $(_i) "' got CCFLAGS1 '" [ geton $(_i) : CCFLAGS1 ] "' and CCFLAGS2 '" [ geton $(_i) : CCFLAGS2 ] "' for total CCFLAGS '" [ geton $(_i) : CCFLAGS ] "'" ;
+		}
+	}
+}
+
+# Add extra C++FLAGS to objects
+# ObjectC++Flags objects : flags ;
+rule ObjectC++Flags
+{
+#Echo "ObjectC++FLags got '" $(<) "' and '" $(>) "'" ;
+	local _t = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+	local _i ;
+
+	for _i in $(_t) {
+		C++FLAGS1 on $(_i) += $(>) ;
+		C++FLAGS on $(_i) = [ geton $(_i) : C++FLAGS1 ] [ geton $(_i) : C++FLAGS2 ] ;
+	}
+}
+
+# Add extra PREF_C++FLAGS to objects
+# ObjectPrefC++Flags objects : flags ;
+rule ObjectPrefC++Flags
+{
+#Echo "ObjectPrefC++FLags got '" $(<) "' and '" $(>) "'" ;
+	if ! $(P_PREF_C++FLAGS) {
+		local _t = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+		local _i ;
+
+		for _i in $(_t) {
+			C++FLAGS2 on $(_i) += $(>) ;
+			C++FLAGS on $(_i) = [ geton $(_i) : C++FLAGS1 ] [ geton $(_i) : C++FLAGS2 ] ;
+		}
+	}
+}
+
+# Add extra DEFINES to objects
+# ObjectDefines objects : defines ;
+rule ObjectDefines
+{
+	# must reformat CCDEFS according to current defines
+
+	local s = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+
+	DEFINES on $(s) += $(>) ;
+	CCDEFS on $(s) = [ on $(s) FDefines $(DEFINES) ] ;
+}
+
+# Add extra header search paths to objects.
+# ObjectHdrs objects : dirs ;
+rule ObjectHdrs
+{
+#Echo "ObjectHdrs HDRS got '" $(<) "' and '" $(>) "'" ;
+	# Add to HDRS for CCHDRS benefit.
+	local _t = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+	local _h = [ NormSrcPaths $(>) ] ;
+	local _i _s ;
+
+#Echo "ObjectHdrs changed  HDRS on '" $(_t) "' from '" [ geton $(_t) : HDRS ] "'" ;
+	HDRS on $(_t) += $(_h) ;
+#Echo " to '" [ geton $(_t) : HDRS ] "'" ;
+	for _i in $(_t) {
+		_s = [ geton $(_i) : SOURCE ] ;
+#Echo " obj '" $(_i) "' has source '" $(_s) "'" ;
+#Echo " ObjectHdrs changed HDRSEARCH on '" $(_s) "' from '" [ geton $(_s) : HDRSEARCH ] "'" ;
+		HDRSEARCH2 on $(_s) += $(_h) ;
+		HDRSEARCH on $(_s) = [ geton $(_s) : HDRSEARCH1 ] [ geton $(_s) : HDRSEARCH2 ]
+		                     [ geton $(_s) : HDRSEARCH3 ] ;
+#Echo "  to '" [ geton $(_s) : HDRSEARCH ] "'" ;
+		CCHDRS on $(_i) = [ on $(_i) FIncludes $(HDRS) ] ;
+	}
+}
+
+# Set KEEPOBJS on the given headers
+# ObjectKeep objects ;
+rule ObjectKeep
+{
+#Echo "ObjectKeep got '" $(<) "" ;
+	local _t = [ NormDstTargets $(<:S=$(SUFOBJ)) ] ;
+
+	KEEPOBJS on $(_t) = "true" ;
+#Echo "ObjectHdrs changed  KEEPOBJS on '" $(_t) "' to '" [ geton $(_t[1]) : KEEPOBJS ] "'" ;
+}
+
+# Create object files from sources.
+# Objects sources : flags : defines : hdrpaths ; 
+rule Objects
+{
+#Echo "Objects got src '" $(<) "' flags '" $(2) "' def '" $(3) "' hdrs '" $(4) "'" ;
+	local _i ;
+
+	for _i in $(<) {
+		Object $(_i) : $(_i) : $(2) : $(3) : $(4) ;
+	}
+}
+
+# Marks sources as temporary with the TEMPORARY rule, and deletes sources once targets  are built.
+# Must be the last rule invoked on targets. 
+# RmTemps targets : sources ;
+rule RmTemps
+{
+	local _s = [ NormPaths $(>) ] ;
+	if $(_s) {
+		RmTemps_ $(<) : $(_s) ;
+	}
+}
+
+# internal RmTemps
+rule RmTemps_
+{
+	Temporary $(>) ;
+}
+
+# Setuid
+rule Setuid
+{
+	local _t = [ NormPaths $(>:S=$(SUFEXE)) ] ;
+	MODE on $(_t) = 4755 ;
+}
+
+# Shell
+rule Shell
+{
+	local _t = [ NormTargs $(>:S=$(SUFSH)) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+	Shell_ $(_t) : $(_s) ;
+}
+
+# internal Shell
+rule Shell_
+{
+	Depends shell : $(<) ;
+	Depends $(<) : $(>) ;
+	MODE on $(<) = $(SHELLMODE) ;
+	Clean clean : $(<) ;
+	Chmod_ $(<) ;
+}
+
+# SoftLink
+rule SoftLink
+{
+	local _t = [ NormDstTargets $(<) ] ;
+	local _s = [ NormSrcTargets $(>) ] ;
+
+	SoftLink_ $(_t) : $(_s) ;
+}
+
+# internal SoftLink
+rule SoftLink_
+{
+	Depends files : $(<) ;
+	Depends $(<) : $(>) ;
+	Clean clean : $(<) ;
+}
+
+#Adds flags to mark symbols as undefined on link command for images
+rule Undefines
+{
+	local _t = [ NormDstTargets $(<) ] ;
+	UNDEFS on [ $(_t:S=$(SUFEXE)) ] += $(UNDEFFLAG)$(>) ;
+}
+
+# User routine to handle objects. Note that
+# targets and sources are in normalized form.
+rule UserObject
+{
+	Exit "Unknown suffix on" $(>) "- see UserObject rule in Jamfile(5)." ;
+}
+
+# Yacc source.c : source.y ;
+rule Yacc
+{
+	local _t = [ NormDstTargets $(<[1]) ] ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Yacc_ $(_t) : $(_s) ;
+}
+
+# internal Yacc
+rule Yacc_
+{
+	local _h ;
+
+	_h = $(<:S=.h) ;
+	CopyTarget $(_h) : $(<) ;	# Transfer LOCATE, SEARCH, NOMLOC
+
+	# Some places don't have a yacc.
+
+	MakeLocate $(<) $(_h) ;
+
+	if $(YACC)
+	{
+		Depends $(<) : $(>) ;
+		FakeFile_ $(_h) : $(<) ;		# .h is created with .c
+		Yacc1_ $(<) $(_h) : $(>) ;
+		YaccMv_ $(<) $(_h) ;
+		Clean clean : $(<) $(_h) ;
+	}
+
+	# make sure someone includes $(_h) else it will be
+	# a deadly independent target
+
+	Includes $(<) : $(_h) ;
+}
+
+# Aswig : source.i ;
+# Argyll C class generator. Creates C class declaration source.h,
+# C class partial implementation source_i.c, C++ class wrapper
+# declaration & implementation source.hpp.
+rule Aswig
+{
+#Echo "Aswig called with $(>) " ;
+	local _s = [ NormSrcTargets $(>[1]) ] ;
+
+	Aswig_ : $(_s) ;
+}
+
+# internal Aswig
+rule Aswig_
+{
+#Echo "Aswig_ called with $(>)" ;
+	local _i = $(>[1]) ;
+	local _h = $(_i:S=.h) ;
+	CopyTarget $(_h) : $(_i) ;		# Transfer LOCATE, SEARCH, NOMLOC
+	local _c = $(_i:B=$(_i:B)_i:S=.c) ;
+	CopyTarget $(_c) : $(_i) ;		# Transfer LOCATE, SEARCH, NOMLOC
+	local _hpp = $(_i:S=.hpp) ;
+	CopyTarget $(_hpp) : $(_i) ;	# Transfer LOCATE, SEARCH, NOMLOC
+
+#Echo "Aswig_ creates $(_h) $(_c) $(_hpp) from $(_i) " ;
+
+	MakeLocate $(_h) $(_c) $(_hpp) ;
+
+	Depends $(_h) : $(_i) ;
+	FakeFile_ $(_c) : $(_h) ;		# _i.c is created with .h
+	FakeFile_ $(_hpp) : $(_h) ;		# _.hpp is created with .h
+	Aswig1_ $(_h) : $(_i) ;
+	Clean clean : $(_h) $(_c) $(_hpp) ;
+}
+
+#
+# Utility rules; no side effects on these
+#
+
+# FReverse a1 a2 a3 ... ;
+# return ... a3 a2 a1 ;
+rule FReverse 
+{
+
+	local _i _o = ;
+	for _i in $(1)
+	{
+		_o = $(_i) $(_o) ;
+	}
+	return $(_o) ;
+}
+
+# Strip common initial elements of variables v1 and v2.
+# Modifies the variable values themselves.
+# FStripCommon v1 : v2 ;
+rule FStripCommon
+{
+
+	if $($(<)[1]) && $($(<)[1]) = $($(>)[1])
+	{
+		$(<) = $($(<)[2-]) ;
+		$(>) = $($(>)[2-]) ;
+		FStripCommon $(<) : $(>) ;
+	}
+}
+
+# Append suffix if there is not already one
+# E.g., "FAppendSuffix yacc lex foo.bat : $(SUFEXE) ;"
+# returns (yacc,lex,foo.bat) on Unix and 
+# (yacc.exe,lex.exe,foo.bat) on NT.
+# FAppendSuffix files : suffix ;
+rule FAppendSuffix
+{
+
+	if $(>)
+	{
+		local _i _o ;
+
+		for _i in $(<)
+		{
+			if $(_i:S)
+			{
+				_o += $(_i) ;
+			}
+			else
+			{
+				_o += $(_i:S=$(>)) ;
+			}
+		}
+		return $(_o) ;
+	}
+	else
+	{
+		return $(<) ;
+	}
+}
+
+# return a1 a2 ... with any empty elements deleted
+# FDelEmpty a1 a2 ... ;
+rule FDelEmpty 
+{
+
+	local _i _o = ;
+	for _i in $(<)
+	{
+		if $(_i) {
+			_o += $(_i) ;
+		}
+	}
+	return $(_o) ;
+}
+
+#
+# Operating system specific utility rules
+# First, the (generic) UNIX versions
+#
+
+rule FQuote { return \\\"$(<)\\\" ; }
+rule FDefines { local _t = [ FDelEmpty $(<) ] ; return -D$(_t) ; }
+rule FIncludes { local _t = [ FDelEmpty $(<) ] ; return -I$(_t) ; }
+
+if $(OS2)
+{
+	rule FQuote { return \"$(<)\" ; }
+	rule FIncludes { local _t = [ FDelEmpty $(<) ] ; return /I$(_t) ; }
+}
+
+else if $(NT)
+{
+	if ! $(MINGW) {
+		rule FDefines { local _t = [ FDelEmpty $(<) ] ; return /D$(_t) ; }
+		rule FIncludes { local _t = [ FDelEmpty $(<) ] ; return /I$(_t) ; }
+	}
+}
+
+else if $(MAC)
+{
+	rule FQuote { return \"$(<)\" ; }
+	rule FDefines { local _t = [ FDelEmpty $(<) ] ; return "-define '$(_t)'" ; }
+	rule FIncludes { local _t = [ FDelEmpty $(<) ] ; return \"$(_t:J=,)\" ; }
+}
+
+else if $(VMS)
+{
+	rule FQuote { return \"\"\"$(<)\"\"\" ; }
+	rule FDefines { local _t = [ FDelEmpty $(<) ] ; return "/define=( $(_t:J=,) )" ; }
+	rule FIncludes { local _t = [ FDelEmpty $(<) ] ; return "/inc=( $(_t:J=,) )" ; }
+
+	rule FDirName
+	{
+			local _s _i ;
+
+			# Turn individual elements in $(<) into a usable path.
+
+			if ! $(<)
+			{
+				_s = $(DOT) ;
+			}
+			else 
+			{
+				# This handles the following cases:
+				#		 a -> [.a]
+				#		 a b c -> [.a.b.c]
+				#		 x: -> x:
+				#		 x: a -> x:[a]
+				#		 x:[a] b -> x:[a.b]
+
+				switch $(<[1])
+				{
+					case *:* : _s = $(<[1]) ;
+					case \\[*\\] : _s = $(<[1]) ;
+					case * : _s = [.$(<[1])] ;
+				}
+
+				for _i in [.$(<[2-])]
+				{
+					_s = $(_i:R=$(_s)) ;
+				}
+			}
+
+			return $(_s) ;
+	}
+}
+
+#
+# Actions
+#
+
+#
+# First the defaults
+#
+
+actions updated together piecemeal Archive
+{
+	$(AR) $(<) $(>)
+}
+
+actions together ArchiveArchive
+{
+	mkdir .jamArchiveArchive$PPID
+	cp $(>) .jamArchiveArchive$PPID 
+	cd .jamArchiveArchive$PPID 
+	for i in $(>:BS)
+	do
+    	ar -xo $i
+	done
+    cd ..
+	ar -r $(<) .jamArchiveArchive$PPID/*.o
+	rm -rf .jamArchiveArchive$PPID
+}
+
+actions As
+{
+	$(AS) $(ASFLAGS) $(ASHDRS) -o $(<) $(>)
+}
+
+actions C++_
+{
+	$(C++) -c -o $(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) $(>)
+}
+
+actions Cc_
+{
+	$(CC) -c -o $(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>)
+}
+
+actions Chgrp_
+{
+	$(CHGRP) $(GROUP) $(<)
+}
+
+actions Chmod1
+{
+	$(CHMOD) $(MODE) $(<)
+}
+
+actions Chown_
+{
+	$(CHOWN) $(OWNER) $(<)
+}
+
+actions piecemeal together existing Clean
+{
+	$(RM) $(>)
+}
+
+actions File_
+{
+	$(CP) $(>) $(<)
+}
+
+#actions FakeFile_ { }
+
+actions GenFile1
+{
+	$(>[1]) $(<) $(>[2-])
+}
+
+actions GenFileND1
+{
+	$(>)
+}
+
+actions GenFileNND1
+{
+	$(>)
+}
+
+actions CreateCatFile_ 
+{
+	$(CP) /Y nul $(<) > nul
+}
+
+actions CatToFile_
+{
+	echo $(>) >> $(<)
+}
+
+actions Fortran_
+{
+	$(FORTRAN) $(FORTRANFLAGS) -o $(<) $(>)
+}
+
+actions HardLink_
+{
+	$(RM) $(<) && $(LN) $(>) $(<)
+}
+
+actions Install
+{
+	$(CP) $(>) $(<) 
+}
+
+actions Lex_
+{
+	$(LEX) $(>)
+}
+
+actions LexMv_
+{
+	$(MV) lex.yy.c $(<)
+}
+
+#	Old: $(LINK) $(LINKFLAGS) $(LINKOUTFLAG)$(<) $(UNDEFS) $(>) $(LINKOBJS) $(LINKLIBS) $(LINKSHLIBS) $(STDLIBS) 
+#	$(LINK) $(LINKOUTFLAG)$(<) $(UNDEFS) $(>) $(LINKFLAGS) $(LINKOBJS) $(LINKLIBS) $(LINKSHLIBS) $(STDLIBS) 
+actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS
+{
+	$(LINK) $(LINKOUTFLAG)$(<) $(UNDEFS) $(>) $(LINKOBJS) $(LINKLIBS) $(LINKSHLIBS) $(LINKFLAGS) $(STDLIBS)  
+}
+
+if $(OS) = MACOSX {		# OS X version of ld
+
+	# Link .o and .a into a .dylib
+	# gcc -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,/usr/local/lib/libfoo.1.dylib -o libfoo.1.dylib $(OBJ)
+	# -Wl,-install_name,@executable_path ???
+	actions ShLink_ bind SHLINKOBJS SHLINKLIBS SHLINKSHLIBS  
+	{
+		$(LINK) -dynamiclib -Wl,-undefined,dynamic_lookup,-install_name,$(SHLINKSEARCHEXEPATH)$(<[1]:BS) $(LINKOUTFLAG)$(<[1]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHLINKFLAGS) $(SHSTDLIBS)
+	}
+
+} else {	# General gcc
+
+	# Link .o and .a into a .so
+	# To set .so search path: -Wl,-rpath,$(LINKSHLIBS:D) 
+	# or set LD_LIBRARY_PATH
+	# or set /etc/ld.so.conf.d/*.conf
+	# To set .so search path (after flag):  -Wl,-soname=$(<[1]:BS)
+# Old:	$(LINK) -shared -Wl,-soname=$(SHLINKSEARCHEXEPATH)$(<[1]:BS) $(SHLINKFLAGS) $(LINKOUTFLAG)$(<[1]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHSTDLIBS)
+	actions ShLink_ bind SHLINKOBJS SHLINKLIBS SHLINKSHLIBS  
+	{
+		$(LINK) -shared -Wl,-soname=$(SHLINKSEARCHEXEPATH)$(<[1]:BS) $(LINKOUTFLAG)$(<[1]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHLINKFLAGS) $(SHSTDLIBS)
+	}
+}
+
+actions MkDir1
+{
+	$(MKDIR) $(<)
+}
+
+actions together Ranlib
+{
+	$(RANLIB) $(<)
+}
+
+actions quietly updated piecemeal together RmTemps_
+{
+	$(RM) $(>)
+}
+
+actions Shell_
+{
+	$(AWK) '
+		NR == 1 { print "$(SHELLHEADER)" }
+		NR == 1 && /^[#:]/ { next }
+		/^##/ { next }
+		{ print }
+	' < $(>) > $(<)
+}
+
+actions SoftLink_
+{
+	$(RM) $(<) && $(LN) -s $(>) $(<)
+}
+
+actions Yacc1_
+{
+	$(YACC) $(YACCFLAGS) $(>)
+}
+
+actions YaccMv_ 
+{
+	$(MV) $(YACCFILES).c $(<[1])
+	$(MV) $(YACCFILES).h $(<[2])
+}
+
+actions Aswig1_
+{
+	aswig $(ASWIGFLAGS) -c++ -a2c $(>)
+}
+
+#
+# RELOCATE - for compilers with broken -o flags
+#
+
+if $(RELOCATE)
+{
+	actions C++_
+	{
+		$(C++) -c $(C++FLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+
+	actions Cc_
+	{
+		$(CC) -c $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+
+	actions ignore CcMv
+	{
+		[ $(<) != $(>:BS=$(SUFOBJ)) ] && $(MV) $(>:BS=$(SUFOBJ)) $(<)
+	}
+}
+
+#
+# NOARUPDATE - can't update an archive
+#
+
+if $(NOARUPDATE)
+{
+	actions Archive
+	{
+		$(AR) $(<) $(>)
+	}
+}
+
+#
+# UNIX specific actions
+#
+
+if $(UNIX)
+{
+	actions GenFile1
+	{
+		PATH="$PATH:."
+		$(>[1]) $(<) $(>[2-])
+	}
+
+	actions CreateCatFile_ 
+	{
+		$(CP) /dev/null $(<) 
+	}
+
+	actions CatToFile_
+	{
+		echo "$(>)" >> $(<)
+	}
+
+	# Make OS X GUI apps work
+	if $(OS) = MACOSX
+	{
+
+		# Used to use /Developer/Tools/Rez -t APPL Carbon.r -o $(<)
+		# but this no longer works in OS X 10.5, and we don't need this
+		# stuff with TransformProcessType()
+		# Another alternative is to use link option "-sectcreate __TEXT __info_plist Info.plist" ???
+		# to embed the plist in the executable, but not sure what should be in plist.
+		# Pure GUI app
+		actions GUIAPP
+		{
+			rm -rf $(<).app
+			mkdir -p $(<).app
+			mkdir $(<).app/Contents
+			mkdir $(<).app/Contents/Resources
+			mkdir $(<).app/Contents/MacOS
+			echo APPLnone > $(<).app/Contents/PkgInfo
+			mv $(<) $(<).app/Contents/MacOS
+			chmod 755 $(<).app/Contents/MacOS/$(<:BS)
+			cat << EOF > $(<).app/Contents/info.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+        <key>CFBundleName</key>
+        <string>$(<:BS)</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleVersion</key>
+        <string>59</string>
+        <key>CFBundleShortVersionString</key>
+        <string>1.1</string>
+        <key>CFBundleSignature</key>
+        <string>none</string>
+</dict>
+</plist>
+EOF
+			cat << EOF > $(<)
+#!/bin/sh
+\$0.app/Contents/MacOS/$(<:BS)
+EOF
+			chmod 755 $(<)
+		}
+	}
+}
+
+#
+# NT specific actions
+#
+
+if $(NT) 
+{
+	# Ensure timestamp is updated
+
+	actions File_
+	{
+		$(CP) /b $(>) + nul $(<) > nul
+	}
+
+	actions Install
+	{
+		$(CP) /b $(>) + nul $(<) > nul
+	}
+}
+
+if $(NT) && $(MSVCNT)
+{
+#	actions updated together piecemeal Archive
+#	{
+#		if exist $(<) set _$(<:B)_=$(<)
+#		$(AR) /out:$(<) %_$(<:B)_% $(>)
+#	}
+
+	# This is slightly dodgy if you've got multiple
+	# libraries with the same name in different directories with
+	# jam -j n, or you have .obj's distinguished only by their directory
+	# being combined into the same library, but it overcomes
+	# the problem of lib not updating a library properly if
+	# jam is involked from different directories.
+	actions updated together piecemeal Archive
+	{
+		if exist $(<:BS)_ RMDIR /S/Q $(<:BS)_
+		MKDIR $(<:BS)_
+		for %%i in ( $(>) ) do COPY %%i $(<:BS)_ 1>nul
+		if exist $(<) set _$(<:B)_=$(<)
+		$(AR) /out:$(<) %_$(<:B)_% $(<:BS)_\*
+		DEL /F/S/Q $(<:BS)_\* 1>nul
+		RMDIR /Q $(<:BS)_
+	}
+
+	actions together ArchiveArchive
+	{
+		$(AR) /out:$(<) $(>)
+	}
+
+	actions As
+	{
+		$(AS) /Ml /p /v /w2 $(>) $(<) ,nul,nul;
+	}
+
+	actions Cc_
+	{
+		$(CC) /c /Fo$(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) /I$(STDHDRS) $(>)
+	}
+
+	actions C++_
+	{
+		$(C++) /c /Fo$(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) /I$(STDHDRS) /Tp $(>)
+	}
+
+	actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS
+	{
+		$(LINK) $(LINKFLAGS) $(P_LINKFLAGS) /out:$(<) $(UNDEFS) $(>) $(LINKOBJS) $(LINKLIBS) $(LINKSHLIBS) $(STDLIBS)
+	}
+
+	# Create DLL using export attribute
+	actions ShLink_  bind SHLINKOBJS SHLINKLIBS SHLINKSHLIBS 
+	{
+		$(LINK) /DLL $(SHLINKFLAGS) /out:$(<[1]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHSTDLIBS)
+	}
+
+	# Create DLL using .def file
+	actions ShLinkDef_ bind SHLINKDEFFILE SHLINKOBJS SHLINKLIBS SHLINKSHLIBS 
+	{
+		$(LINK) /DLL /DEF:$(SHLINKDEFFILE) $(SHLINKFLAGS) /out:$(<[1]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHSTDLIBS)
+	}
+}
+else if $(NT) && $(MSVC)
+{
+	actions updated together piecemeal Archive
+	{
+		$(AR) $(<) -+$(>)
+	}
+
+	actions Cc_
+	{
+		$(CC) /c /Fo$(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+
+	actions C++_
+	{
+		$(C++) /c /Fo$(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) /Tp $(>)
+	}
+
+	actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS
+	{
+		$(LINK) $(LINKFLAGS) $(P_LINKFLAGS) /out:$(<) $(UNDEFS) $(>) $(LINKOBJS) $(LINKLIBS) $(LINKSHLIBS) $(STDLIBS)
+	}
+}
+else if $(NT) && $(BCCROOT)
+{
+	actions updated together piecemeal Archive
+	{
+		$(AR) $(<) -+$(>)
+	}
+
+	actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS
+	{
+		$(LINK) -e$(<) $(LINKFLAGS) $(P_LINKFLAGS) $(UNDEFS) -L$(STDLIBS) $(LINKLIBS) $(LINKSHLIBS) $(>) $(LINKOBJS)
+	}
+
+	actions C++_
+	{
+		$(C++) -c -o$(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+
+	actions Cc_
+	{
+		$(CC) -c -o$(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+}
+
+else if $(NT) && $(MINGW) {
+
+	# Create DLL using export attribute
+	actions ShLink_  bind SHLINKOBJS SHLINKLIBS SHLINKSHLIBS
+	{
+		$(LINK) -shared $(SHLINKFLAGS) $(LINKOUTFLAG)$(<[1]) -Wl,--out-implib,$(<[2]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHSTDLIBS)
+	}
+	# Create DLL using .def file
+	actions ShLinkDef_ bind SHLINKOBJS SHLINKLIBS SHLINKSHLIBS SHLINKDEFFILE
+	{
+		$(LINK) -shared $(SHLINKFLAGS) $(LINKOUTFLAG)$(<[1]) -Wl,--out-implib,$(<[2]) $(>) $(SHLINKOBJS) $(SHLINKLIBS) $(SHLINKSHLIBS) $(SHSTDLIBS) $(SHLINKDEFFILE)
+	}
+}
+
+#
+# OS2 specific actions
+#
+
+else if $(OS2) && $(WATCOM)
+{
+	actions together piecemeal Archive
+	{
+		$(AR) $(<) +-$(>) 
+	}
+
+	actions Cc_
+	{
+		$(CC) /Fo=$(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+
+	actions C++_
+	{
+		$(C++) /Fo=$(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) $(>)
+	}
+
+	actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS 
+	{
+		$(LINK) $(LINKFLAGS) $(P_LINKFLAGS) /Fe=$(<) $(UNDEFS) $(>) $(LINKOBJS) $(LINKLIBS) $(LINKSHLIBS) $(STDLIBS)
+	}
+
+	actions Shell_
+	{
+		$(CP) $(>) $(<)
+	}
+}
+
+#
+# VMS specific actions
+#
+
+else if $(VMS)
+{
+	actions updated together piecemeal Archive 
+	{
+		lib/replace $(<) $(>[1]) ,$(>[2-])
+	}
+
+	actions Cc_
+	{ 
+		$(CC)/obj=$(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>) 
+	}
+
+	actions C++_
+	{ 
+		$(C++)/obj=$(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) $(>) 
+	}
+
+	actions piecemeal together existing Clean
+	{
+		$(RM) $(>[1]);* ,$(>[2-]);*
+	}
+
+	actions together quietly CreLib
+	{
+		if f$search("$(<)") .eqs. "" then lib/create $(<)
+	}
+
+	actions GenFile1
+	{
+		mcr $(>[1]) $(<) $(>[2-])
+	}
+
+	actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS
+	{
+		$(LINK)/exe=$(<) $(LINKFLAGS) $(P_LINKFLAGS) $(>:J=,) ,$(LINKOBJS:J=,) ,$(LINKLIBS)/lib ,$(LINKSHLIBS)/lib ,$(STDLIBS)
+	}
+
+	actions quietly updated piecemeal together RmTemps_
+	{
+		$(RM) $(>[1]);* ,$(>[2-]);*
+	}
+
+	actions Shell_
+	{
+		$(CP) $(>) $(<)
+	}
+}
+
+#
+# Mac specifc actions
+#
+
+else if $(MAC)
+{
+	actions together Archive 
+	{
+		$(LINK) -library -o $(<) $(>)
+	}
+
+	actions Cc_
+	{
+		set -e MWCincludes $(CCHDRS)
+		$(CC) -o $(<) $(CCFLAGS) $(CCDEFS) $(>) 
+	}
+
+	actions C++_
+	{
+		set -e MWCincludes $(CCHDRS)
+		$(CC) -o $(<) $(C++FLAGS) $(CCDEFS) $(>) 
+	}
+
+	actions Link_ bind LINKOBJS LINKLIBS LINKSHLIBS
+	{
+		$(LINK) -o $(<) $(LINKOBJS) $(LINKFLAGS) $(P_LINKFLAGS) $(>) $(LINKLIBS) $(LINKSHLIBS) "$(STDLIBS)"
+	}
+}
+
+if $(WIN98)
+{
+	actions existing Clean
+	{
+		del $(>)
+	}
+}
+
+# =========================================
+
+# Now do Argyll init and read default Jamtop
+DoInit ;
+
+#
+# Now include the user's Jamfile.
+#
+
+#PeerInclude $(DOT) ;
+SubInclude $(DOT) ;
+

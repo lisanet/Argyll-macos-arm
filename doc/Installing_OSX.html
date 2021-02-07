@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll Installation on Apple OS X</title>
+  </head>
+  <body>
+    <h1> <u>Installing the software on Apple OS X<br>
+      </u></h1>
+    <br>
+    You will need to unpack the downloaded file in such a way that the
+    files it contains end up in the location you have chosen to hold its
+    contents.<br>
+    <br>
+    If you want to install it system wide, then you probably want to
+    unpack it in the <i>/Applications</i> folder, so that it ends up in
+    the <i>/Applications/Argyll_VX.X.X</i> folder.<br>
+    Another option is just to install it somewhere under your $HOME
+    folder, such as <span style="font-style: italic;">$HOME/</span><i>Argyll_VX.X.X</i>
+    or <span style="font-style: italic;">$HOME/</span><i>bin/Argyll_VX.X.X</i>,
+    depending on how you like to organize your applications and utility
+    programs. ($HOME is the shell symbolic name for your home folder,
+    typically /Users/<i>username</i>. Another abbreviation for it is the
+    ~ character.)<br>
+    <br>
+    You can unpack it by control-click on the downloaded file and “Open
+    With” BOMArchiveHelper or Archive Utility. Drag the resulting folder
+    to where you want it, e.g. into <i>/Applications</i>, <i>$HOME</i>
+    or <i>$HOME/bin</i>.<br>
+    <br>
+    Alternatively you can unpack it on the command line using&nbsp; the
+    command <span style="font-weight: bold;">tar -zxf</span> <span
+      style="font-weight: bold;">archivename.tgz</span>, which will
+    create a folder <span style="font-weight: bold;">Argyll_VX.X.X</span>
+    in your current folder, where X.X.X is the version number, and the
+    executables will be in <span style="font-weight: bold;">Argyll_VX.X.X/bin</span>
+    sub-folder.<br>
+    <br>
+    Open a Terminal shell. This will be in
+    Applications-&gt;Utilities-&gt;Terminal (Dragging it to the dock is
+    a good idea to make it more accessible).<br>
+    <br>
+    You should configure your $PATH environment variable to give the
+    shell access to the executable from your command line environment
+    without having to spell out the whole path every time, by editing
+    your <span style="font-weight: bold;">.profile</span> file, which
+    will be in your $HOME folder. You can open a graphical editor on
+    this file by using the open command:<br>
+    <br>
+    &nbsp; open $HOME/.profile<br>
+    <br>
+    or alternatively, use some other text editor that you are familiar
+    with.<br>
+    <br>
+    Add a line similar to the following line to your .profile file:<br>
+    <br>
+    &nbsp; PATH=$PATH:/Applications/Argyll_VX.X.X/bin<br>
+    <br>
+    where "/Applications/Argyll_VX.X.X/bin" is the path to the folder
+    that contains the ArgyllCMS executables.<br>
+    Save your changes and exit the editor.<br>
+    <br>
+    If you want further guidance in setting up and using a command line
+    environment, then please consult an appropriate tutorial, e.g. &lt;<a
+href="http://heather.cs.ucdavis.edu/matloff/public_html/UnixAndC/Unix/ShellIntro.pdf">ShellIntro</a>&gt;.<br>
+    <br>
+    The .tgz file also contains several useful reference files (such as
+    scanner chart recognition templates, sample illumination spectrum
+    etc.) in the <b>ref</b> sub-folder, as well as all the current
+    documentation in a <b>doc</b> sub-folder.<br>
+    <br>
+    For most devices there is nothing special to do. Plug in and go.
+    Some devices may not work without some extra help though:<br>
+    <h3><a name="ColorMunki"></a><span style="text-decoration:
+        underline;">X-Rite ColorMunki</span></h3>
+    Some version of X-Rite's ColorMunki drivers released between 2009
+    and 2011 install an X-Rite daemon that runs as root and grabs the
+    device, preventing any other programs (such as Argyll) from opening
+    them. Latter versions seem to be more cooperative, and don't suffer
+    from this problem. There are three ways of working around this
+    problem:<br>
+    <br>
+    1) Turn off the X-Rite service for the ColorMunki. See &lt;<a
+      class="moz-txt-link-freetext"
+href="http://www.xrite.com/product_overview.aspx?ID=1161&amp;Action=support&amp;SupportID=4980">http://www.xrite.com/product_overview.aspx?ID=1161&amp;Action=support&amp;SupportID=4980</a>&gt;.<br>
+    <br>
+    2) Run all Argyll programs that need to access the instrument as
+    root. For instance:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; sudo spotread<br>
+    <br>
+    and then you will be asked for the root password.<br>
+    While these methods will work, they are inconvenient. <br>
+    <br>
+    3) Alter the X-Rite drivers Daeomon so that it runs under your user
+    account.<br>
+    <br>
+    To do this you need to edit the script that controls the X-Rite
+    Daemon.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cd ~<br>
+    &nbsp;&nbsp;&nbsp; whoami<br>
+    &nbsp;&nbsp;&nbsp; cp
+    /Library/LaunchDaemons/com.xrite.device.colormunki.plist temp.plist<br>
+    &nbsp;&nbsp;&nbsp; open temp.plist<br>
+    <br>
+    and add one child below the root:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+      Value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </span><br>
+    &nbsp;&nbsp;&nbsp; UserName &nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+    myusername<br>
+    <br>
+    where "myusername" is your username shown by whoami, and save the
+    file. You then need to copy the modified file back: <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; sudo cp temp.plist
+    /Library/LaunchDaemons/com.xrite.device.colormunki.plist<br>
+    <br>
+    You will then need to restart the machine for this change to take
+    effect, or invoke the following commands:<br>
+    <br>
+    &nbsp;&nbsp; sudo launchctl unload
+    /Library/LaunchDaemons/com.xrite.device.colormunki.plist<br>
+    &nbsp;&nbsp; sudo launchctl load
+    /Library/LaunchDaemons/com.xrite.device.colormunki.plist<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that after running
+    Argyll tools, you may have to turn the X-Rite service off then on
+    again, or disconnect and reconnect the instrument.<br>
+    <br>
+    <h3><a name="ColorMunki"></a><span style="text-decoration:
+        underline;">X-Rite EyeOne Pro</span><br>
+    </h3>
+    Some version of X-Rite's EyeOne Pro drivers drivers released between
+    2009 and 2011 install an X-Rite daemon that runs as root and grabs
+    the device, preventing any other programs (such as Argyll) from
+    opening them. Latter versions seem to be more cooperative, and don't
+    suffer from this problem. There are three ways of working around
+    this problem:<br>
+    <br>
+    1) Turn off the X-Rite service for the EyeOne Pro. See &lt;<a
+      class="moz-txt-link-freetext"
+href="http://www.xrite.com/product_overview.aspx?ID=1161&amp;Action=support&amp;SupportID=4980">http://www.xrite.com/product_overview.aspx?ID=1161&amp;Action=support&amp;SupportID=4980</a>&gt;.<br>
+    <br>
+    2) Run all Argyll programs that need to access the instrument as
+    root. For instance:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; sudo spotread<br>
+    <br>
+    and then you will be asked for the root password.<br>
+    While these methods will work, they are inconvenient. <br>
+    <br>
+    3) Alter the X-Rite drivers Daemon so that it runs under your user
+    account.<br>
+    <br>
+    To do this you need to edit the script that controls the X-Rite
+    Daemon.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; cd ~<br>
+    &nbsp;&nbsp;&nbsp; whoami<br>
+    &nbsp;&nbsp;&nbsp; cp
+    /Library/LaunchDaemons/com.xrite.device.i1.plist temp.plist<br>
+    &nbsp;&nbsp;&nbsp; open temp.plist<br>
+    <br>
+    and add one child below the root:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+      Value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </span><br>
+    &nbsp;&nbsp;&nbsp; UserName &nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+    myusername<br>
+    <br>
+    where "myusername" is your username shown by whoami, and save the
+    file. You then need to copy the modified file back: <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; sudo cp temp.plist
+    /Library/LaunchDaemons/com.xrite.device.i1.plist<br>
+    <br>
+    You will then need to restart the machine for this change to take
+    effect, or invoke the following commands:<br>
+    <br>
+    &nbsp;&nbsp; sudo launchctl unload
+    /Library/LaunchDaemons/com.xrite.device.i1.plist<br>
+    &nbsp;&nbsp; sudo launchctl load
+    /Library/LaunchDaemons/com.xrite.device.i1.plist<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that after running
+    Argyll tools, you may have to turn the X-Rite service off then on
+    again, or disconnect and reconnect the instrument.<br>
+    <br>
+    <h3><a name="specbos"></a><span style="text-decoration: underline;">JETI
+specbos
+
+
+
+
+
+
+
+
+
+
+        1201 and 1211</span> and <u>Klein K10A</u><br>
+    </h3>
+    <br>
+    If you are using the <b>JETI</b> specbos <b>1211</b><b>,&nbsp;</b><b>1201</b><b>,
+      1511, 1501</b> and the <b>Klien K10A</b> then you may need to
+    install the <a href="http://www.ftdichip.com/Drivers/VCP.htm">FTDI
+      Virtual COM Port Drivers</a> (VCP), if they are not already on
+    your system. You may have to update to the latest FTDI driver to
+    work with the FTDI FT231XS chip that the <b>JETI</b> specbos <b>1511,
+      1501</b> use.<br>
+    <h3><a name="HCFR"></a><u>HCFR Colorimeter</u></h3>
+    The default OS X class drivers will grab this device, preventing
+    Argyll from accessing it. To overcome this, you need to install a
+    codeless kernel extension if you wish to use the HCFR colorimeter,
+    that prevents this from happening. From the command line you need to
+    create a folder called Argyll.kext somewhere convenient, and then
+    place in it one file called Info.plist, containing the following:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; ----------------- cut here ---------------------<br>
+    &nbsp;&nbsp; &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>
+    &nbsp;&nbsp; &lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST
+    1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>
+    &nbsp;&nbsp; &lt;plist version="1.0"&gt;<br>
+    &nbsp;&nbsp; &lt;dict&gt;<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;
+    &lt;key&gt;CFBundleDevelopmentRegion&lt;/key&gt;
+    &lt;string&gt;English&lt;/string&gt;<br>
+    &nbsp;&nbsp; &nbsp; &nbsp;
+    &lt;key&gt;CFBundleGetInfoString&lt;/key&gt; &lt;string&gt;Libusb
+    USB device Shield&lt;/string&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
+    &lt;string&gt;com.libusb.USB_Shield&lt;/string&gt;<br>
+    &nbsp;&nbsp; &nbsp; &nbsp;
+    &lt;key&gt;CFBundleInfoDictionaryVersion&lt;/key&gt;
+    &lt;string&gt;6.0&lt;/string&gt;<br>
+    &nbsp; &nbsp; &nbsp;&nbsp; &lt;key&gt;CFBundleName&lt;/key&gt;
+    &lt;string&gt;Libusb USB device Shield&lt;/string&gt;<br>
+    &nbsp; &nbsp; &nbsp;&nbsp;
+    &lt;key&gt;CFBundlePackageType&lt;/key&gt;
+    &lt;string&gt;KEXT&lt;/string&gt;<br>
+    &nbsp;&nbsp; &nbsp; &nbsp; &lt;key&gt;CFBundleSignature&lt;/key&gt;
+    &lt;string&gt;????&lt;/string&gt;<br>
+    &nbsp; &nbsp; &nbsp;&nbsp; &lt;key&gt;CFBundleVersion&lt;/key&gt;
+    &lt;string&gt;6.0&lt;/string&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    &lt;key&gt;IOKitPersonalities&lt;/key&gt;<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;dict&gt;<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;
+    &lt;key&gt;HCFR&lt;/key&gt;<br>
+    &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &lt;dict&gt;<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;
+    &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
+    &lt;string&gt;com.apple.driver.AppleUSBComposite&lt;/string&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+    &nbsp;&nbsp; &lt;key&gt;IOClass&lt;/key&gt;
+    &lt;string&gt;AppleUSBComposite&lt;/string&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+    &nbsp; &lt;key&gt;IOProviderClass&lt;/key&gt;
+    &lt;string&gt;IOUSBDevice&lt;/string&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    &nbsp;&nbsp; &lt;key&gt;idVendor&lt;/key&gt;
+    &lt;integer&gt;1243&lt;/integer&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+    &nbsp; &lt;key&gt;idProduct&lt;/key&gt;
+    &lt;integer&gt;91&lt;/integer&gt;<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &lt;/dict&gt;<br>
+    &nbsp;&nbsp; &nbsp; &nbsp; &lt;/dict&gt;<br>
+    &nbsp; &nbsp; &nbsp;&nbsp;
+    &lt;key&gt;OSBundleCompatibleVersion&lt;/key&gt;
+    &lt;string&gt;1.8&lt;/string&gt;<br>
+    &nbsp;&nbsp; &nbsp; &nbsp; &lt;key&gt;OSBundleLibraries&lt;/key&gt;<br>
+    &nbsp; &nbsp; &nbsp;&nbsp; &lt;dict&gt;<br>
+    &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+    &lt;key&gt;com.apple.kernel.iokit&lt;/key&gt;
+    &lt;string&gt;6.0&lt;/string&gt;<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/dict&gt;<br>
+    &nbsp;&nbsp; &lt;/dict&gt;<br>
+    &nbsp;&nbsp; &lt;/plist&gt;<br>
+    &nbsp; &nbsp; ----------------- cut here ---------------------<br>
+    <br>
+    (You can also copy this from the source installation in
+    usb/Argyll.kext)<br>
+    <br>
+    You then need to install it by using:<br>
+    <br>
+    &nbsp; sudo cp -R Argyll.kext /System/Library/Extensions<br>
+    <br>
+    supplying the appropriate root password when prompted.<br>
+    Reboot the system to activate the extension.<br>
+    <br>
+    <p><br>
+    </p>
+  </body>
+</html>

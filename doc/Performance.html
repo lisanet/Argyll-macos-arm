@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll Performance Tuning</title>
+  </head>
+  <body>
+    <h2> <u>Performance Tuning</u></h2>
+    <br>
+    Some operations in Argyll can be particularly slow, so it is worth
+    examining ways of improving performance, or trading memory
+    consumption for performance.<br>
+    <br>
+    (See <a href="Environment.html">here</a> for how to set Environment
+    variables.)<br>
+    <h3>Creating Device Links and Profiles<br>
+    </h3>
+    In creating device links or the B2A tables of profiles, the
+    execution time is often dominated by the inversion of forward color
+    lookup values. An in-memory cache is employed to speed up this
+    operation, by keeping computed values in case they can be used more
+    than once. The amount of memory used for caching these values is
+    pre-set within the inversion code, and by default is set to use half
+    of the available RAM on the system, with a minimum of 50 Mbytes.<br>
+    <br>
+    The reverse cache size can be changed by setting an environment
+    variable <span style="font-weight: bold;">ARGYLL_REV_CACHE_MULT</span>
+    to a number greater or less than than 1.0 This will multiply the
+    size of the cache by that number (i.e. 1.5 would increase the cache
+    size by 50%, 0.5 would halve it).<br>
+    <br>
+    If you find that <span style="font-weight: bold;">colprof</span>
+    or&nbsp; <span style="font-weight: bold;">collink</span> are
+    working very slowly, but that your CPU's are nearly idle, then this
+    is a sign of disk swapping, and that too much memory is being
+    requested.&nbsp; This can be because other applications are also
+    using memory, or Argyll's default setting tries to use more memory
+    than is actually available. You can try shutting down other
+    applications when this happens, or you can <span
+      style="font-weight: bold;">lower</span> the amount of memory
+    Argyll uses by setting <span style="font-weight: bold;">ARGYLL_REV_CACHE_MULT</span>
+    to a value less than 1.0 (ie. try 0.5). <br>
+    <br>
+    If you have a lot of memory available, you can try increasing the
+    cache size to use more of the available RAM (particularly if you get
+    a "Warning - Reverse Cell Cache exhausted, processing in chunks"
+    message during processing), but if you set it to a value too near
+    2.0 you risk disk swapping, which can slow progress to a crawl.<br>
+    <br>
+    If you have a lot of memory available, then a second adjustment that
+    can make a great difference to the time taken in creating B2A tables
+    is the resolution of the inverse lookup acceleration grid. The finer
+    the grid, the less searching is needed to locate the input
+    colorspace values that correspond to a target output color value,
+    but the greater the memory used in this structure, and the greater
+    the setup time needed to initialize the acceleration grid. The <span
+      style="font-weight: bold;">ARGYLL_REV_ACC_GRID_RES_MULT</span>
+    environment variable can alter the default resolution by a scale
+    factor. A value of 0.5 for instance, would halve the resolution
+    (typically meaning 1/8 th. the total number of grid entries and
+    memory), while a value of 2.0 would double it, typically resulting
+    in 8 times the memory usage. Increasing the resolution too much will
+    reduce the available memory for the reverse cache, and greatly
+    increase setup time.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

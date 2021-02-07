@@ -1,0 +1,76 @@
+
+# Top level Argyll Jamfile. 
+
+# Overall optization state and configuration. Overrides sub-Jamfiles
+# See Jamtop and Jambase for other details.
+
+PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+#PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	+= $(CCHEAPDEBUG) ;		# Heap Debugging & Debugging flags
+#PREF_LINKFLAGS	+= $(LINKOPTFLAG) ;		# Link optimization flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;	# Link debugging flags
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile flags
+
+# Include all the sub-directory Jamfiles
+
+SubInclude numlib ;
+SubInclude plot ;
+SubInclude icc ;
+#SubInclude icc4 ;
+SubInclude cgats ;
+SubInclude xml ;
+SubInclude yajl ;
+SubInclude rspl ;
+SubInclude gamut ;
+SubInclude xicc ;
+SubInclude imdi ;
+SubInclude spectro ;
+SubInclude target ;
+SubInclude scanin ;
+SubInclude profile ;
+SubInclude link ;
+SubInclude tweak ;
+SubInclude render ;
+SubInclude namedc ;
+SubInclude ccast ;
+
+if ! $(HAVE_TIFF) {
+	SubInclude tiff ;
+}
+
+if ! $(HAVE_JPEG) {
+	SubInclude jpeg ;
+}
+
+if ! $(HAVE_ZLIB) {
+	SubInclude zlib ;
+}
+
+if ! $(HAVE_PNG) {
+	SubInclude png ;
+}
+
+if $(USE_LIBUSB) = true {
+
+	if $(USE_LIBUSB1) = true {
+		SubInclude libusb1 ;
+	} else {
+		if $(NT) {
+			SubInclude libusbw ;
+		}
+		if $(UNIX) {
+			SubInclude libusb ;
+		}
+	}
+} else {
+	if $(NT) {
+		SubInclude usb ;
+	}
+}
+
+if $(UNIX) && $(OS) != MACOSX {
+	SubInclude jcnf ;
+	SubInclude ucmm ;
+}
+

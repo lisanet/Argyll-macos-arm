@@ -1,0 +1,618 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll Installation on Microsoft Windows</title>
+  </head>
+  <body style="color: rgb(0, 0, 0);" link="#0000ee" vlink="#551a8b"
+    alink="#ee0000">
+    <h1> <u>Installing the software on Microsoft Windows<br>
+      </u></h1>
+    <h3 style="background-color: rgb(255, 255, 255);"><span
+        style="color: rgb(51, 153, 153);">Unpacking the .zip archive:</span></h3>
+    You will need to unzip the downloaded file in the location you have
+    chosen to hold the executable files (perhaps somewhere like <span
+      style="font-weight: bold;">\bin</span>). I would <span
+      style="font-weight: bold;">NOT</span> put them in <span
+      style="font-style: italic;">\Program Files</span>, since spaces in
+    directory or file names and command line environments are a very bad
+    mix, and will cause you endless problems. The archive will create a
+    <span style="font-weight: bold;"></span> top level directory <span
+      style="font-weight: bold;">Argyll_VX.X.X</span>, where X.X.X is
+    the version number, and the executables will be in <span
+      style="font-weight: bold;">Argyll_VX.X.X\bin</span>.
+    <h3><span style="color: rgb(51, 153, 153);">Making the tools
+        accessible:</span></h3>
+    You should also configure your %PATH% environment variable to give
+    access to the executables from your command line environment.<br>
+    <br>
+    For <span style="font-weight: bold;">Windows 8</span>, <b>8.1
+      &amp; 10</b>, look in<br>
+    &nbsp;&nbsp;&nbsp; <span style="font-weight: bold;"></span>Desktop
+    -&gt; Settings -&gt; Control Panel -&gt; System And Security -&gt;
+    System -&gt; Advanced System Settings -&gt; Environment Variables<br>
+    <br>
+    For <span style="font-weight: bold;">Windows 7</span>, look in<br>
+    &nbsp;&nbsp;&nbsp; Start Menu -&gt; Control Panel -&gt; System And
+    Security -&gt; System -&gt; Change Settings -&gt; Advanced -&gt;
+    Environment Variables<br>
+    <br>
+    For <span style="font-weight: bold;">Vista</span>, look in<br>
+    &nbsp;&nbsp;&nbsp; Start Menu -&gt; Control Panel -&gt; System And
+    Maintenance -&gt; System -&gt; Change Settings -&gt; Advanced -&gt;
+    Environment Variables<br>
+    <br>
+    For <span style="font-weight: bold;">XP and 2000 </span>look in<br>
+    &nbsp;&nbsp;&nbsp; Start-&gt;Settings-&gt;Control
+    Panel-&gt;System-&gt;Advanced-&gt;Environment Variables<br>
+    <br>
+    For <span style="font-weight: bold;">NT 4</span> look in<br>
+    &nbsp;&nbsp;&nbsp; Start-&gt;Settings-&gt;Control
+    Panel-&gt;System-&gt;Environment<br>
+    <br>
+    You want to add the directory you've chosen to your %PATH%, which is
+    a System Variable. Normally you would add this to the end of the
+    current setting, separated by a ';'.&nbsp; <br>
+    <br>
+    &nbsp;So if the current value of PATH is
+    "%SystemRoot%\system32;%SystemRoot%" and you unpacked Argyll version
+    1.8.0 in <span style="font-weight: bold;">d:\bin\</span>, then you
+    would modify PATH to be
+    "%SystemRoot%\system32;%SystemRoot%;d:\bin\Argyll_V1.8.0\bin", -
+    i.e. you append the path to the Argyll binaries to your PATH,
+    separated by the ';' character. The change will take effect when you
+    start a new command shell, which you start from Start
+    Menu-&gt;Accessories-&gt;Command Prompt, or Start
+    Menu-&gt;Programs-&gt;Accessories-&gt;Command Prompt. You can check
+    that the environment variable has been set by running the command
+    "echo %PATH%" in the command shell.<br>
+    <br>
+    The .zip file also contains several useful reference files (such as
+    scanner chart recognition templates, sample illumination spectrum
+    etc.) in the ref sub-directory, all the current documentation in a
+    doc sub-directory, and instrument USB drivers in the usb directory.<br>
+    <br>
+    <span style="font-weight: bold;">NOTE: </span><span
+      style="font-weight: bold;">Vista 64/Windows 7, 8,8.1 &amp;
+      10&nbsp; 64 bit</span> and <span style="font-weight: bold;">Beep</span>
+    prompt<span style="font-weight: bold;">: </span>Microsoft (in its
+    infinite wisdom) has removed the built in speaker driver, and now
+    relies on systems having a sound card and speakers's installed and
+    turned on to hear system beeps. So if you're wondering where the
+    beeps have gone when using <a href="chartread.html">chartread</a>,
+    now you know.<span style="font-weight: bold;"></span><br>
+    <br>
+    <span style="font-weight: bold;">NOTE: Microsofts generic VGA Driver</span>
+    does not appear to support setting the display VideoLUTs. You will
+    need to install a display driver for your specific display hardware
+    to enable this. Note that it is possible in many cases to use
+    Windows 7 video drivers on Windows 8 systems.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><br>
+    <span style="font-weight: bold;">NOTE</span> that if you wish to use
+    Argyll tools (<a href="dispwin.html">dispwin</a>) to control display
+    calibration, that you will have to disable any other display
+    calibration loader programs.<br>
+    <br>
+    There are other programs that will interfere with calibration
+    loading, such as igfxpers.exe that gets installed with nVidia
+    "Optimus" technology.<br>
+    You may have to disable both the igfx tray module
+    (c:\windows\system32\igfxtray.exe) and the igfxpph Module
+    (c:\windows\system32\igfxpph.dll) in addition to the persistence
+    Module (c:\windows\system32\igfxpers.exe).<br>
+    <br>
+    A good tool for this is <a
+      href="http://technet.microsoft.com/en-us/sysinternals/bb963902">AutoRuns</a>.
+    Note that the igfxpph module may exist in several locations and you
+    have to disable all of them. Reboot after changing settings.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;">
+    <h3><u><font color="#009900">Serial Instruments:</font></u><br>
+    </h3>
+    If you are using a serial connected instrument, then there is
+    nothing special to do to enable this.<br>
+    <h3><font color="#ff6600"><u>USB Instruments:</u></font></h3>
+    If you are using a USB connected instrument, then suitable <span
+      style="font-weight: bold;">USB system drivers</span> may need to
+    be installed.<br>
+    <span style="font-weight: bold;"><br>
+    </span>Note that the <span style="font-weight: bold;">Huey</span>,
+    <span style="font-weight: bold;">i1 Display Pro</span>, <span
+      style="font-weight: bold;">ColorMunki Display</span> and <b>ColorHug</b>
+    colorimeter appears as an HID (USB Human Interface Device Class)
+    device, and hence will be assigned to the default MSWindows HID
+    driver. You therefore <span style="font-weight: bold;
+      text-decoration: underline;">don't need</span> to install an
+    Argyll <span style="font-weight: bold;">usb</span> system driver
+    for these instruments, although it is possible to select the
+    libusb0.sys driver as an alternative to the default HID driver.<br>
+    <br>
+    If you are using the <b>JETI</b> specbos <b>1211</b><b>,&nbsp;</b><b>1201</b><b>,
+      1511, 1501</b> and the <b>Klien K10A</b><b></b> then you may need
+    to install the <a href="http://www.ftdichip.com/Drivers/VCP.htm">FTDI
+
+
+      Virtual COM Port Drivers</a> (VCP), if they are not already on
+    your system. You may have to update to the latest FTDI driver to
+    work with the FTDI FT231XS chip that the <b>JETI</b> specbos <b>1511,
+
+
+      1501</b> use.<br>
+    <br>
+    Jump to your operating system version:<br>
+    <br>
+    <a href="#WIN8">Windows 8, 8.1 &amp; 10</a><br>
+    <a href="#WINV7">Windows 7</a><br>
+    <a href="#WINV7">Windows Vista</a><br>
+    <a href="#WINXP">Windows XP</a><br>
+    <a href="#WIN2K">Windows 2000</a><br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><a name="WIN8"></a><font
+      size="+1"><span style="font-weight: bold;">Windows 8, 8.1 &amp; 10</span></font><font
+      size="+1"><span style="font-weight: bold;"></span></font><br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;">Fresh Install of Instrument USB driver:</span></span><br>
+      <br>
+    </span>If you currently don't have any applications that talk to
+    your instrument using USB, then it is relatively simple to use the
+    drivers provided with Argyll, since you don't have to deal with the
+    instrument already having an assigned driver.<br>
+    <br>
+    Windows 8/8.1/10 does not automatically pop up a "New Hardware"
+    dialog, so you will have to open the Device Manager manually, and
+    you will also have to temporarily disable UBS driver .inf signature
+    enforcement.<br>
+    <br>
+    Please <b>NOTE</b> that on some versions of Windows 10, you may
+    have to temporarily <b>disable secure boot</b> in your UEFI BIOS to
+    be able to Disable Driver Signature Enforcement.<br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      driver for the first instrument:</span><br>
+    &nbsp;&nbsp;&nbsp; Settings -&gt; Power -&gt; <span
+      style="font-weight: bold;">Hold Shift Key down and click</span>
+    "Restart" -&gt; Troubleshoot -&gt; Advanced Options -&gt; Startup
+    Settings -&gt; Restart -&gt;<br>
+    &nbsp;&nbsp;&nbsp; (After Reboot) -&gt; "Disable Driver Signature
+    Enforcement" (number 7 on the list)<br>
+    &nbsp;&nbsp;&nbsp; (After system starts, Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp; Desktop -&gt; Settings -&gt; Control Panel -&gt;
+    Hardware and Sound -&gt; Device Manager -&gt;<br>
+    &nbsp;&nbsp;&nbsp; Other Devices -&gt; &lt;instrument being
+    installed&gt; -&gt; right click -&gt; Update Driver Software...
+    -&gt; Browse my computer for driver software -&gt; Browse...<br>
+    &nbsp;&nbsp;&nbsp; -&gt; <span style="font-weight: bold;">argyll\usb</span>
+    folder -&gt; Next -&gt; Install this driver software anyway -&gt;
+    Close<br>
+    <br style="text-decoration: underline;">
+    <span style="text-decoration: underline;">On subsequent installation
+      of other supported instrument types:</span><br>
+    &nbsp;&nbsp;&nbsp; Simply plug the instrument in. The Argyll driver
+    will be automatically selected.<br>
+    <br>
+    <br>
+    &nbsp; <span style="color: rgb(51, 153, 153); font-weight: bold;"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+        Argyll drivers with existing OEM drivers:</span></span><br>
+    <br>
+    If you currently have applications other than Argyll accessing your
+    USB connected instrument, then you will have to manually install the
+    Argyll driver, and then switch back and forth between the Argyll and
+    other drivers if you want to switch between applications. <br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      Driver:</span><br>
+    &nbsp;&nbsp;&nbsp; Settings -&gt; Power -&gt; <span
+      style="font-weight: bold;">Hold Shift Key down and click</span>
+    "Restart" -&gt; Troubleshoot -&gt; Advanced Options -&gt; Startup
+    Settings -&gt; Restart -&gt;<br>
+    &nbsp;&nbsp;&nbsp; (After Reboot) -&gt; Disable Driver Signature
+    Enforcement" (number 7 on the list)<br>
+    &nbsp;&nbsp;&nbsp; (After system starts, Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp; Desktop -&gt; Settings -&gt; Control Panel -&gt;
+    Hardware and Sound -&gt; Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Update Driver
+    Software... -&gt; let me pick from a list of device drivers on my
+    computer -&gt; Have disk... -&gt; Browse...<br>
+    &nbsp;&nbsp;&nbsp; -&gt; <span style="font-weight: bold;">argyll\usb</span>
+    folder -&gt; select ArgyllCMS.inf -&gt; Open -&gt; OK -&gt; Install
+    this driver software anyway -&gt; Close<br>
+    <br>
+    <span style="text-decoration: underline;">To switch between drivers:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp;&nbsp; Desktop -&gt; Settings -&gt; Control Panel -&gt;
+    Hardware and Sound -&gt; Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Update Driver
+    Software... -&gt; let me pick from a list of device drivers on my
+    computer<br>
+    &nbsp;&nbsp;&nbsp; (Choose either the Argyll driver or another
+    driver from the list)<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Next -&gt; Close<br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;">Un-installing Argyll driver:</span></span></span><br>
+    <br>
+    If you are updating to a new version of Argyll which adds support
+    for a new instrument that you want to use, then it may be necessary
+    to uninstall all the existing Argyll USB driver and do a fresh
+    re-install to update the relevant libusb system driver and .inf
+    file. (This is true for updating to Argyll Version 2.0.0). <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp;&nbsp; Desktop -&gt; Settings -&gt; Control Panel -&gt;
+    Hardware and Sound -&gt; Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It
+    will be underneath the Argyll LibUSB-win32 devices top level item.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Uninstall -&gt;
+    click "Delete the driver software for this device" -&gt; OK <br>
+    <br>
+    Proceed then with either <span style="color: rgb(51, 153, 153);"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;">Fresh
+        Install of Argyll USB driver</span></span> or <span
+      style="color: rgb(51, 153, 153);"><span style="color: rgb(0, 0,
+        0); text-decoration: underline;">Adding Argyll drivers to
+        existing drivers</span></span> above.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><a name="WINV7"></a><font
+      size="+1"><span style="font-weight: bold;">Windows Vista &amp;
+        Windows 7</span></font><br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;"></span></span></span><span style="color: rgb(51, 153,
+      153);"><span style="color: rgb(0, 0, 0); text-decoration:
+        underline;"><span style="font-weight: bold;">Fresh Install of
+          Instrument USB driver:</span></span><br>
+      <br>
+    </span>If you currently don't have any applications that talk to
+    your instrument using USB, then it is relatively simple to use the
+    drivers provided with Argyll since you don't have to deal with the
+    instrument already having an assigned driver.<br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      driver for the first instrument:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp; (Wait for the "Found New Hardware" or "Installing
+    new device driver software - Device driver software was not
+    successfully installed" popup and dismiss it)<br>
+    &nbsp;&nbsp;&nbsp; Start -&gt; Control Panel -&gt; Hardware and
+    Sound -&gt; Device Manager -&gt;<br>
+    &nbsp;&nbsp;&nbsp; Other Devices -&gt; &lt;instrument being
+    installed&gt; -&gt; right click -&gt; Update Driver Software...
+    -&gt; Browse my computer for driver software -&gt; Browse...<br>
+    &nbsp;&nbsp;&nbsp; -&gt; <span style="font-weight: bold;">argyll\usb</span>
+    folder -&gt; Next -&gt; Install this driver software anyway -&gt;
+    Close<br>
+    <br style="text-decoration: underline;">
+    <span style="text-decoration: underline;">On subsequent installation
+      of other instrument types:</span><br>
+    &nbsp;&nbsp;&nbsp; Simply plug the instrument in. The Argyll driver
+    will be automatically installed.<br>
+    <br>
+    <br>
+    <span style="color: rgb(51, 153, 153); font-weight: bold;"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;"><span
+          style="color: rgb(51, 153, 153); font-weight: bold;"><span
+            style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+
+            Argyll drivers with existing OEM drivers</span></span>:</span></span><br>
+    <br>
+    If you currently have applications other than Argyll accessing your
+    USB connected instrument, then you will have to manually install the
+    Argyll driver, and then switch back and forth between the Argyll and
+    other drivers if you want to switch between applications. <br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      Driver:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp; Start -&gt; Control Panel -&gt; Hardware and
+    Sound -&gt; Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Update Driver
+    Software... -&gt; let me pick from a list of device drivers on my
+    computer -&gt; Have disk... -&gt; Browse...<br>
+    &nbsp;&nbsp;&nbsp; -&gt; <span style="font-weight: bold;">argyll\usb</span>
+    folder -&gt; select ArgyllCMS.inf -&gt; Open -&gt; OK -&gt; Install
+    this driver software anyway -&gt; Close<br>
+    <br>
+    <span style="text-decoration: underline;">To switch between drivers:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp;&nbsp; Start -&gt; Control Panel -&gt; Hardware and
+    Sound -&gt; Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Update Driver
+    Software... -&gt; let me pick from a list of device drivers on my
+    computer<br>
+    &nbsp;&nbsp;&nbsp; (Choose either the Argyll driver or another
+    driver from the list)<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Next -&gt; Close<br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;">Un-installing Argyll driver:</span></span></span><br>
+    <br>
+    If you are updating to a new version of Argyll which adds support
+    for a new instrument that you want to use, then it may be necessary
+    to uninstall all the existing Argyll USB driver and do a fresh
+    re-install to update the relevant libusb system driver and .inf
+    file. (This is true for updating to Argyll Version 2.0.0).&nbsp; <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp;&nbsp; Start -&gt; Control Panel -&gt; Hardware and
+    Sound -&gt; Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It
+    will be underneath the Argyll LibUSB-win32 devices top level item.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Uninstall -&gt;
+    click "Delete the driver software for this device" -&gt; OK <br>
+    <br>
+    Proceed then with either <span style="color: rgb(51, 153, 153);"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;">Fresh
+        Install of Argyll USB driver</span></span> or <span
+      style="color: rgb(51, 153, 153);"><span style="color: rgb(0, 0,
+        0); text-decoration: underline;">Adding Argyll drivers to
+        existing drivers</span></span> above.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><a name="WINXP"></a><font
+      size="+1"><span style="font-weight: bold;">Windows XP</span></font><br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;"></span></span></span><span style="color: rgb(51, 153,
+      153);"><span style="color: rgb(0, 0, 0); text-decoration:
+        underline;"><span style="font-weight: bold;">Fresh Install of
+          Instrument USB driver:</span></span><br>
+      <br>
+    </span>If you currently don't have any applications that talk to
+    your instrument using USB, then it is relatively simple to use the
+    drivers provided with Argyll since you don't have to deal with the
+    instrument already having an assigned driver.<br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      driver for the first instrument:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp; (Wait for the "Welcome to the Found New Hardware
+    Wizard" popups and dismiss it)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; My Computer, Right Click -&gt; Manage -&gt;
+    Device Manager<br>
+    &nbsp;&nbsp;&nbsp; Other Devices -&gt; &lt;instrument being
+    installed&gt; -&gt; right click -&gt; Update Driver... -&gt; No, not
+    this time -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt;Install from a list or specific location
+    (Advanced) -&gt; Next -&gt; Don't search. I will choose the driver
+    to install -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Have Disk... -&gt; Browse -&gt; <span
+      style="font-weight: bold;">argyll\usb</span> folder -&gt;
+    ArgyllCMS.inf -&gt; Open -&gt; OK -&gt; Next -&gt; Finish<br>
+    <br style="text-decoration: underline;">
+    <span style="text-decoration: underline;">On subsequent installation
+      of other instrument types:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug the instrument in, and wait for the
+    "Welcome to the Found New Hardware Wizard"&nbsp; to pop up.)<br>
+    &nbsp;&nbsp;&nbsp; No, not this time -&gt; Install the software
+    automatically (Recommended) -&gt; Next -&gt; Finish<br>
+    <br>
+    <br>
+    <span style="color: rgb(51, 153, 153); font-weight: bold;"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;"><span
+          style="color: rgb(51, 153, 153); font-weight: bold;"><span
+            style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+
+            Argyll drivers with existing OEM drivers</span></span>:</span></span><br>
+    <br>
+    If you currently have applications other than Argyll accessing your
+    USB connected instrument, then you will have to manually install the
+    Argyll driver, and then switch back and forth between the Argyll and
+    other drivers if you want to switch between applications. <br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      Driver:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; My Computer, Right Click -&gt; Manage -&gt;
+    Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; Right click on instrument -&gt; right click
+    -&gt; Update Driver... -&gt; No, not this time -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt;Install from a list or specific location
+    (Advanced) -&gt; Next -&gt; Don't search. I will choose the driver
+    to install -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Have Disk... -&gt; Browse -&gt; <span
+      style="font-weight: bold;">argyll\usb</span> folder -&gt;
+    ArgyllCMS.inf -&gt; Open -&gt; OK -&gt; Next -&gt; Finish<br>
+    <br>
+    <span style="text-decoration: underline;">To switch between drivers:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp;&nbsp; My Computer,&nbsp; Right Click -&gt; Manage -&gt;
+    Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Update Driver...
+    -&gt; No, not this time -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt;Install from a list or specific location
+    (Advanced) -&gt; Next -&gt; Don't search. I will choose the driver
+    to install -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt;let me pick from a list of device drivers on
+    my computer<br>
+    &nbsp;&nbsp;&nbsp; (Choose either the Argyll driver or another
+    driver from the list)<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Next -&gt; Finish<br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;">Un-installing Argyll driver:</span></span></span><br>
+    <br>
+    If you are updating to a new version of Argyll which adds support
+    for a new instrument that you want to use, then it may be necessary
+    to uninstall all the existing Argyll USB driver and do a fresh
+    re-install to update the relevant libusb system driver and .inf
+    file. (This is true for updating to Argyll Version 2.0.0).&nbsp; <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp; My Computer, Right Click -&gt; Manage -&gt; Device
+    Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It
+    will be underneath the Argyll LibUSB-win32 devices top level item.)<br>
+    &nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Uninstall -&gt;
+    click "Delete the driver software for this device" -&gt; OK <br>
+    <br>
+    &nbsp; Then you will have to delete the cached copy of the old
+    Argyll driver .inf files, that MSWindows keeps.<br>
+    <br>
+    &nbsp; cd to where Windows keeps it's cached driver information
+    files, ie:<br>
+    &nbsp;&nbsp;&nbsp; c:<br>
+    &nbsp;&nbsp;&nbsp; cd \windows\inf<br>
+    <br>
+    &nbsp; identify all the system copies of the Argyll .inf files:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; find /I "ArgyllCMS" oem*.inf<br>
+    <br>
+    &nbsp; then delete just the files that contain "ArgyllCMS":<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; del /F oemXXX.inf<br>
+    &nbsp;&nbsp;&nbsp; del /F oemXXY.inf<br>
+    &nbsp;&nbsp;&nbsp; etc.<br>
+    <br>
+    Proceed then with either <span style="color: rgb(51, 153, 153);"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;">Fresh
+        Install of Argyll USB driver</span></span> or <span
+      style="color: rgb(51, 153, 153);"><span style="color: rgb(0, 0,
+        0); text-decoration: underline;">Adding Argyll drivers to
+        existing drivers</span></span> above.<br>
+    <br>
+    <hr style="width: 100%; height: 2px;"><a name="WIN2K"></a><font
+      size="+1"><span style="font-weight: bold;">Windows 2000</span></font><br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;"></span></span></span><span style="color: rgb(51, 153,
+      153);"><span style="color: rgb(0, 0, 0); text-decoration:
+        underline;"><span style="font-weight: bold;">Fresh Install of
+          Instrument USB driver:</span></span><br>
+      <br>
+    </span>If you currently don't have any applications that talk to
+    your instrument using USB, then it is relatively simple to use the
+    drivers provided with Argyll since you don't have to deal with the
+    instrument already having an assigned driver.<br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      driver for the first instrument:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp; (Wait for the "Welcome to the Found New Hardware
+    Wizard" pops up) -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Search for a suitable driver for my device
+    (recommended) -&gt; Next -&gt; Specify a location -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Browse -&gt;&nbsp; <span
+      style="font-weight: bold;">argyll\usb</span> folder -&gt;
+    ArgyllCMS.inf -&gt; Open -&gt; OK -&gt; Next -&gt; Finish<br>
+    <br style="text-decoration: underline;">
+    <span style="text-decoration: underline;">On subsequent installation
+      of other instrument types:</span><br>
+    &nbsp;&nbsp;&nbsp; Simply plug the instrument in. The Argyll driver
+    will be automatically installed.<br>
+    <br>
+    <span style="color: rgb(51, 153, 153); font-weight: bold;"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;"></span></span><span
+      style="color: rgb(51, 153, 153); font-weight: bold;"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;"><span
+          style="color: rgb(51, 153, 153); font-weight: bold;"><span
+            style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+
+            Argyll drivers with existing OEM drivers</span></span>:</span></span><br>
+    <br>
+    If you currently have applications other than Argyll accessing your
+    USB connected instrument, then you will have to manually install the
+    Argyll driver, and then switch back and forth between the Argyll and
+    other drivers if you want to switch between applications. <br>
+    <br>
+    <span style="text-decoration: underline;">To install the Argyll
+      Driver:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; My Computer, Right Click -&gt; Manage -&gt;
+    Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Properties
+    -&gt; Driver -&gt; Update Driver&nbsp; this time<br>
+    &nbsp;&nbsp;&nbsp; -&gt; "Welcome to the Found New Hardware Wizard"
+    -&gt; Next -&gt; Display a list of known drivers for this device so
+    that I can choose a specific driver -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Have Disk -&gt; Browse -&gt; <span
+      style="font-weight: bold;">argyll\usb</span> folder -&gt;
+    ArgyllCMS.inf -&gt; Open -&gt; OK -&gt; Next -&gt; Next -&gt; Finish<br>
+    <br>
+    <span style="text-decoration: underline;">To switch between drivers:</span><br>
+    &nbsp;&nbsp;&nbsp; (Plug in instrument)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; My Computer, Right Click -&gt; Manage -&gt;
+    Device Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Properties
+    -&gt; Driver -&gt; Update Driver... -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Display a list of known drivers for this
+    device so that I can choose a specific driver -&gt; Next<br>
+    &nbsp;&nbsp;&nbsp; (Choose either the Argyll driver or another
+    driver from the list)<br>
+    &nbsp;&nbsp;&nbsp; -&gt; Next -&gt; Next -&gt; Finish<br>
+    <br>
+    <span style="color: rgb(51, 153, 153);"><span style="color: rgb(0,
+        0, 0); text-decoration: underline;"><span style="font-weight:
+          bold;">Un-installing Argyll driver:</span></span></span><br>
+    <br>
+    If you are updating to a new version of Argyll which adds support
+    for a new instrument that you want to use, then it may be necessary
+    to uninstall all the existing Argyll USB driver and do a fresh
+    re-install to update the relevant libusb system driver and .inf
+    file. (This is true for updating to Argyll Version 2.0.0).&nbsp; <br>
+    <br>
+    &nbsp;&nbsp;&nbsp; (Plug in the instrument)<br>
+    &nbsp;&nbsp; My Computer, Right Click -&gt; Manage -&gt; Device
+    Manager<br>
+    &nbsp;&nbsp;&nbsp; (Locate the instrument in the device list. It may
+    be underneath one of the top level items.)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; Right click on instrument -&gt; Uninstall
+    -&gt; OK<br>
+    <br>
+    &nbsp; Then you will have to delete the cached copy of the old
+    Argyll driver .inf files, that MSWindows keeps.<br>
+    <br>
+    &nbsp; cd to where Windows keeps it's cached driver information
+    files, ie:<br>
+    &nbsp;&nbsp;&nbsp; c:<br>
+    &nbsp;&nbsp;&nbsp; cd \winnt\inf<br>
+    <br>
+    &nbsp; identify all the system copies of the Argyll .inf files:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; find /I "ArgyllCMS" oem*.inf<br>
+    <br>
+    &nbsp; &nbsp; then delete just the files that contain "ArgyllCMS":<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; del /F oemXXX.inf<br>
+    &nbsp;&nbsp;&nbsp; del /F oemXXY.inf<br>
+    &nbsp;&nbsp;&nbsp; etc.<br>
+    <br>
+    Proceed then with either <span style="color: rgb(51, 153, 153);"><span
+        style="color: rgb(0, 0, 0); text-decoration: underline;">Fresh
+        Install of Argyll USB driver</span></span> or <span
+      style="color: rgb(51, 153, 153);"><span style="color: rgb(0, 0,
+        0); text-decoration: underline;">Adding Argyll drivers to
+        existing drivers</span></span> above.<br>
+    <br>
+    <br>
+  </body>
+</html>

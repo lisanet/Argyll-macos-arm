@@ -1,0 +1,510 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>scanin</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>scanin/scanin</b></h2>
+    <h3>Summary</h3>
+    Convert an 8 or 16 bit per component <a
+      href="File_Formats.html#TIFF">TIFF</a> image of a test chart
+    into&nbsp;<a href="File_Formats.html#.ti3">.ti3</a> device values
+    using automatic pattern recognition, or manual chart alignment.<br>
+    Performs other tasks associated with turning a TIFF raster of test
+    patches into numeric values. <br>
+    <h3>Usage Summary<br>
+    </h3>
+    <small><a style="font-family: monospace;" href="#_"> usage</a><span
+        style="font-family: monospace;">: scanin [options] input.tif
+        recogin.cht valin.cie [diag.tif]</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp; :- inputs
+        'input.tif',&nbsp; and outputs scanner 'input.ti3', or</span><br
+        style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <a style="font-family: monospace;" href="#g"> usage</a><span
+        style="font-family: monospace;">: scanin -g [options] input.tif
+        recogout.cht [diag.tif]</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp; :- outputs file
+        'recogout.cht', or</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <a style="font-family: monospace;" href="#o"> usage</a><span
+        style="font-family: monospace;">: scanin -o [options] input.tif
+        recogin.cht [diag.tif]</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp; :- outputs file
+        'input.val', or</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <a style="font-family: monospace;" href="#c"> usage</a><span
+        style="font-family: monospace;">: scanin -c [options] input.tif
+        recogin.cht scanprofile.[icm|mpp] pbase [diag.tif]</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp; :- inputs
+        pbase.ti2 and outputs printer pbase.ti3, or</span><br
+        style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <a style="font-family: monospace;" href="#r"> usage</a><span
+        style="font-family: monospace;">: scanin -r [options] input.tif
+        recogin.cht pbase [diag.tif]</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp; :- inputs
+        pbase.ti2+.ti3 and outputs pbase.ti3</span><br
+        style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#g">-g</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Generate
+
+
+        a chart reference (.cht) file</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#o">-o</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Output
+
+
+        patch values in .val file</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#c">-c</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+
+
+        image to measure color to convert printer pbase .ti2 to .ti3</span><span
+        style="font-family: monospace;"></span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#ca">-ca</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Same
+
+
+        as -c, but accumulates more values to pbase .ti3</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+from
+
+
+        subsequent pages</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#r">-r</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Replace
+
+
+        device values in pbase .ti3</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Default
+
+
+        is to create a scanner .ti3 file<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#F">-F
+        x1,y1,x2,y2,x3,y3,x4,y4</a><span style="font-family: monospace;">
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Don't
+
+
+        auto recognize, locate using four fiducual marks<br>
+        &nbsp;<a href="#p">-p</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Compensate
+
+
+        for perspective distortion<br style="font-family: monospace;">
+      </span></small><small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#a">-a</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Recognize
+
+
+        chart in normal orientation only</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Default
+
+
+        is to recognize all possible chart angles<br>
+        &nbsp;<a href="#m">-m</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Return
+
+
+        true mean (default is robust mean)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;<a
+          href="#G">-G gamma</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Approximate gamma encoding of image</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v [n]</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbosity
+
+
+        level 0-9</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#d">-d</a><span
+        style="font-family: monospace;"> [ihvglLIcrsonap]&nbsp;&nbsp;
+        generate diagnostic output (try -dipn)</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#di">i</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - B&amp;W of input image</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dh">h</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - Horizontal edge detection</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dv">v</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - Vertical edge detection</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dg">g</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - Groups detected</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dl">l</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - Lines detected</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dL">L</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - All lines detected<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      </span><span style="font-family: monospace;"><a href="#dI">I</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - lines used to improve fit<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      </span><a style="font-family: monospace;" href="#dc">c</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - lines perspective corrected</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dr">r</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - lines rotated</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#ds">s</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - sample boxes rotated</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#do">o</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - sample box outlines</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dn">n</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - sample box names</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#da">a</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - sample box areas</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; </span><a
+        style="font-family: monospace;" href="#dp">p</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+diag
+
+
+        - pixel areas sampled</span></small> <br>
+    <small><span style="font-family: monospace;">&nbsp; <a href="#O">-O</a>
+        outputfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override the
+        default output filename &amp; extension.</span></small><br>
+    <h3>Usage Details and Discussion</h3>
+    <span style="font-weight: bold;">scanin</span> is setup to deal with
+    a raster file that has been roughly cropped to a size that contains
+    the test chart. It's exact orientation is not important [ie. there
+    is usually no need to rotate or crop the image any more finely.] The
+    reference files are normally set up with the assumption that the
+    edges of the chart are visible within the image, and if the image is
+    cropped to exclude the chart edges, it may well not recognize the
+    chart properly. It is designed to cope with a variety of
+    resolutions, and will cope with some degree of noise in the scan
+    (due to screening artefacts on the original, or film grain), but it
+    isn't really designed to accept very high resolution input. For
+    anything over 1200 pixels on a side, you should consider down
+    sampling the scan using a filtering down-sample, before submitting
+    the file to scanin. Similarly, any file with a large level of noise
+    (due to screening or scanner artefacts, or a noisy surrounding
+    texture) should consider cropping out the noisy surrounding, or down
+    sampling the image or filtering it with some average preserving
+    filter before submitting it to scanin. Examining the diagnostic
+    output (ie. -dig and -dil) may help in determining whether noise is
+    an issue.<br>
+    <br>
+    There are 5 basic modes that <b>scanin</b> operates in.<br>
+    <ul>
+      <li><a name="_"></a>When no special argument is given scanin is
+        assumed to be parsing an input device characterization chart
+        (ie. an IT8.7/2 chart), for the purpose of creating a <a
+          href="File_Formats.html#.ti3">.ti3</a> data file containing
+        the CIE test values and the corresponding RGB scanner values.
+        The <a href="File_Formats.html#.ti3">.ti3</a> file can then be
+        used for creating an input profile using <a href="colprof.html">colprof</a>.
+        The file arguments are: <a name="_p1"></a>The TIFF file that is
+        to be processed, <a name="_p2"></a>the image recognition
+        template file, <a name="_p3"></a>the CIE reference value
+        definitions for the test chart (sometimes labeled a ".q60"
+        file), <a name="_p4"></a>and an optional name for the image
+        recognition diagnostic output. The resulting .ti3 file will have
+        the same base name as the input TIFF file.</li>
+      <li><a name="g"></a>If the<b> -g</b> flag is specified, then
+        scanin is operating in a mode designed to create the necessary
+        image recognition template file (<a
+          href="File_Formats.html#.cht">.cht</a>) boilerplate
+        information. Patch location and labeling information would need
+        to be added manually to such a generated file, to make a
+        complete and useable recognition template file. <a
+          href="cht_format.html">CHT file format.</a> The input TIFF
+        file in this situation, should be a good quality image, perhaps
+        synthetically generated (rather than being scanned), and
+        perfectly oriented, to make specification of the patch locations
+        easier. The file arguments are: <a name="gp1"></a>The TIFF file
+        that is to be processed, <a name="gp2"></a>the image
+        recognition template file to be created, <a name="gp3"></a>and
+        an optional name for the image recognition diagnostic output.</li>
+      <li><a name="o"></a>If the <b>-o</b> flag is used, then scanin
+        will process the input TIFF file and produce a generic&nbsp;<a
+          href="File_Formats.html#CGATS">CGATS</a> &nbsp;style file
+        containing just the patch values (a <span style="font-weight:
+          bold;">.val</span> file). The file arguments are: <a
+          name="op1"></a>The TIFF file that is to be processed, <a
+          name="op2"></a>the image recognition template file to be
+        created, <a name="op3"></a>and an optional name for the image
+        recognition diagnostic output.</li>
+      <li><a name="c"></a>If the <b>-c</b> flag is used, then an input
+        image of a print test chart can be used in combination with a
+        device profile, to estimate the CIE tristimulus values of the
+        patches. This allows RGB input devices to be used as a crude
+        replacement for a color measuring instrument. The icc or mpp
+        profile has (presumably) been created by scanning an IT8.7/2
+        chart (or similar) through the RGB input device, and then using
+        scanin to create the .ti3 file needed to feed to colprof to
+        create the input device profile. The file arguments in -c mode
+        are: <a name="cp1"></a>The TIFF file that is to be processed
+        containing the image of a print test chart, <a name="cp2"></a>the
+
+        image recognition template file for the test chart generated by
+        the <a href="printtarg.html"> printtarg</a> tool, <a
+          name="cp3"></a>the input device ICC or MPP profile, <a
+          name="cp4"></a>the base name for the .ti2 file containing the
+        test chart printer device values and their patch identifiers and
+        the base name for the resulting .ti3 file, <a name="cp5"></a>and
+
+        finally an optional name for the image recognition diagnostic
+        output. The resulting .ti3 file will have the same base name as
+        the input TIFF file. If there is more than one page in the test
+        chart, then scanin will need to be run multiple times, once for
+        each scan file made from each test chart. <a name="ca"></a>The
+        <b>-ca</b> flag combination should be used for all pages after
+        the first, as this then adds that pages test values to the .ti3
+        file, rather than creating a .ti3 file that contains only that
+        pages test values. If the incoming .ti2 file contains
+        per-channel calibration curves, these will be passed through to
+        the .ti3 so that accurate ink limits can be computed during
+        profiling. </li>
+      <li><a name="r"></a>If the <span style="font-weight: bold;">-r</span>
+        flag is used, then the input TIFF value is used as a source of
+        device values to replace any existing device values in the given
+        .ti3 file. This is intended for use in the situation in which
+        the device values being fed into an output device are altered in
+        some way that is difficult to predict (ie. such as being
+        screened and then de-screened), and this alteration to the
+        device values needs to be taken into account in creating a
+        profile for such a device. The file arguments in -r mode are: <a
+          name="rp1"></a>The TIFF file that is to be processed
+        containing a rasterized image of an output test chart, <a
+          name="rp2"></a>the image recognition template file for the
+        test chart generated by the <a href="printtarg.html"> printtarg</a>
+        tool,&nbsp; <a name="rp3"></a>the base name for the .ti2 file
+        containing the output test chart device values and their patch
+        identifiers and the base name for the .ti3 file that is to have
+        its device values replaced, <a name="rp4"></a>and finally an
+        optional name for the image recognition diagnostic output.<br>
+      </li>
+    </ul>
+    A number of flags and options are available, that are independent of
+    the mode that scanin is in.<br>
+    <br>
+    Normally scanin will try and recognize a chart, irrespective of its
+    orientation. For charts that have some asymmetric patch size or
+    arrangement (such as an IT8.7/2, or a chart generated by <a
+      href="printtarg.html"> printtarg</a> with the <b>-s</b> option),
+    this is both flexible and reliable. Other charts may be symmetrical,
+    and therefore having scanin figure out the orientation automatically
+    is a problem if the recognition template does not contain expected
+    patch values, since it will have an equal chance of orienting it
+    incorrectly as correctly. To solve this, the <a name="a"></a><b>-a</b>
+    flag can be used, and care taken to provide a raster file that is
+    within 45 degrees of "no rotation".<br>
+    <br>
+    <a name="F"></a>Normally scanin will use automatic chart recognition
+    to identify the location of the test patches and extract their
+    values. If the chart <a href="cht_format.html">CHT file</a>&nbsp;
+    has four fiducial marks defined, then the chart can be manually
+    aligned by specifying the pixel location of the four marks as
+    arguments to the <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-F</span></span> flag. The top left,
+    top right, bottom right and bottom left fiducial marks X and Y
+    co-ordinates should be specified as a single concatenated argument,
+    separated by comma's, e.g: -F 10,20,435,22,432,239,10,239&nbsp; The
+    coodinates may be fractional using a decimal point. Four fiducial
+    marks allows for compensation for perspective distortion.<br>
+    <br>
+    <a name="p"></a>By default the automatic chart recognition copes
+    with rotation, scale and stretch in the chart image, making it
+    suitable for charts that have been scanned, or shot squarely with a
+    camera. If a chart has been shot not exactly facing the camera
+    (perhaps to avoid reflection, or to get more even lighting), then it
+    will suffer from perspective distortion as well. The <span
+      style="font-weight: bold;"><span style="font-weight: bold;">-p</span></span>
+    flag enables automatic compensation for perspective distortion.<br>
+    <br>
+    <a name="m"></a>Normally scanin computes an average of the pixel
+    values within a sample square, using a "robust" mean, that discards
+    pixel values that are too far from the average ("outlier" pixel
+    values). This is done in an attempt to discard value that are due to
+    scanning artefacts such as dust, scratches etc. You can force scanin
+    to return the true mean values for the sample squares that includes
+    all the pixel values, by using the <span style="font-weight: bold;">-m</span>
+    flag.<br>
+    <br>
+    <a name="G"></a>Normally scanin has reasonably robust feature
+    recognition, but the default assumption is that the input chart has
+    an approximately even visual distribution of patch values, and has
+    been scanned and converted to a typical gamma 2.2 corrected image,
+    meaning that the average patch pixel value is expected to be about
+    50%. If this is not the case (for instance if the input chart has
+    been scanned with linear light or "raw" encoding), then it may
+    enhance the image recognition to provide the approximate gamma
+    encoding of the image. For instance, if linear light encoding
+    ("Raw") is used, a <span style="font-weight: bold;">-G</span> value
+    of 1.0 would be appropriate. Values less than 2.2 should be tried if
+    the chart is particularly dark, or greater than 2.2 if the chart is
+    particularly light. Generally it is only necessary to provide this
+    is there are problems in recognizing the chart.<br>
+    <br>
+    <a name="v"></a> The <b>-v</b> flag enables extra verbosity in
+    processing. This can aid debugging, if a chart fails to be
+    recognized.<br>
+    <br>
+    <a name="d"></a> The <b>-d</b> flag enables the generation of an
+    image recognition diagnostic raster. The name of diagnostic raster
+    can be specified as the last in the command line, or if not, will
+    default to <span style="font-weight: bold;">diag.tif</span>.
+    Various flags control what is written to the diagnostic raster. Note
+    that at least one flag must be specified for a diagnostic raster to
+    be produced.<br>
+    <b><a name="di"></a>i</b>&nbsp;&nbsp;&nbsp; creates a black and
+    white version of the input raster in the diagnostic output, to be
+    able to compare with the feature extraction.<br>
+    <b><a name="dh"></a>h</b>&nbsp;&nbsp;&nbsp; will show pixels in the
+    input image classified as being on horizontal edges, in red.<br>
+    <b><a name="dv"></a>v</b>&nbsp;&nbsp;&nbsp; will show pixels in the
+    input image classified as being vertical edges, in green.<br>
+    <b><a name="dg"></a>g</b>&nbsp;&nbsp;&nbsp; will show groups of
+    pixels that will be used to estimate edge lines, each group in a
+    different color.<br>
+    <b><a name="dl"></a>l</b>&nbsp;&nbsp;&nbsp; will show valid lines
+    estimated from the vertical and horizontal pixel groups, in white.<br>
+    <b><a name="dL"></a>L</b>&nbsp;&nbsp;&nbsp; will show all lines
+    (valid and invalid) estimated from the vertical and horizontal pixel
+    groups, in white.<br>
+    <b><a name="dI"></a>I</b> &nbsp;&nbsp; will show valid lines lines
+    used to improve the final fit, in blue.<br>
+    <b><a name="dc"></a>c</b> &nbsp;&nbsp; will show the lines with
+    perspective correction applied in cyan.<br>
+    <b><a name="dr"></a>r</b>&nbsp;&nbsp;&nbsp; will show the lines
+    rotated to the reference chart orientation, in yellow.<br>
+    <b><a name="ds"></a>s</b>&nbsp;&nbsp;&nbsp; will show the diagnostic
+    sampling box edge outlines, rotated to the reference chart
+    orientation, in orange.<br>
+    <b><a name="do"></a>o</b>&nbsp;&nbsp;&nbsp; will show all the
+    sampling box edge outlines, in orange.<br>
+    <b><a name="dn"></a>n</b>&nbsp;&nbsp;&nbsp; will show the ID names
+    of the sampling boxes, plus the diagnostic sample boxes, using a
+    simple stroke font, in orange.<br>
+    <b><a name="da"></a>a</b>&nbsp;&nbsp;&nbsp; will show the sampling
+    areas as crossed boxes, plus the diagnostic sample boxes, in orange.<br>
+    <b><a name="dp"></a>p</b>&nbsp;&nbsp;&nbsp; will show the sampling
+    areas as colored pixels.<br>
+    <br>
+    The combination of <b>-dipn</b> is usually a good place to start.<br>
+    <br>
+    The <a href="File_Formats.html#TIFF">TIFF</a> file can be either 8
+    or 16 bits per color component, with 16 bit files being slower to
+    process, but yielding more precise results.<br>
+    <br>
+    If at all in doubt that the file has been recognized correctly, use
+    the <span style="font-weight: bold;">-dipn</span> diagnostic flag
+    combination, and check the resulting diagnostic raster file.<br>
+    [ A badly recognised image will typically result in high self fit
+    delta E's when used with colprof. ]<br>
+    <br>
+    <a name="O"></a>The <span style="font-weight: bold;">-O</span>
+    parameter allows the output file name &amp; extension to be
+    specified independently of the last tiff filename. This works for
+    the default, -g and -o modes. It is ignored for the -r, -c and -ca
+    modes that use a basename for .ti2 in and .ti3 output. Note that the
+    full filename must be specified, including the extension. <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

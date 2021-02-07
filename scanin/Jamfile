@@ -1,0 +1,43 @@
+
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;
+
+#Products
+Libraries = libscanrd ;
+Executables = scanin ;
+Headers = scanrd.h ;
+Samples = it8.cht ColorChecker.cht ColorChecker.cie ColorCheckerDC.cht ColorCheckerDC.ti2
+          ColorCheckerSG.cht ColorCheckerSG.ti2 Hutchcolor.cht i1_RGB_Scan_1.4.cht
+          ColorCheckerPassport.cht ColorCheckerPassport.cie
+          QPcard_201.cht QPcard_201.cie QPcard_202.cht QPcard_202.cie CMP_DT_003.cht
+          CMP_Digital_Target-4.cht CMP_Digital_Target-4.ti2 CMP_Digital_Target-4.cie
+          CMP_Digital_Target-7.cht CMP_Digital_Target-2019.cht CMP_Digital_Target_Studio.cht
+          LaserSoftDCPro.cht ISO12641_2_1.cht ISO12641_2_3_1.cht ISO12641_2_3_2.cht
+          ISO12641_2_3_3.cht SpyderChecker.cht SpyderChecker.cie SpyderChecker24.cht
+          SpyderChecker24.cie ;
+
+#Install
+InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+InstallFile $(DESTDIR)$(PREFIX)/$(REFSUBDIR) : $(Samples) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+# Chart recognition library
+Library libscanrd : scanrd.c : : : ../numlib ;
+
+LINKFLAGS += $(GUILINKFLAGS) ;
+
+# IT8 chart reader - sucks in tiff file and spits out cgats file
+Main scanin : scanin.c ;
+# ObjectHdrs scanin : ../h ../cgats ../numlib ../icc ../rspl ../gamut ../xicc $(TIFFINC) ;
+ObjectHdrs scanin : ../h ../numlib ../icc ../cgats ../rspl ../xicc ../gamut ../spectro $(TIFFINC) ;
+LinkLibraries scanin : libscanrd ../xicc/libxicc ../spectro/libinsttypes 
+                       ../gamut/libgamut ../rspl/librspl ../cgats/libcgats
+                       ../icc/libicc ../plot/libplot ../plot/libvrml
+                       ../numlib/libnum ../numlib/libui
+                       $(TIFFLIB) $(JPEGLIB) ;
+
+
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>iccdump</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+</head>
+<body>
+<h2><b>icclib/iccdump</b></h2>
+<br>
+Dump the contents of an ICC profile as human readable text.<br>
+<h3>Usage</h3>
+<small><span style="font-family: monospace;">&nbsp;iccdump [-v level]
+[-t tagname] [-s] </span><i style="font-family: monospace;">infile</i><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-v
+level&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Verbose level 1-3 (default 2)</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-t
+tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dump this tag only (can
+be used multiple times)</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Search for embedded profile</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; </span><i
+ style="font-family: monospace;">infile</i><span
+ style="font-family: monospace;"> &nbsp; &nbsp; &nbsp; </span><a
+ style="font-family: monospace;" href="File_Formats.html#ICC">ICC</a><span
+ style="font-family: monospace;"> profile</span></small><br>
+<h3><b> Examples</b></h3>
+iccdump sRGB.icm<br>
+<br>
+iccdump -v3 -t rTRC sRGB.icm<br>
+<h3>Comments</h3>
+This tool will dump the contents of the header, and each known type
+of tag within the ICC profile. For more detail on each tag, the -v flag
+should be used, typically with verbose level 3.<br>
+<br>
+The <span style="font-weight: bold;">-s</span> flag causes iccdump to
+do a brute force search for any embedded
+profiles within the file, and dumps them all. This won't work if the
+profile data is
+segmented or compressed.<br>
+<br>
+The <span style="font-weight: bold;">-t</span> parameter may be used
+multiple times, to dump just specific tags, e.g. <span
+ style="font-weight: bold;">iccdump -v3 -t clrt -t clot devicelink.icm</span><br>
+<br>
+<br>
+<br>
+</body>
+</html>

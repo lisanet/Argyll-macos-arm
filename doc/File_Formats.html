@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Argyll File Formats</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h1>File formats that Argyll uses</h1>
+    <br>
+    Argyll uses a number of file formats for its operation, some that
+    are external standards, and some that are unique to Argyll.<br>
+    <br>
+    <a href="#.ti1">.ti1</a><br>
+    <a href="#.ti2">.ti2</a><br>
+    <a href="#.ti3">.ti3</a><br>
+    <a href="#.cal">.cal</a><br>
+    <a href="#.cht">.cht</a> <br>
+    <a href="#.gam">.gam</a> <br>
+    <a href="#.sp">.sp</a><br>
+    <a href="File_Formats.html#.cmf">.cmf</a><br>
+    <a href="#CGATS">CGATS</a><br>
+    <a href="#ICC">ICC</a><br>
+    <a href="#MPP">MPP</a><br>
+    <a href="#TIFF">TIFF</a><br>
+    <a href="#VRML">VRML</a><br>
+    <a href="#X3D">X3D</a><br>
+    <a href="#X3DOM">X3DOM</a><br>
+    <br>
+    <h2><a name=".ti1"></a>.ti1</h2>
+    Target Information 1 data. This is an ASCII text, <a href="#CGATS">CGATS</a>,
+    Argyll specific format, used to hold device value ready for creating
+    a profiling test chart, as well as the estimated CIE color values
+    for each value, used in laying out the test chart and reading
+    validation purposes. Additional information on possible spacer and
+    marking values that may be needed in creating a rendered test chart
+    is also included. This file is typically created using the <a
+      href="targen.html"> targen</a> tool.<br>
+    <br>
+    <h2><a name=".ti2"></a>.ti2</h2>
+    Target Information 2 data. This is an ASCII text, <a href="#CGATS">CGATS</a>,
+    Argyll specific format, used to hold device value that have been
+    laid out in a test chart, together with each test patches location,
+    and estimated CIE color values for each value used for reading
+    validation purposes. This file is typically created using the <a
+      href="printtarg.html">printtarg</a> or <a href="filmtarg.html">
+      filmtarg</a> tools.<br>
+    <br>
+    <h2><a name=".ti3"></a>.ti3</h2>
+    Target Information 3 data. This is an ASCII text, <a href="#CGATS">CGATS</a>,
+    Argyll specific format, used to hold device value and CIE/Spectral
+    value pairs, the raw information needed to create device profiles.
+    This file is typically created using the <a href="chartread.html">chartread</a>,&nbsp;<a
+      href="dispread.html"> dispread</a>, <a href="filmread.html">filmread</a>,
+    <a href="scanin.html"> scanin</a>, <a href="fakeread.html">
+      fakeread</a> or one of the conversion tools such as <a
+      href="cb2ti3.html">cb2ti3</a>, <a href="kodak2ti3.html">kodak2ti3</a>,
+    <a href="txt2ti3.html">txt2ti3</a>. See&nbsp; <a
+      href="ti3_format.html">TI3 file format</a> for more detail.
+    <h2><a name=".cal"></a>.cal</h2>
+    Device calibration information. This is ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>, Argyll specific format,
+    used to hold a description of device setup information that brings
+    it to a desired calibration state. Created by <a
+      href="dispcal.html">dispcal</a>, <a href="printcal.html">printcal</a>,
+    <a href="synthcal.html">synthcal</a>. See&nbsp; <a
+      href="cal_format.html">CAL file format</a> for more detail.
+    <h2><a name=".cht"></a>.cht</h2>
+    Test chart recognition file. This is ASCII text Argyll specific
+    format, used to hold a description of a test chart, so that a raster
+    image of the chart can be turned into device test values by the <a
+      href="scanin.html"> scanin</a> tool. <span style="font-weight:
+      bold;">.cht</span> files are created manually (usually in
+    combination with <a href="scanin.html"> scanin</a> creating a
+    boilerplate file containing the recognition parameters, but not the
+    patch location information), or by the <a href="printtarg.html">
+      printtarg</a> tool, when creating a test print chart that will be
+    scanned in, rather than read by an instrument. See &nbsp;<a
+      href="cht_format.html">CHT file format</a> for more detail.<br>
+    <h2><a name=".gam"></a>.gam</h2>
+    Gamut surface description. This is an ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>, Argyll specific format,
+    used to hold a 3 Dimensional surface description of a color gamut.
+    Typical this is created using the <a href="iccgamut.html">iccgamut</a>,
+    <a href="tiffgamut.html">tiffgamut</a>, or <a href="mpplu.html">mpplu</a>
+    tools. The resulting file is typically viewed using the <a
+      href="viewgam.html">viewgam</a> tool to convert one or more gamuts
+    into a <a href="#VRML">VRML</a> file, or as input to <a
+      href="collink.html">collink</a>, to describe a source colorspace
+    gamut.<br>
+    <h2><a name=".sp"></a>.sp</h2>
+    Spectral illuminant description. This is an ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>, Argyll specific format,
+    used to hold one or more spectral descriptions of an illuminant or
+    color. Typically it is used to record a custom illuminant, for use
+    in computing&nbsp;Fluorescent Whitening Agent compensation for
+    reflective samples, as well as computing CIE tristimulus values from
+    spectral samples.<br>
+    <h2><a name=".cmf"></a>.cmf</h2>
+    Color Matching Functions. This is an ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>,
+    Argyll specific format, used to hold three spectral response curves
+    that define a tristimulus observer. The format is the same as a .sp
+    file.<i></i>
+    <h2><a name=".ccmx"></a>.ccmx</h2>
+    Colorimeter Correction Matrix. This is an ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>, Argyll specific format,
+    used to hold a 3x3 correction matrix. The matrix is for a specific
+    display and Colorimeter, and is used to transform the instruments
+    XYZ values to make them better match a reference spectrometers
+    measurements for that display. The file contains a description of
+    the display, Colorimeter and reference Spectrometer. See <a
+      href="ccxxmake.html">ccxxmake</a> for more information.<br>
+    <h2><a name=".ccss"></a>.ccss</h2>
+    Colorimeter Calibration Spectral Set. This is an ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>, Argyll specific format,
+    used to hold a set of display spectral samples. For Colorimeters
+    that have known sensor spectral sensitivity information (such as the
+    i1d3 and Spyder4 & Spyder5), this allows a calibration to be created that is
+    tuned for a particular display. The file contains a description of
+    the display, the display technology type, the type of spectrometer
+    used for taking the readings. See <a href="oeminst.html">oeminst</a>
+    and <a href="ccxxmake.html">ccxxmake</a> for more information. The
+    format is similar to a .sp file.<br>
+    <h3><a name="CGATS"></a>CGATS</h3>
+    CGATS.5 Data Exchange Format, from the Annex J, of the ANSI
+    CGATS.5-1993 standard.<br>
+    This is a general purpose ASCII file format suitable for
+    representing color data, and widely used to store color test values.
+    Argyll uses this as a base, human readable format, for a variety of
+    purposes.<br>
+    <h3><a name="ICC"></a>ICC</h3>
+    ICC files are files that conform to the International Color
+    Consortium, File Format for Color profiles. The ICC Profile Format
+    attempts to provide a cross platform device profile format, that can
+    be used to translate color data created on one device into another
+    device's native color space. For a fuller explanation of what the
+    ICC Profile Format is all about, please refer to <a
+      href="http://www.color.org">http://www.color.org</a>, and the
+    profile specification. Argyll currently supports profiles that meet
+    the V3.4 specification. These files are commonly named with a <b>.icm</b>
+    extension on the Windows platform, <b>.pr</b> or <b>.icc</b> on
+    the Macintosh and other platforms. As well as device profiles, the
+    ICC format can also store device link profiles, abstract profiles
+    and named color profiles. This file is typically created using the <a
+      href="colprof.html">colprof</a> or <a href="collink.html">
+      collink</a> tools. A device link profile is also a way of
+    specifying a custom ink separation from (say) CMYK to the 6 or more
+    colorants used by inkjet printers.<br>
+    <h3><a name="MPP"></a>MPP</h3>
+    Model based device profile format. This is an ASCII text, <a
+      href="File_Formats.html#CGATS">CGATS</a>, Argyll specific format,
+    used to hold the parameters to a general model based device profile.
+    This is a less precise and general format than and ICC profile, but
+    is a compact way of representing a devices response when it has a
+    large number of color channels, or when very few measured data
+    points are available for its construction. This file is typically
+    created using the <a href="mppprof.html">mppprof</a> tool.<br>
+    <h3><a name="TIFF"></a>TIFF</h3>
+    Tag Image File Format (TIFF), a widely used format within the
+    graphic arts industries for storing image data. It handles various
+    forms of compression, and various colorspaces, including RGB, CMYK
+    and multi-channel files. See <a
+      href="http://en.wikipedia.org/wiki/TIFF">http://en.wikipedia.org/wiki/TIFF/</a>.
+    Argyll makes use of this as a default raster format.<br>
+    <h3><a name="JPEG"></a>JPEG</h3>
+    Joint Photographic Experts Group, (JPEG), a widely used format
+    within the graphic arts and photographic industries for storing
+    image data. It handles various forms of compression, and various
+    colorspaces, including RGB and CMYK. See <a
+      href="http://en.wikipedia.org/wiki/JPEG/">http://en.wikipedia.org/wiki/JPEG/</a>.
+    Argyll makes use of this as an alternate raster format for some
+    tools.<br>
+    <h3><a name="VRML"></a>VRML</h3>
+    Virtual Reality Modeling Language file. This is a portable way of
+    encoding 3 Dimensional objects (such as gamut surfaces). Typically
+    these can be viewed with a suitable standalone VRML viewer, or a
+    plug in for a web browser. VRML97 is International Standard ISO/IEC
+    14772-1:1997. See <a href="http://www.vrml.org/">http://www.vrml.org/</a>
+    for more information. See <a href="3dformat.html">3D Viewing Format</a>
+    for switching to VRML output format.<br>
+    <br>
+    <h3><a name="X3D"></a>X3D</h3>
+    X3D is a royalty-free ISO standard XML-based file format for
+    representing 3D computer graphics. It is successor to the Virtual
+    Reality Modeling Language (VRML).&nbsp; See <a
+      href="http://www.web3d.org/">http://www.web3d.org/</a> for more
+    information. See <a href="3dformat.html">3D Viewing Format</a> for
+    switching X3D output format.<br>
+    <br>
+    <h3><a name="X3DOM"></a>X3DOM</h3>
+    X3DOM is an open-source framework and runtime for 3D graphics on the
+    Web. It can be freely used for non-commercial and commercial
+    purposes, and is dual-licensed under MIT and GPL license. The
+    javascript runtime displays embeded X3D files in browsers that
+    support WebGL.<br>
+    See <a href="http://www.x3dom.org/">http://www.x3dom.org/</a> for
+    more information about this format.<br>
+    To check if your browser supports X3DOM, try <a
+      href="http://www.x3dom.org/check/">this test page</a>.<br>
+    For more information about ArgyllCMS use of it, see <a
+      href="3dformat.html">3D Viewing Format</a>.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

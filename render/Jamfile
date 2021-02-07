@@ -1,0 +1,39 @@
+
+# Optimization and Debug flags
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS		+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;      # Link with debug info
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile flags
+
+#Products
+Libraries = librender ;
+Executables = timage ;
+Headers = render.h ;
+
+#Install
+InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+DEFINES += RENDER_TIFF RENDER_PNG ;
+
+HDRS = ../h ../numlib $(TIFFINC) $(PNGINC) ;
+
+if [ GLOB [ NormPaths . ] : vimage.c ]  {
+	EXTRASRC = vimage.c ;
+	MainVariant vimage : vimage.c : : STANDALONE_TEST : : : librender ../numlib/libnum
+	          $(TIFFLIB) $(JPEGLIB) $(PNGLIB) $(ZLIB) ;
+}
+
+# 2D Rendering library
+Library librender : render.c thscreen.c $(EXTRASRC) ;
+
+Main timage : timage.c : : : : : librender ../numlib/libnum
+	          $(TIFFLIB) $(JPEGLIB) $(PNGLIB) $(ZLIB) ;
+
+if $(BUILD_JUNK) {
+	Main tt : tt.c : : : ../plot : : ../numlib/libnum ../plot/libplot ;
+}

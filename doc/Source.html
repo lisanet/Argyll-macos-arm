@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Argyll Overview</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+<h2><u>Source Code Documentation</u></h2>
+Some general comments about how different software works.<br>
+<br>
+<b>TARGET</b><br>
+<br>
+&nbsp;Nearly all current Color correction systems generate test charts
+(or device characterization target charts) by laying out a regular
+rectangular grid of test points in device space (Targen will do this if
+you feed it a non-zero <span style="font-weight: bold;">-m</span>
+option). On some consideration, this approach is far from optimal. Not
+only is a regular grid inefficient in packing the multidimensional
+device space but if the points are spaced evenly in device space, they
+will probably not be optimal in determining the underlying device
+characteristic, sampling too finely where the device behavior is
+smooth, and too coarsely where the device behavior changes rapidly.
+Some commercial color systems tackle
+the latter problem by "pre-linearizing" the device, which amounts to
+distorting
+the regular device space grid points with a perceptual inverse per
+device
+channel lookup curve.<br>
+<br>
+The approach I have taken with Argyll, is a little different. Both a
+device independent and device dependent approach are available. In the
+device independent mode, test points are distributed so as to minimize
+the distance from any point in the device space to the nearest test
+chart value. When the device dependent approach is used, test points
+are chosen so as to minimize the expected error between the resulting
+profile and the underlying device response.<br>
+<br>
+For higher dimensional spaces, where the aim is to create a more
+approximate device profile, I've used an "incremental far point" point
+generator, that starting with a previous test point as a seed, use a
+minimization algorithm to locate another point that is as far as
+possible from the nearest existing test point in perceptual space,
+while remaining in gamut at all tines. This means that ideally each
+point "fills in" the gaps in the existing distribution.<br>
+<br>
+Another issue with laying test points out in regular grids, is that
+this means that the device response is poorly sampled (since the grids
+are usually coarse), and this can make it impossible to create detailed
+device linearisation "shaper" curves from the resulting data ! Ideally,
+in any colorspace (input or output), when viewed from any possible
+angle, none of the test data points should appear&nbsp; to line up. The
+Argyll target generator seems to achieve this goal.<br>
+<br>
+<br>
+target/printtarg.c:<br>
+<br>
+printtarg simply generates a PostScript file containing the patches
+laid out for an Xrite DTP51/DTP41/SpectroScan. It allows them to be
+laid out on
+a choice of paper sizes, with the appropriate contrasting color spacers
+between
+each patch for the strip reading instruments. Unlike other charts,
+Argyll
+charts are generated as required, rather that being fixed. Also unlike
+most
+other strip reading charts, the spacers may colored, so that the
+density contrast
+ratio is guaranteed, even when two patches are about 50% density.<br>
+<br>
+Another feature is the pseudo random patch layout. This has three
+purposes. One is to try and average out any variation in the device
+response in relationship to the location of the patch on the paper.
+Color copiers and printing presses (for instance), are notorious in
+having side to side density variations.<br>
+<br>
+Another purpose of the random patch layout, is that it gives the
+reading program a good mechanism for detecting user error. It can guess
+the expected values, compare them to the readings, and complain if it
+seems that the strip is probably the wrong one.<br>
+<br>
+The final purpose of the random patch layout is to optimize the
+contrast
+between patches in a strip, to improve the robustness of the strip
+reading.
+Using this, small charts may be even be generated without any gaps
+between
+the test patches.<br>
+<b><br>
+RSPL</b><br>
+<br>
+A lot of core Argyll algorithms are bound up in the RSPL (Regular
+Spline) class. The RSPL class is closely related to the CLUT table
+structure used in the ICC profile format, and is a general purpose way
+of mapping one multi-dimensional value to another, using interpolation
+to reduce the mapping function to a manageable size.<br>
+Regular splines are not directly related to other types of splines, and
+do not generally suffer from the sort of "wiggles" and "overshoot"
+characteristic of other spline systems.<br>
+<br>
+The RSPL class adds three basic methods to the underlying data
+structure:<br>
+<br>
+1) Interpolation<br>
+<br>
+2) Creation from scattered data<br>
+<br>
+The regular spline implementation was inspired by the following
+technical reports:<br>
+<br>
+D.J. Bone, "Adaptive Multi-Dimensional Interpolation Using Regularized
+Linear Splines," Proc. SPIE Vol. 1902, p.243-253, Nonlinear Image
+Processing IV, Edward R. Dougherty; Jaakko T. Astola; Harold G.
+Longbotham;(Eds)(1993).<br>
+<br>
+D.J. Bone, "Adaptive Colour Printer Modeling using regularized linear
+splines," Proc. SPIE Vol. 1909, p. 104-115, Device-Independent Color
+Imaging and Imaging Systems Integration, Ricardo J. Motta; Hapet A.
+Berberian; Eds.(1993)<br>
+<br>
+Don Bone and Duncan Stevenson, "Modelling of Colour Hard Copy Devices
+Using Regularised Linear Splines," Proceedings of the APRS workshop on
+Colour Imaging and Applications, Canberra (1994)<br>
+<br>
+see &lt;http://www.cmis.csiro.au/Don.Bone/&gt;<br>
+<br>
+Also of interest was:<br>
+<br>
+"Discrete Smooth Interpolation", Jean-Laurent Mallet, ACM Transactions
+on Graphics, Volume 8, Number 2, April 1989, Pages 121-144.<br>
+<br>
+3) Inversion<br>
+<br>
+Simplex interpolation is normally done in Baricentric space, where
+there
+is one more baricentric coordinate than dimensions, and the sum of all
+the
+baricentric coordinates must be 1.<br>
+To simplify things, we work in a "Simplex parameter" space, in which
+there are only &lt;dimension&gt; parameters, and each directly
+corresponds with a cartesian coordinate, but the parameter order
+corresponds with the baricentric order.<br>
+For example, given cartesian coordinates D0, D1, D2 these should be
+sorted from smallest to largest, thereby choosing a particular simplex
+within a cube,
+and allowing a correspondence to the parameter coordinates, ie:<br>
+<br>
+D1 D0 D2&nbsp;&nbsp;&nbsp;&nbsp; Smallest -&gt; Largest cartesian sort<br>
+P2 P1 P0&nbsp;&nbsp;&nbsp;&nbsp; Corresponding Parameter coordinates
+(note reverse order!)<br>
+<br>
+B0 = P0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Conversion to Baricentric
+coordinates<br>
+B1 = P1 - P0<br>
+B2 = P2 - P1<br>
+B3 = 1&nbsp; - P2<br>
+<br>
+The vertex values directly correspond to Baricentric coordinates,<br>
+giving the usual interpolation equation of:<br>
+<br>
+&nbsp; VV0 * B0<br>
++ VV1 * B1<br>
++ VV2 * B2<br>
++ VV3 * B3<br>
+<br>
+where VVn is the vertex value for each of the 4 vertices of the simplex.<br>
+<br>
+Reversing the Parameter -&gt; Baricentric equations gives the<br>
+following interpolation equation using Parameter coordinates:<br>
+<br>
+&nbsp; VV0 - VV1 * P0<br>
++ VV1 - VV2 * P1<br>
++ VV2 - VV3 * P2<br>
++ VV3<br>
+<br>
+It is this which is used in rev.c for solving the reverse interpolation
+problem. Within a simplex, only linear algebra is needed to compute
+inverses. To deal with the 4D-&gt;3D nature of a CMYK profile, the SVD
+(Singular Value Decomposition) approach is used to solving a CMYK for a
+given CIE value, the result being the equation of the line of
+solutions. The lines from adjacent simplexes form a solution locus,
+that can be resolved into a single point solution once a black
+generation rule is applied.<br>
+<br>
+Outline of inversion processing:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Basic function requirements:&nbsp; exact,
+auxil, locus, clip inversion.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Fwd cell - reverse cell list lookup<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Basic layout di -&gt; fdi + auxils + ink limit<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Basic search strategy<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Sub Simplex decomposition &amp; properties<br>
+&nbsp;&nbsp;&nbsp;&nbsp; How each type of function finds solutions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sub-simplex dimensionality &amp;
+dof + target dim &amp; dof<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Linear algebra choices.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; How final solutions are chosen<br>
+<b><br>
+XICC</b><br>
+<br>
+&nbsp;&nbsp;&nbsp; Profiling using concatenated shapers to augment thin
+plate splines for per channel curves.<br>
+<br>
+<b>IMDI</b><br>
+<br>
+This module generates C code routines which implement an integer
+multi-channel transform. The input values are read, passed through per
+channel lookup tables, a multi-dimensional interpolation table, and
+then a per channel output lookup table, before being written.<br>
+<br>
+<b> MPP<br>
+</b> <br>
+Outline model parameter optimization using slope accelerated error
+metric, and initial parameter speedup for adjacent spectral bands etc.<br>
+<br>
+<br>
+<br>
+</body>
+</html>

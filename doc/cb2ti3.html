@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>cb2ti3</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="author" content="Graeme Gill">
+</head>
+<body>
+<h2><b>profile/cb2ti3</b></h2>
+<h3>Summary</h3>
+Convert Colorblind format CMY/RGB test chart information into <a
+ href="File_Formats.html#.ti3">Argyll .ti3</a> CGATS profile forma
+files.
+This allows the use of raw Colorblind profiling data, to be used for
+Argyll
+profile creation or validation..<br>
+<h3>Usage</h3>
+<small><span style="font-family: monospace;"> cb2gcats [-v] [-l limit] </span><i
+ style="font-family: monospace;">inbasename outbasename</i><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;
+-v&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp; Verbose flag</span><br style="font-family: monospace;">
+<span style="font-family: monospace;"> &nbsp;&nbsp;&nbsp; -l
+limit&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; Set and ink limit
+(TAC) in the resulting .ti3 file</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;"> &nbsp;&nbsp;&nbsp; </span><i
+ style="font-family: monospace;">inbasename</i><span
+ style="font-family: monospace;"> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Base
+name for input Colorblind .CMY and input. nCIE file</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;"> &nbsp;&nbsp;&nbsp; </span><i
+ style="font-family: monospace;">outbasename</i><span
+ style="font-family: monospace;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Base
+name for output.ti3 file.</span></small><br>
+<h3>Examples</h3>
+Given the Colorblind files <i>fred.CMY</i> and <i>fred.nCIE</i>, and
+an
+ink limit of 280%, one would create the Argyll CGATs file <i>device.ti3</i>
+file thus:<br>
+<br>
+cb2ti3 -l 280 fred device<br>
+<h3>Comments</h3>
+This tool only handles RGB or CMY files, and nothing else.<br>
+There is no extra output when the verbose flag is used.<br>
+Because the two Colorblind files are specified by a basename., they
+must reside in the same directory.<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

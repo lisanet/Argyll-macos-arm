@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>synthcal</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>spectro/synthcal</b></h2>
+    <h3>Summary</h3>
+    Create synthetic calibration file. The default is a linear
+    calibration
+    file.<br>
+    <h3>Usage</h3>
+    <font size="-1"><span style="font-family: monospace;">synthcal</span><i
+        style="font-family: monospace;"> </i><span style="font-family:
+        monospace;">[-options] </span><i style="font-family:
+        monospace;">basename<br>
+      </i><span style="font-family: monospace;">&nbsp;-r
+        res&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set
+        the calibration resolution (default 256)<br>
+        &nbsp;-t
+        N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        i =
+        input, o = output, d = display (default)<br>
+        &nbsp;-d col_comb&nbsp;&nbsp;&nbsp;&nbsp; choose colorant
+        combination
+        from the following:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0:
+Print
+        grey<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1:
+Video
+        grey<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2:
+Print
+        RGB<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3:
+Video
+        RGB<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        4:
+        CMYK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        5:
+        CMY<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+6:
+CMYK
+        + Light CM<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+7:
+CMYK
+        + Light CMK<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8:
+CMYK
+        + Red + Blue<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+9:
+CMYK
+        + Orange + Green<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+10:
+CMYK
+        + Light CMK + Light Light K<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+11:
+CMYK
+        + Orange + Green + Light CM<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+12:
+CMYK
+        + Light CM + Medium CM<br>
+        &nbsp;-D colorant&nbsp;&nbsp;&nbsp;&nbsp; Add or delete colorant
+        from
+        combination:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(Use
+-??
+        to list known colorants)<br>
+      </span></font><font size="-1"><span style="font-family:
+        monospace;">&nbsp;-o
+        o1,o2,o3,&nbsp;&nbsp;&nbsp; Set non-linear curve offset
+        (default 0.0)</span></font><br>
+    <font size="-1"><span style="font-family: monospace;">&nbsp;-s
+        s1,s2,s3,&nbsp;&nbsp;&nbsp; Set non-linear curve scale
+        (default 1.0)<br>
+        &nbsp;-p p1,p2,p3,&nbsp;&nbsp;&nbsp; Set non-linear curve powers
+        (default 1.0)<br>
+        &nbsp;outfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Base name
+        for output .cal file</span></font><br>
+    <h3>Comments<br>
+    </h3>
+    This is the tool creates a calibration (<a
+      href="File_Formats.html#.cal">.cal</a>)
+    file that has a linear table
+    for each channel. This is useful in setting up a display for
+    evaluation, disabling printer calibration, testing, or to recover a
+    display that has a strange set of
+    Video LUTs loaded.<br>
+    <br>
+    <a name="r"></a>The <span style="font-weight: bold;">-r</span>
+    parameter
+    selects the table resolution. The default is 256.<br>
+    <br>
+    <a name="t"></a>The <span style="font-weight: bold;">-t</span>
+    option
+    selects the type of device the calibration file is intended for.
+    Default is display.<br>
+    <br>
+    <a name="d"></a>The <span style="font-weight: bold;">-d</span>
+    option
+    selects the device colorspace. The default for input and display is
+    <font style="font-weight: bold;" size="-1"><span style="font-family:
+        monospace;">Video RGB</span></font><font size="-1"><span
+        style="font-family: monospace;">, while the default for output
+        is <span style="font-weight: bold;">CMYK</span>.<br>
+      </span></font><br>
+    <a name="D"></a> The <b>-D</b> parameter modifies the colorspace
+    set
+    by <span style="font-weight: bold;">-d</span> by allowing
+    individual
+    colorants to be added or subtracted from the colorspace.<br>
+    <br>
+    Optionally it can be used to create a non-linear calibration file,
+    useful for diagnostics. Each of the device channel curves can be
+    given a gamma (power curve) shape, scaled to a maximum other than
+    1.0, and offset from a value other than 0.0.<br>
+    <br>
+  </body>
+</html>

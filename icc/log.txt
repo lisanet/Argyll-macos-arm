@@ -1,0 +1,195 @@
+
+ Change History: (See ArgyllCMS log.txt too)
+
+ 2.21
+	Automatically repair icmTextDescription strings have an allocation that is longer
+	than their size.
+
+ 2.20
+   Add better cross compatibility with non-Argyll ICC profiles:
+   + Use "wrong Von Kries" media white point adapation for non-Argyll non-display profile
+   + Optionally create "wrong Von Kries" media white point adapation profiles
+     using the "ARGYLL_CREATE_WRONG_VON_KRIES_OUTPUT_CLASS_REL_WP" env. variable,
+     while maintaining ArgyllCMS compatibility using the 'arts' tag.
+   + Implement proper absolute colorimetric intent for ICCV2 Display profiles
+     that use the ICCV4 style of have a media white od D50 and storing the
+     media chromatic trasnform in the 'chad' tag.
+   + Optionally create such ICCV4 style V2 Display profiles by using the
+     "ARGYLL_CREATE_DISPLAY_PROFILE_WITH_CHAD" env. variable.
+	
+ 2.16
+	Clean up cLUT read code to make sanity checking
+	more explicit and remove redundant code.
+
+	Added special mode that interprets cLUT res of 0 as 256
+	for MadVR testing.
+
+	Change icc->read_tag() to only succeed if the tag type is
+	known, since the standard expectation of a non NULL
+	return type is that it is of a known type. Added new
+	method icc->read_tag_any() which will return a
+	icmSigUnknownType if the tag type is unknown.
+
+ 2.14
+	Fix potential array bounds violation in icc/icc.c for malformed
+	cLUT profiles with zero input channels.
+
+ 2.10
+	
+	Added protection against crafted file integer overflows.
+
+	Many minor additions to support ArgyllCMS.
+
+	Further add V4 compatibility, with changes to PCS encoding. 
+ 
+ 2.06
+
+	Added MD5 checksum code for profile ID support.
+
+ 2.05
+      Version in Argyll V0.51 release.
+
+      Started adding support for ICC V4. Not enabled yet.
+
+      Expanded internal/effective colorspace/ranges support
+      to be uniform between all the lookup types.
+
+ 2.04
+
+      Fixed minor casting nits picked up by some compilers
+      (thanks to Keith Trummel).
+
+      Make intent selection for Matrix profiles and Gamut tables
+      more forgiving if not ICM_STRICT.
+
+ 2.03
+      Added simple extention when dumping binary data tag to
+      dump ASCII as well if verb >= 4.
+
+      Added Makefile support for compiling under MAC OSX.
+
+      Added access to primitive read and write functions, so custom tag
+      data can be marshalled using standard encodings.
+
+      Expanded ICM_STRICT to encompass bad DateTime information in the header,
+      and also disable required tag checking on reading or lookups.
+      Changed default intent for Output profiles to perceptual from
+      colorimetric, since this would usually be expected.
+
+      Added workaround for faulty Kodak RGB matrix profiles, that
+      have their primary XYZ coordinates scaled to 100.0 rather than
+      1.0. This is enabled if ICM_STRICT is not defined.
+
+      Replaced Lab<->XYZ functions with simpler versions.
+
+      Expand icmFile implimentation to handle icmAlloc
+
+		Do check for header Magic number first.
+
+      Add convenience function that creates an RGB to XYZ transform
+      matrix from the device primaries and the white point.
+
+      Separated stdio versions of file and alloc to allow
+      compile without these.
+
+      Non-standard (ie. Apple) 5,6,7 & 8 channel color signatures
+      weren't being handled properly thruout the library.
+
+ 2.02
+      Merged rename of [u]int64 to icm[Ui][I]nt64 (to work around
+      AIX 5.1L portability bug) from Raph Levien.
+
+      Fixed stray , in icmLookupOrder structure definition (from Dan Coby)
+
+ 2.01
+		Change TextDescription code to not barf if #undef ICM_STRICT and
+      Apple scriptcode not padded to 67 bytes.
+
+      Add get_ranges() method to all Lu types, not just LuLut.
+      Fix bug in PCS override logic that was causing
+		reverse conversions to apply the wrong conversion.
+
+      Added Delta E convenience functions icmLabDE() and
+      icmCIE94() etc.
+
+		Merged Raph Levien's cleanups, to quiet gcc warnings.
+
+      Merged another couple of warning cleanups from Jouk Jansen.
+
+ 2.00
+      Change absolute conversion to be white point only, and use
+      Bradford transform by default. (ie. we are now ignoring the
+      comment in section 6.4.22 of the 1998 spec. about the
+      media black point being used for absolute colorimetry,
+      ignoring the recommendation on page 118 in section E.5,
+      and are taking up the recommendation on page 124 in section
+      E.16 that a more sophisticated chromatic adaptation model be used.)
+
+      This is for better compatibility with other CMM's, and to
+      improve the results when using simple links between
+      profiles with non-D50 white points. Standard profiles
+      like sRGB will also be more accurate when interpreted
+      with absolute colorimetric intent.
+      This will cause some slight incompatibilty with previous
+      versions of icclib.
+
+      Added ColorSync 2.5 specific VideoCardGamma tag support
+      (from Neil Okamoto)
+
+ 1.31
+      Added file I/O class to allow substitution of alternative ICC profile
+      file access. Provide standard file class instance, and memory image
+      instance of file I/O class as default and example. 
+      Added an optional new_icc_a() object creator, that takes a memory
+      allocator class instance. This allows an alternate memory heap to
+      be used with the icc class. 
+      Renamed object free() methods to del() for more consistency with new().
+
+ 1.30	
+      Added workaround for reading some Adobe profiles with confused header DateTime.
+      Enhanced tag allocate() methods so that they can resize allocations.
+      Enhanced icmLut_set_tables() to access grid points in a cache friendly order.
+      Fixed bug in check_icc_legal() that caused bogus errors, removed
+      uneccessary static declarations in icc.h, and fixed a bug in
+      icmTable_lookup_bwd() that effected both accuracy and speed. (Thanks to Andrei Frolov)
+      Removed icmAbsoluteColorimetricXYZ intent, and replaced it with
+      a PCS override capability. This adds a new parameter to get_luobj() 
+      Added Lab translations of some XYZ "dump" strings.
+      Fix memory leak after failed tag read + rename_tag function
+      + shared library support changes. (Thanks to Carles Llopis).
+		Changed all the public 2str utility routines to a single function
+      that can be used to interpret an enumeration or tag in a human
+      readable form. 
+
+ 1.23	
+      Fixed important bug in Lut read/write. The matrix values had their
+      rows and columns switched. Not many profiles exercise this code.
+      Thanks to David Gillman for discovering this problem.
+      Fixup compiler complains about illegal enum values for icmCurveStyle,
+      and icmDataStyle. Malloc memory icmLut_lookup_clut_nl for gw[], so that
+      it is more friendly to systems with a limited stack. (Thanks to Dave White)
+
+ 1.22	99/11/11 Snapshot of current code.
+      Added more hooks to support inherited implementation of
+      color conversion, used in Argyll to support reversing
+      multi-dimentional table lookups.
+      Cleaned up color conversion code to make it easier to follow.
+      Adding simplex interpolation for non-Lab style input space interpolation.
+      Fix Sun misalignment and realloc problems (Thanks to Allan N. Hessenflow)
+      Fixed endian problem with Unicode on read and write.
+      Expanded icmTextDescription_dump() to do hex dump of Unicode and ScriptCode.
+      Changed over to ICC.1:1998-09 .h file.
+      Started implementing ICC.1:1998-09, but not complete yet!
+
+ 1.21	99/2/14
+     	After re-reading Michael Bourgoin's 1998 SIGGRAPH notes,
+      I have consolidated the Lut input index, and table value encodings.
+      The default set_tables() scaling has been adjusted appropriately
+      for this correction of Lab encoding.
+      Trying to create an 8 bit XYZ Lut will now fail if icclib helper
+      functions are used to create it.
+ 
+ 1.20	99/2/7
+      Added profile color lookup functon.
+      Added set_tables() support.
+      Various bug fixes and enhancements.

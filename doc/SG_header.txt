@@ -1,0 +1,12 @@
+IT8.7/2
+ORIGINATOR "Graeme Gill" 
+DESCRIPTOR "Header to prepend to X-Rite digital_colorchecker_sg_l_a_b.txt file"
+CREATED  "June 26, 2012"
+
+NUMBER_OF_FIELDS 4
+BEGIN_DATA_FORMAT
+SAMPLE_ID LAB_L LAB_A LAB_B
+END_DATA_FORMAT
+
+NUMBER_OF_SETS 140
+BEGIN_DATA

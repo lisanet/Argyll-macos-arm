@@ -1,0 +1,32 @@
+ 
+# JAM style makefile for jcnf
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS    = $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#Products
+Libraries = libjcnf ;
+Executables = ;
+Headers = jcnf.h ;
+
+#Install
+#InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+
+HDRS = ../yajl ;
+
+# config parser based on yajl 
+Library libjcnf : jcnf.c ;
+
+# Link all utilities here with libicc
+LINKLIBS = libjcnf ../yajl/libyajl ../numlib/libnum ;
+
+# All utils are made from a single source file 
+MainsFromSources test.c ;
+
+
+
+

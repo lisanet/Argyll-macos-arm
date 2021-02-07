@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=windows-1252">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; I)
+      [Netscape]">
+    <title>Argyll Compiling</title>
+  </head>
+  <body>
+    <h2> <u>Compiling the Source Code</u></h2>
+    If you have downloaded the source code package, then you will need
+    to read the following instructions in order to compile and then run
+    any of the tools. If you have downloaded one of the platform
+    specific executable package, then the executables don't need to be
+    compiled, and the following instructions are not relevant.<br>
+    <h5 style="text-decoration: underline;">Check your development
+      environment:</h5>
+    Check you have one of the supported development environments <a
+      href="ArgyllDoc.html">listed</a>, and that your shell is
+    configured to have access to the development tools.<br>
+    <br>
+    On Linux, check that the appropriate development packages are
+    installed:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; jam: Program construction tool, similar to make
+    [If available - downloadable from the ArgyllCMS website]<br>
+    &nbsp;&nbsp;&nbsp; gcc C compiler<br>
+    &nbsp;&nbsp;&nbsp; Development files for libX11<br>
+    &nbsp;&nbsp;&nbsp; Development files for libXdmcp<br>
+    &nbsp;&nbsp;&nbsp; X.Org X11 libXext development package<br>
+    &nbsp;&nbsp;&nbsp; X.Org X11 libXxf86vm development package<br>
+    &nbsp;&nbsp;&nbsp; X.Org X11 libXinerama development package<br>
+    &nbsp;&nbsp;&nbsp; X.Org X11 libXrandr development package<br>
+    &nbsp;&nbsp;&nbsp; X.Org X11 libXScrnSaver A.K.A. libxss-dev
+    development package<br>
+    <h5><span style="text-decoration: underline;">Setup JAM:</span><br>
+    </h5>
+    Argyll makes use of a build system called <a
+      href="http://www.perforce.com/jam/jam.html">Jam/MR</a>. Jam is
+    cross platform, highly customizable and flexible. It uses a concise,
+    scalable and platform neutral configuration files, and is fast.<br>
+    <p>If you do not already have Jam 2.5 on your system or if it is not
+      available as an installable package, you will need to install it.
+      [It may be available as an RPM for Linux systems.] Jam/MR is
+      available from <a href="ftp://ftp.perforce.com/jam/">&lt;ftp://ftp.perforce.com/jam&gt;</a>
+      You'll want to bootstrap it up using its Makefile - see the <span
+        style="font-weight: bold;">README</span> file that comes with
+      Jam for more information. You may want to apply the patch <span
+        style="font-weight: bold;">jam.patch</span> included in Argyll
+      to <span style="font-weight: bold;">jam.c</span> so that it uses
+      the environment variable <span style="font-weight: bold;">JAMBASE</span>,
+      and then setting this environment variable to point to the Argyll
+      Jambase. The patch also fixes a non-critical bug that affects
+      building using MingW. Note that building jam results in an
+      executable <span style="font-weight: bold;">jam0</span> that you
+      will want to rename and install in an appropriate place on your
+      system. A <span style="font-weight: bold;">pre-patched</span>
+      source archive of Jam is available as a&nbsp; <a
+        href="http://www.argyllcms.com/ajam-2.5.2-1.3.3.zip">.zip here
+        for MSWin</a>, or as a <a
+        href="http://www.argyllcms.com/ajam-2.5.2-1.3.3.tgz">.tgz for OS
+        X and Linux</a>.<br>
+    </p>
+    <p>An alternative to the original Jam may be <a
+        href="http://freetype.sourceforge.net/jam/index.html">ftjam</a>,
+      which is appears to be backwards compatible with the original
+      Jam/MR.</p>
+    <p>The <span style="font-weight: bold;">Jambase</span> I am using
+      for Argyll is different to the default Jambase provided with Jam
+      and compiled into it,&nbsp; and you need to arrange to use this
+      when you compile Argyll. You can tell Jam to use an alternate
+      Jambase using the <span style="font-weight: bold;">-f</span>
+      option, or by setting the environment variable <span
+        style="font-weight: bold;">JAMBASE</span> to point to the Argyll
+      Jambase if you applied the Argyll patch to jam. Another method
+      would be to create a shell alias of jam that invokes jam using the
+      -f flag, or to create a script that provides the -f option to
+      point to the Argyll Jambase. Argyll will not build properly if you
+      use the wrong Jambase. </p>
+    If you are running on Mac OSX, then even though OSX comes with a
+    version of Jam/MR in the development system, you will need to
+    download, build and install a normal version of Jam/MR Version 2.5
+    or later from perforce, to be able to build Argyll. This is due to
+    Apple changing their version of Jam sufficiently to make it
+    incompatible with normal Jamfiles :-(.<br>
+    <p>On OSX what I did was to name the "normal" Jam ajam, and then
+      setup a jam shell script to invoke it something like this: "ajam
+      -f~/src/argyll/Jambase $*", and to make sure that my script is
+      ahead of Apples jam in my $PATH.&nbsp; The makeall.ksh script or
+      Makefile will run Jam with the -f flag.<br>
+    </p>
+    <p>Also on Linux and OSX you may have to make sure that certain
+      environment variables such as <b>HOSTTYPE</b> are exported, so
+      that other programs can see them.<br>
+    </p>
+    <p>On newer Linux systems that make use of versions of the <b>ar</b>
+      utility that default to so called "deterministic builds" you
+      should set the <b>JAM_NEW_GNU_AR_OPTIONS</b> environment <br>
+      variable so that the ar U option is set:<br>
+    </p>
+    <p>&nbsp;&nbsp;&nbsp; export <b>JAM_NEW_GNU_AR_OPTIONS=true<br>
+        <br>
+      </b>&nbsp;Not doing this will cause libraries to be re-built all
+      the time.<br>
+    </p>
+    <p>You may also have to set the appropriate environment variable to
+      tell the Jambase which compiler you are using.<br>
+    </p>
+    <h5><span style="text-decoration: underline;">Then compile Argyll:</span><br>
+    </h5>
+    <p>Once you've got a working Jam, you simply have to unzip the
+      argyll.zip file, and it will create a top level directory <span
+        style="font-weight: bold;">Argyll_VX.X.X</span>, where X.X.X is
+      the version number, and you can then cd into this directory and
+      run <span style="font-weight: bold;">jam</span>. <span
+        style="color: rgb(102, 0, 204);"></span><span style="color:
+        rgb(102, 0, 204);"></span>For a faster build on a multiprocessor
+      system you may like to use the -j option&nbsp; to do a parallel
+      build, e.g. <span style="font-weight: bold;">jam -j3</span>. To
+      install the executables in the bin directory and the sample files
+      into the <span style="font-weight: bold;">ref</span> directory,
+      run <span style="font-weight: bold;">jam install</span>. To
+      remove everything that has been built, run <span
+        style="font-weight: bold;">jam clean</span>. On Linux/OS X you
+      could also just try running make, and the makefile will invoke
+      jam, or the makeall.ksh shell script file or the makeall.bat file
+      can be used to invoke jam.<br>
+    </p>
+    <p>Something to watch on the Intel versions of OS X 10.4, is that
+      your shell environment variable $MACHTYPE may be incorrect. On
+      Intel 10.4 it should be i386-apple-darwin8.0, but there are bugs
+      in Apples distribution.<br>
+    </p>
+    <p>You may have to check that your shell environment variable $<span
+        style="font-weight: bold;">HOSTTYPE</span> has been exported, so
+      that Jam can know if it's 64 bit or not,<br>
+      and look for libraries in the right place. You can fix this
+      permanently in your shell .initialization file (ie. ~/.profile,
+      ~/.bashrc etc.).<br>
+    </p>
+    <p>To build a particular sub directory only, cd to the directory and
+      simply run <span style="font-weight: bold;">jam</span>, although
+      be aware that the local Jamfile compile time options may be
+      different to those in the top level Jamfile used when compiling
+      from the top.<br>
+    </p>
+    <p><span style="font-weight: bold;">NOTE</span> that "jam install"
+      doesn't install the resulting binaries in the "usual places", it
+      installs them in the <span style="font-weight: bold;">Argyll_VX.X.X/</span><span
+        style="font-weight: bold;">bin</span> directory, and it's then
+      up to you whether you want copy them to somewhere like C:\Program
+      Files\argyll, /usr/bin, /usr/local/bin etc., or simply leave them
+      there. </p>
+    <h5><span style="text-decoration: underline;">Compile environment on
+        MSWindows:</span></h5>
+    <p>Setting up a compile environment on MSWindows can be challenging.
+      The simplest approach is probably to install MingW, since it
+      provides both the compiler and the SDK in one package.<br>
+      <br>
+      I've successfully compiled using Microsoft VC++ 6.0, but I think I
+      remember tweaking some of the header files by borrowing from a
+      latter SDK to be able to incorporate the&nbsp; necessary function
+      calls to access display and color profiles on Win2K and latter, so
+      this may not work "out of the box".</p>
+    <p>I've also successfully compiled using Microsoft VC++ 8.0, VC++
+      9.0 and VC++ 10.0 Express (the free Microsoft compiler) plus the
+      Microsoft Platform SDK February 2008. To get this to work though,
+      I had to create my own batch file to setup the SDK environment
+      variables <span style="font-weight: bold;">MSSdk</span> etc.,
+      because the batch files provided with the SDK got confused by the
+      presence of VC++6, and didn't notice that VC++8, 9 or 10 was
+      configured.</p>
+    <p>Note that for some hard to fathom reason VC++ 9.0 refused to
+      install on my Win2K development machine, so I had to install it on
+      a WinXP machine and then copy the installation back to Win2K, and
+      manually complete the installation. There seems to be no reason
+      for this limitation, since the VC++9&nbsp; compiler/linker etc.
+      seems quite happy to run on Win2K.</p>
+    <p>I have succeeded in cross compiling for Win64 using
+      x86_64-w64-mingw32-gcc, but currently the Jambase isn't setup for
+      cross compilation and I used a hack to build the native
+      executables with a native compiler before invoking the usual Jam
+      compilation in the cross environment.<br>
+      &nbsp; </p>
+  </body>
+</html>

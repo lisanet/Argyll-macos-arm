@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>tiffgamut</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>xicc/tiffgamut</b></h2>
+    <h3>Summary</h3>
+    Create a gamut file or X3DOM file of the color gamut of the contents
+    of a set of TIFF or JPEG image.<br>
+    <br>
+    <span style="font-weight: bold;">tiffgamut</span> allows creation of
+    gamut files from the pixel values in a set of TIFF and/or JPEG
+    raster images, as defined by an ICC profile, in L*a*b* or CIECAM02
+    Jab colorspace, and can also represent the gamut as a X3DOM file.
+    This can be used for visualizing and comparing the gamut of an image
+    to the colorspace it is in, or a colorspace it might get transformed
+    into, and can also be used to create an image source gamut for use
+    with <a href="collink.html"> collink</a>, something that can be of
+    particular importance if your images are encoded in a large gamut
+    space such as L*a*b*, ProPhoto, scRGB etc.<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that if you are
+    creating an image gamut suitable for use with the <a
+      href="collink.html">collink</a> <a href="collink.html#g">-g</a>
+    or <a href="collink.html#G">-G</a> flags, or <a
+      href="colprof.html#g">colprof -g</a>, use the Jab appearance space
+    intent for appearance space gamut mappings, and the same input
+    viewing conditions to be used in <span style="font-weight: bold;">collink</span>
+    or <span style="font-weight: bold;">colprof</span> using the -c
+    flag, i.e. "tiffgamut -pj -cmt sRGB.icm image.tif" See <a
+      href="Scenarios.html#LP3">Image dependent gamut mapping using
+      device links</a> for an example workflow.<br>
+    <br>
+    See <a href="3dformat.html">3D Viewing Format</a> for switching to
+    VRML or X3D output format.<br>
+    <h3>Usage Summary</h3>
+    <span style="font-family: monospace;">tiffgamut [-v level]
+      [profile.icm | embedded.tif/jpg] infile1.tif/jpg [infile2.tif/jpg
+      ...]</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+      Verbose</span><br style="font-family: monospace;">
+    &nbsp; <span style="font-family: monospace;">-d
+      sres&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Surface resolution
+      details 1.0 - 50.0</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+emit
+
+
+
+
+
+
+
+
+      X3DOM .x3d.html file as well as CGATS .gam file</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Don't
+
+
+
+
+
+
+
+
+      add X3DOM axes or white/black point</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;-k&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Add
+
+
+
+
+
+
+
+
+      markers for prim. &amp; sec. "cusp" points<br>
+      &nbsp;-f perc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Filter by
+      popularity, perc = percent to use<br style="font-family:
+        monospace;">
+    </span><span style="font-family: monospace;">&nbsp;-i
+      intent&nbsp;&nbsp;&nbsp;&nbsp; p = perceptual, r = relative
+      colorimetric,</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+s
+
+
+
+
+
+
+
+
+      = saturation, a = absolute (default), d = profile default</span><span
+      style="font-family: monospace;"></span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;">&nbsp;-o
+      order&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n = normal (priority: lut &gt;
+      matrix &gt; monochrome)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+r
+
+
+
+
+
+
+
+
+      = reverse (priority: monochrome &gt; matrix &gt; lut)<br>
+    </span><span style="font-family: monospace;">&nbsp;</span><span
+      style="font-family: monospace;">-p oride</span><span
+      style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l =
+      Lab_PCS (default), j = CIECAM02 Appearance Jab</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;">&nbsp;-c viewcond&nbsp;&nbsp; set
+      appearance mode and viewing conditions for CIECAM02,</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"></span><span
+      style="font-family: monospace;"></span><span style="font-family:
+      monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+either
+
+
+
+
+
+
+
+
+      an enumerated choice, or a parameter:value change</span><span
+      style="font-family: monospace;"></span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;"></span><tt> &nbsp; &nbsp;
+      &nbsp; &nbsp;&nbsp; &nbsp; </tt><tt><tt>pc - Critical print
+        evaluation environment (ISO-3664 P1)</tt><tt><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt>pp
+
+      - Practical Reflection Print (ISO-3664 P2)<br>
+      &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; pe - Print evaluation
+      environment (CIE 116-1995)<br>
+    </tt><tt>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; pm - Print
+      evaluation with partial Mid-tone adaptation</tt><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; mt - Monitor in typical work environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+      &nbsp; mb - Monitor in bright work environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; md - Monitor in darkened work
+      environment</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; jm - Projector in dim environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; jd - Projector in dark environment</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp; &nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; pcd - Photo CD - original scene outdoors</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; ob - Original scene - Bright Outdoors</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; &nbsp;&nbsp;&nbsp; cx - Cut Sheet Transparencies on a
+      viewing box</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+s:surround&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+      n = auto, a = average, m = dim, d = dark,</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+      &nbsp; &nbsp;&nbsp; c = transparency (default average)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+w:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+      Adapted white point as XYZ (default media white)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+w:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+      Adapted white point as x, y</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a:adaptation
+
+
+
+
+
+
+
+
+      Adaptation luminance in cd.m^2 (default 50.0)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+b:background
+
+
+
+
+
+
+
+
+      Background % of image luminance (default 20)<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; l:imagewhite Image
+      white in cd.m^2 if surround = auto (default 250)</span><br
+      style="font-family: monospace;">
+    <span style="font-family: monospace;"><span style="font-family:
+        monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        f:flare&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Flare light % of image
+        luminance (default 1)<br>
+      </span>&nbsp;</span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+      g:glare&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare light % of ambient
+      (default 5)</span><br style="font-family: monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp;&nbsp; g:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare color as
+      XYZ (default media white)</span><br style="font-family:
+      monospace;">
+    <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+      g:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Glare color as x,
+      y</span><br>
+    <span style="font-family: monospace;"><tt><span style="font-family:
+          monospace;"><tt><span style="font-family: monospace;"><span
+                style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+                h:hkscale&nbsp;&nbsp;&nbsp; Helmholtz-Kohlrausch effect
+                scale factor (default 1.0)<br>
+              </span></span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+              m:mtaf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone
+              partial adaptation factor (default 0.0)</span><br
+              style="font-family: monospace;">
+            <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+              m:X:Y:Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone Adaptation
+              white as XYZ (default D50)</span><br style="font-family:
+              monospace;">
+            <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+              m:x:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mid-tone
+              Adaptation white as x, y</span></tt></span></tt><br>
+    </span> <span style="font-family: monospace;"><span
+        style="font-family: monospace;">&nbsp;-x
+        pcent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expand/compress gamut
+        cylindrically by percent</span><br>
+      &nbsp;-O outputfile Override the default output filename &amp;
+      extension.</span><small><span style="font-family: monospace;"><br>
+        &nbsp;[profile.icm | embedded.tif/jpg]&nbsp;&nbsp;&nbsp;&nbsp;
+        File specifying device to CIE conversion<br>
+        &nbsp;infile1.tif/jpg
+        ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        One or more raster files to create gamut from<br
+          style="font-family: monospace;">
+      </span></small><br>
+    <h3>Usage Details and Discussion<br>
+    </h3>
+    The<b> -v</b> flag dumps out the ICC profile header information.<br>
+    <br>
+    The <b>-d</b> parameter controls the level of detail displayed in
+    the surface. The parameter roughly corresponds to a deltaE value, so
+    smaller values give greater detail. The default value is around 10,
+    and is a good place to start. Small values may take a lot of time to
+    generate, and will produce big files.<br>
+    <br>
+    The <b>-w</b> flag causes a X3DOM file to be produced, as well as a
+    gamut file.<br>
+    <br>
+    The <b>-n</b> flag suppresses the L*a*b* axes being created in the
+    X3DOM.<br>
+    <br>
+    The <span style="font-weight: bold;">-k</span> flag adds markers
+    for each of the primary and secondary "cusp" points (Red, Yellow,
+    Green, Cyan, Blue &amp; Magenta). No markers will be displayed if
+    the cusps cannot be determined.<br>
+    <br>
+    The <span style="font-weight: bold;">-f</span> <span
+      style="font-weight: bold;">perc</span> parameter turns on
+    filtering of the raster colors. The colors from the image are
+    clustered, and then sorted according to popularity, and then the <span
+      style="font-weight: bold;">perc</span> most common percentage of
+    colors are used to create the gamut surface. This may be useful in
+    creating a source gamut mapping surface that favors the important
+    colors within an image, and doesn't attempt to compress the color
+    reproduction in order to reproduce the little used colors. A value
+    of <span style="font-weight: bold;">perc</span> of 90 or 80 may be
+    a good place to start. Note that the filtering is performed
+    independently on each raster image processed, with the final gamut
+    being the union of all the filtered image gamuts.<br>
+    <br>
+    The <b>-i</b> flag selects the intent transform used for a lut
+    based profile. It also selects between relative and absolute
+    colorimetric for non-lut base profiles. Note that anything other
+    than colorimetric may not represent the native capabilities of the
+    device. The default intent will be absolute colorimetic for L*a*b*
+    output, and CIECAM02 appearance for Jab output.<br>
+    <br>
+    An ICC profile is allowed to contain more than the minimum number of
+    elements or table needed to describe a certain transform, and may
+    contain redundant descriptions. &nbsp;By default, LUT based table
+    information will be used first if present, followed by matrix/shaper
+    information, and only using monochrome information if it is all that
+    is present. The <b>-o</b> flag, reverses this
+    order.&nbsp;&nbsp;&nbsp; <br>
+    <br>
+    <span style="font-weight: bold;">-p</span>: By default the gamut
+    will be created in L*a*b* colorspace. If&nbsp; <span
+      style="font-weight: bold;">-pj</span> is selected, then CIECAM02
+    appearance space Jab will be used for the output, and the viewing
+    conditions will be taken into account. Jab space is what is normally
+    needed to be compatible with the default intents used in <a
+      href="colprof.html">colprof</a>. <span style="font-weight: bold;"><br>
+    </span>Note that the CIECAM02 output space selection by default uses
+    the colorimetric transform of the profile resulting in the
+    appearance of the native device, but that the perceptual or
+    saturation transforms may be used by selecting them using the <span
+      style="font-weight: bold;">-i</span> parameter, which may give a
+    different result with some profiles. This may be desirable if an
+    image is to be transformed through the perceptual or saturation
+    tables of a profile as part of a link with an Argyll generated
+    output profile, since it will then represent the apparent gamut of
+    the image when subject to these tables. If the absolute colorimetric
+    intent is chosen using <span style="font-weight: bold;">-ia</span>
+    in combinations with <span style="font-weight: bold;">-pj</span>,
+    then&nbsp; Jab with a fixed white reference is used, which emulates
+    an absolute CIECAM02 Jab appearance space. <br>
+    <br>
+    The <span style="font-weight: bold;">-c</span> parameter sets the
+    output space to CIECAM02 appearance Jab values, and also allows
+    choosing a set of viewing conditions, either by choosing a typical
+    viewing environment, or controlling particular viewing condition
+    parameters. This is only functional if an ICC profile is provided.<br>
+    <br>
+    The <b>-x</b> parameter allows expanding or compressing the
+    resulting gamut in a cylindrical direction by the given percentage
+    :- i.e "-x 120" will expand by 20%. This may be useful for creating
+    a general compression gamut mapping by using such an expanded device
+    gamut as input to <a href="collink.html#g">collink -g or -G</a>.<br>
+    <br>
+    The <span style="font-weight: bold;">-O</span> parameter allows the
+    output file name &amp; extension to be specified independently of
+    the last tiff/jpeg filename. Note that the full filename must be
+    specified, including the extension.<br>
+    <br>
+    If the TIFF or JPEG files are in a device space (ie. RGB, CMYK
+    etc.), then it is necessary to supply an ICC profile to translate
+    the device space values to a CIE space value such as L*a*b* or
+    CIECAM02 Jab space for creating a gamut surface. For the ICC profile
+    provided it is then possible to select exactly what type of
+    conversion is used. A TIFF or JPEGfile with an embedded ICC profile
+    may be supplied as the profile argument - e.g. to get the gamut of a
+    tiff file that contains an embedded profile use something like:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; tiffgamut image.tif image.tif<br>
+    <br>
+    To create a gamut suitable for CIECAM02&nbsp; gamut mapping space in
+    colprof or collink, something like<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; tiffgamut -ir -pj -cmt&nbsp; image.icm image.tif<br>
+    <br>
+    where the viewing conditions "mt" should the same as the source
+    conditions in colprof or collink.<br>
+    <br>
+    If a TIFF file is already in a CIE space such as CIELab or ICCLab,
+    then it is not necessary to select an ICC profile,&nbsp; although a
+    PCS to PCS colorspace profile may be chosen. All the TIFF and JPEG
+    files must be in the same colorspace.<br>
+    <br>
+    One or more TIFF and/or JPEG files may be specified, and the gamut
+    is the union of the gamuts of each file. This is useful for creating
+    an image specific gamut mapping that can be applied to a set of
+    images with consistent results between the images. Note that the
+    output gamut file name will by default be taken from the last TIFF
+    or JPEG file specified, with the .gam extension added automatically.
+    The <span style="font-weight: bold;">-O</span> parameter will
+    override this default.<br>
+    <br>
+    <span style="font-weight: bold;">NOTES</span><br>
+    <br>
+    The white and black points put in the gamut are the colorspace white
+    and black points. For the purposes of latter gamut mapping, it is
+    assumed that the image should retain it's position within the
+    colorspace dynamic range. For an L*a*b* image, the values value
+    100,0,0 and 0,0,0 for white and black are assumed. An image in
+    L*a*b* should be adjusted be neutral to, and sit within the dynamic
+    range of those white and black points.<br>
+    <br>
+    <br>
+    <span style="font-weight: bold;"></span><br>
+    <br>
+    <br>
+  </body>
+</html>

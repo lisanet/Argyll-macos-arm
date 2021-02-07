@@ -1,0 +1,93 @@
+
+
+# Optimization and Debug flags
+
+#PREF_CCFLAGS 	+= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	+= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS		+= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;      # Link with debug info
+#PREF_CCFLAGS 	+= $(CCPROFFLAG) ;		# Profile flags
+#PREF_LINKFLAGS	+= $(LINKPROFFLAG) ;    # Profile flags
+
+#Products
+Libraries = libgamut libgammap ;
+Executables = viewgam ;
+Samples = RefMediumGamut.gam ;
+Headers = gammap.h gamut.h ;
+
+#Install
+InstallBin $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+InstallFile $(DESTDIR)$(PREFIX)/$(REFSUBDIR) : $(Samples) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib $(DESTDIR)$(PREFIX)lib : $(Libraries) ;
+
+# Header search path
+HDRS = ../h ../icc ../rspl ../numlib ../plot ../xicc ../cgats ../spectro ../gamut ;
+
+# Gamut handling library
+Library libgamut : gamut.c ;
+
+# Gamut mapping library
+Library libgammap : gammap.c nearsmth.c ;
+
+LINKLIBS = libgammap libgamut ../rspl/librspl ../icc/libicc ../cgats/libcgats
+           ../plot/libplot ../numlib/libnum ../numlib/libui ../plot/libvrml ;
+
+# Utilities
+Main viewgam : viewgam.c ;
+
+# Link all the tests and utils with these libraries
+
+# Smoothed nearpoint test routine
+Main smthtest :  smthtest.c ;
+
+# Preliminary ICC V4 Reference Medium Gamut
+Main GenRMGam : GenRMGam.c ;
+
+# Generate referenec medium gamut the kernel files
+# (NoUpdate so that Cross Compile Win64 hack works)
+NNoUpdate RefMediumGamut.gam ;
+GenFile RefMediumGamut.gam : GenRMGam ;
+
+# Visual gamut
+Main GenVisGam : GenVisGam.c ;
+
+# Develop hue sensitive parameter interpolation */
+#Main tttt : tttt.c ;
+
+LINKLIBS = libgammap libgamut ../icc/libicc ../cgats/libcgats ../xicc/libxicc
+           ../rspl/librspl ../plot/libplot ../plot/libvrml ../numlib/libnum ../numlib/libui ;
+
+# Mapping test routine
+Main maptest : maptest.c ;
+
+# Fake test gamut generatio
+Main fakegam : fakegam.c ;
+
+# Surfacing test routine
+Main surftest : surftest.c ;
+
+# Filtering test cpde
+#Main filt : filt.c ;
+
+#Main tt : tt.c ;
+
+if $(BUILD_JUNK) {
+
+	# Gamut creation test routine
+	Main gamtest : gamtest.c ;
+
+	# Group finding test.
+	Main gtest : gtest.c ;
+
+	# Test routine
+	Main test : test.c ;
+
+	Main tt : tt.c ;
+
+	# Atan aproximation test
+	Main xtan : xtan.c ;
+
+	# Bit vector class test
+	Main bvtest : bvtest.c ;
+}

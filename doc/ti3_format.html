@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Target Information 3 Format File (.ti3)</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2>Description of the .ti3 format</h2>
+    This is an ASCII text, <a href="File_Formats.html#CGATS">CGATS</a>,
+    Argyll specific format, used to hold device value and CIE/Spectral
+    value pairs, the raw information needed to create device profiles.
+    This file is typically created using the <a href="chartread.html">chartread</a>,&nbsp;<a
+      href="dispread.html"> dispread</a>, <a href="filmread.html">filmread</a>,
+    <a href="scanin.html"> scanin</a>, <a href="fakeread.html">
+      fakeread</a> or one of the conversion tools such as <a
+      href="cb2ti3.html">cb2ti3</a>, <a href="kodak2ti3.html">kodak2ti3</a>,
+    <a href="txt2ti3.html">txt2ti3</a>.<br>
+    <br>
+    While fully compatible with the CGATS.5 Data Exchange Format, the
+    particular required keywords and fields are unique to Argyll, hence
+    an Argyll specific file identifier <span style="font-weight: bold;">CTI3</span>
+    is used to avoid confusion with standard ANSI or CGATS files.<br>
+    <br>
+    The <span style="font-weight: bold;">.ti3</span> format changes
+    from time to time with new releases, to add new functionality, but
+    generally retains backwards compatibility. Note that in the
+    description below, the word "may" indicates an optional component,
+    while the word "shall" indicates a necessary component.<br>
+    <br>
+    Generally a .ti3 file contains only one table, the table containing
+    the colorimetric information. The exception is for a display in
+    which a set of RAMDAC values (most likely the result of display
+    calibration, or simply the video LUT (RAMDAC) values present in the
+    display when the test values were read) are recorded in a second
+    table.<br>
+    <br>
+    <br>
+    The first table contains the following:<br>
+    <br>
+    The file identifier (First 7 characters) shall be <span
+      style="font-weight: bold;">CTI3</span>.<br>
+    <br>
+    A <span style="font-weight: bold;">#</span> character introduces a
+    comment.<br>
+    <br>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;"></span></span></span>There may be <span
+      style="font-weight: bold;">DESCRIPTOR</span>, <span
+      style="font-weight: bold;">ORIGINATOR</span>, or <span
+      style="font-weight: bold;">CREATED</span> keywords and values (as
+    per CGATS).<br>
+    <br>
+    There shall be a <span style="font-weight: bold;">DEVICE_CLASS</span>
+    keyword that has a value of <span style="font-weight: bold;">"OUTPUT</span>",
+
+
+
+
+
+
+
+    "<span style="font-weight: bold;">DISPLAY</span>",&nbsp; <span
+      style="font-weight: bold;">"INPUT"</span> or <span
+      style="font-weight: bold;">"EMISINPUT"</span>.<br>
+    This indicates to the profile program what type of device the color
+    information is from. (An OUTPUT device is typically a printer. An
+    INPUT device is typically a Scanner or Camera with data from a
+    reflective reference chart. An EMISINPUT is a camera with emissive
+    rather than reflective reference data. ).<br>
+    <br>
+    An <span style="font-weight: bold;">"OUTPUT"</span> type device may
+    have a <span style="font-weight: bold;">TOTAL_INK_LIMIT</span>
+    keyword that has a numeric value indicating the maximum sum of the
+    device channel values as a percentage (T.A.C.), used in creating the
+    test chart. This will be used by the profiler as a value indicating
+    what the valid device gamut is, and what total ink limit should be
+    used in creating the profile tables.<br>
+    <br>
+    An <span style="font-weight: bold;">"OUTPUT"</span> type device may
+    have an <span style="font-weight: bold;">ILLUMINANT_WHITE_POINT_XYZ</span>
+    keyword that contains the XYZ of the illuminant used to compute the
+    CIE values from spectral reflectance or transmittance values. If
+    this tag is absent, the illuminant is assumes to be ICC standard
+    D50.<br>
+    <br>
+    A <span style="font-weight: bold;">"DISPLAY"</span> type device may
+    have a <span style="font-weight: bold;">LUMINANCE_XYZ_CDM2</span>
+    keyword that contains the absolute XYZ value of white in candelas
+    per meter squared, e.g. <span style="font-weight: bold;">"112.334770
+
+
+
+
+
+
+
+      119.657745 121.474236".<br>
+      <br>
+    </span>A display device may also have a <span style="font-weight:
+      bold;">NORMALIZED_TO_Y_100</span> keyword that must have a value
+    of "<span style="font-weight: bold;">NO</span>" or "<span
+      style="font-weight: bold;">YES</span>", to indicate whether the
+    CIE values have been normalised so that the largest has a Y value of
+    100. If this is a display type device and there is no <span
+      style="font-weight: bold;">NORMALIZED_TO_Y_100</span> keyword,
+    then it can be assumed that the value <span style="font-weight:
+      bold;">are</span> normalized to Y = 100. If the values are
+    normalized to Y = 100, then the absolute values can be restored by
+    multiplying the XYZ values by the <span style="font-weight: bold;">LUMINANCE_XYZ_CDM2</span>
+    Y value and dividing by 100.<br>
+    <br>
+    There may be a keyword <span style="font-weight: bold;">TARGET_INSTRUMENT</span>
+    which will identify the instrument used to read the test values.
+    This is used by the profiling program to determine the spectral
+    characteristics of the instrument illuminant if Fluorescent Whitener
+    Compensation is desired. The value shall be one of:<br>
+    <blockquote> <b>"X-Rite DTP20"</b><br>
+      <b>"X-Rite DTP22"</b><br>
+      <b>"X-Rite DTP41"</b><br>
+      <b>"X-Rite DTP51"</b><br>
+      <b>"X-Rite DTP92"</b><br>
+      <b>"X-Rite DTP94"</b><br>
+      <b>"GretagMacbeth Spectrolino"</b><br>
+      <b>"GretagMacbeth SpectroScan"</b><br>
+      <b>"GretagMacbeth SpectroScanT"</b><br>
+      <b>"Spectrocam"</b><br>
+      <b>"GretagMacbeth i1 Display 1"</b><br>
+      <b>"GretagMacbeth i1 Display 2"</b><br>
+      <b>"X-Rite i1 DisplayPro, ColorMunki Display"</b><br>
+      <b>"GretagMacbeth i1 Monitor"</b><br>
+      <b>"GretagMacbeth i1 Pro"</b><br>
+      <b>"X-Rite i1 Pro 2"</b><br>
+      <b>"X-Rite ColorMunki"</b><br>
+      <b>"Colorimtre HCFR"</b><br>
+      <b>"ColorVision Spyder1"</b><br>
+      <b>"ColorVision Spyder2"</b><br>
+      <b>"Datacolor Spyder3"</b><br>
+      <b>"Datacolor Spyder4"</b><br>
+      <b>"Datacolor Spyder5"</b><br>
+      <b>"GretagMacbeth Huey"</b><br>
+      <b>"ColorMunki Smile"</b><br>
+      <b>"JETI specbos 1201"</b><br>
+      <b>"JETI specbos"</b><br>
+      <b>"Klein K-10"</b><br>
+      <b>"Image Engineering EX1"</b><br>
+    </blockquote>
+    All instruments except the Spectrocam are assumed to have an "A"
+    type illuminant (incandescent lamp of&nbsp; 2850 degrees Kelvin.)<br>
+    <br>
+    There may be a <span style="font-weight: bold;">INSTRUMENT_TYPE_SPECTRAL</span>
+    keyword that must have a value of "<span style="font-weight: bold;">NO</span>"
+    or "<span style="font-weight: bold;">YES</span>", to indicate
+    whether the instrument is based on spectral measurement or not.<br>
+    <br>
+    There may be a <span style="font-weight: bold;">DISPLAY_TYPE_REFRESH</span>
+    keyword that must have a value of "<span style="font-weight: bold;">NO</span>"
+    or "<span style="font-weight: bold;">YES</span>", to indicate
+    whether the instrument was used in a display refresh mode during
+    measurement.<br>
+    <br>
+    There may be a <b>DEVCALSTD</b> keyword that must have a value of <b>"XRDI"</b>
+    or <b>"GMDI"</b> or <b>"XRGA"</b>, to indicate which X-Rite
+    calibration standard the data has been measured.<br>
+    <br>
+    There may be a <b>INSTRUMENT_FILTER</b> keyword that must have a
+    value of <b>"POLARIZED"</b> or <b>"D65"</b> or <b>"UVCUT"</b> to
+    indicate whay if any filter was present during measurement.<br>
+    <br>
+    There may be keywords with associated values <span
+      style="font-weight: bold;">SINGLE_DIM_STEPS</span>, <span
+      style="font-weight: bold;">COMP_GREY_STEPS</span>, <span
+      style="font-weight: bold;">MULTI_DIM_STEPS</span> or <span
+      style="font-weight: bold;">FULL_SPREAD_PATCHES</span>, that
+    document the composition of the test chart patches.<br>
+    <br>
+    There shall be a keyword <span style="font-weight: bold;">COLOR_REP</span>
+    that has a value that indicates what colorspaces the test values
+    connect. The colorspaces shall be encoded with one&nbsp; or two
+    letters per component, and the two color spaces shall then separated
+    by an <span style="font-weight: bold;"><span style="font-weight:
+        bold;">_</span></span> (underscore) character. For output and
+    display devices, the device space shall come first, followed by the
+    PCS space. For an input device, the PCS shall come first, followed
+    by the device space. The PCS space shall be either XYZ space,
+    indicated by <span style="font-weight: bold;">XYZ</span>, or D50
+    while point L*a*b* space, indicated by <span style="font-weight:
+      bold;">LAB</span>. The device spaces shall use the following
+    letter encoding:<br>
+    <br>
+    <span style="font-weight: bold;"><span style="font-weight: bold;"></span></span>&nbsp;&nbsp;&nbsp;
+Cyan
+
+
+
+
+
+
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    C<br>
+    &nbsp;&nbsp;&nbsp; Magenta &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; M<br>
+    &nbsp;&nbsp;&nbsp; Yellow &nbsp; &nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    Y<br>
+    &nbsp;&nbsp;&nbsp; Black &nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    K<br>
+    &nbsp;&nbsp;&nbsp; Orange &nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    O<br>
+    &nbsp;&nbsp;&nbsp; Red
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    R<br>
+    &nbsp;&nbsp;&nbsp; Green &nbsp; &nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    G<br>
+    &nbsp;&nbsp;&nbsp; Blue &nbsp;&nbsp; &nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    B<br>
+    &nbsp;&nbsp;&nbsp; White &nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; W<br>
+    &nbsp;&nbsp;&nbsp; Light Cyan
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    c<br>
+    &nbsp;&nbsp;&nbsp; Light
+    Magenta&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    m<br>
+    &nbsp;&nbsp;&nbsp; Light
+    Yellow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    y<br>
+    &nbsp;&nbsp;&nbsp; Light
+    Black&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+    k<br>
+    &nbsp;&nbsp;&nbsp; Medium Cyan&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2c<br>
+    &nbsp;&nbsp;&nbsp; Medium Magenta
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2m<br>
+    &nbsp;&nbsp;&nbsp; Medium Yellow
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2y<br>
+    &nbsp;&nbsp;&nbsp; Medium Black
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2k<br>
+    &nbsp;&nbsp;&nbsp; Light Light Black &nbsp; &nbsp; &nbsp;&nbsp; 1k<br>
+    <br>
+    There may be an a previx <span style="font-weight: bold;">i</span>
+    preceeding the device space letter encoding, indicating that
+    although the space appears to be an additive space, it is in fact a
+    subtractive device.<br>
+    <br>
+    Typical values might be: "<span style="font-weight: bold;">RGB_XYZ</span>"
+    or "<span style="font-weight: bold;">RGB_LAB</span>" for an RGB
+    display, "<span style="font-weight: bold;">iRGB_XYZ</span>" or "<span
+      style="font-weight: bold;">iRGB_LAB</span>" for an RGB printer, "<span
+      style="font-weight: bold;">CMYK_XYZ</span>" for a printer, "<span
+      style="font-weight: bold;">XYZ_RGB"</span> for an RGB scanner.<br>
+    <br>
+    If spectral values are going to be included in the file, the
+    following keywords and values shall be used:<br>
+    <br>
+    <span style="font-weight: bold;">&nbsp; SPECTRAL_BANDS</span> shall
+    contain the number of spectral bands in the readings, e.g. <span
+      style="font-weight: bold;">"36"</span>.<br>
+    &nbsp; <span style="font-weight: bold;">SPECTRAL_START_NM</span>
+    shall contain the wavelength in nanometers of the first band, e.g. <span
+      style="font-weight: bold;"><span style="font-weight: bold;"><span
+          style="font-weight: bold;">"380.0"</span></span></span>.<br>
+    &nbsp; <span style="font-weight: bold;">SPECTRAL_END_NM</span>
+    shall contain the wavelength in nanometers of the last band, e.g. <span
+      style="font-weight: bold;">"730.0"</span>.<br>
+    <br>
+    The <span style="font-weight: bold;">NUMBER_OF_FIELDS</span>
+    keyword shall have a value that indicates the number of fields in
+    each data set, e.g. <span style="font-weight: bold;">43</span> (as
+    per CGATS).<br>
+    <br>
+    The start of the declaration of the fields shall be marked by the <span
+      style="font-weight: bold;">BEGIN_DATA_FORMAT</span> keyword (as
+    per CGATS).<br>
+    Then shall follow the names of the fields. Standard CGATS field
+    names such as:<br>
+    <br>
+    <span style="font-weight: bold;">&nbsp;SAMPLE_ID</span>, <span
+      style="font-weight: bold;">RGB_R</span>, <span
+      style="font-weight: bold;">RGB_G</span>, <span
+      style="font-weight: bold;">RGB_B</span>, <span
+      style="font-weight: bold;">CMYK_C</span>, <span
+      style="font-weight: bold;">CMYK_M</span>, <span
+      style="font-weight: bold;">CMYK_Y</span>, <span
+      style="font-weight: bold;">CMYK_K</span>, <span
+      style="font-weight: bold;">XYZ_X</span>, <span
+      style="font-weight: bold;">XYZ_Y</span>, <span
+      style="font-weight: bold;">XYZ_Z</span>, <span
+      style="font-weight: bold;">LAB_L</span>, <span
+      style="font-weight: bold;">LAB_A</span> or <span
+      style="font-weight: bold;">LAB_B</span><br>
+    <br>
+    shall be used where appropriate. Other device fields shall use the
+    appropriate pattern, e.g. <span style="font-weight: bold;">CMYKOG_G</span>
+    etc. Spectral band values shall be named <span style="font-weight:
+      bold;">SPEC_XXX</span>, where <span style="font-weight: bold;">XXX</span>
+    is the nearest integer values of the number of nanometers of the
+    band.<br>
+    <br>
+    Optional patch location information shall use the&nbsp; <span
+      style="font-weight: bold;">SAMPLE_LOC</span> field and shall be of
+    quoted string type.<br>
+    <br>
+    The definition of the fields shall be terminated by the <span
+      style="font-weight: bold;">END_DATA_FORMAT</span> keyword (as per
+    CGATS).<br>
+    <br>
+    The <span style="font-weight: bold;">NUMBER_OF_SETS</span> keyword
+    shall have a value that indicates the number of sets of data, e.g. <span
+      style="font-weight: bold;">1000</span> (as per CGATS).<br>
+    <br>
+    The start of the values of the data sets shall be marked by the <span
+      style="font-weight: bold;">BEGIN_DATA</span> keyword (as per
+    CGATS).<br>
+    <br>
+    Each set of data shall be on one line, and shall be separated by
+    white space. All device values shall be percentages (e.g. values
+    from 0.0 to 100.0). XYZ values shall normalized to a Y value of
+    100.0. L*a*b* values will have their normal range (L* 0.0 to 100.0,
+    a* and b* typically -128.0 to 128.0).<br>
+    <br>
+    The end of the values of the data sets shall be marked by the <span
+      style="font-weight: bold;">END_DATA</span> keyword (as per CGATS).<br>
+    <br>
+    Generally any other keywords and values will be ignored.<br>
+    <br>
+    If a second table is present, and it is a display RAMDAC
+    calibration, printers or input devices per channel calibration
+    curves, and will be of the <a href="cal_format.html">CAL file
+      format</a>..<br>
+    <br>
+  </body>
+</html>

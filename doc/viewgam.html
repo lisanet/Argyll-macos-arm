@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>viewgam</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>gamut/viewgam</b></h2>
+    <h3>Summary</h3>
+    Convert one or more gamuts into a&nbsp;<a
+      href="File_Formats.html#X3DOM">X3DOM</a> 3D visualization file.
+    &nbsp;This allows visual comparison of several gamut surfaces.<br>
+    Also allows creating the intersection (overlap) between two gamuts.
+    This is useful in measuring and visualizing the coverage of one
+    gamut of another.<br>
+    <br>
+    See <a href="3dformat.html">3D Viewing Format</a> for switching to
+    VRML or X3D output format.<br>
+    <h3>Usage<br>
+    </h3>
+    <small><span style="font-family: monospace;">viewgam { [-c color]
+        [-t trans] [-w|s] </span><span style="font-style: italic;
+        font-family: monospace;">infile.gam</span><span
+        style="font-family: monospace;"> } ... </span><span
+        style="font-style: italic; font-family: monospace;">outfile.x3d.html</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+For
+
+
+        each input gamut file:</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-c </span><i
+        style="font-family: monospace;">color</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Color
+to
+make
+
+
+        gamut, r = red, g = green, b = blue</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+c
+
+
+        = cyan, m = magenta, y = yellow, w = white</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+n
+
+
+        = natural color</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-t </span><i
+        style="font-family: monospace;">trans</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+transparency
+from
+
+
+        0.0 (opaque) to 1.0 (invisible)</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;-w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show
+
+
+        as a wireframe</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show
+
+
+        as a solid surface</span><br style="font-family: monospace;">
+      <i style="font-family: monospace;"> &nbsp;infile.gam</i><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Name of </span><i style="font-family: monospace;">infile</i><a
+        style="font-family: monospace;" href="File_Formats.html#.gam">.gam</a><span
+        style="font-family: monospace;"> file</span><br
+        style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Don't
+
+
+        add Lab axes<br>
+        &nbsp;-i &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Compute and
+        print intersecting volume of first 2 gamuts<br>
+        &nbsp;-I isect.gam&nbsp;&nbsp; Same as -i, but save intersection
+        gamut to isect.gam<br style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;</span><i
+        style="font-family: monospace;">outfile&nbsp;</i><span
+        style="font-family: monospace;"><i> &nbsp; &nbsp;&nbsp;&nbsp; </i>Base
+
+        name of output </span><i style="font-family: monospace;">outfile.x3d.html</i><span
+        style="font-family: monospace;"> file</span></small> <br>
+    <h3>Usage Details and Discussion</h3>
+    <b>viewgam</b> creates a X3DOM file that allows the &nbsp;viewing
+    and comparing of multiple gamut files by representing them as solid
+    surfaces, wireframes, etc. It takes as input a list of gamut files,
+    each file preceded by any options that are to apply to the display
+    of &nbsp;that particular gamut. <br>
+    <br>
+    The options that can be specified for each input gamut are:<br>
+    <br>
+    <b>-c</b> <i>color</i> allows the color of the surface or wireframe
+    to be specified. Any of a number of predefined colors (red, green,
+    blue, cyan, magenta, yellow, white) can be used, as well as allowing
+    the color to reflect the natural color of that point in the
+    colorspace.<br>
+    <br>
+    <b>-t</b> <i>trans</i> allows the transparency of the surface&nbsp;
+    to be specified. A value of 0.2 might be a good place to start.
+    Using transparency generally leads to a slower display than the
+    default opaque surface treatment, but can make it possible to see
+    within a solid gamut surface.<br>
+    <br>
+    <b>-w</b> forces the gamut surface to be rendered as a wireframe.<br>
+    <br>
+    <b>-s</b> forces the gamut surface to be rendered as a solid
+    surface.<br>
+    <br>
+    By default, the first gamut is treated as a solid with natural
+    coloring, with the second and subsequent gamuts being wireframes
+    with colors of white, red, cyan, yellow, green and blue, with
+    decreasing visibility.<br>
+    <br>
+    The <b>-n</b> flag turns off display of the default L*a*b* axes in
+    the output.<br>
+    <br>
+    The <span style="font-weight: bold;">-i</span> flag computes the
+    intersecting volume of the first two gamuts (in cubic color units,
+    usually L*a*b*), as well as the volumes of the two gamuts and the
+    percentage the intersection is of the two gamuts. This is a useful
+    measure of the coverage one gamut has of another. If <span
+      style="font-weight: bold;">-I</span> is used, then as well as
+    printing the volume, the intersecting gamut will be saved to the <span
+      style="font-style: italic;">isect.gam</span> file.<br>
+    <br>
+    The final argument is the base name of the X3DOM file to save the
+    resulting composite 3D visualization file to. If the name given
+    doesn't have an extension, one will be automatically added.<br>
+    <br>
+  </body>
+</html>

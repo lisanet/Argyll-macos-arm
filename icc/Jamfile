@@ -1,0 +1,77 @@
+ 
+# JAM style makefile for icclib and friends
+
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS    = $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+#if stdio is not wanted in icclib:
+#DEFINES	= SEPARATE_STD ;
+
+#Products
+Libraries = libicc ;
+Executables = iccdump icclu ;
+Headers = icc.h ;
+Samples = sRGB.icm ClayRGB1998.icm EBU3213_PAL.icm SMPTE_RP145_NTSC.icm Rec709.icm
+          Rec2020.icm SMPTE431_P3.icm ACES_P3.icm DisplayP3.icm ProPhoto.icm ProPhotoLin.icm lab2lab.icm ;
+# Remember to add samples to ref/afiles !
+
+#Install
+InstallBin  $(DESTDIR)$(PREFIX)/bin : $(Executables) ;
+#InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
+#InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
+InstallFile $(DESTDIR)$(PREFIX)/$(REFSUBDIR) : $(Samples) ;
+
+# ICC library
+Library libicc : icc.c ;
+
+# Executable support if SEPARATED_STD
+if SEPARATE_STD in $(DEFINES) {
+	Objects iccstd.c ;
+	LINKOBJS = iccstd ;		# Link all utilities here with iccstd
+}
+
+# Link all utilities here with libicc
+LINKLIBS = libicc ;
+
+# All utils are made from a single source file 
+MainsFromSources icctest.c lutest.c iccdump.c icclu.c iccrw.c ;
+
+# This is an example program for making a matrix display profile
+MainsFromSources mkDispProf.c ;
+
+#MainsFromSources t2.c ;
+
+if $(BUILD_JUNK) {
+
+	HDRS += ../plot ;
+	LINKLIBS += ../plot/libvrml ;
+
+	#Monotonic behaviour checker
+	MainsFromSources mcheck.c ;
+
+#	MainsFromSources tt.c ;
+
+	MainsFromSources mksRGB.c ;
+#	MainsFromSources mkscRGB.c ;
+	MainsFromSources mkAdobeRGB.c ;
+	MainsFromSources mkEBU3213.c ;
+	MainsFromSources mkSMPTERP145.c ;
+	MainsFromSources mklab2lab.c ;
+	MainsFromSources mkRec709.c ;
+	MainsFromSources mkRec2020.c ;
+	MainsFromSources mkSMPTE431_P3.c ;
+	MainsFromSources mkACES_P3.c ;
+	MainsFromSources mkDisplayP3.c ;
+	MainsFromSources mkProPhoto.c ;
+#	MainsFromSources icm2ary.c ;
+
+	# Check library is compatible with C++
+	Main cppcheck : cppcheck.cpp ;
+
+	# check CIEDE2000
+	MainsFromSources testDE2K.c ;
+}
+
+

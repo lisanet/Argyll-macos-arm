@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Color Management</title>
+    <meta content="Graeme W. Gill" name="author">
+  </head>
+  <body>
+    <h2 style="text-decoration: underline;">A Concise Introduction to
+      Color Management and ICC profiles<br>
+    </h2>
+    [Note that there are many other, perhaps more comprehensive and
+    expansive "introduction to Color Management" resources on the web.
+    Google is your friend...]<br>
+    <br>
+    Color management is a means of dealing with the fact that color
+    capture and output devices such as Cameras, Scanners, Displays and
+    Printers etc., all have different color capabilities and different
+    native ways of communicating color. In the modern world each device
+    is typically just part of a chain of devices and applications that
+    deal with color, so it is essential that there be some means for
+    each of these devices to communicate with each other about what they
+    mean by color.<br>
+    <br>
+    Successful color management allows colors to be captured,
+    interchanged and reproduced by different devices in a consistent
+    manner, and in such a way as to minimize the impact of any technical
+    limitation each device has in relation to color. It must also deal
+    with the interaction of human vision and devices, allowing for such
+    fundamental vision characteristics as white point adaptation and
+    other phenomena. It should also allow the human end purposes to
+    influence the choice of&nbsp; tradeoffs in dealing with practical
+    device limitations.<br>
+    <br>
+    The key means of implementing color management is to have a way of
+    relating what we see, to the numbers that each device uses to
+    represent color.<br>
+    <br>
+    The human eye is known to have 3 type of receptors responsible for
+    color vision, the long, medium and short wavelength receptors.
+    Because there are 3 receptors, human color perception is a 3
+    dimensional phenomena, and therefore at least 3 information channels
+    are necessary when communicating color information. Any device
+    capable of sensing or reproducing color must therefore have at least
+    3 channels, and any numerical representation of a full range of
+    colors must have at least 3 components and hence may be interpreted
+    as a point in a 3 dimensional space. Such a representation is
+    referred to as a <span style="font-weight: bold;">Color Space</span>.
+    <br>
+    <br>
+    Typically color capture and output devices expose their native color
+    spaces in their hardware interfaces. The native color space is
+    usually related to the particular technology they employ to capture
+    or reproduce color. Devices that emit light often choose <span
+      style="font-weight: bold;">Red Green</span> and <span
+      style="font-weight: bold;">Blue</span> (<span style="font-weight:
+      bold;">RGB</span>) wavelengths, as these are particularly
+    efficient at independently stimulating the human eye's receptors,
+    and for capture devices R,G &amp; B are roughly similar to the type
+    of spectral sensitivity of our eyes receptors. Devices that work by
+    taking a white background or illumination and filtering out (or <span
+      style="font-weight: bold;">subtracting</span>) colors tend to use
+    <span style="font-weight: bold;">Cyan</span>, <span
+      style="font-weight: bold;">Magenta</span>, and <span
+      style="font-weight: bold;">Yellow</span> (<span
+      style="font-weight: bold;">CMY</span>) filters or colorants to
+    manipulate the color, often augmented by a <span
+      style="font-weight: bold;">Black</span> channel (<span
+      style="font-weight: bold;">CMYK</span>). This is because a Cyan
+    filters out Red wavelengths, Magenta filters out Green wavelengths,
+    and Yellow filters out Blue wavelengths, allowing these colorants to
+    independently control how much RGB is reflected or transmitted.
+    Because it's impossible to make filters that perfectly block C, M or
+    Y wavelengths without overlapping each other, C+M+Y filters together
+    tend to let some light from broadband light sources through, making
+    for an imperfect black. Augmenting with an additional Black filter
+    allows improving Black, but the extra channel greatly complicates
+    the choice of colorant values to create any particular color. <br>
+    <br>
+    Many color devices have mechanisms for changing the way they respond
+    to or reproduce color, and such features are called <span
+      style="font-weight: bold;">Adjustments</span>, or <span
+      style="font-weight: bold;">Calibration</span>. Such features can
+    be very useful in adapting the device for use in a particular
+    situation, or for matching different instances of the device, or for
+    keeping its behavior constant in the face of component or
+    environmental changes. Sometimes there may be internal
+    transformations going on in the device so that it presents a more or
+    less expected type of color space in its hardware interface. [ Some
+    sophisticated devices have built in means of emulating the behavior
+    of other devices, but we won't go into such details here, as this is
+    really just a specialized implementation of color management. ]<br>
+    <br>
+    To be able to communicate the way we see color, a common "language"
+    is needed, and the scientific basis for such a language was laid
+    down by the International Commission on Illumination (CIE) in 1931
+    with the establishment of the CIE 1931 <span style="font-weight:
+      bold;">XYZ</span> color space. This provides a means of predicting
+    what light spectra will be a color match to the Standard Observer.
+    The Standard Observer represents the typical response of the Human
+    eye under given viewing conditions. Such a color space is said to be
+    <span style="font-weight: bold;">Device Independent</span> since it
+    is not related to a particular technological capture or reproduction
+    device. There are also closely related color-spaces which are direct
+    transformations of the XYZ space, such as the <span
+      style="font-weight: bold;">L* a* b*</span> space which is a more
+    perceptually uniform device independent colorspace.<br>
+    <br>
+    As mentioned above, the key to managing color is to be able to
+    relate different color spaces so that they can be compares and
+    transformed between. The most practical approach to doing this is to
+    relate all color spaces back to one common colorspace, and the CIE
+    XYZ colorspace is the logical choice for this. A description of the
+    relationship between a devices native color space and an XYZ based
+    colorspace is commonly referred to as a <span style="font-weight:
+      bold;">Color Profile</span>. As a practical issue when dealing
+    with computers, it's important to have a common and widely
+    understood means to communicate such profiles, and the <span
+      style="font-weight: bold;">ICC</span> profile format standardized
+    by the <b>International Color Consortium</b> is today's most widely
+    supported color profile format.<br>
+    <br>
+    The ICC profile format refers to it's common color space as the <span
+      style="font-weight: bold;">Profile Connection Space</span> (<span
+      style="font-weight: bold;">PCS</span>), which is closely based on
+    the CIE XYZ space. ICC profile are based on a Tagged format, so they
+    are very flexible, and may contain a variety of ways to represent
+    profile information, and may also contain a lot of other optional
+    information.<br>
+    <br>
+    There are several fundamental types of ICC profiles. <span
+      style="font-weight: bold;">Device</span> and <span
+      style="font-weight: bold;">Named</span> profiles represent color <span
+      style="text-decoration: underline;">anchor points</span>. <span
+      style="font-weight: bold;">Device Link</span> and <span
+      style="font-weight: bold;">Abstract</span> profiles represent <u>connections</u>
+    or journeys between anchor points.<br>
+    <br>
+    <span style="font-weight: bold;">Device</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; These primarily provide a translation between
+    device space and PCS. They also typically provide a translation in
+    the reverse direction, from PCS to device space. They provide an
+    "color anchor" with which we are able to navigate our way around
+    device color. The mechanisms they use to do this are discussed in
+    more detail below.<br>
+    <br>
+    <span style="font-weight: bold;">Device Link</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; A Device Link profile provides a transformation
+    from one Device space to another. It is typically the result of
+    linking two device profiles, ie. Device 1 -&gt; PCS -&gt; Device 2,
+    resulting in a direct Device 1 -&gt; Device 2 transformation.<br>
+    <br>
+    <span style="font-weight: bold;">Abstract</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; An abstract profile contains a transformation
+    define in PCS space, and typically represents some sort of color
+    adjustment in a device independent manner.<br>
+    <br>
+    <span style="font-weight: bold;">Named</span><br>
+    <br>
+    &nbsp;&nbsp;&nbsp; A Named profile is analogous to a device Profile,
+    but contains a list of named colors, and the equivalent PCS and
+    possibly Device values.<br>
+    <br>
+    Most of the time when people talk about "ICC profiles" they mean <span
+      style="font-weight: bold;">Device Profiles</span>. Profiles rely
+    on a set of mathematical models to define the translation from one
+    colorspace to another. The models represent a general framework,
+    while a specific profile will define the scope of the model as well
+    as it's specific parameters, resulting an a concrete translation.
+    Profiles are typically used by <span style="font-weight: bold;">CMM</span>s
+    (Color Management Modules), which are a piece of software (and
+    possibly hardware) that knows how to read and interpret an ICC
+    profile, and perform the translation it contains.<br>
+    <br>
+    Often the function of a CMM will be to take two device profiles, one
+    representing the starting point and the other representing the
+    destination, and create a transformation between the two and
+    applying it to image pixel values.<br>
+    <br>
+    Two basic models can be used in ICC profiles, a <span
+      style="font-weight: bold;">Matrix/shaper</span> model and a <span
+      style="font-weight: bold;">cLUT</span> (Color Lookup Table) model.
+    Models often contain several processing elements that are applied
+    one after the other in order to provide an overall transformation. <br>
+    <br>
+    The Matrix/Shaper model consists of a set of per channel lookup
+    curves followed by a 3x3 matrix. The curves may be defined as a
+    single power value, or as a one dimensional lookup table which
+    encodes a discretely represented curve (Lut). The matrix step can
+    only transform between 3 dimensional to 3 dimensional color spaces.<br>
+    <br>
+    The cLUT model consists of an optional 3x3 matrix, a set of per
+    channel one dimensional LUTs, an N dimensional lookup table (cLUT)
+    and a set of per channel one dimensional LUTs. It can transform from
+    any dimension input to any dimension output.<br>
+    <br>
+    All Lookup Tables are interpolated, so while they are defined by a
+    specific set of point values, in-between values are filled in using
+    (typically linear) interpolation.<br>
+    <br>
+    For a one dimensional Lookup table, the number of points needed to
+    define it is equal to its resolution.<br>
+    <br>
+    For an n-dimensional cLUT, the number of points needed to define it
+    is equal to it's resolution taken to the power of the number of
+    input channels. Because of this, the number of entries <span
+      class="st"><em></em></span>climbs rapidly with resolution, and
+    typical limited resolution tables are used to constrain profile file
+    size and processing time. cLUT's permit detailed, independent
+    control over the the transformation throughout the colorspace.<br>
+    <br>
+    <span style="font-weight: bold;">Limitations of CIE XYZ</span><br>
+    <br>
+    Although CIE XYZ colorspace forms an excellent basis for connecting
+    what we can measure with what we see in regard to color, it has its
+    limitations. The primary limitation is that the visual match between
+    two colors with the same XYZ values assumes identical viewing
+    conditions. Our eyes are marvelously adaptable, automatically
+    adjusting to different viewing conditions so that we are able to
+    extract the maximum amount of useful visual information. There are
+    many practical situations in which the viewing conditions are not
+    identical - e.g. when evaluating an image against our memory of an
+    image seen in a different location, or in viewing images side by
+    side under mixed viewing conditions. One of the primary things that
+    can change is our adaptation to the white point of what we are
+    looking at. This can be accounted for in XYZ space by applying a
+    chromatic adaptation, which mimics the adaptation of the eye. The
+    ICC profile format PCS space by default adapts the XYZ values to a
+    common white point (D50), to facilitate ease of matching colors
+    amongst devices with different white points. Other viewing condition
+    effects (ie. image luminance level, viewing surround luminance and
+    flare/glare) can be modeled using (for example) CIECAM02 to modify
+    XYZ values.<br>
+    <br>
+    Another limitation relates to spectral assumptions. CIE XYZ uses a
+    Standard Observer to convert spectral light values into XYZ values,
+    but in practice every observer may have slightly different spectral
+    sensitivities due to biological differences, including aging.
+    (People with color deficient vision may have radically different
+    spectral sensitivities.) Our eyes also have a fourth receptor
+    responsible for low light level vision, and in the eye's periphery
+    or at very low light levels it too comes to play a role in the color
+    we perceive, and is the source of a difference in the eye's spectral
+    sensitivity under these conditions. <br>
+    <br>
+    Another spectral effect is in the practice of separating the color
+    of reflective prints from the light source used to view them, by
+    characterizing a prints color by it's reflectance. This is very
+    convenient, since a print will probably be taken into many different
+    lighting situations, but if the color is reduced to XYZ reflectance,
+    the effect of the detailed interaction between the spectra of the
+    light source and print will lead to inaccuracies.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

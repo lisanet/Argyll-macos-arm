@@ -1,0 +1,904 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>printtarg</title>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <meta name="author" content="Graeme Gill">
+  </head>
+  <body>
+    <h2><b>target/printtarg</b></h2>
+    <h3>Summary</h3>
+    Create a PostScript (PS), Embedded PostScript (EPS) or Tagged Image
+    File Format (TIFF) file containing profile test patch values, ready
+    for printing.<br>
+    <h3>Usage Summary</h3>
+    <small><span style="font-family: monospace;">printtarg [options]
+        basename</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#v">-v</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Verbose mode</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#i">-i 20 | 22 | 41 | 51 |
+        SS | i1 | CM</a><span style="font-family: monospace;"> Select
+        target instrument (default DTP41)</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+20
+=
+DTP20,
+22
+=
+
+
+
+
+
+
+
+        DTP22, 41 = DTP41, 51 = DTP51, SS = SpectroScan,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        i1 = i1Pro, CM = ColorMunki</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#a">-a scale</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Scale
+patch
+and
+spacer
+size
+
+
+
+
+
+
+
+        by factor (e.g. 0.857 or 1.5 etc.)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#A">-A scale</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Scale
+spacer
+size
+by
+additional
+
+
+
+
+
+
+
+        factor (e.g. 0.857 or 1.5 etc.)</span></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#h">-h</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Use hexagon patches for SS, double density for CM</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#r">-r</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Don't randomize patch location</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#s">-s</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Create
+a
+scan
+image
+recognition
+
+
+
+
+
+
+
+        (.cht) file</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#S">-S</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Same
+as
+-s,
+but
+don't
+
+
+
+
+
+
+
+        generate wide orientation strip.</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#c">-c</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Force colored spacers</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#b">-b</a><span
+        style="font-family: monospace;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Force B&amp;W spacers</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#n">-n</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Force no spacers</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#f">-f</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Create PostScript DeviceN Color fallback</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#w">-w g|r|s|n</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        White colorspace encoding DeviceGray (def), DeviceRGB,
+        Separation or DeviceN</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#k">-k g|c|s|n</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Black colorspace encoding DeviceGray (def), DeviceCMYK,
+        Separation or DeviceN<br>
+        &nbsp;<a href="#o">-o k|n</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+        CMY colorspace encoding DefiveCMYK (def), inverted DeviceRGB or
+        DeviceN<br style="font-family: monospace;">
+      </span> <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#e">-e</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Output EPS compatible file<br>
+        &nbsp;<a href="#t">-t [res]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Output
+8
+bit
+TIFF
+raster
+
+
+
+
+
+
+
+        file, optional res DPI (default 200)<br>
+        &nbsp;<a href="#T">-T [res]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Output
+16
+bit
+TIFF
+raster
+
+
+
+
+
+
+
+        file, optional res DPI (default 200)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;<a
+          href="#C">-C</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Don't use TIFF compression</span></small><br>
+    <small><span style="font-family: monospace;">&nbsp;<a href="#N">-N</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use
+TIFF
+alpha
+N
+channels
+
+
+
+
+
+
+
+        more than 4<br>
+        &nbsp;<a href="#D">-D</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Dither 8 bit TIFF values down from 16 bit<br>
+        &nbsp;<a href="#Q">-Q nbits</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Quantize
+test
+values
+to
+fit
+
+
+
+
+
+
+
+        in nbits<br>
+      </span></small><small style="font-family: monospace;">&nbsp;<span
+        style="text-decoration: underline;">-</span><a href="#K">K
+        file.cal</a>&nbsp;&nbsp;&nbsp;&nbsp; Apply printer calibration
+      to patch values and include in .ti2<br>
+      &nbsp;<a href="#I">-I file.cal</a>&nbsp;&nbsp;&nbsp;&nbsp; Include
+      calibration in .ti2 (but don't apply it)<br style="font-family:
+        monospace;">
+    </small><small><span style="font-family: monospace;"></span><span
+        style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#R">-R rsnum</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Use given random start number</span><br style="font-family:
+        monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#x">-x pattern</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Use given strip indexing pattern (Default = "A-Z, A-Z")</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#y">-y pattern</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Use given patch indexing pattern (Default = "0-9,@-9,@-9;1-999")</span><br
+        style="font-family: monospace;">
+      <span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#m">-m margin</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set
+
+
+
+
+
+
+
+        a page margin in mm (default 6.0 mm)<br>
+      </span></small><small><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#M">-M margin</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+      </span></small><small><span style="font-family: monospace;">Set a
+        page margin in mm and include it in TIFF</span><span
+        style="font-family: monospace;"></span></small><br>
+    <small><span style="font-family: monospace;">&nbsp;<a href="#P">-P</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Don't limit strip length</span></small><br>
+    <small><span style="font-family: monospace;">&nbsp;<a href="#L">-L</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Suppress
+any
+left
+paper
+clip
+
+
+
+
+
+
+
+        border</span></small><br>
+    <small><span style="font-family: monospace;"><small><span
+            style="font-family: monospace;">&nbsp;<a href="#U">-U</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Suppress CUPS cupsJobTicket: cups-disable-cmm in PS &amp;
+            EPS files</span></small><br style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#p">-p size</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Select page size from:</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;"></span></small><small><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        [210.0 x 297.0 mm]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A4R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        [297.0 x 210.0 mm]<br>
+        &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        [297.0 x 420.0 mm] (default)<br>
+        &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        A2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [420.0 x 594.0 mm]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Letter&nbsp;&nbsp; [215.9 x 279.4 mm]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LetterR&nbsp; [279.4 x
+        215.9 mm]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+        &nbsp; &nbsp;&nbsp;&nbsp; Legal&nbsp;&nbsp;&nbsp; [215.9 x 355.6
+        mm]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+        &nbsp;&nbsp; 4x6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [101.6 x 152.4
+        mm]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+11x17&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        [279.4 x 431.8 mm]<br style="font-family: monospace;">
+      </span><span style="font-family: monospace;">&nbsp;</span><a
+        style="font-family: monospace;" href="#pp">-p WWWxHHH</a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Custom size, WWW mm wide by HHH mm high<br>
+      </span></small><small style="font-family: monospace;"></small><br
+      style="font-family: monospace;">
+    <small><span style="font-family: monospace;"></span>&nbsp; <span
+        style="font-family: monospace;"></span><a style="font-family:
+        monospace;" href="#p1"><i>basename</i></a><span
+        style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+        Base name for input(</span><a style="font-family: monospace;"
+        href="File_Formats.html#.ti1">.ti1</a><span style="font-family:
+        monospace;">), output(</span><a style="font-family: monospace;"
+        href="File_Formats.html#.ti2">.ti2</a><span style="font-family:
+        monospace;">) and output(.ps/.eps/.tif)</span></small><br>
+    <h3>Usage Details and Discussion</h3>
+    <b> printtarg</b> is used to generate a PostScript or TIFF print
+    file from device test values in a .ti1 file. It output both a
+    PostScript/EPS/TIFF file, and a .ti2 file containing the device test
+    values together with the layout information needed to identify the
+    patch location. This module can also generate the image recognition
+    templates needed to read the print targets in using a scanner.<br>
+    <br>
+    <a name="v"></a> The <b>-v</b> flag turns on verbose mode. Prints
+    information about how many patches there are in a row, how many
+    patches in a set,&nbsp; and how many pages will be generated. Good
+    for figuring out what the magic number of patches should be for a
+    particular page size.<br>
+    <br>
+    <a name="i"></a> The <b>-i</b> parameter should be used to tell
+    printtarg which instrument it should lay the patches out for. Each
+    instrument has a slightly different requirement, and will lead to a
+    different number of patches ending up on a particular page size. For
+    a generic type of chart, try <span style="font-weight: bold;">SS</span>.<br>
+    <br>
+    <a name="a"></a><a name="A"></a> <span style="font-weight: bold;">-a,
+-A:
+
+
+
+
+
+
+
+    </span>Normally, <b>printtarg</b> prints test patches that are the
+    minimum size that can be reliably and accurately read by the
+    instrument.&nbsp; For some media, it might be desirable to use test
+    patches that are larger than this minimum (e.g. if the media has
+    poor registration, gets physically distorted in the print production
+    process, or if it has a coarse screen, and there are few samples per
+    patch), and the <span style="font-weight: bold;">-a</span> flag
+    should be given an argument greater than 1.0 to increase the patch
+    length, patch width, and spacer size between patches, if it is
+    appropriate for the type of instrument. A value of 1.5 would make
+    the patch 50% larger for instance. For the strip reading instruments
+    the patch is made longer, the strip spacing remaining the same,
+    while for XY scanning instruments, both the width and height will be
+    increased. If a value less than 1.0 is given as an argument, then
+    the patches will be made smaller. For instance, using the
+    SpectroScan instrument it is possible to reduce the test patches to
+    6mm rather than the default 7mm by supplying an argument of 0.857.
+    Note that this make lining up of the scan head very critical, and
+    increases the amount of bleed through from adjacent squares. For an
+    instrument that needs color spacers between patches, <span
+      style="font-weight: bold;">-a scale</span> also scales the spacer
+    length. For some situations, this may be insufficient, and the&nbsp;<span
+      style="font-weight: bold;"> -A scale</span> option can be used to
+    additionally scale the spacer length.<br>
+    Note that the for the <span style="font-weight: bold;">DTP20</span>
+    only <span style="font-weight: bold;">-a </span>values of 1.0,
+    1.08, 1.54, 1.92, 2.0 and that the patch width will be made no
+    smaller than its length.<br>
+    <br>
+    <a name="h"></a> Normally, <b>printtarg</b> creates a regular grid
+    of test patches, but for instruments that support arbitrary X, Y
+    addressing (such as the SpectroScan). For the <span
+      style="font-weight: bold;">SpectroScan</span> it can also create a
+    chart using regular hexagonal patches, allowing more patches to be
+    fitted into a single sheet if the <span style="font-weight: bold;">-h</span>
+    flag is used.&nbsp; For the <span style="font-weight: bold;">ColorMunki</span>
+    instrument, <span style="font-weight: bold;">-h</span> doubles the
+    normal number of patches is printed by halving the row width. The
+    patches are also staggered to improve the detection of a poor scan.<br>
+    <br>
+    <a name="r"></a> Normally, <b>printtarg</b> randomizes the patch
+    locations, which helps strip reading instruments detect patch
+    boundaries and the direction the strip was read in, as well as being
+    able to detect incorrect strips being fed into strip reading
+    instruments, and also assists in randomizing any systematic printing
+    errors introduced into the test chart due to print engine
+    unevenness, inkjet banding, or printing press ink key settings etc.
+    The <b>-r</b> flag turns this off, and lays the test squares out in
+    the order the values appear in, in the .ti1 file. Note that if you
+    turn this off you probably want to <a href="chartread.html#B">disable
+
+
+
+
+
+
+
+      bi-directional</a> strip reading in instruments such as the i1pro.<br>
+    <br>
+    <a name="s"></a> The <b>-s</b> flag does two things. One is that it
+    causes printtarg to output a chart recognition file (<a
+      href="File_Formats.html#.cht">.cht</a>) so that <a
+      href="scanin.html"> scanin</a> can recognize the chart, and
+    convert rasterized patches into patch values, and the second is that
+    is expands the size of the leading row of patches by 50%, to help
+    make sure that each sheet can be oriented correctly by <a
+      href="scanin.html"> scanin</a>. <a name="S"></a>If <b>-S</b> is
+    used rather than <b>-s</b>, then the recognition chart will be
+    created, but the leading row will be the same size as all the other
+    rows.<br>
+    <br>
+    <a name="c"></a> For strip reading instruments, the contrast with
+    the spacers is important in ensuring that a reading will be
+    successful. Normally <span style="font-weight: bold;">printtarg</span>
+    ensures this by printing optimally contrasting colored spacers
+    between each measurement patch. The <b>-c</b> flag is therefore the
+    default behaviour. <a name="b"></a>If the <b>-b</b> flag is used,
+    then contrasting neutral colored spacers will be used, but these
+    generally work less reliably than colored spacers. <a name="n"></a>The
+
+
+
+
+
+
+    <b>-n</b> flag will cause spacers to be omitted, which may still
+    work with smaller numbers of test values when the patch selection is
+    randomized, but won't work successfully when a large number of test
+    points is being used (&gt;200), or when the patches are not
+    randomized in location.<br>
+    <br>
+    <a name="f"></a><b>-f</b>: When creating a test chart for more than
+    CMYK inks, a PostScript file normally contains color settings that
+    use the PostScript level 3 "Device N" color specifications. Such
+    color specifications have a "fallback" color, for PostScript
+    interpreters that don't handle Device N specifications. Such
+    fallback colors are normally set to a grayscale estimate of the
+    patch color, so that it is possible to tell if the PostScript
+    interpreter is not rendering the Device N values correctly. <a
+      name="f"></a>The <b>-f</b> flag, causes the fallback color to be
+    a color estimate of the Device N test patch color, which is useful
+    for diagnostic purposes.<br>
+    <br>
+    <a name="e"></a> The <b>-e</b> flag gives EPS output, rather than
+    PostScript, allowing the charts to be included in other
+    applications. Because EPS disallows the showpage command, multiple
+    EPS files will result for a multi-page test chart, each one having a
+    two digit number sequence in it's name, so if the input file name is
+    <span style="font-weight: bold;">chart</span>, then file <span
+      style="font-weight: bold;">chart.ti1</span> will be read, and file
+    <span style="font-weight: bold;">chart.ti2</span> written, together
+    with <span style="font-weight: bold;">chart.eps</span> if there is
+    only one page, or <span style="font-weight: bold;">chart_01.eps</span>,
+    <span style="font-weight: bold;">chart_02.eps</span>, etc. if there
+    is more than one page.<br>
+    <br>
+    <a name="t"></a><a name="T"></a><span style="font-weight: bold;">-t
+      [res], -T [res]</span> The <b>-t</b> flag gives TIFF raster
+    output rather than PostScript, allowing the charts to be printed to
+    systems that do not accept PostScript input. Because few systems
+    understand multi-page TIFF files, multiple TIFF files will result
+    for a multi-page test chart, each one having a two digit number
+    sequence in it's name, so if the input file name is <span
+      style="font-weight: bold;">chart</span>, then file <span
+      style="font-weight: bold;">chart.ti1</span> will be read, and file
+    <span style="font-weight: bold;">chart.ti2</span> written, together
+    with <span style="font-weight: bold;">chart.eps</span> if there is
+    only one page, or <span style="font-weight: bold;">chart_01.tif</span>,
+    <span style="font-weight: bold;">chart_02.tif</span>, etc. if there
+    is more than one page. By default the resolution of the chart will
+    be 100 Dots Per Inch (DPI), but this can be changed by providing an
+    optional DPI argument after the <span style="font-weight: bold;">-t</span>
+    or <span style="font-weight: bold;">-T</span> flag. If the <span
+      style="font-weight: bold;">-t</span> flag is used, then an 8 bit
+    per component TIFF file will be created. If the <span
+      style="font-weight: bold;">-T</span> flag is used, then a 16 bit
+    per component TIFF file will be created. Note that if 8 bit TIFF<span
+      style="font-weight: bold;"></span> output is selected (<span
+      style="font-weight: bold;">-t</span>) without dithering (no <span
+      style="font-weight: bold;">-D) </span>then the values will by
+    default be quantized to 8 bits, and that if 16 bit TIFF<span
+      style="font-weight: bold;"></span> output is selected (<span
+      style="font-weight: bold;">-T</span>) or 8 bit TIFF with dithering
+    (<span style="font-weight: bold;">-D)</span>, then the values will
+    by default be quantized to 16 bits (see <a href="#Q">-Q</a> flag).
+    The raster file will be the page size specified minus the <a
+      href="#m">-m</a> margin.<br>
+    <br>
+    <a name="C"></a><span style="font-weight: bold;">-C:</span> Normally
+    the TIFF files created will be compressed using LZW compression to
+    save space. Some systems may not support this compression, so it can
+    be disabled by using the <span style="font-weight: bold;">-C</span>
+    flag.<br>
+    <br>
+    <a name="N"></a><span style="font-weight: bold;">-N:</span> When
+    creating TIFF files with more than 4 colorants, the normal Separated
+    mode is used. Some systems don't cope well with extra colorants
+    presented in this manner, and the <span style="font-weight: bold;">-N</span>
+    flag causes all the channels greater than 4 to be labelled as
+    "Alpha" channels, which may be more palatable.<br>
+    <br>
+    <a name="D"></a><span style="font-weight: bold;">-D:</span> When
+    creating TIFF files with 8 bit output, dither the values to give
+    effective 16 bit precision. Note this is applied after any
+    quantization of the test values (see <a href="#Q">-Q</a>). Note
+    that this might interfere (i.e. give alias/moire patterns) in
+    printed output if the printer uses screening that happens to clash.
+    Note also that dithering is effectively linearly interpolating
+    between the 8 bit values using spatial averaging, and that therefore
+    the device response may also be a linear interpolation between its 8
+    bit output values, adding no effective extra precision to the device
+    measurement. <br>
+    <br>
+    <a name="Q"></a><span style="font-weight: bold;">-Q:</span> Normally
+    the target device values are floating point numbers that may get
+    rounded and quantized in the process of printing them or reproducing
+    them on the printing or display device. If some of this quantization
+    can be accounted for, it may improve the accuracy of the resulting
+    profile, and the <span style="font-weight: bold;">Q</span>
+    parameter allows this quantization to be specified. The parameter is
+    the number of binary digits (bits) that the device values should be
+    quantized to. In many systems the right value would be 8 bits. Note
+    that if 8 bit TIFF<span style="font-weight: bold;"></span> output is
+    selected (<span style="font-weight: bold;">-t</span>) without
+    dithering (no <span style="font-weight: bold;">-D) </span>then the
+    values will by default be quantized to 8 bits, and that if 16 bit
+    TIFF<span style="font-weight: bold;"></span> output is selected (<span
+      style="font-weight: bold;">-T</span>) or 8 bit TIFF with dithering
+    (<span style="font-weight: bold;">-D)</span>, then the values will
+    by default be quantized to 16 bits.<br>
+    <br>
+    <a name="K"></a> The <b>-K file.cal</b> parameter specifies a
+    printer calibration file created by <a href="printcal.html">printcal</a>,
+    and the supplied calibration curves will be applied to the test
+    patch values. This allows profiling of a printing system that
+    doesn't natively support calibration. The calibration curves will
+    also be included in the resulting .ti2 file, so that they can be
+    passed through to .ti3 file and ICC profile, to allow accurate
+    computation of ink limits.<br>
+    <br>
+    <a name="I"></a> The <b>-I file.cal</b> parameter specifies a
+    printer calibration file created by <a href="printcal.html">printcal</a>,
+    and the calibration curves will be included in the included in the
+    resulting .ti2 file, so that they can be passed through to .ti3 file
+    and ICC profile, to allow accurate computation of ink limits. The
+    calibration <span style="font-weight: bold;">is not applied</span>
+    to the test patch values, but is assumed to be applied somewhere
+    else in the printing workflow when printing the profile test chart.<br>
+    <br>
+    <a name="R"></a> The <b>-R</b> parameter allows setting the random
+    layout seed. Normally the seed is chosen at random, but sometimes it
+    is useful to be able to generate a chart with the same layout, so a
+    specific seed can be specified this way. The seed (ID) used to
+    generate a chart is recorded in the .ti2 file, and is also in the
+    label printed on the right hand side of each chart.<br>
+    <br>
+    <a name="x"></a> The <b>-x</b> parameter allows specifying the
+    labeling sequence used for strips (e.g. the X axis of the chart). By
+    default this will be a character sequence A, B, C .. Z. AA, AB, AC
+    .. ZZ, but this can be changed by specifying an alternate labeling
+    sequence pattern. The pattern specifies the labeling sequence as
+    follows: First comes the definition of the symbols for each digit
+    location, least significant to most significant, each digit
+    separated by the ',' character. Note that space is a valid
+    character. The number of definitions declares the maximum number of
+    digits. For example, for a 2 digit numerical sequence: "0123456789,
+    123456789" would define 0..99 with the most significant digit
+    suppressed when it is 0 (because it uses a space rather than 0).
+    Ranges can be used for brevity: "0-9, 1-9". As a special case, the
+    '@' character can be used to instead of '0' to indicate suppression
+    of the leading zero: "0-9,@-9". Leading ' ' characters in the
+    resulting generated sequence are omitted. Optionally following this
+    and delimited by a ';' character, are the definitions of valid
+    segments of the index sequence. For instance, to define the index
+    range to be 1..19, 30..39 one could use the pattern "0-9,
+    1-9;1-19,30-39". Of course most of the time an alphabetic sequence
+    will be wanted, to distinguish it from the numerical sequence used
+    to number the patches in a strip. For a sequence A, B, C .. AA, AB,
+    AC etc. (the default used in Argyll), the following patter would be
+    used: "A-Z, A-Z". For a some ECI2002R charts that skip columns Y and
+    Z, and use a leading numeric digits for addressing strips over 26,
+    the following might be used: "A-Z, 2-9;A-X,2A-9Z".<br>
+    <br>
+    <a name="y"></a> The <b>-y</b> parameter allows specifying the
+    labeling sequence used for patches (e.g. the Y axis of the chart).
+    By default this will be a number sequence 1, 2, ..10, 11, ... 999,
+    but this can be changed by specifying an alternate labeling sequence
+    pattern. See the above description for the labeling sequence
+    encoding.<br>
+    <br>
+    <span style="font-weight: bold;">NOTE</span> that the pattern chosen
+    for the X and Y axes of the chart must be distinguishable, e.g. if
+    they are both numbers or both letters then reading the chart will
+    fail.<br>
+    <br>
+    <a name="w"></a> The <b>-w</b> parameter changes how a white
+    colorspace test chart (ie. Additive Grey monochrome) will be
+    represented in the Postscript or TIFF output. The default is to use
+    the DeviceGray representation (<span style="font-weight: bold;">-wg</span>),
+
+
+
+
+
+
+    but Device RGB can also be used, where the R, G &amp;B values are
+    all set to the same value (<span style="font-weight: bold;">-wr</span>),
+
+
+
+
+
+
+    a <span style="font-weight: bold;">White</span> separation color
+    can be specified (<span style="font-weight: bold;">-ws</span>), or a
+    DeviceN <span style="font-weight: bold;">White</span> color can be
+    used (<span style="font-weight: bold;">-wn</span>).<br>
+    <br>
+    <a name="k"></a> The <b>-k</b> parameter changes how a black
+    colorspace test chart (ie. Subtractive Grey monochrome ) will be
+    represented in the Postscript or TIFF output. The default is to use
+    the DeviceGray representation (<span style="font-weight: bold;">-kg</span>),
+but
+Device
+CMYK
+can
+also
+
+
+
+
+
+
+
+    be used, where the CMY values are zero, and just the K channel is
+    used (<span style="font-weight: bold;">-kc</span>), a <span
+      style="font-weight: bold;">Black</span> separation color can be
+    specified (<span style="font-weight: bold;">-ks</span>), or a
+    DeviceN <span style="font-weight: bold;">Black</span> color can be
+    used (<span style="font-weight: bold;">-kn</span>).<br>
+    <br>
+    <a name="o"></a> The <b>-o</b> parameter changes how a CMY
+    colorspace test chart will be represented in the Postscript or TIFF
+    output. The default is to use the DeviceCMYK representation (<span
+      style="font-weight: bold;">-ok</span>) where the K value is always
+    zero, or inverted Device RGB (<span style="font-weight: bold;">-or</span>),
+
+
+
+
+
+    or as a 3 channel DeviceN colorsoace can be used (<span
+      style="font-weight: bold;">-on</span>).<br>
+    <br>
+    <a name="m"></a> The <b>-m</b> parameter sets the page margin for
+    all sides. If the printer has print margins larger than the default
+    assumed by <span style="font-weight: bold;">printtarg,</span> then
+    critical parts of the test chart may be cropped or scaled, and not
+    printed properly.<span style="font-weight: bold;"></span> Increasing
+    the margin from the default of 6 mm to 10 or 15 mm, may alleviate
+    this problem. (Note that the number of patches per page may be
+    reduced as a consequence.) Decreasing the margin below 6 mm may be
+    possible for printers that have smaller or no margins, increasing
+    the number of patches possible on each page. A TIFF chart raster
+    will be the size of the paper minus the margin, so that it can be
+    placed on a page that size without cropping or inadvertent scaling.<br>
+    <br>
+    <a name="M"></a> The <b>-M</b> parameter sets the page margin for
+    all sides the same as <span style="font-weight: bold;"><span
+        style="font-weight: bold;">-m</span></span>, but for a TIFF
+    chart the margin will be <span style="font-weight: bold;">included</span>
+    in the raster, meaning that the TIFF will have to be printed right
+    to the edge of the paper, or on paper larger than the raster size.
+    (Having the raster be the full page size may be useful in certain
+    situations.)<br>
+    &nbsp; <br>
+    <a name="P"></a> The <b>-P</b> flag disables any normal limiting of
+    strip length that would normally be imposed due to guide or
+    instrument limitations. There is still an upper limit of around 500
+    patches or 2 Meters though. Note that if you generate a strip larger
+    than the instrument can cope with, it may be unable to read the
+    strip.<br>
+    <br>
+    <a name="L"></a> The <b>-L</b> flag suppresses the left margin that
+    is added for instruments that have a paper holder that has a clip to
+    hold the chart in place, while it is being read. (Currently this is
+    only the Eye-One Pro).<br>
+    <br>
+    <a name="U"></a> The <b>-U</b> flag suppresses the CUPS
+    %cupsJobTicket: cups-disable-cmm in PS and EPS files. By default
+    this ensures that the resulting files doesn't have color management
+    applied to it. If you are creating a test chart that should be color
+    managed (perhaps because you want to use it to verify the overall
+    operation of the printing system), then you can use the <b>-U</b>
+    flag to disable this.<br>
+    <br>
+    <a name="p"></a> The <b>-p</b> parameter specifies the paper size.
+    The size can either be one of the default sizes, <a name="pp"></a>or
+
+
+
+
+
+
+
+    can be specified in millimeters. Limitations of the instrument may
+    limit the maximum number of patches in a strip. For SpectroScan, a
+    size of &nbsp;A4 or Letter (or smaller) should be used. Useful
+    combinations of number of patches and paper size are listed <a
+      href="targen.html#Table">here</a>. The printed parts of the chart
+    will be the size of paper minus the page margin. A TIFF chart will
+    be the size of the paper minus the margin, so that it can be placed
+    on a page that size without cropping or inadvertent scaling, but
+    also see the <span style="font-weight: bold;">-M</span> flag.<br>
+    <br>
+    <a name="p1"></a><i>basename</i> is the base file name of the&nbsp;<a
+      href="File_Formats.html#.ti1">.ti1</a> file that contains the
+    device values to be put on the test chart. <b>printtarg</b> will
+    output a <i>basename.ps</i> or one or more <i>basename_NN.eps</i>
+    or <i>basename_NN.tif </i>files files that should be printed on
+    the devices, as well as a <i>basename.ti2</i> file that contains
+    both the device test point values, and the location of the
+    corresponding patch on the test chart. If the <b>-s</b> or <b>-S</b>
+    flag was specified, then&nbsp; one or more <i>basename_NN.cht</i>
+    files will also be generated.<br>
+    <br>
+    <a href="http://www.ghostgum.com.au/">GSview</a> or <a
+      href="http://www.cs.wisc.edu/%7Eghost/gv/index.htm">GhostView</a>
+    are good programs to use to check what the PostScript or EPS file
+    will look like, without actually printing it out. Alternatively, use
+    the TIFF raster output for non-PostScript printers.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>
