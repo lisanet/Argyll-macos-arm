@@ -485,7 +485,7 @@ disppath **get_displays() {
 		io_service_t dport;
 		CFDictionaryRef ddr, pndr;
 		CFIndex dcount;
-		char *dp = NULL, desc[50];
+		char *dname = NULL;
 		char buf[200];
 
 		dbound = CGDisplayBounds(dids[i]);
@@ -493,7 +493,27 @@ disppath **get_displays() {
 		disps[i]->sy = dbound.origin.y;
 		disps[i]->sw = dbound.size.width;
 		disps[i]->sh = dbound.size.height;
-			
+
+		/* on macOS 10.15 and later we have a new API: localizedName. This gives us the display name. And it works perfectly on Apple Silicon. */
+		if (@available(macOS 10.15, *))
+		{
+			@autoreleasepool {
+				NSArray *screens = [NSScreen screens];
+				NSDictionary *descript;
+				NSNumber *displayID;
+
+				for (NSScreen *screen in screens) {
+					descript = [screen deviceDescription];
+					displayID = descript[@"NSScreenNumber"];
+					if ([displayID intValue] == dids[i]) {
+						dname = strndup([[screen localizedName] UTF8String], 49);
+					}
+				}
+			}
+		}
+		else {
+		/* code for macOS 10.14 and older */
+
 		/* Try and get some information about the display */
 		if ((dport = CGDisplayIOServicePort(dids[i])) == MACH_PORT_NULL) {
 			debugrr("CGDisplayIOServicePort returned error\n");
@@ -561,9 +581,7 @@ disppath **get_displays() {
 				}
 				/* We're only grabing the english description... */
 				if (k != NULL && v != NULL && strcmp(k, "en_US") == 0) {
-					strncpy(desc, v, 49);
-					desc[49] = '\000';
-					dp = desc;
+	                 dname = strndup(v, 49);
 				}
 			}
 			free(keys);
@@ -571,21 +589,25 @@ disppath **get_displays() {
 		}
 		CFRelease(ddr);
 
-		if (dp == NULL) {
-			strcpy(desc, "(unknown)");
-			dp = desc;
 		}
-		sprintf(buf,"%s, at %d, %d, width %d, height %d%s",dp,
+		/* end of code for macOS 10.14 and older */
+
+		if (!dname) {
+			dname = strdup("(unknown)");
+		}
+		sprintf(buf,"%s, at %d, %d, width %d, height %d%s",dname,
 	        disps[i]->sx, disps[i]->sy, disps[i]->sw, disps[i]->sh,
 	        CGDisplayIsMain(dids[i]) ? " (Primary Display)" : "");
 
-		if ((disps[i]->name = strdup(dp)) == NULL
+		if ((disps[i]->name = strdup(dname)) == NULL
 		 || (disps[i]->description = strdup(buf)) == NULL) {
 			debugrr("get_displays failed on malloc\n");
 			free_disppaths(disps);
 			free(dids);
+			free(dname);
 			return NULL;
 		}
+		free(dname);
 	}
 
 	free(dids);
