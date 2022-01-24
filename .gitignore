@@ -36,3 +36,6 @@ bin/
 ._*
 .Spotlight-V100
 .Trashes
+
+#VS Code
+.vscode
