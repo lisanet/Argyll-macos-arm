@@ -518,7 +518,7 @@ disppath **get_displays() {
 				descript = [screen deviceDescription];
 				displayID = [ descript objectForKey: @"NSScreenNumber"];
 				if ([displayID intValue] == dids[i]) {
-					dname = osx_strndup([[screen localizedName] UTF8String], 49);
+					dname = strndup([[screen localizedName] UTF8String], 49);
 				}
 			}
 
@@ -593,7 +593,7 @@ disppath **get_displays() {
 					}
 					/* We're only grabing the english description... */
 					if (k != NULL && v != NULL && strcmp(k, "en_US") == 0) {
-						dname = osx_strndup(v, 49);
+						dname = strndup(v, 49);
 					}
 				}
 				free(keys);
