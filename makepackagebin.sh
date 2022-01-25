@@ -108,13 +108,14 @@ else if [ X$OSTYPE = "Xdarwin10.0" \
        -o X$OSTYPE = "Xdarwin17"   \
        -o X$OSTYPE = "Xdarwin18"   \
        -o X$OSTYPE = "Xdarwin19"   \
-       -o X$OSTYPE = "Xdarwin20" ] ; then
+       -o X$OSTYPE = "Xdarwin20"   \
+       -o X$OSTYPE = "Xdarwin21" ] ; then
 	if [ X$HOSTTYPE = "Xx86_64" ] ; then
 		echo "We're on OSX 10.X x86_64!"
 		PACKAGE=Argyll_V${VERSION}_osx10.6_x86_64_bin.tgz
 	else if [ X$HOSTTYPE = "Xarm64" ] ; then
-		echo "We're on OSX 11.X arm64!"
-		PACKAGE=Argyll_V${VERSION}_macOS11_arm64_bin.tgz
+		echo "We're on macOS 11+ arm64!"
+		PACKAGE=Argyll_V${VERSION}_macOS_arm64_bin.tgz
 	fi
 	fi
 	USBDIRS="usb"
