@@ -2,7 +2,7 @@
 # This holds the common definitions for Argyll that all the
 # subdirectory jam's will include (even if run in the sub directory) 
 
-Echo "Argyll Jamrules has been read" ;
+Echo "Argyll Jamtop has been read" ;
 
 # Default install base directory is same directory as Jamtop,
 # but can be overriden in the command line.
@@ -22,7 +22,6 @@ ANCHORED_PATH_VARS = DESTDIR ;
 
 # Should we also allow CFLAGS, CXXFLAGS, CPPFLAGS & LDFLAGS env. variables
 # to have effect ?
-
 
 # Tell standalone libraries that they are part of Argyll:
 DEFINES += ARGYLLCMS ;
@@ -46,11 +45,14 @@ USE_VTPGLUT = false ;
 # enable Printer device support 
 USE_PRINTER = false ;
 
-# enable CMF Measurement device support
+# enable CMF Measurement device and accessory support (if present)
 USE_CMFM = true ;	
 
 # Use ArgyllCMS version of libusb (deprecated - don't use)
-USE_LIBUSB = false ;
+USE_LIBUSB = false ;	# [false]
+
+# Compile in graph plotting code (Not fully implemented)
+USE_PLOT = true ;		# [true] 
 
 if $(USE_LIBUSB) = true {
 
@@ -192,7 +194,7 @@ CheckForLibrary "Z" : "zlib" ;
 
 CheckForLibrary "SSL" : : "/openssl" ;
 # if OpenSSL not found:
-if $(SSLLIB) {
+if ! $(HAVE_SSL) {
 	SSLINC = ../ccast/axTLS ; 
 	SSLLIB = ../ccast/axTLS/libaxtls ; 
 }

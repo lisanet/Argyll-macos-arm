@@ -2,7 +2,7 @@
 /* Instrument command line application support functions */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   10/3/2001
@@ -180,6 +180,8 @@ inst_code inst_handle_calibrate(
 
 	a1logd(p->log,1,"inst_handle_calibrate called\n");
 
+	p->last_cal_ec = 0;
+
 	/* Untill we're done with the calibration */
 	for (;;) {
 
@@ -215,6 +217,8 @@ inst_code inst_handle_calibrate(
 
 			printf("Calibration failed with '%s' (%s)\n",
 				       p->inst_interp_error(p, ev), p->interp_error(p, ev));
+
+			p->last_cal_ec = ev;		/* So caller can see what happened */
 
 			if (doimmediately)
 				return inst_user_abort;
@@ -426,17 +430,23 @@ inst_code inst_handle_calibrate(
 /* Return accumulated capabilities2 of all the instruments */
 /* Return all possible capabilities if there are no instruments */
 /* If docbib is nz, then only display the base calibration display types */
-inst2_capability inst_show_disptype_options(FILE *fp, char *oline, icompaths *icmps, int docbib) { 
+/* If openallisnt is nz, then open even slow serial instruments for specific info. */
+inst2_capability inst_show_disptype_options(FILE *fp, char *oline, icompaths *icmps,
+                                            int docbib, int openallinst) { 
 	int i, j;
 	char buf[200], *bp;
 	char extra[40];
 	int olen, pstart;
+	int onlyidinst = 1;			/* Only open instruments that can be id'd without opening */
 	int notall = 0;				/* Not all instruments are USB */
 	int gotone = 0;				/* Found at least one USB instrument */
 	inst2_capability acap = 0;	/* Accumulate capabilities */
 
 	if (icmps == NULL)
 		return 0;
+
+	if (openallinst)
+		onlyidinst = 0;			/* Slowly ID and open all instrument */
 
 	/* Locate the end of the option */
 	for (bp = oline; *bp != '\000' && *bp == ' '; bp++)
@@ -456,7 +466,7 @@ inst2_capability inst_show_disptype_options(FILE *fp, char *oline, icompaths *ic
 		inst2_capability cap;
 		int k;
 
-		if ((it = new_inst(icmps->dpaths[dtix_inst][i], 1, g_log, NULL, NULL)) == NULL) {
+		if ((it = new_inst(icmps->dpaths[dtix_inst][i], onlyidinst, g_log, NULL, NULL)) == NULL) {
 			notall = 1;
 			continue;
 		}

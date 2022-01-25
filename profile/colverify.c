@@ -1,5 +1,5 @@
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Verify two sets of PCS values.
  *
  * Author: Graeme W. Gill
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
 
 						spec = 1;
 						tillum = icxIT_custom;
-						if (read_xspect(&cust_tillum, &mt, na) != 0)
+						if (read_xspect(&cust_tillum, &mt, NULL, na) != 0)
 							usage();
 
 						if (mt != inst_mrt_none
@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
 
 					spec = 1;
 					illum = icxIT_custom;
-					if (read_xspect(&cust_illum, &mt, na) != 0)
+					if (read_xspect(&cust_illum, &mt, NULL, na) != 0)
 						usage();
 
 					if (mt != inst_mrt_none

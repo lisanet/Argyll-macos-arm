@@ -148,7 +148,7 @@ int main(int argc, char ** argv) {
 
 	/* Default stack size is 512K - this is a bit small - raise it */
 	if ((rv = pthread_attr_init(&stackSzAtrbt)) != 0
-	 || (rv = pthread_attr_setstacksize(&stackSzAtrbt, 4 * 1024 * 1024)) != 0) {
+	 || (rv = pthread_attr_setstacksize(&stackSzAtrbt, 8 * 1024 * 1024)) != 0) {
 		fprintf(stderr,"ui: thread_attr_setstacksize failed with %d\n",rv);
 		return -1;
 	}

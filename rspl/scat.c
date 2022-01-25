@@ -2,7 +2,7 @@
 // current scat.c with V1.6.3 position curve rspl setup code
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized splines data fitter
  *
  * Author: Graeme W. Gill
@@ -2002,7 +2002,7 @@ mgtmp *sm		/* Optional smoothing map for ausm mode */
 //printf("[%d][%d] w0 = %f, w1 = %f\n",gc[e],i,w0,w1);
 					}
 					A[i][ixcol[0]]      += -(w0 + w1) * -(w0 + w1) * kw;
-					A[i][ixcol[gci[e]]] += -(w0 + w1) * w1 * kw * oawt;
+					A[i][ixcol[gci[e]]] += -(w0 + w1) *        w1  * kw * oawt;
 //printf("A[%d][%d] = %f\n",i,0,A[i][ixcol[0]]);
 //printf("A[%d][%d] = %f\n",i,1,A[i][ixcol[gci[e]]]);
 				}
@@ -2313,7 +2313,7 @@ mgtmp *sm		/* Optional smoothing map for ausm mode */
 			for (k = j+1; k < (1 << di); k++) {	/* Binary sequence */
 				int ii;
 				ii = ixcol[m->g.hi[k] - m->g.hi[j]];	/* A matrix column index */
-				A[ai][ii] += d * dd->w[k];			/* dui component due to ui+1 */
+				A[ai][ii] += d * dd->w[k];				/* dui component due to ui+1 */
 			}
 		}
 	}

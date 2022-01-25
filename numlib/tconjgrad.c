@@ -147,7 +147,8 @@ double tp[]
 		tp[i] = temp;			/* Restore value */
 	}
 
-	return DFUNC_NRV;
+//	return DFUNC_NRV;
+	return d;
 }
 
 

@@ -40,6 +40,10 @@ RSPL_FILES="
 	../rspl/rspl1.c
 	"
 
+USB_FILES="
+	../usb/driver/driver_api.h
+	"
+
 SPECTRO_FILES="
 	License2.txt
 	spotread.c
@@ -89,6 +93,10 @@ SPECTRO_FILES="
 	i1pro.c
 	i1pro_imp.h
 	i1pro_imp.c
+	i1pro3.h
+	i1pro3.c
+	i1pro3_imp.h
+	i1pro3_imp.c
 	munki.h
 	munki.c
 	munki_imp.h
@@ -101,6 +109,8 @@ SPECTRO_FILES="
 	colorhug.h
 	spyd2.c
 	spyd2.h
+	spydX.c
+	spydX.h
 	specbos.h
 	specbos.c
 	kleink10.h
@@ -137,7 +147,7 @@ SPECTRO_FILES="
 	xrga.c
 	"
 
-FILES=" $H_FILES $CGATS_FILES $NUMLIB_FILES $RSPL_FILES $XICC_FILES $SPECTRO_FILES "
+FILES=" $H_FILES $CGATS_FILES $NUMLIB_FILES $RSPL_FILES $XICC_FILES $USB_FILES $SPECTRO_FILES "
 
 rm -f instlib.zip
 rm -rf _zipdir
@@ -161,7 +171,9 @@ done
 # Plus renamed files
 cp IntsLib_Readme.txt _zipdir/instlib/Readme.txt
 echo instlib/Readme.txt >> _ziplist
+cp Jamfile.SA _zipdir/instlib/Jamfile
 cp Makefile.SA _zipdir/instlib/Makefile
+echo instlib/Jamfile >> _ziplist
 echo instlib/Makefile >> _ziplist
 cp ../h/aconfig.h _zipdir/instlib/sa_config.h
 echo instlib/sa_config.h >> _ziplist

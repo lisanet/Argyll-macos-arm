@@ -1,8 +1,8 @@
 
-Argyll CMS README file - Version 2.1.1
+Argyll CMS README file - Version 2.3.0
 --------------------------------------
 
-Date: 14th Jamuary 2020
+Date: 24th December 2021
 Author: Graeme Gill
 
 Introduction
@@ -26,7 +26,7 @@ provided for each major tool, and a general guide to using the tools for
 typical color management tasks is also available. A mailing list provides
 support for more advanced usage.
 
-This is Version 2.1.2, a bug fix and feature update to the last release V2.1.1.
+This is Version 2.3.0, a bug fix and feature change update to the last release V2.2.1.
 The first public release of icclib was in November 1998,
 and of Argyll was in October 2000. Code development commenced in 1995. See
 Changes Summary for an overview of changes since the last release. Changes

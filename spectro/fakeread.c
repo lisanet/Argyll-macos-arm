@@ -1,5 +1,6 @@
-	/* 
- * Argyll Color Correction System
+
+/* 
+ * Argyll Color Management System
  * Fake print target chart reader - use ICC or MPP profile rather than instrument
  *
  * Author: Graeme W. Gill

@@ -7,7 +7,7 @@
 /*
  * Author: Graeme W. Gill
  *
- * Copyright 2006 - 2018, Graeme W. Gill
+ * Copyright 2006 - 2021, Graeme W. Gill
  * All rights reserved.
  *
  * This material is licenced under the GNU GENERAL PUBLIC LICENSE Version 2 or later :-
@@ -24,8 +24,8 @@
 /* major number = 8 bits */
 
 #ifndef USE_NG_VERSION 
-# define ARGYLL_VERSION 0x02012
-# define ARGYLL_VERSION_STR "2.1.2"
+# define ARGYLL_VERSION 0x02030
+# define ARGYLL_VERSION_STR "2.3.0"
 #else
 # define ARGYLL_VERSION NG_VERSION
 # define ARGYLL_VERSION_STR "NG_VERSION_STR"
@@ -55,7 +55,7 @@
 #endif
 
 /* Maximum number of graphs supported by plot */
-#define MXGPHS 12
+#define MXGPHS 16
 
 /* Maximum file path length */
 #define MAXNAMEL 1024

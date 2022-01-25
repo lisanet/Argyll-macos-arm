@@ -645,18 +645,18 @@ main() {
 
 	rv = icx_IES_TM_30_15(&Rf, &Rg, &CCT, &duv, bins, &f4);
 	printf(" f4 returned %d Rf %f Rg %f CCT %f duv %f\n",rv,Rf,Rg,CCT,duv);
-	printf("        expect Rf 51.5      Rg 83.5\n\n",rv,Rf,Rg,CCT,duv);
+	printf("        expect Rf 51.5      Rg 83.5\n\n");
 	tm3015_plot(bins);
 	
 
 	rv = icx_IES_TM_30_15(&Rf, &Rg, &CCT, &duv, bins, &f5);
 	printf(" f5 returned %d Rf %f Rg %f CCT %f duv %f\n",rv,Rf,Rg,CCT,duv);
-	printf("        expect Rf 75.2      Rg 87.4\n\n",rv,Rf,Rg,CCT,duv);
+	printf("        expect Rf 75.2      Rg 87.4\n\n");
 	tm3015_plot(bins);
 
 	rv = icx_IES_TM_30_15(&Rf, &Rg, &CCT, &duv, bins, &f8);
 	printf(" f8 returned %d Rf %f Rg %f CCT %f duv %f\n",rv,Rf,Rg,CCT,duv);
-	printf("        expect Rf 95.9      Rg 101.0\n\n",rv,Rf,Rg,CCT,duv);
+	printf("        expect Rf 95.9      Rg 101.0\n\n");
 	tm3015_plot(bins);
 
 	return 0;

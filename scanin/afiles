@@ -7,6 +7,7 @@ scanrd.c
 scanrd.h
 scanrd_.h
 it8.cht
+it8Wolf.cht
 ColorChecker.cht
 ColorChecker.cie
 ColorCheckerDC.cht
@@ -30,6 +31,7 @@ CMP_Digital_Target-4.cie
 CMP_Digital_Target-7.cht
 CMP_Digital_Target-2019.cht
 CMP_Digital_Target_Studio.cht
+CMP_DT_mini.cht
 LaserSoftDCPro.cht
 ISO12641_2_1.cht
 ISO12641_2_3_1.cht

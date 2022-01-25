@@ -2,7 +2,7 @@
 			
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Print Device calibration curve generator.
  *
  * Author: Graeme W. Gill

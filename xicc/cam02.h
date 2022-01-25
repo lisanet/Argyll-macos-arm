@@ -149,7 +149,7 @@ struct _cam02 {
 		double Wxyz2[3] /* Mid tone Adapted White XYZ (Y range 0.0 .. 1.0) */
 	);
 
-	/* Conversions. Return nz on error */
+	/* Conversions. Return nz on error (Y scale 1.0) */
 	int (*XYZ_to_cam)(struct _cam02 *s, double *out, double *in);
 	int (*cam_to_XYZ)(struct _cam02 *s, double *out, double *in);
 
@@ -214,6 +214,7 @@ struct _cam02 {
 	/* Option flags, code not always enabled */
 	int hk;				/* Use Helmholtz-Kohlrausch effect */
 	int hkscale;		/* [1.0] Scale HK effect up/down from default */
+	int bluelin;		/* Use blue hue linearization */
 	int trace;			/* Trace values through computation */
 	int retss;			/* Return ss rather than Jab */
 	int range;			/* (for cam02ref.h) return on range error */ 

@@ -27,10 +27,10 @@ Objects alphix.c randix.c ;
 
 HDRS += ../plot ../rspl ../cgats ../icc ../gamut ../xicc ../spectro ../render $(TIFFINC) ;
 
-LINKLIBS = ../xicc/libxcolorants ../spectro/libconv ../xicc/libxicc ../spectro/libinsttypes
-           ../spectro/libdisptechs
-           ../gamut/libgamut ../rspl/librspl ../render/librender ../cgats/libcgats
-           ../plot/libplot ../plot/libvrml ../icc/libicc ../numlib/libnum ../numlib/libui 
+LINKLIBS = ../xicc/libxcolorants ../xicc/libxicc ../spectro/libinsttypes
+           ../spectro/libdisptechs ../gamut/libgamut ../rspl/librspl
+           ../render/librender ../cgats/libcgats ../plot/libplot ../plot/libvrml
+           ../icc/libicc ../spectro/libconv ../numlib/libnum ../numlib/libui 
            $(TIFFLIB) $(JPEGLIB) $(PNGLIB) $(ZLIB) $(LibWin) ;
 
 

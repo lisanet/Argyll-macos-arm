@@ -5,6 +5,7 @@ IntsLib_Readme.txt
 License.txt
 License2.txt
 License3.txt
+addk.txt
 afiles
 ifiles
 Jamfile
@@ -57,6 +58,10 @@ i1pro.h
 i1pro.c
 i1pro_imp.h
 i1pro_imp.c
+i1pro3.h
+i1pro3.c
+i1pro3_imp.h
+i1pro3_imp.c
 munki.h
 munki.c
 munki_imp.h
@@ -133,6 +138,7 @@ SOtele.sp
 linear.cal
 strange.cal
 ccxx.ti1
+Jamfile.SA
 Makefile.SA
 Makefile.OSX
 Makefile.UNIX

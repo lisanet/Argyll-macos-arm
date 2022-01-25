@@ -5,7 +5,7 @@
 
 /*
  *
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Author: Graeme W. Gill
  * Date:   30/10/2005
  *

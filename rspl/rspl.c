@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized splines data fitter
  *
  * Author: Graeme W. Gill

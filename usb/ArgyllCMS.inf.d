@@ -9,9 +9,10 @@
 [X_Rite_Devices#PLAT#]
 "HueyL (Argyll)"                = LIBUSB0_DEV, USB\VID_0765&PID_5001
 "HueyL (Argyll)"                = LIBUSB0_DEV, USB\VID_0765&PID_5010
-"Eye-One Display 3 (Argyll)"    = LIBUSB0_DEV, USB\VID_0765&PID_5020
+;"Eye-One Display 3 (Argyll)"    = LIBUSB0_DEV, USB\VID_0765&PID_5020
 "ColorMunki Smile (Argyll)"     = LIBUSB0_DEV, USB\VID_0765&PID_6003
 "i1 Studio (Argyll)"            = LIBUSB0_DEV, USB\VID_0765&PID_6008
+"i1 Pro3 (Argyll)"              = LIBUSB0_DEV, USB\VID_0765&PID_6009
 "DTP20 (Argyll)"                = LIBUSB0_DEV, USB\VID_0765&PID_D020
 "DTP92Q (Argyll)"               = LIBUSB0_DEV, USB\VID_0765&PID_D092
 "DTP94 (Argyll)"                = LIBUSB0_DEV, USB\VID_0765&PID_D094

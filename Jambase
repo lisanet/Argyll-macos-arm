@@ -425,17 +425,20 @@ if $(NT)
 		if $(MINGW64) {
 			ECHO "Compiler is MingW for 64 bit target" ;
 			TARGET64     = true ;
-			TPFX         = x86_64-w64-mingw32- ;
+			TPFX1        = x86_64-w64-mingw32- ;	# Some tools
+			TPFX2        = x86_64-w64-mingw32- ;	# Rest of tools
 			MINGW64_LIB32 = $(MINGW)/mingw/lib32 ;
 		} else {
 			ECHO "Compiler is MingW for 32 bit target" ;
+			TPFX1        = "" ;	# Some tools
+			TPFX2        = "" ;	# Rest of tools
 		}
 
-
 		# Basic C/C++ tools
-		AR				?= $(TPFX)ar rusc ;
-		AS				?= $(TPFX)as ;
-		CC				?= $(TPFX)gcc ;
+		AR				?= $(TPFX2)ar rusc ;
+		AS				?= $(TPFX2)as ;
+		CC				?= $(TPFX1)gcc ;
+echo "CC = " $(CC) ;
 		CCFLAGS			?= -DNT -mwin32 -pipe ;
 		C++				?= $(CC) ;
 		C++FLAGS		?= $(CCFLAGS) ;
@@ -448,7 +451,7 @@ if $(NT)
 		WINLIBS			?= -lshlwapi -lsetupapi -lole32 -lws2_32 -lpsapi -lversion ;
 		GUILIBS			?= -lgdi32 -lmscms ;
 
-		LINK			?= $(TPFX)g++ ;		# In case we link to C++ files
+		LINK			?= $(TPFX1)g++ ;		# In case we link to C++ files
 		LINKFLAGS		?= -static ;
 		SHLINKFLAGS		?= ;
 		STDLIBS			?= -lm $(OLELIBS) $(WINLIBS) $(GUILIBS) ;
@@ -2071,19 +2074,19 @@ rule _JamInclude
 
 	if $(_JAMINCLUDE_PEER) != "true" {
 		# Incorporate this levels extra flags & header paths into the base 
-		P_ASFLAGS += $(ASFLAGS) ;
-		P_CCFLAGS += $(CCFLAGS) ;
-		P_C++FLAGS += $(C++FLAGS) ;
-		P_LINKFLAGS += $(LINKFLAGS) ;
-		P_SHLINKFLAGS += $(SHLINKFLAGS) ;
-		P_HDRS = [ NormPaths $(HDRS) ] $(P_HDRS) ;
-		P_DEFINES += $(DEFINES) ;
-		P_LINKOBJS = [ NormPaths $(LINKOBJS) ] $(P_LINKOBJS) ;
-		P_LINKLIBS = [ NormPaths $(LINKLIBS) ] $(P_LINKLIBS) ;
-		P_LINKSHLIBS = [ NormPaths $(LINKSHLIBS) ] $(P_LINKSHLIBS) ;
-		P_SHLINKOBJS = [ NormPaths $(SHLINKOBJS) ] $(P_SHLINKOBJS) ;
-		P_SHLINKLIBS = [ NormPaths $(SHLINKLIBS) ] $(P_SHLINKLIBS) ;
-		P_SHLINKSHLIBS = [ NormPaths $(SHLINKSHLIBS) ] $(P_SHLINKSHLIBS) ;
+		P_ASFLAGS += $(ASFLAGS) ;	ASFLAGS = "" ;
+		P_CCFLAGS += $(CCFLAGS) ;	CCFLAGS = "" ;
+		P_C++FLAGS += $(C++FLAGS) ;		C++FLAGS = "" ;
+		P_LINKFLAGS += $(LINKFLAGS) ;	LINKFLAGS = "" ;
+		P_SHLINKFLAGS += $(SHLINKFLAGS) ;	SHLINKFLAGS = "" ;
+		P_HDRS = [ NormPaths $(HDRS) ] $(P_HDRS) ;	HDRS = "" ;
+		P_DEFINES += $(DEFINES) ;	DEFINES = "" ;
+		P_LINKOBJS = [ NormPaths $(LINKOBJS) ] $(P_LINKOBJS) ; LINKOBJS = "" ;
+		P_LINKLIBS = [ NormPaths $(LINKLIBS) ] $(P_LINKLIBS) ;	LINKLIBS = "" ;
+		P_LINKSHLIBS = [ NormPaths $(LINKSHLIBS) ] $(P_LINKSHLIBS) ;	LINKSHLIBS = "" ;
+		P_SHLINKOBJS = [ NormPaths $(SHLINKOBJS) ] $(P_SHLINKOBJS) ;	SHLINKOBJS = "" ;
+		P_SHLINKLIBS = [ NormPaths $(SHLINKLIBS) ] $(P_SHLINKLIBS) ;	SHLINKLIBS = "" ;
+		P_SHLINKSHLIBS = [ NormPaths $(SHLINKSHLIBS) ] $(P_SHLINKSHLIBS) ;	SHLINKSHLIBS = "" ;
 
 		# Set parent flags no existing parent flags
 		if ! $(P_PREF_ASFLAGS) {
@@ -3382,6 +3385,7 @@ rule MainFromObjects
 
 #Echo "MainFromObjects LINKFLAGS = '" $(LINKFLAGS) "' and P_LINKFLAGS ='" $(P_LINKFLAGS) "'" ;
 #Echo "                PREF_LINKFLAGS = '" $(PREF_LINKFLAGS) "' and P_PREF_LINKFLAGS ='" $(P_PREF_LINKFLAGS) "'" ;
+#Echo "                pref_linkflags = '" $(pref_linkflags) "'" ;
 	if $(LINKFLAGS) || $(P_LINKFLAGS)
 	 || $(PREF_LINKFLAGS) || $(P_PREF_LINKFLAGS) {
 		local pref_linkflags = $(P_PREF_LINKFLAGS) ;
@@ -3642,6 +3646,8 @@ rule Object
 	switch $(_s:S)
 	{
 		case .asm : As_ $(_t) : $(_s) ;
+		case .s :	As_ $(_t) : $(_s) ;
+		case .S :	As_ $(_t) : $(_s) ;
 
 		case .c :	Cc_ $(_t) : $(_s) ;
 
@@ -3660,8 +3666,6 @@ rule Object
 						Lex_ $(_c) : $(_s) ;
 						Cc_ $(_t) : $(_c) ;
 					}
-
-		case .s :	As_ $(_t) : $(_s) ;
 
 		case .y :	{
 						local _c = $(_t:S=$(YACCGEN)) ;
@@ -4139,7 +4143,7 @@ actions together ArchiveArchive
 	rm -rf .jamArchiveArchive$PPID
 }
 
-actions As
+actions As_
 {
 	$(AS) $(ASFLAGS) $(ASHDRS) -o $(<) $(>)
 }

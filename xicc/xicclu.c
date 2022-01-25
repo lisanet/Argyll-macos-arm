@@ -513,7 +513,7 @@ main(int argc, char *argv[]) {
 						repXYZ100 = 0;
 						break;
 					default:
-						usage("Unknown parameter after flag -i");
+						usage("Unknown parameter after flag -p");
 				}
 			}
 

@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Model Printer Profile object.
  *
  * Author: Graeme W. Gill

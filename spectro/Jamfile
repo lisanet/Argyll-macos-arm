@@ -13,14 +13,23 @@ if $(OS) = MACOSX {
 }
 
 if $(USE_CMFM) = true {
-	echo "CMF Measurement device support is enabled" ;
+	echo "CMF Measurement device and accessories is enabled" ;
 	DEFINES += ENABLE_CMFM ;
+}
+
+if $(USE_PLOT) = true {
+	DEFINES += EN_PLOT ; 
+} else {
+	UNDEFS += $(UNDEFFLAG)EN_PLOT ; 
 }
 
 if [ GLOB [ NormPaths . ] : fastserio.c ]  {
 #	echo "!!!!!!!!! fastserio.c is enabled !!!!!!!!!" ;
 #	DEFINES += ENABLE_FTDI ;
 }
+
+# Test code
+#DEFINES += REPLAY_I1PRO3 ;
 
 MADVRSOURCE = ;
 
@@ -104,6 +113,10 @@ USB_INSTS = dtp20.c i1disp.c i1d3.c i1pro.c i1pro_imp.c
                       munki.c munki_imp.c hcfr.c spyd2.c spydX.c huey.c
                       colorhug.c ex1.c usbio.c hidio.c ;
 
+if [ GLOB [ NormPaths . ] : i1pro3.c ]  {
+USB_INSTS += i1pro3.c i1pro3_imp.c ;
+}
+
 FAST_SER_INSTS = specbos.c kleink10.c smcube.c ;
 
 SER_USB_INSTS = dtp92.c ;
@@ -147,8 +160,13 @@ if $(USE_PRINTERS) = true && [ GLOB [ NormPaths . ] : printers.c ] {
 
 if $(USE_CMFM) = true && [ GLOB [ NormPaths . ] : colvis.c ] {
 	echo "Compiling ColVis support" ;
-	DEFINES += ENABLE_CMFM ;
+	DEFINES += MASTER ;
 	INST_SRCS += colvis.c ;
+}
+
+if $(USE_CMFM) = true && [ GLOB [ NormPaths . ] : ledcool.c ] {
+	echo "Compiling LedCool support" ;
+	INST_SRCS += ledcool.c ;
 }
 
 Library libinst : inst.c insttypes.c icoms.c disptechs.c rspec.c xrga.c $(INST_SRCS) ;
@@ -184,8 +202,8 @@ LINKLIBS = libinst libinstapp
            ../icc/libicc ../plot/libplot ../plot/libvrml
 		   ../ccast/libccast $(SSLLIB) ../yajl/libyajl ../render/librender
            $(TIFFLIB) $(JPEGLIB) $(PNGLIB) $(ZLIB)
-           ../numlib/libui ../numlib/libnum
-           $(CMMLIBS) libconv ;
+           ../numlib/libui libconv ../numlib/libnum
+           $(CMMLIBS) ;
 
 if $(LIBUSB_IS_DLL) = true {
 	LINKSHLIBS = $(LIBUSBDIR)/$(LIBUSB) ;
@@ -225,14 +243,27 @@ Main dispcal : dispcal.c : : : ../target : : libdisp ;
 # Display tester program
 Main dispread : dispread.c : : : : : libdisp ;
 
+if $(USE_CMFM) = true && [ GLOB [ NormPaths . ] : 1501_cal.c ] {
+	echo "Compiling LedCool support" ;
+	Main 1501_cal : 1501_cal.c ;
+}
+
+# Misc. test code
+if [ GLOB [ NormPaths . ] : i1d3test.c ]  {
+	Main i1d3test : i1d3test.c ;
+}
+if [ GLOB [ NormPaths . ] : i1d3test2.c ]  {
+	Main i1d3test2 : i1d3test2.c ;
+}
+
 #display test window test/Lut loader utility
 # [ Could avoid need for libinst libusb etc.
 #   by separating system dependent utils to a separate library .] 
 MainVariant dispwin : dispwin.c webwin.c ccwin.c dummywin.c $(MADVRSOURCE) : : STANDALONE_TEST : : mongoose : $(LibWin) ;
 
 LINKLIBS = libinsttypes libdisptechs ../xicc/libxicc ../gamut/libgamut ../rspl/librspl
-           ../cgats/libcgats ../icc/libicc ../plot/libplot ../numlib/libnum ../numlib/libui
-           ../plot/libvrml ;
+           ../cgats/libcgats ../icc/libicc ../plot/libplot libconv ../numlib/libnum
+           ../numlib/libui ../plot/libvrml ;
 
 # Fake device print/read utility using ICC profile
 Main fakeread : fakeread.c ;

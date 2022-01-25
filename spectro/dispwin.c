@@ -1,12 +1,12 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Display target patch window
  *
  * Author: Graeme W. Gill
  * Date:   4/10/96
  *
- * Copyright 1998 - 2013, Graeme W. Gill
+ * Copyright 1998 - 2021, Graeme W. Gill
  * All rights reserved.
  *
  * This material is licenced under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 :-
@@ -329,6 +329,7 @@ static unsigned short *char2wchar(char *s) {
 
 #endif /* NT */
 
+
 #if defined(UNIX_X11)
 /* Hack to notice if the error handler has been triggered */
 /* when a function doesn't return a value. */
@@ -341,6 +342,16 @@ int null_error_handler(Display *disp, XErrorEvent *ev) {
 	return 0;
 }
 #endif	/* X11 */
+
+
+/* Declare the extra possible property if we're compiling on < 10.15 */
+#if defined(UNIX_APPLE) &&  __MAC_OS_X_VERSION_MAX_ALLOWED < 101500 \
+                        &&  __MAC_OS_X_VERSION_MAX_ALLOWED > 1040
+@interface NSScreen ()
+@property(readonly, copy) NSString *localizedName;
+@end
+#endif
+
 
 /* Return pointer to list of disppath. Last will be NULL. */
 /* Return NULL on failure. Call free_disppaths() to free up allocation */
@@ -431,7 +442,7 @@ disppath **get_displays() {
 
 #ifdef UNIX_APPLE
 	/* Note :- some recent releases of OS X have a feature which */
-	/* automatically adjusts the screen brigtness with ambient level. */
+	/* automatically adjusts the screen brightness with ambient level. */
 	/* We may have to find a way of disabling this during calibration and profiling. */
 	/* See the "pset -g" command. */
 
@@ -493,121 +504,120 @@ disppath **get_displays() {
 		disps[i]->sy = dbound.origin.y;
 		disps[i]->sw = dbound.size.width;
 		disps[i]->sh = dbound.size.height;
+			
+#if __MAC_OS_X_VERSION_MAX_ALLOWED > 1040
+		/* On macOS 10.15 and later we have a new API: localizedName. */
+		/* This gives us the display name, and it works on Apple Arm. */
+		if ([NSScreen instancesRespondToSelector: @selector (localizedName)]) {
+			NSArray *screens = [NSScreen screens];
 
-		/* on macOS 10.15 and later we have a new API: localizedName. This gives us the display name. And it works perfectly on Apple Silicon. */
-		if (@available(macOS 10.15, *))
-		{
-			@autoreleasepool {
-				NSArray *screens = [NSScreen screens];
+			for (NSScreen *screen in screens) {
 				NSDictionary *descript;
 				NSNumber *displayID;
 
-				for (NSScreen *screen in screens) {
-					descript = [screen deviceDescription];
-					displayID = descript[@"NSScreenNumber"];
-					if ([displayID intValue] == dids[i]) {
-						dname = strndup([[screen localizedName] UTF8String], 49);
-					}
+				descript = [screen deviceDescription];
+				displayID = [ descript objectForKey: @"NSScreenNumber"];
+				if ([displayID intValue] == dids[i]) {
+					dname = osx_strndup([[screen localizedName] UTF8String], 49);
 				}
 			}
-		}
-		else {
-		/* code for macOS 10.14 and older */
 
-		/* Try and get some information about the display */
-		if ((dport = CGDisplayIOServicePort(dids[i])) == MACH_PORT_NULL) {
-			debugrr("CGDisplayIOServicePort returned error\n");
-			free_disppaths(disps);
-			free(dids);
-			return NULL;
-		}
+		/* code for macOS 10.14 and older */
+		} else
+#endif
+		{
+			/* Try and get some information about the display */
+			/* CGDisplayIOServicePort is deprecated on recent systems, */
+			/* so the NSScreen code above should be used. */
+			if ((dport = CGDisplayIOServicePort(dids[i])) == MACH_PORT_NULL) {
+				debugrr("CGDisplayIOServicePort returned error\n");
+				warning("IODisplayCreateInfoDictionary returned NULL!");
+				goto dict_fail;
+			}
 
 #ifdef NEVER
-		{
-			io_name_t name;
-			if (IORegistryEntryGetName(dport, name) != KERN_SUCCESS) {
-				debugrr("IORegistryEntryGetName returned error\n");
-				free_disppaths(disps);
-				free(dids);
-				return NULL;
+			{
+				io_name_t name;
+				if (IORegistryEntryGetName(dport, name) != KERN_SUCCESS) {
+					debugrr("IORegistryEntryGetName returned error\n");
+					free_disppaths(disps);
+					free(dids);
+					return NULL;
+				}
+				printf("Driver %d name = '%s'\n",i,name);
 			}
-			printf("Driver %d name = '%s'\n",i,name);
-		}
 #endif
-		if ((ddr = IODisplayCreateInfoDictionary(dport, 0)) == NULL) {
-			debugrr("IODisplayCreateInfoDictionary returned NULL\n");
-			free_disppaths(disps);
-			free(dids);
-			return NULL;
-		}
-		if ((pndr = CFDictionaryGetValue(ddr, CFSTR(kDisplayProductName))) == NULL) {
-			debugrr("CFDictionaryGetValue returned NULL\n");
-			CFRelease(ddr);
-			free_disppaths(disps);
-			free(dids);
-			return NULL;
-		}
-		if ((dcount = CFDictionaryGetCount(pndr)) > 0) {
-			const void **keys;
-			const void **values;
-			int j;
-
-			keys = (const void **)calloc(sizeof(void *), dcount);
-			values = (const void **)calloc(sizeof(void *), dcount);
-			if (keys == NULL || values == NULL) {
-				if (keys != NULL)
-					free(keys);
-				if (values != NULL)
-					free(values);
-				debugrr("malloc failed\n");
-				CFRelease(ddr);
+			if ((ddr = IODisplayCreateInfoDictionary(dport, 0)) == NULL) {
+				debugrr("IODisplayCreateInfoDictionary returned NULL\n");
 				free_disppaths(disps);
 				free(dids);
 				return NULL;
 			}
-			CFDictionaryGetKeysAndValues(pndr, keys, values);
-			for (j = 0; j < dcount; j++) {
-				const char *k, *v;
-				char kbuf[50], vbuf[50];
-				k = CFStringGetCStringPtr(keys[j], kCFStringEncodingMacRoman);
-				if (k == NULL) {
-					if (CFStringGetCString(keys[j], kbuf, 50, kCFStringEncodingMacRoman))
-						k = kbuf;
-				}
-				v = CFStringGetCStringPtr(values[j], kCFStringEncodingMacRoman);
-				if (v == NULL) {
-					if (CFStringGetCString(values[j], vbuf, 50, kCFStringEncodingMacRoman))
-						v = vbuf;
-				}
-				/* We're only grabing the english description... */
-				if (k != NULL && v != NULL && strcmp(k, "en_US") == 0) {
-	                 dname = strndup(v, 49);
-				}
+			/* If CGDisplayIOServicePort is deprectaed, NULL is returned here. */
+			if ((pndr = CFDictionaryGetValue(ddr, CFSTR(kDisplayProductName))) == NULL) {
+				debugrr("CFDictionaryGetValue of kDisplayProductName returned NULL\n");
+				warning("CFDictionaryGetValue(kDisplayProductName) returned NULL!");
+				goto dict_fail;
 			}
-			free(keys);
-			free(values);
-		}
-		CFRelease(ddr);
+			if ((dcount = CFDictionaryGetCount(pndr)) > 0) {
+				const void **keys;
+				const void **values;
+				int j;
 
+				keys = (const void **)calloc(sizeof(void *), dcount);
+				values = (const void **)calloc(sizeof(void *), dcount);
+				if (keys == NULL || values == NULL) {
+					if (keys != NULL)
+						free(keys);
+					if (values != NULL)
+						free(values);
+					debugrr("malloc failed\n");
+					CFRelease(ddr);
+					free_disppaths(disps);
+					free(dids);
+					return NULL;
+				}
+				CFDictionaryGetKeysAndValues(pndr, keys, values);
+				for (j = 0; j < dcount; j++) {
+					const char *k, *v;
+					char kbuf[50], vbuf[50];
+					k = CFStringGetCStringPtr(keys[j], kCFStringEncodingMacRoman);
+					if (k == NULL) {
+						if (CFStringGetCString(keys[j], kbuf, 50, kCFStringEncodingMacRoman))
+							k = kbuf;
+					}
+					v = CFStringGetCStringPtr(values[j], kCFStringEncodingMacRoman);
+					if (v == NULL) {
+						if (CFStringGetCString(values[j], vbuf, 50, kCFStringEncodingMacRoman))
+							v = vbuf;
+					}
+					/* We're only grabing the english description... */
+					if (k != NULL && v != NULL && strcmp(k, "en_US") == 0) {
+						dname = osx_strndup(v, 49);
+					}
+				}
+				free(keys);
+				free(values);
+			}
+			CFRelease(ddr);
 		}
-		/* end of code for macOS 10.14 and older */
-
-		if (!dname) {
+   dict_fail:;
+		if (dname == NULL) {
 			dname = strdup("(unknown)");
 		}
+
 		sprintf(buf,"%s, at %d, %d, width %d, height %d%s",dname,
 	        disps[i]->sx, disps[i]->sy, disps[i]->sw, disps[i]->sh,
 	        CGDisplayIsMain(dids[i]) ? " (Primary Display)" : "");
 
-		if ((disps[i]->name = strdup(dname)) == NULL
-		 || (disps[i]->description = strdup(buf)) == NULL) {
+		disps[i]->name = dname;			/* (Transfer ownership of strdup malloc) */
+		if ((disps[i]->description = strdup(buf)) == NULL) {
 			debugrr("get_displays failed on malloc\n");
 			free_disppaths(disps);
-			free(dids);
 			free(dname);
+			free(dids);
 			return NULL;
 		}
-		free(dname);
 	}
 
 	free(dids);
@@ -3694,7 +3704,7 @@ static void dispwin_sighandler(int arg) {
 		restore_display(pp);
 	}
 
-	/* Call through to previous handler */
+	/* Call through to previous handlers */
 #ifdef UNIX
 	if (arg == SIGHUP && dispwin_hup != SIG_DFL && dispwin_hup != SIG_IGN) 
 		dispwin_hup(arg);
@@ -3708,15 +3718,34 @@ static void dispwin_sighandler(int arg) {
 	exit(0);
 }
 
+/* Use sigaction() if we can, to get SA_RESTART behavior */
+#if defined(UNIX)
+//sighandler_t signal_x(int signum, sighandler_t handler) {
+static void (*signal_x(int signum, void (*handler)(int)))(int) {
+	struct sigaction new, old;
+	int rv = 0;
+
+	new.sa_handler = handler;
+	sigemptyset(&new.sa_mask);
+	new.sa_flags = SA_RESTART;
+
+	rv =  sigaction(signum, &new, &old);
+
+	return old.sa_handler;
+}
+#else
+# define signal_x signal
+#endif
+
 static void dispwin_install_signal_handlers(dispwin *p) {
 
 	if (signal_dispwin == NULL) {
 		/* Install the signal handler to ensure cleanup */
 #ifdef UNIX
-		dispwin_hup = signal(SIGHUP, dispwin_sighandler);
+		dispwin_hup = signal_x(SIGHUP, dispwin_sighandler);
 #endif /* UNIX */
-		dispwin_int = signal(SIGINT, dispwin_sighandler);
-		dispwin_term = signal(SIGTERM, dispwin_sighandler);
+		dispwin_int = signal_x(SIGINT, dispwin_sighandler);
+		dispwin_term = signal_x(SIGTERM, dispwin_sighandler);
 	}
 
 	/* Add this one to the list */
@@ -3732,10 +3761,10 @@ static void dispwin_uninstall_signal_handlers(dispwin *p) {
 			signal_dispwin = p->next;
 			if (signal_dispwin == NULL) {
 #if defined(UNIX)
-				signal(SIGHUP, dispwin_hup);
+				signal_x(SIGHUP, dispwin_hup);
 #endif /* UNIX */
-				signal(SIGINT, dispwin_int);
-				signal(SIGTERM, dispwin_term);
+				signal_x(SIGINT, dispwin_int);
+				signal_x(SIGTERM, dispwin_term);
 			}
 		} else {
 			dispwin *pp;
@@ -4189,7 +4218,6 @@ double r, double g, double b	/* Color values 0.0 - 1.0 */
 			debugr2((errout,"InvalidateRect failed, lasterr = %d\n",GetLastError()));
 			return 1;
 		}
-		UpdateWindow(p->hwnd);
 
 //printf("~1 waiting for paint\n");
 		/* Wait for WM_PAINT to be executed */
@@ -4258,8 +4286,10 @@ double r, double g, double b	/* Color values 0.0 - 1.0 */
 
 	debugr2((errout,"dispwin_set_color paint done\n"));
 
-	if (tpool != nil)
+	if (tpool != nil) {
 		[tpool release];
+		tpool = nil;
+	}
 
 #endif /* UNIX_APPLE */
 
@@ -4754,7 +4784,7 @@ int win_message_thread(void *pp) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			if (p->quit != 0) {
+			if (p->quit != 0) {		/* We've been instructed to quit */
 				/* Process any pending messages */
 				while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 					TranslateMessage(&msg);
@@ -5046,6 +5076,11 @@ int ddebug						/* >0 to print debug statements to stderr */
 		CFStringRef pixenc;
 		int fbdepth = 0;
 
+		/* CGDisplayModeCopyPixelEncoding() depercation madness... */
+		/* <https://stackoverflow.com/a/36904508/3073383> */
+		/* <https://forum.lazarus.freepascal.org/index.php/topic,44455.msg314267.html?PHPSESSID=dm4e7hlj32k8f5lp0t7copn2n1#msg314267> */
+		/* Also see the bottom of this file */
+
 		/* Get frame buffer depth  */
 		dispmode = CGDisplayCopyDisplayMode(p->ddid);
 		pixenc = CGDisplayModeCopyPixelEncoding(dispmode);
@@ -5146,8 +5181,10 @@ int ddebug						/* >0 to print debug statements to stderr */
 		}
 
 		if ((cx = (osx_cntx_t *)calloc(sizeof(osx_cntx_t), 1)) == NULL) {
-			if (tpool != nil)
+			if (tpool != nil) {
 				[tpool release];
+				tpool = nil;
+			}
 			debugr2((errout,"new_dispwin: Malloc failed (osx_cntx_t)\n"));
 			dispwin_del(p);
 			return NULL;
@@ -5203,8 +5240,10 @@ int ddebug						/* >0 to print debug statements to stderr */
 		/* Wait for events generated by window creation to complete */
 		ui_waitForEvents();
 
-		if (tpool != nil)
+		if (tpool != nil) {
 			[tpool release];
+			tpool = nil;
+		}
 
 		p->winclose = 0;
 
@@ -7273,14 +7312,15 @@ main(int argc, char *argv[]) {
 						error ("set_color failed");
 					}
 
-					if (inf == 2)
-						getchar();				
-					else
+					if (inf == 2) {
+						if (getchar() == 'q')
+							goto do_exit;
+					} else
 						sleep(2);
 				}
 				icg->del(icg);
 
-			/* Manually define patche colors */
+			/* Manually define patch colors */
 			} else if (nmrgb > 0) {
 				int i;
 				int ri, gi, bi;
@@ -7305,9 +7345,10 @@ main(int argc, char *argv[]) {
 						error ("set_color failed");
 					}
 
-					if (inf == 2)
-						getchar();				
-					else
+					if (inf == 2) {
+						if (getchar() == 'q')
+							goto do_exit;
+					} else
 						sleep(2);
 				}
 
@@ -7320,121 +7361,136 @@ main(int argc, char *argv[]) {
 				printf("Setting White\n");
 				dw->set_color(dw, 1.0, 1.0, 1.0);	/* White */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 75%% Grey\n");
 				dw->set_color(dw, 0.75, 0.75, 0.75);	/* Grey */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 50%% Grey\n");
 				dw->set_color(dw, 0.5, 0.5, 0.5);	/* Grey */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 25%% Grey\n");
 				dw->set_color(dw, 0.25, 0.25, 0.25);	/* Grey */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 12.5%% Grey\n");
 				dw->set_color(dw, 0.125, 0.125, 0.125);	/* Grey */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Black\n");
 				dw->set_color(dw, 0.0, 0.0, 0.0);
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Red\n");
 				dw->set_color(dw, 1.0, 0.0, 0.0);	/* Red */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Green\n");
 				dw->set_color(dw, 0.0, 1.0,  0.0);	/* Green */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Blue\n");
 				dw->set_color(dw, 0.0, 0.0, 1.0);	/* Blue */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Cyan\n");
 				dw->set_color(dw, 0.0, 1.0, 1.0);	/* Cyan */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Magenta\n");
 				dw->set_color(dw, 1.0, 0.0,  1.0);	/* Magenta */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting Yellow\n");
 				dw->set_color(dw, 1.0, 1.0, 0.0);	/* Yellow */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 50%% Red\n");
 				dw->set_color(dw, 0.5, 0.0, 0.0);	/* Red */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 50%% Green\n");
 				dw->set_color(dw, 0.0, 0.5,  0.0);	/* Green */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				printf("Setting 50%% Blue\n");
 				dw->set_color(dw, 0.0, 0.0, 0.5);	/* Blue */
 
-				if (inf == 2)
-					getchar();				
-				else
+				if (inf == 2) {
+					if (getchar() == 'q')
+						goto do_exit;
+				} else
 					sleep(2);
 
 				if (inf == 1) {
@@ -7449,9 +7505,10 @@ main(int argc, char *argv[]) {
 						printf("Setting %f %f %f\n",col[0],col[1],col[2]);
 						dw->set_color(dw, col[0],col[1],col[2]);
 	
-						if (inf == 2)
-							getchar();
-						else
+						if (inf == 2) {
+							if (getchar() == 'q')
+								goto do_exit;
+						} else
 							sleep(2);
 	
 					}
@@ -7517,6 +7574,8 @@ main(int argc, char *argv[]) {
 		}
 	}
 	
+  do_exit:;
+
 	if (disp != NULL)
 		free_a_disppath(disp);
 
@@ -7976,5 +8035,69 @@ static void pcurpath(dispwin *p) {
 
 //	return dpath;
 	return NULL;
+#endif
+
+#ifdef NEVER
+
+/* Possible replacement for CGDisplayModeCopyPixelEncoding() */
+
+const
+  // https://opensource.apple.com/source/IOGraphics/IOGraphics-406/IOGraphicsFamily/IOKit/graphics/IOGraphicsTypes.h.auto.html
+  IO1BitIndexedPixels = 'P';
+  IO2BitIndexedPixels = 'PP';
+  IO4BitIndexedPixels = 'PPPP';
+  IO8BitIndexedPixels = 'PPPPPPPP';
+  IO16BitDirectPixels = '-RRRRRGGGGGBBBBB';
+  IO32BitDirectPixels = '--------RRRRRRRRGGGGGGGGBBBBBBBB';
+  kIO30BitDirectPixels = '--RRRRRRRRRRGGGGGGGGGGBBBBBBBBBB';
+  kIO64BitDirectPixels = '-16R16G16B16';
+  kIO16BitFloatPixels = '-16FR16FG16FB16';
+  kIO32BitFloatPixels = '-32FR32FG32FB32';
+  IOYUV422Pixels = 'Y4U2V2';
+  IO8BitOverlayPixels = 'O8';
+
+function MacOSGetDisplayBitsPerPixel(ADefault: integer): integer;
+var
+  mode: CGDisplayModeRef;
+  r: CFStringRef;
+  rString: shortstring;
+begin
+  Result := ADefault;
+  // CGDisplayModeCopyPixelEncoding is the alternative recommended by the
+  // CGDisplayBitsPerPixel Apple Developer website page.
+  // https://developer.apple.com/documentation/coregraphics/1455067-cgdisplaymodecopypixelencoding?language=objc
+  // It is listed as deprecated on this overview page:
+  // https://developer.apple.com/documentation/coregraphics/quartz_display_services?language=objc#1656418
+  mode := CGDisplayCopyDisplayMode(CGMainDisplayID);
+  try
+    r := CGDisplayModeCopyPixelEncoding(mode);
+    try
+      CFStringGetPascalString(r, @rString, 255, CFStringGetSystemEncoding());
+      case rString of
+        IO1BitIndexedPixels: Result := 1;
+        IO2BitIndexedPixels: Result := 2;
+        IO4BitIndexedPixels: Result := 4;
+        IO8BitIndexedPixels: Result := 8;
+        IO16BitDirectPixels: Result := 16;
+        IO32BitDirectPixels: Result := 32;
+        kIO30BitDirectPixels: Result := 30;
+        kIO64BitDirectPixels: Result := 64;
+        kIO16BitFloatPixels: Result := 16;
+        kIO32BitFloatPixels: Result := 32;
+        IOYUV422Pixels: Result := 6;
+        IO8BitOverlayPixels: Result := 8;
+      end;
+    finally
+      // FreeCFString(r);
+    end;
+  finally
+    CFRelease(mode);
+  end;
+end;
+
+// ????
+// CGDisplayModeRelease(mode);
+// CFRelease(r);
+
 #endif
 

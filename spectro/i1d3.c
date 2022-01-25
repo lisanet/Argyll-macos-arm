@@ -1,6 +1,5 @@
-
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * GretagMacbeth Huey related functions
  *
@@ -18,7 +17,7 @@
 
 /* 
    If you make use of the instrument driver code here, please note
-   that it is the author(s) of the code who take responsibility
+   that it is the author(s) of the code who are responsibility
    for its operation. Any problems or queries regarding driving
    instruments with the Argyll drivers, should be directed to
    the Argyll's author(s), and not to any other party.
@@ -75,7 +74,7 @@
 #define I1D3_MEAS_TIMEOUT 40.0      /* Longest reading timeout in seconds */ 
 									/* Typically 20.0 is the maximum needed. */
 
-#define I1D3_SAT_FREQ 100000.0		/* L2F sensor frequency limit */
+#define I1D3_SAT_FREQ 100000.0		/* L2F sensor frequency limit ? Should this be increased ?? */
 
 static inst_code i1d3_interp_code(inst *pp, int ec);
 static inst_code i1d3_check_unlock(i1d3 *p);
@@ -577,30 +576,30 @@ i1d3_lock_status(
 
 static void create_unlock_response(unsigned int *k, unsigned char *c, unsigned char *r);
 
-
 /* Unlock the device */
+static struct {
+	char *pname;							/* Product name */
+	unsigned int key[2];					/* ArgyllCMS flavor unlock code */
+	i1d3_dtype btype;						/* Base type enumerator */
+	i1d3_dtype stype;						/* Sub type enumerator */
+} i1d3_codes[] = {
+	{ "i1Display3 ",         { 0xe9622e9f, 0x8d63e133 }, i1d3_disppro,  i1d3_disppro },
+	{ "Colormunki Display ", { 0xe01e6e0a, 0x257462de }, i1d3_munkdisp, i1d3_munkdisp },
+	{ "i1Display3 ",         { 0xcaa62b2c, 0x30815b61 }, i1d3_disppro,  i1d3_dpp_oem },
+	{ "i1Display3 ",         { 0xa9119479, 0x5b168761 }, i1d3_disppro,  i1d3_nec_ssp },
+	{ "i1Display3 ",         { 0x160eb6ae, 0x14440e70 }, i1d3_disppro,  i1d3_quato_sh3 },
+	{ "i1Display3 ",         { 0x291e41d7, 0x51937bdd }, i1d3_disppro,  i1d3_hp_dreamc },
+	{ "i1Display3 ",         { 0x1abfae03, 0xf25ac8e8 }, i1d3_disppro,  i1d3_wacom_dc },
+	{ "i1Display3 ",         { 0x828c43e9, 0xcbb8a8ed }, i1d3_disppro,  i1d3_tpa_1 },
+	{ NULL }, { NULL } 
+};
+
 static inst_code
 i1d3_unlock(
 	i1d3 *p				/* Object */
 ) {
 	unsigned char todev[64];
 	unsigned char fromdev[64];
-	struct {
-		char *pname;							/* Product name */
-		unsigned int key[2];					/* Unlock code */
-		i1d3_dtype btype;						/* Base type enumerator */
-		i1d3_dtype stype;						/* Sub type enumerator */
-	} codes[] = {
-		{ "i1Display3 ",         { 0xe9622e9f, 0x8d63e133 }, i1d3_disppro,  i1d3_disppro },
-		{ "Colormunki Display ", { 0xe01e6e0a, 0x257462de }, i1d3_munkdisp, i1d3_munkdisp },
-		{ "i1Display3 ",         { 0xcaa62b2c, 0x30815b61 }, i1d3_disppro,  i1d3_dpp_oem },
-		{ "i1Display3 ",         { 0xa9119479, 0x5b168761 }, i1d3_disppro,  i1d3_nec_ssp },
-		{ "i1Display3 ",         { 0x160eb6ae, 0x14440e70 }, i1d3_disppro,  i1d3_quato_sh3 },
-		{ "i1Display3 ",         { 0x291e41d7, 0x51937bdd }, i1d3_disppro,  i1d3_hp_dreamc },
-		{ "i1Display3 ",         { 0xc9bfafe0, 0x02871166 }, i1d3_disppro,  i1d3_sc_c6 },
-		{ "i1Display3 ",         { 0x1abfae03, 0xf25ac8e8 }, i1d3_disppro,  i1d3_wacom_dc },
-		{ NULL } 
-	}; 
 	inst_code ev;
 	int ix, nix;
 
@@ -608,7 +607,7 @@ i1d3_unlock(
 
 	/* Count the keys */
 	for (nix = 0;;nix++) {
-		if (codes[nix].pname == NULL)
+		if (i1d3_codes[nix].pname == NULL)
 			break;
 	}
 
@@ -616,7 +615,7 @@ i1d3_unlock(
 	for (ix = 0;;ix++) {
 
 		/* If we've run out of unlock keys */
-		if (codes[ix].pname == NULL) {
+		if (i1d3_codes[ix].pname == NULL) {
 			a1logw(p->log, "i1d3: Unknown lock code. Please contact ArgyllCMS for help\n");
 			return i1d3_interp_code((inst *)p, I1D3_UNKNOWN_UNLOCK);
 		}
@@ -624,16 +623,16 @@ i1d3_unlock(
 //		return i1d3_interp_code((inst *)p, I1D3_UNLOCK_FAIL);
 
 		/* Skip any keys that don't match the product name */
-		if (strcmp(p->prod_name, codes[ix].pname) != 0) {
-			continue;
-		}
+//		if (strcmp(p->prod_name, i1d3_codes[ix].pname) != 0) {
+//			continue;
+//		}
 
 //		a1logd(p->log, 3, "i1d3_unlock: Trying unlock key 0x%08x 0x%08x\n",
-//			codes[ix].key[0], codes[ix].key[1]);
+//			i1d3_codes[ix].key[0], i1d3_codes[ix].key[1]);
 		a1logd(p->log, 3, "i1d3_unlock: Trying unlock key %d/%d\n", ix+1, nix);
 
-		p->btype = codes[ix].btype;
-		p->stype = codes[ix].stype;
+		p->btype = i1d3_codes[ix].btype;
+		p->stype = i1d3_codes[ix].stype;
 
 		/* Attempt unlock */
 		memset(todev, 0, 64);
@@ -644,14 +643,21 @@ i1d3_unlock(
 			return ev;
 
 		/* Convert challenge to response */
-		create_unlock_response(codes[ix].key, fromdev, todev);
+		create_unlock_response(i1d3_codes[ix].key, fromdev, todev);
 
 		/* Send the response */
 		if ((ev = i1d3_command(p, i1d3_lockresp, todev, fromdev, 1.0, 0)) != inst_ok)
 			return ev;
 
-		if (fromdev[2] == 0x77) {		/* Sucess */
-			break;
+		if (fromdev[2] == 0x77) {		/* Sucess ? */
+			int stat;
+
+			/* Check success */
+			if ((ev = i1d3_lock_status(p,&stat)) != inst_ok)
+				return ev;
+
+			if (stat == 0)
+				break;
 		}
 
 		a1logd(p->log, 3, "i1d3_unlock: Trying next unlock key\n");
@@ -815,9 +821,10 @@ i1d3_freq_measure(
 
 	/* The HW holds the L2F *OE high (disabled) until the start of the measurement period, */
 	/* and this has the effect of holding the internal integrator in a reset state. */
-	/* This then synchronizes the frequency output to the start of */
-	/* the measurement, which has the effect of rounding down the count output. */
-	/* To compensate, we have to add 0.5 to the count. */
+	/* This then synchronizes the frequency output to the start of the measurement,*/
+	/* which has the effect of rounding down the count output (0 to -1 bit error). */
+	/* To compensate, we have to add 0.5 to the count to make the quantization error */
+	/* symetric and minimal (-.5 to .5 bit error) */
 	rgb[0] += 0.5;
 	rgb[1] += 0.5;
 	rgb[2] += 0.5;
@@ -825,7 +832,7 @@ i1d3_freq_measure(
 	return inst_ok;
 }
 
-/* Take a raw measurement that returns the number of clocks */
+/* Take a raw measurement that returns the number of clocks (i.e. period) */
 /* between and initial edge at the start of the period (triggered by */
 /* the *OE going low and the integrator being started) and edgec[] */
 /* subsequent edges of the L2F. The edge count must be between */
@@ -937,7 +944,7 @@ i1d3_set_LEDs(
 	and halve this to use as the quantization value (ie. make
 	it lie between 20 and 80 Hz).
 
-	If there was no error, return refresh quanization period it.
+	If there was no error, return refresh quanization period.
 
 	If there is no aparent refresh, or the refresh rate is not determinable,
 	return a period of 0.0 and inst_ok;
@@ -2580,6 +2587,9 @@ static int i1d3_diff_thread(void *pp) {
 
 static inst_code set_default_disp_type(i1d3 *p);
 
+
+static inst_code i1d3_bfsearch(i1d3 *p);
+
 /* Initialise the I1D3 */
 static inst_code
 i1d3_init_inst(inst *pp) {
@@ -2620,8 +2630,10 @@ i1d3_init_inst(inst *pp) {
 	if ((ev = i1d3_lock_status(p,&stat)) != inst_ok)
 		return ev;
 
+
 	if (stat != 0) {		/* Locked, so unlock it */
 		a1logd(p->log, 3, "i1d3_init_inst: unlocking the instrument\n");
+
 
 		if ((ev = i1d3_unlock(p)) != inst_ok)
 			return ev;
@@ -2708,6 +2720,20 @@ i1d3_init_inst(inst *pp) {
 	a1logd(p->log, 2, "i1d3_init_inst: done\n");
 
 	return ev;
+}
+
+/* Return the instrument serial number. */
+/* (This will be an empty string if there is no serial no) */
+char *i1d3_get_serial_no(
+inst *pp) {
+	i1d3 *p = (i1d3 *)pp;
+
+	if (!pp->gotcoms)
+		return "";
+	if (!pp->inited)
+		return "";
+
+	return p->serial_no;
 }
 
 /* Read a single sample */
@@ -2810,6 +2836,7 @@ instClamping clamp) {		/* NZ if clamp XYZ/Lab to be +ve */
 		val->mtype = inst_mrt_ambient;
 	else
 		val->mtype = inst_mrt_emission;
+	val->mcond = inst_mrc_none;
 	val->XYZ_v = 1;
 	val->sp.spec_n = 0;
 	val->duration = 0.0;
@@ -3485,6 +3512,7 @@ i1d3_del(inst *pp) {
 				msec_sleep(50);	/* Wait for thread to terminate */
 			if (i >= 5) {
 				a1logd(p->log,3,"i1d3 diffuser thread termination failed\n");
+				p->th->terminate(p->th);		/* Try and force thread to terminate */
 			}
 			p->th->del(p->th);
 		}
@@ -4067,6 +4095,41 @@ i1d3_get_set_opt(inst *pp, inst_opt_type m, ...) {
 	}
 }
 
+/* Look for an escape code (to escape from the clutches of the re-seller!) */
+/* Can only call this once. */
+static void get_escape_code(i1d3 *p) {
+	char *cp;
+	static eset = 0;
+
+	if (eset)
+		return;
+
+	if ((cp = getenv("I1D3_ESCAPE")) != NULL) {
+		int nix;
+		unsigned char k[8];
+
+
+		if (sscanf(cp, "%2hx%2hx%2hx%2hx%2hx%2hx%2hx%2hx",
+			&k[0], &k[1], &k[2], &k[3], &k[4], &k[5], &k[6], &k[7]) != 8)
+			return;
+
+		/* Find the last slot */
+		for (nix = 0;;nix++) {
+			if (i1d3_codes[nix].pname == NULL)
+				break;
+		}
+
+		i1d3_codes[nix].pname = "i1Display3 ";
+		i1d3_codes[nix].key[0] = (k[0] << 24) | (k[1] << 16) | (k[2] << 8) | k[3];
+		i1d3_codes[nix].key[1] = (k[4] << 24) | (k[5] << 16) | (k[6] << 8) | k[7];
+		i1d3_codes[nix].btype = i1d3_disppro;
+		i1d3_codes[nix].stype = i1d3_unk;
+		a1logd(p->log, 3, "i1d3: found escape code 0x%08x 0x%08x\n",
+			i1d3_codes[nix].key[0], i1d3_codes[nix].key[1]);
+		eset = 1;
+	}
+}
+
 /* Constructor */
 extern i1d3 *new_i1d3(icoms *icom, instType dtype) {
 	i1d3 *p;
@@ -4080,6 +4143,7 @@ extern i1d3 *new_i1d3(icoms *icom, instType dtype) {
 
 	p->init_coms         = i1d3_init_coms;
 	p->init_inst         = i1d3_init_inst;
+	p->get_serial_no     = i1d3_get_serial_no;
 	p->capabilities      = i1d3_capabilities;
 	p->meas_config       = i1d3_meas_config;
 	p->check_mode        = i1d3_check_mode;
@@ -4109,9 +4173,10 @@ extern i1d3 *new_i1d3(icoms *icom, instType dtype) {
 	icmSetUnity3x3(p->ccmat);
 	p->dtech = disptech_unknown;
 
+	get_escape_code(p);
+
 	return p;
 }
-
 
 
 /* Combine the 2 word key and 64 byte challenge into a 64 bit response.  */
@@ -4124,7 +4189,7 @@ static void create_unlock_response(unsigned int *k, unsigned char *c, unsigned c
 	for (i = 0; i < 8; i++)
 		sc[i] = c[3] ^ c[35 + i];
 	
-	/* Combine key with 16 byte challenge to create core 16 byte response */
+	/* Combine 8 byte key with 16 byte challenge to create core 16 byte response */
 	{
 		unsigned int ci[2];		/* challenge as 4 ints */
 		unsigned int co[4];		/* product, difference of 4 ints */
@@ -4162,7 +4227,7 @@ static void create_unlock_response(unsigned int *k, unsigned char *c, unsigned c
 		s0 =  sum       & 0xff;
 		s1 = (sum >> 8) & 0xff;
 	
-		/* Final computation of bytes from 4 ints + sum bytes */
+		/* Final computation of 16 bytes from 4 ints + sum bytes */
 		sr[0] =  ((co[0] >> 16) & 0xff) + s0;
 		sr[1] =  ((co[2] >>  8) & 0xff) - s1;
 		sr[2] =  ( co[3]        & 0xff) + s1;
@@ -4183,14 +4248,18 @@ static void create_unlock_response(unsigned int *k, unsigned char *c, unsigned c
 
 	/* The OEM driver sets the resonse to random bytes, */
 	/* but we don't need to do this, since the device doesn't */
-	/* look at them. */
+	/* look at them. We could add random bytes if an instrument */
+	/* update were to reject zero bytes. */
 	for (i = 0; i < 64; i++)
 		r[i] = 0;
 
 	/* The actual resonse is 16 bytes at offset 24 in the response buffer. */
-	/* The OEM driver xor's challeng byte 2 with response bytes 4..63, but */
+	/* The OEM driver xor's challenge byte 2 with response bytes 4..63, but */
 	/* since the instrument doesn't look at them, we only do this to the actual */
 	/* response. */
 	for (i = 0; i < 16; i++)
 		r[24 + i] = c[2] ^ sr[i];
 }
+
+
+

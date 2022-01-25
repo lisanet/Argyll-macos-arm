@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <meta content="text/html; charset=ISO-8859-1"
+    <meta content="text/html; charset=windows-1252"
       http-equiv="content-type">
     <title>Display profile locations</title>
   </head>
@@ -69,9 +69,8 @@
       "Gamma/VCGT/RAMDAC/Video LUT" loader tools, so consult their
       documentation and check your Start Menu Startup folders. If you
       don't want to use any of these 3rd party tools, you can also use
-      the <a href="dispwin.html">dispwin</a>
-      tool to do this for you, as it takes either a <a
-        href="cal_format.html">.cal</a> or ICC
+      the <a href="dispwin.html">dispwin</a> tool to do this for you,
+      as it takes either a <a href="cal_format.html">.cal</a> or ICC
       file as an argument. The <a
         href="http://freshmeat.net/projects/xcalib/">xcalib</a> tool
       could also be used.<br>
@@ -121,6 +120,7 @@
       style="font-weight: bold;">NOTE</span> that it seems to have a <span
       style="font-weight: bold;">bug</span>, in that it sometimes
     associates the profiles with the <span style="font-weight: bold;">wrong
+
       monitor</span> entry!<br>
     <br>
     On Microsoft <span style="font-weight: bold;">Vista</span> you can
@@ -131,6 +131,7 @@
 you&nbsp;select&nbsp;"Use&nbsp;my&nbsp;settings&nbsp;for&nbsp;this
 device",&nbsp;and&nbsp;then&nbsp;add&nbsp;the&nbsp;profile&nbsp;you've&nbsp;created.
 Unfortunately
+
 
     though, it doesn't use the 'vcgt' calibration curves on system
     startup, so a tool such as <span style="font-weight: bold;">dispwin</span>
@@ -147,6 +148,7 @@ Unfortunately
     <br>
     On Microsoft <span style="font-weight: bold;">Windows 7 &amp; 8</span>
     you can set the display profile by opening the <span class="phrase">Color
+
 
       Management control by clicking the <span class="ui">Start</span>
       button and then clicking <span class="ui">Control Panel</span>.
@@ -167,6 +169,7 @@ Unfortunately
     3rd party tool to load display calibration has been installed. This
     can be done by logging on with a user account that has
     administrative privileges, then opening the <span class="phrase">Color
+
       Management (see above), and then select the "</span><span
       class="ui">Advanced</span>" tab, and then "<span class="ui">Change
       system defaults...", then select the </span><span class="phrase">"</span><span
@@ -219,7 +222,16 @@ Unfortunately
     correctly, it will follow <a
       href="http://www.burtonini.com/computing/x-icc-profiles-spec-0.2.html">this
 
+
       convention</a> to make it available to applications.<br>
+    <br>
+    In addition to the _ICC_PROFILE and _ICC_PROFILE_NN X11 atom
+    convention mentioned above, ArgyllCMS dispwin will also set a CRTC
+    _ICC_PROFILE property on systems that support XRANDR 1.2 or later,
+    and this is the preferred way of applications obtaining a particular
+    displays profile for multi-display X11 setups. (See the
+    XRRGetOutputProperty() function for the method of getting the
+    _ICC_PROFILE value).<br>
     &nbsp;&nbsp; <br>
     If you want the display calibration to be loaded, you should
     consider installing a tool to do so at startup, such as <a
@@ -239,9 +251,9 @@ Unfortunately
     property, and also load it into the display VideoLUTs. <br>
     <br>
     You can use the <span style="font-weight: bold;">dispwin</span> <a
-      href="dispwin.html#d">-d</a> parameter
-    in the usual way to select other displays to store or load the
-    calibration using the _ICC_PROFILE property.<br>
+      href="dispwin.html#d">-d</a> parameter in the usual way to select
+    other displays to store or load the calibration using the
+    _ICC_PROFILE property.<br>
     <br>
     To do this when you start your X11 server, you could put the above
     command in your <span style="font-weight: bold;">.xinitrc</span>

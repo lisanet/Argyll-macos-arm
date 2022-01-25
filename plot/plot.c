@@ -72,7 +72,12 @@ int plot_colors[MXGPHS][3] = {
 	{ 160, 160, 160},	/* Grey */
 	{ 220,  30, 220},	/* Magenta */
 	{ 112, 255, 161},	/* Lime */
-	{ 255, 191,  80}	/* Pink */
+	{ 255, 191,  80},	/* Pink */
+
+	{   0, 100, 100},	/* ???? */
+	{ 100,   0, 100},	/* ???? */
+	{ 100, 100,   0},	/* ???? */
+	{ 100,   0,   0}	/* ???? */
 };
 
 struct _plot_info {
@@ -502,7 +507,7 @@ int m) {
 int
 do_plotNpwz(
 double *x,		/* X coord */
-double **yy,	/* Y values, NULL for none */
+double **yy,	/* MXGPHS x Y values, NULL for none */
 int n,			/* Number of values, -ve for reverse X axis */
 double *xp, double *yp,		/* And crosses */
 int m,			/* Number of crosses */
@@ -1083,8 +1088,7 @@ DWORD WINAPI plot_message_thread(LPVOID lpParameter) {
 	HWND _hwnd;
 
 	// Fill in window class structure with parameters that describe the
-	// main window.
-
+	// main window. (This is accessed by lpszClassName match to window)
 	wc.style         = CS_HREDRAW | CS_VREDRAW;	// Class style(s).
 	wc.lpfnWndProc   = MainWndProc;	// Function to retrieve messages for windows of this class.
 	wc.cbClsExtra    = 0;			// No per-class extra data.
@@ -1846,10 +1850,17 @@ static void create_my_win(void *cntx) {
 	wRect.size.height = DEFWHEIGHT;
 
 	cx->window = [[PLWin alloc] initWithContentRect: wRect
-                                        styleMask: (NSTitledWindowMask |
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200
+	                                    styleMask: (NSWindowStyleMaskTitled |
+	                                                NSWindowStyleMaskClosable |
+	                                                NSWindowStyleMaskMiniaturizable |
+	                                                NSWindowStyleMaskResizable)
+#else
+	                                    styleMask: (NSTitledWindowMask |
 	                                                NSClosableWindowMask |
-                                                    NSMiniaturizableWindowMask |
-                                                    NSResizableWindowMask)
+	                                                NSMiniaturizableWindowMask |
+	                                                NSResizableWindowMask)
+#endif
                                           backing: NSBackingStoreBuffered
                                             defer: YES
 	                                       screen: nil];		/* Main screen */
@@ -2169,7 +2180,7 @@ void (*pfunc)(plot_info *pdp, NSBezierPath *path, NSColor *lcol, NSColor *tcol, 
 /* Called from within view to plot overall graph  */
 static void DoPlot(NSRect *rect, plot_info *pdp) {
 	int i, j;
-	int lx,ly;		/* Last x,y */
+	float lx,ly;		/* Last x,y */
 	CGFloat dash_list[2] = {7.0, 2.0};
 	/* Note path and tcol are autorelease */
 	NSBezierPath *path = [NSBezierPath bezierPath];		/* Path to use */
@@ -2223,14 +2234,14 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 			                           alpha: 1.0] setStroke];
 
 			if (pdp->n > 0) {
-				lx = (int)((pdp->x1[0] - pdp->mnx) * pdp->scx + 0.5);
-				ly = (int)((     yp[0] - pdp->mny) * pdp->scy + 0.5);
+				lx = (pdp->x1[0] - pdp->mnx) * pdp->scx;
+				ly = (     yp[0] - pdp->mny) * pdp->scy;
 			}
 
 			for (i = 1; i < pdp->n; i++) {
-				int cx,cy;
-				cx = (int)((pdp->x1[i] - pdp->mnx) * pdp->scx + 0.5);
-				cy = (int)((     yp[i] - pdp->mny) * pdp->scy + 0.5);
+				float cx,cy;
+				cx = (pdp->x1[i] - pdp->mnx) * pdp->scx;
+				cy = (     yp[i] - pdp->mny) * pdp->scy;
 
 				ADrawLine(path, 20.0 + lx, 20.0 + ly, 20 + cx, 20.0 + cy);
 				if (pdp->flags & PLOTF_GRAPHCROSSES) {
@@ -2255,7 +2266,7 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 			                           alpha: 1.0];
 		}
 		for (i = 0; i < pdp->n; i++) {
-			int cx,cy;
+			float cx,cy;
 
 			if (pdp->ncols != NULL) {
 				[[NSColor colorWithCalibratedRed: pdp->ncols[i].rgb[0]/255.0
@@ -2271,11 +2282,11 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 				}
 			}
 
-			lx = (int)((pdp->x1[i] - pdp->mnx) * pdp->scx + 0.5);
-			ly = (int)((pdp->yy[0][i] - pdp->mny) * pdp->scy + 0.5);
+			lx = (pdp->x1[i] - pdp->mnx) * pdp->scx;
+			ly = (pdp->yy[0][i] - pdp->mny) * pdp->scy;
 
-			cx = (int)((pdp->x2[i] - pdp->mnx) * pdp->scx + 0.5);
-			cy = (int)((pdp->yy[1][i] - pdp->mny) * pdp->scy + 0.5);
+			cx = (pdp->x2[i] - pdp->mnx) * pdp->scx;
+			cy = (pdp->yy[1][i] - pdp->mny) * pdp->scy;
 
 			ADrawLine(path, 20.0 + lx, 20.0 + ly, 20.0 + cx, 20.0 + cy);
 
@@ -2311,8 +2322,8 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 					                           alpha: 1.0];
 				}
 			}
-			lx = (int)((pdp->x7[i] - pdp->mnx) * pdp->scx + 0.5);
-			ly = (int)((pdp->y7[i] - pdp->mny) * pdp->scy + 0.5);
+			lx = (pdp->x7[i] - pdp->mnx) * pdp->scx;
+			ly = (pdp->y7[i] - pdp->mny) * pdp->scy;
 
 			ADrawLine(path, 20.0 + lx - 5, 20.0 + ly, 20.0 + lx + 5, 20.0 + ly);
 			ADrawLine(path, 20.0 + lx, 20.0 + ly - 5, 20.0 + lx, 20.0 + ly + 5);
@@ -2331,7 +2342,7 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 		                           alpha: 1.0] setStroke];
 	
 		for (i = 0; i < pdp->o; i++) {
-			int cx,cy;
+			float cx,cy;
 
 			if (pdp->ocols != NULL) {
 				[[NSColor colorWithCalibratedRed: pdp->ocols[i].rgb[0]
@@ -2345,11 +2356,11 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 					                           alpha: 1.0];
 				}
 			}
-			lx = (int)((pdp->x8[i] - pdp->mnx) * pdp->scx + 0.5);
-			ly = (int)((pdp->y8[i] - pdp->mny) * pdp->scy + 0.5);
+			lx = (pdp->x8[i] - pdp->mnx) * pdp->scx;
+			ly = (pdp->y8[i] - pdp->mny) * pdp->scy;
 
-			cx = (int)((pdp->x9[i] - pdp->mnx) * pdp->scx + 0.5);
-			cy = (int)((pdp->y9[i] - pdp->mny) * pdp->scy + 0.5);
+			cx = (pdp->x9[i] - pdp->mnx) * pdp->scx;
+			cy = (pdp->y9[i] - pdp->mny) * pdp->scy;
 
 			ADrawLine(path, 20.0 + lx, 20.0 + ly, 20.0 + cx, 20.0 + cy);
 		}
@@ -2360,7 +2371,7 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 		int ss = 7;
 
 		for (i = 0; i < pdp->p; i++) {
-			int cx,cy;
+			float cx,cy;
 
 			if (pdp->pcols != NULL) {
 				[[NSColor colorWithCalibratedRed: pdp->pcols[i].rgb[0]
@@ -2387,12 +2398,12 @@ static void DoPlot(NSRect *rect, plot_info *pdp) {
 				}
 			}
 
-			cx = (int)((pdp->xp[i] - pdp->mnx) * pdp->scx + 0.5);
-			cy = (int)((pdp->yp[i] - pdp->mny) * pdp->scy + 0.5);
+			cx = (pdp->xp[i] - pdp->mnx) * pdp->scx;
+			cy = (pdp->yp[i] - pdp->mny) * pdp->scy;
 
 			/* Allow for margin and y being top to bottom */
-			cx += 20;
-			cy += 20;
+			cx += 20.0;
+			cy += 20.0;
 
 			switch (pdp->tp[i]) {
     			case plotDiagCross:

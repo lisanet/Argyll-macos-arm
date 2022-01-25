@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Datacolor Spyder X related software.
  *
@@ -18,7 +18,7 @@
 
 /* 
    If you make use of the instrument driver code here, please note
-   that it is the author(s) of the code who take responsibility
+   that it is the author(s) of the code who are responsibility
    for its operation. Any problems or queries regarding driving
    instruments with the Argyll drivers, should be directed to
    the Argyll's author(s), and not to any other party.
@@ -101,7 +101,7 @@ spydX_reset(
 
 	se = p->icom->usb_control(p->icom,
 	               IUSB_REQ_TYPE_VENDOR | IUSB_REQ_RECIP_INTERFACE,
-                   0x02, 2, 0, NULL, 0, 5.0);
+                   0x02, 2, 0, NULL, 0, NULL, 5.0);
 
 	if (se == ICOM_OK) {
 		a1logd(p->log, 6, "spydX_reset: complete, ICOM code 0x%x\n",se);
@@ -311,6 +311,11 @@ spydX_getCalibration(
 	inst_code rv = inst_ok;
 
 	a1logd(p->log, 3, "spydX_getCalibration %d: called\n",cix);
+
+	if (cix < 0 || cix >= SPYDX_NOCALIBS) {
+		rv = spydX_interp_code((inst *)p, SPYDX_CIX_MISMATCH);
+		a1logd(p->log, 6, "spydX_getCalibration cix is out of range 0 .. %d\n",SPYDX_NOCALIBS-1);
+	}
 
 	send[0] = cix;
 
@@ -683,8 +688,8 @@ spydX_init_coms(inst *pp, baud_rate br, flow_control fc, double tout) {
 
 	a1logd(p->log, 2, "spydX_init_coms: about to init USB\n");
 
-//	usbflags |= icomuf_no_open_clear;
-//	usbflags |= icomuf_resetep_before_read;
+	/* Some instruments on some systems to lockup after use... */
+	usbflags |= icomuf_reset_before_close;
 
 	/* Set config, interface, write end point, read end point */
 	/* ("serial" end points aren't used - the spydX uses USB control & write/read) */
@@ -840,6 +845,7 @@ instClamping clamp) {		/* NZ if clamp XYZ/Lab to be +ve */
 		val->mtype = inst_mrt_ambient;
 	else
 		val->mtype = inst_mrt_emission;
+	val->mcond = inst_mrc_none;
 	val->XYZ_v = 1;		/* These are absolute XYZ readings ? */
 	val->sp.spec_n = 0;
 	val->duration = 0.0;
@@ -901,15 +907,17 @@ static inst_code spydX_get_n_a_cals(inst *pp, inst_cal_type *pn_cals, inst_cal_t
 	inst_cal_type a_cals = inst_calt_none;
 	
 	if ((curtime - p->bdate) > DCALTOUT) {
-		a1logd(p->log,2,"Invalidating black cal as %d secs from last cal\n",curtime - p->bdate);
+		a1logd(p->log,2,"SpydX: Invalidating black cal as %d secs from last cal\n",curtime - p->bdate);
 		p->bcal_done = 0;
 	}
 		
-	if (!IMODETST(p->mode, inst_mode_emis_ambient)) {
+	if (!IMODETST(p->mode, inst_mode_emis_ambient)) {		/* If not ambient */
 		if (!p->bcal_done || !p->noinitcalib)
 			n_cals |= inst_calt_emis_offset;
 		a_cals |= inst_calt_emis_offset;
 	}
+
+	a1logd(p->log,4,"SpydX: returning n_cals 0x%x, a_cals 0x%x\n",n_cals,a_cals);
 
 	if (pn_cals != NULL)
 		*pn_cals = n_cals;
@@ -977,6 +985,7 @@ char id[CALIDLEN]		/* Condition identifier (ie. white reference ID) */
 			return ev;
 		p->bcal_done = 1;
 		p->bdate = cdate;
+		p->noinitcalib = 1;			/* Don't calibrate again */
 	}
 
 #ifdef ENABLE_NONVCAL
@@ -1249,7 +1258,7 @@ static inst_code set_disp_type(spydX *p, inst_disptypesel *dentry) {
 
 	if (dentry->flags & inst_dtflags_ccmx) {
 		if (dentry->cc_cbid != 1) {
-			a1loge(p->log, 1, "k10: matrix must use cbid 1!\n",dentry->cc_cbid);
+			a1loge(p->log, 1, "SpydX: matrix must use cbid 1 (is %d)!\n",dentry->cc_cbid);
 			return inst_wrong_setup;
 		}
 
@@ -1257,11 +1266,15 @@ static inst_code set_disp_type(spydX *p, inst_disptypesel *dentry) {
 		icmCpy3x3(p->ccmat, dentry->mat);
 		p->cbid = 0;	/* Can't be a base type now */
 
-	} else {
+	} else if ((dentry->flags & inst_dtflags_mtx) != 0) { 
 		p->dtech = dentry->dtech;
 		icmCpy3x3(p->ccmat, dentry->mat);
 		p->cbid = dentry->cbid;
 		p->ucbid = dentry->cbid;    /* This is underying base if dentry is base selection */
+
+	} else {			/* This shouldn't happen... */
+		a1loge(p->log, 1, "SpydX: calibration selected isn't builit in or CCMX!\n");
+		return inst_wrong_setup;
 	}
 
 	p->ix = dentry->ix;				/* Native index */

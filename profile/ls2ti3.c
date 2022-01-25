@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Read in the RGB & CIE data from a LightSpace format .bcs XML file
  * and convert it into a .ti3 CGATs format suitable for the Argyll CMS.

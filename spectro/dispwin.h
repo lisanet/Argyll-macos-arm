@@ -2,7 +2,7 @@
 #ifndef DISPWIN_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Display target patch window
  *
  * Author: Graeme W. Gill
@@ -434,8 +434,6 @@ ramdac *dispwin_clone_ramdac(ramdac *r);
 void dispwin_setlin_ramdac(ramdac *r);
 int dispwin_sane_ramdac(ramdac *r);
 void dispwin_del_ramdac(ramdac *r);
-
-
 
 #define DISPWIN_H
 #endif /* DISPWIN_H */

@@ -11,6 +11,8 @@ ss.c
 ss_imp.c
 i1pro.c
 i1pro_imp.c
+i1pro3.c
+i1pro3_imp.c
 munki.c
 munki_imp.c
 hcfr.c

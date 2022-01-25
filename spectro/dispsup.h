@@ -2,7 +2,7 @@
 #ifndef DISPSUP_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Common display patch reading support.
  *
  * Author: Graeme W. Gill
@@ -81,6 +81,7 @@ typedef struct {
 	char *id;			/* Id string */
 
 	inst_meas_type mtype;	/* Measurement type */
+	inst_meas_cond mcond;	/* Reflective measurement condition */
 
 	int    XYZ_v;
 	double XYZ[3];		/* Colorimeter readings */

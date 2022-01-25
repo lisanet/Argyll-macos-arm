@@ -8,6 +8,106 @@ Not included yet:
 * Started adding comms for Lumagen Radiance detection.
 
 
+Version 2.3.0 24th December 2021
+-------------
+
+* Fixed spotread -YL (i1Pro1/2 lamp remediation) to function even
+  if calibration is impossible due to the white reference being
+  out of tolerance.
+
+* Fix SpyderX faulty initial black calibration (it was asking for
+  calibration every measurement).
+
+* Added icomuf_reset_before_close flag for SpyderX, as some versions
+  of the instrument have been reported to lock up after use.
+
+* Modified the ArgyllCMS CIECAM02 implementation to include a
+  blue hue linearization tweak, to improve the "blue goes purple"
+  effect when gamut mapping or clipping highly saturated blues
+  to smaller gamuts.
+
+* Added spotread -Y y option that forces the listing of
+  instrument specific display calibrations in the usage,
+  even for serial instruments.
+
+* Removed native i1d3 C6 instrument support as a favor to X-Rite.
+  Anybody adversely affected should contact me (Graeme Gill).
+
+* Modified usbio_lx.c cancel_req() to supress cancel_req: failed error
+  message, since this seems benign.
+
+* Improved cxf2ti3 so that it should cope with XML that uses "Colour"
+  spelling rather than "Color".
+
+* Added I1D3_ESCAPE environment variable to allow a user to 
+  potentialy use any current or future OEM coded i1d3 instrument.
+  
+
+Version 2.2.1 17th September 2021
+-------------
+
+* Added support for Christophe Mtairie's Mini Digital Target with CMP_DT_mini.cht
+
+* Added Toshiba TPA-1 i1d3 support.
+
+* Added extra file corruption checks to Munki & i1Pro current calibration restore.
+ 
+* Fix inconsistency between .ti3 documentation of NORMALIZED_TO_Y_100 tag
+  behavior and profile/profin.c code.
+
+* Improved cxf2ti3 so that it truncates trailing spaces on the names
+  of patch id's. This caused scanin to ignore patches with such
+  trailing spaces, omitting them from the resulting .ti3 file.
+
+* Added iccvcgt utility for extracting or inserting a
+  'vcgt' tag from or into an ICC profile.
+
+* Fix bug in applycal.c introduced in 2.2.0 - crashes when existing
+  ICC curves are not 256 step LUTs.
+
+* Removed OS X hidio device Release - returned error on recent
+  OS X versions.
+
+* Fix bug in dispwin on OS X that randomly causes crash on exit
+  by removing releases. 
+
+Version 2.2.0 3rd May 2021
+-------------
+
+* Fix bug in applycal.c where it gets an
+  "Error - Write file: 1, icmTextDescription_write: ascii string is shorter"
+  error on replacing one calibration with another.
+  
+* Added native i1Pro3 and i1Pro3 Plus driver.
+
+* Improved i1pro & Munki patch recognition to work much more
+  reliably with a slow swipe speed.
+ 
+* Fix Apple M1 display name code & builds. (Thanks to Simone Karin).
+  Should work now using Rosetta 2 or as M1 native binaries.
+
+* Fixed oeminst to work with spyder V5.5. setup.exe
+
+* Fixed bug in oemdld that prevented HTML encoded characters in
+  download file decoding properly, which prevented certain
+  filenames from working.
+
+* Fixed bug in ccxxmake -S -f where save error wasn't being
+  fully reported, and display technology presence check was faulty. 
+
+* Fixed typo in display technology, VPA -> PVA.
+
+* Made Klein K10A "Lights Off" command timeout a soft error.
+  For some reason this command doesn't seem to be implemented
+  on some K10A's.
+
+* Fixed OS X 10.15 compatibility problem with change in objc_msgSend
+  declaration. (Thanks to Misty De Meo)
+
+* Added CIE dE2000 to spotread output.
+
+* Fixed accidental global "wrl" in gamut/gamut.h that cases compile warnings.
+
 Version 2.1.2 14th January 2020 
 -------------
 
@@ -26,7 +126,7 @@ Version 2.1.2 14th January 2020
   conversion and the i1Pro2 one.
 
 * Changed targen round down/up to 0%/100% to have a tighter
-  tollerance of 0.5% rather than 2%, so that -n values of
+  tolerance of 0.5% rather than 2%, so that -n values of
   L* 1 and 99 are not rounded. 
 
 * Fix bug in xicclu -v2 option when operating on a .cal file.
@@ -282,7 +382,7 @@ Version 2.0.0  17th November 2017
   CCT delta E in 1960 Duv units and others in Delta E 2000.
   Also renamed (Invalid) notification to (Caution), since
   the computed values themselves are not necessarily invalid,
-  just that the illuminant is out of whiteness (red/green) tollerance.
+  just that the illuminant is out of whiteness (red/green) tolerance.
 
 * Added ARGYLL_UNTWIST_GAMUT_SURFACE environment variable,
   that enables extra gamut clip surface processing that
@@ -2595,7 +2695,7 @@ Version 1.1.0 RC1 (6 November 2009)
 
 	The second issue was in not being sufficiently sensitive
 	to sensor saturation for display measurement. Fix by
-	now having a zero tollerance, and allowing for 3 different
+	now having a zero tolerance, and allowing for 3 different
 	display measurement exposures.
 
 *	Fix bug in link/collink -ke where the K value was being

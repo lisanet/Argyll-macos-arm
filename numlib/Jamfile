@@ -3,8 +3,8 @@
 
 # Optization state and configuration. Overridden by parent-Jamfiles
 
-PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
-#PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+PREF_CCFLAGS	= $(CCDEBUGFLAG) ;		# Debugging flags
 PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;
 #PREF_CCFLAGS 	= $(CCPROFFLAG) ;		# Profile flags
 #PREF_LINKFLAGS	= $(LINKPROFFLAG) ;    # Profile flags
@@ -17,7 +17,7 @@ Headers = numlib.h libui.h ;
 #InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
 #InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
 
-HDRS = ../h ;
+HDRS = ../h ../plot ;
 
 # Numeric library
 Library libnum.lib : numsup.c dnsq.c powell.c dhsx.c varmet.c ludecomp.c svd.c zbrent.c rand.c sobol.c aatree.c quadprog.c gnewt.c roots.c ;
@@ -35,5 +35,4 @@ if $(OS) = MACOSX {
 
 # UI setup library
 Library libui.lib : ui.c ;
-
 

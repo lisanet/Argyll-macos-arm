@@ -1,7 +1,7 @@
 #ifndef COLORHUG_H
 
 /*
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Hughski ColorHug related defines
  *
@@ -80,6 +80,7 @@ struct _colorhug {
 	colorhug_model stype;		/* Instrument sub-model */
 	int maj, min, uro;			/* Version number */
 	int ser_no;					/* Serial number */
+	char serno[20];				/* Serial number as string */
 
 	inst_disptypesel *dtlist;	/* Display Type list */
 	int ndtlist;				/* Number of valid dtlist entries */

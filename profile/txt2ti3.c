@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Read in the RGB/CMYK CGATS device data from Gretag/Logo/X-Rite etc.
  * and convert it into a .ti3 CGATs format suitable for the Argyll CMS.

@@ -202,15 +202,17 @@
     specifications, FWA compensation should ideally be used when
     building a interchangeable ICC profile, by selecting the D50
     illuminant, and the 1931_2 observer model (ISO 13655:2009 M1). Note
-    however that this is likely to make profiles <b><span
+    however that unless you are interchanging with profiles made using
+    M1 measurement mode data, that this is likely to make profiles <b><span
         style="text-decoration: underline;">less</span></b>
-    interchangeable rather than more, since few if any other profiles
-    will represent the appearance under real D50, since few if any
-    instruments use a real D50 illuminant that will trigger the correct
-    level of FWA response, and few if any other packages will compensate
-    for the differences in FWA activity between the instrument
-    illuminant used and real D50 (ie. most instruments are actually
-    returning&nbsp; ISO 13655:2009 M0 measurements).<br>
+    interchangeable rather than more, since few if any profiles made
+    with older instruments will represent the appearance under real D50,
+    since few if any of those instruments use a real D50 illuminant that
+    will trigger the correct level of FWA response, and few if any other
+    packages will compensate for the differences in FWA activity between
+    the instrument illuminant used and real D50 (ie. most instruments
+    return M0 measurements by default, and older instruments are
+    generally not capable of M1 measurement).<br>
     <br>
     Similarly, the effects of viewing the media in an environment with a
     UV filter fitted over the D50 illuminant can be simulated by using
@@ -234,8 +236,8 @@
     containing FWA.<br>
     <br>
     <h3>FWA myths</h3>
-    Amongst the user (and to some degree) vendor community, there is a
-    widely held belief that the solution to fluorescent whitener
+    Amongst the user (and to some degree) vendor community, there has
+    been a widely held belief that the solution to fluorescent whitener
     affecting color profiles is to simply use a UV filter fitted
     instrument. Exactly what the origin of the legend is, is hard to
     tell. Possibly it is a misinterpretation of the&nbsp; ANSI
@@ -253,8 +255,8 @@
     Note that to be able to measure the FWA in the paper, the instrument
     has to be able to trigger Fluorescence, which it cannot do if it is
     fitted with a UV filter, or uses a light source that emits no UV
-    (e.g. a white LED). So UV excluded instruments are not suitable for
-    use with FWA compensation.<br>
+    (e.g. a normal white LED). So UV excluded instruments are not
+    suitable for use with FWA compensation.<br>
     <br>
     <br>
     <br>

@@ -212,7 +212,7 @@
 /* After init or increment, expression is TRUE if counter is done */
 #define CB_DONE(nn)									\
 	(nn##_e >= nn##_cmb)
-	
+
 /* ------------------------------------------------------- */
 /* Macros simplex combination counter. */
 /* Based on COMBO, but skips invalid simplex combinations */
@@ -276,7 +276,45 @@
 #define XCB_DONE(nn)									\
          CB_DONE(nn)
 	
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* ------------------------------------------------------- */
+/* Macros permutation counter */
+/* Declare the counter name nn, number of elements to be permuted */
+/* maxnum should be set to maximum number of elements. */
+
+/* Declare and initialize */
+#define PERMUT(nn, maxnum, num) 							\
+	int nn[maxnum];			/* permutation counter */		\
+	int nn##p[maxnum];		/* permutation indexes  */		\
+	int nn##_num = (num);	/* number of elements */		\
+	int nn##_i				/* dimension index */
+
+/* Set the counter to its initial value */
+#define PU_INIT(nn) { 								\
+	for (nn##_i = 0; nn##_i < nn##_num; nn##_i++) {	\
+		nn[nn##_i] = nn##_i;						\
+		nn##p[nn##_i] = 0;							\
+	}												\
+	nn##_i = 0;										\
+}
+
+/* Increment the counter value */
+#define PU_INC(nn) {										\
+	int nn##_tt;											\
+	while (nn##_i < nn##_num && nn##p[nn##_i] >= nn##_i)	\
+		nn##p[nn##_i++] = 0;								\
+	if (nn##_i >= nn##_num)									\
+		break;												\
+	if (!(nn##_i & 1))										\
+		nn##_tt = nn[0], nn[0] = nn[nn##_i], nn[nn##_i] = nn##_tt;	\
+	else													\
+		nn##_tt = nn[nn##p[nn##_i]], nn[nn##p[nn##_i]] = nn[nn##_i], nn[nn##_i] = nn##_tt;	\
+	nn##p[nn##_i]++;										\
+	nn##_i = 0;												\
+}
+
+/* After init or increment, expression is TRUE if counter is done */
+#define PU_DONE(nn)											\
+	(nn##_i >= nn##_num)
 
 #ifdef __cplusplus
 	}

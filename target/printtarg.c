@@ -1731,6 +1731,7 @@ cp->nc[1]->i,cp->nc[1]->id,cp->nc[1]->loc);
 void
 generate_file(
 instType itype,		/* Target instrument type */
+int itype_mod,		/* Target instrument type modifier */
 char *bname,		/* Output file basename */
 col *cols,			/* Array of colors to be put on target chart */
 int npat,			/* Number of test targets needed */
@@ -2119,7 +2120,7 @@ int *p_npat			/* Return number of patches including padding */
 		rlwi = 7.5;				/* Row label width */
 		pglth = 5.0;			/* Page Label text height */
 
-	} else if (itype == instI1Pro ) {	/* GretagMacbeth Eye-One Pro */
+	} else if (itype == instI1Pro ) {	/* GretagMacbeth/X-Rite Eye-One Pro */
 		if (nolpcbord == 0 && bord < 26.0)
 			lbord = 26.0 - bord;	/* need this for holder to grip paper and plastic spacer */
 		hex = 0;				/* No hex for strip instruments */
@@ -2136,17 +2137,38 @@ int *p_npat			/* Return number of patches including padding */
 			spacer = 2;			/* Colored Spacer */
 		needpc = 1;				/* Need patch to patch contrast in a row */
 		usede = 1;				/* Use delta E to maximize patch/spacer conrast */
-		lspa  = bord + 7.0 + 10.0;	/* Leader space before first patch = bord + txhisl + lcar */
-		lcar  = 10.0;			/* Leading clear area before first patch */
-		plen  = pscale * 10.00;	/* Patch min length - total 11 mm */
-		if (spacer > 0)
-			pspa  = pscale * sscale * 1.00;	/* Inbetween Patch spacer 1mm */
-		else
-			pspa  = 0.0;		/* No spacer */
-		tspa  = 10.0; 			/* Clear space after last patch - run off */
-		pwid  = pscale * 8.0;	/* Patch min width */
-		rrsp  = pscale * 8.0;	/* Row center to row center spacing */
-		pwex  = 0.0;			/* Patch width expansion between rows of a strip */
+
+		/* 5 mm aperture */
+		if (itype_mod == 0) {
+			lcar  = 10.0;			/* Leading clear area before first patch */
+			plen  = pscale * 10.00;	/* Patch min length - total 10 mm (absolute limit is 10) */
+			if (spacer > 0)
+				pspa  = pscale * sscale * 1.00;	/* Inbetween Patch spacer 1mm */
+			else
+				pspa  = 0.0;		/* No spacer */
+			tspa  = 10.0; 			/* Clear space after last patch - run off */
+			pwid  = pscale * 8.0;	/* Patch min width (absollute limit is 7) */
+			rrsp  = pscale * 8.0;	/* Row center to row center spacing */
+			pwex  = 0.0;			/* Patch width expansion between rows of a strip */
+
+		/* 8 mm aperture */
+		} else {
+			lcar  = 20.0;			/* Leading clear area before first patch */
+			plen  = pscale * 20.00;	/* Patch min length - total 20 mm (absolute limit 16 with zr) */
+			if (spacer > 0)
+				pspa  = pscale * sscale * 2.0;	/* Inbetween Patch spacer 2.0 mm */
+			else
+				pspa  = 0.0;		/* No spacer */
+			tspa  = 20.0; 			/* Clear space after last patch - run off */
+			pwid  = pscale * 16.0;	/* Patch min width (absollute limit is 14) */
+			rrsp  = pscale * 16.0;	/* Row center to row center spacing */
+			pwex  = 0.0;			/* Patch width expansion between rows of a strip */
+		}
+		txhi = txhisl = 7.0;		/* Text Height */
+		rlwi = 0.0;					/* Row label width */
+		pglth = 5.0;				/* Page Label text height */
+		lspa = bord + txhisl + lcar;	/* Leader space before first patch */
+
 		if (nollimit == 0) {
 			mxpprow = MAXPPROW;		/* Maximum patches per row permitted (set by length) */
 			mxrowl = (260.0 - lcar - tspa);	/* Maximum holder row length */
@@ -2156,12 +2178,9 @@ int *p_npat			/* Return number of patches including padding */
 		}
 		tidrows = 0;			/* No rows on first page for target ID */
 		rpstrip = 999;			/* Rows per strip */
-		txhi = txhisl = 7.0;	/* Text Height */
 		docutmarks = 0;			/* Don't generate strip cut marks */
 		clwi  = 0.0;			/* Cut line width */
 		dorowlabel = 0;			/* Don't generate row labels */
-		rlwi = 0.0;				/* Row label width */
-		pglth = 5.0;			/* Page Label text height */
 
 	} else if (itype == instColorMunki ) {	/* X-Rite ColorMunki */
 		hex = 0;				/* No hex for strip instruments */
@@ -2899,9 +2918,10 @@ void usage(char *diag, ...) {
 	}
 	fprintf(stderr,"usage: printtarg [-v] [-i instr] [-r] [-s] [-p size] basename\n");
 	fprintf(stderr," -v              Verbose mode\n");
-	fprintf(stderr," -i 20 | 22 | 41 | 51 | SS | i1 | CM Select target instrument (default DTP41)\n");
+	fprintf(stderr," -i 20 | 22 | 41 | 51 | SS | i1 | p3 | CM Select target instrument (default DTP41)\n");
+	fprintf(stderr,"                 i1 = i1Pro, 3p = i1Pro3+, CM = ColorMunki\n");
 	fprintf(stderr,"                 20 = DTP20, 22 = DTP22, 41 = DTP41, 51 = DTP51,\n");
-	fprintf(stderr,"                 SS = SpectroScan, i1 = i1Pro, CM = ColorMunki\n");
+	fprintf(stderr,"                 SS = SpectroScan\n");
 	fprintf(stderr," -h              Use hexagon patches for SS, double density for CM\n");
 	fprintf(stderr," -a scale        Scale patch size and spacers by factor (e.g. 0.857 or 1.5 etc.)\n");
 	fprintf(stderr," -A scale        Scale spacers by additional factor (e.g. 0.857 or 1.5 etc.)\n");
@@ -2980,6 +3000,7 @@ char *argv[];
 	cgats *ocg;				/* output cgats structure */
 	xcal *cal = NULL;		/* printer calibration */ 
 	instType itype = instDTP41;		/* Default target instrument */
+	int itype_mod = 0;		/* Instrument type modifier. 1 = i1Pro3+ */
 	int nmask = 0;			/* Device colorant mask */
 	int nchan = 0;			/* Number of device chanels */
 	int i;
@@ -3304,9 +3325,12 @@ char *argv[];
 					itype = instDTP51;
 				else if (strcmp("SS", na) == 0 || strcmp("ss", na) == 0)
 					itype = instSpectroScan;
-				else if (strcmp("i1", na) == 0 || strcmp("I1", na) == 0)
+				else if (strcmp("i1", na) == 0)
 					itype = instI1Pro;
-				else if (strcmp("cm", na) == 0 || strcmp("CM", na) == 0)
+				else if (strcmp("3p", na) == 0) {
+					itype = instI1Pro;
+					itype_mod = 1;
+				} else if (strcmp("cm", na) == 0 || strcmp("CM", na) == 0)
 					itype = instColorMunki;
 				else
 					usage("Argument to -i wasn't recognised");
@@ -3681,7 +3705,7 @@ char *argv[];
 	
 	sprintf(label, "ArgyllCMS - Chart \"%s\" (%s %d) %s",
 	               psname, rand ? "Random Start" : "Chart ID", rstart, atm);
-	generate_file(itype, psname, cols, npat, applycal ? cal : NULL, label,
+	generate_file(itype, itype_mod, psname, cols, npat, applycal ? cal : NULL, label,
 	            pap != NULL ? pap->w : cwidth, pap != NULL ? pap->h : cheight,
 	            marg, nosubmarg, nollimit, nolpcbord, rand, rstart, saix, paix,	ixord,
 	            pscale, sscale, hflag, verb, scanc, oft, nocups, tiffdpth, tiffres, ncha, tiffdith,

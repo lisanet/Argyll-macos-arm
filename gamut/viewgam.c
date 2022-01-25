@@ -62,7 +62,8 @@ void usage(char *diag, ...) {
 	fprintf(stderr," -w             Show as a wireframe\n");
 	fprintf(stderr," -s             Show as a solid surace\n");
 	fprintf(stderr," infile.gam     Name of .gam file\n");
-	fprintf(stderr,"                Repeat above for each input file\n\n");
+	fprintf(stderr,"                Repeat above for each input file\n");
+	fprintf(stderr,"                Default is colored solid, then white, red etc. wireframes.\n\n");
 	fprintf(stderr," -n             Don't add Lab axes\n");
 	fprintf(stderr," -k             Add markers for prim. & sec. \"cusp\" points\n");
 	fprintf(stderr," -i             Compute and print intersecting volume of first 2 gamuts\n");

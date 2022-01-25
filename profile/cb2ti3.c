@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Read in the device data from Colorblind device files,
  * and convert it into a .ti3 CGATs format suitable for

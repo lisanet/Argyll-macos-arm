@@ -88,10 +88,13 @@
     now you know.<span style="font-weight: bold;"></span><br>
     <br>
     <span style="font-weight: bold;">NOTE: Microsofts generic VGA Driver</span>
-    does not appear to support setting the display VideoLUTs. You will
-    need to install a display driver for your specific display hardware
-    to enable this. Note that it is possible in many cases to use
-    Windows 7 video drivers on Windows 8 systems.<br>
+    does not appear to support setting the graphics card VideoLUTs. You
+    will need to install a display driver for your specific display
+    hardware to enable this. Note that it is possible in many cases to
+    use Windows 7 video drivers on Windows 8 systems. If you are having
+    trouble accessing the VideoLUTs, then check in Device Manager that
+    you are running the correct driver for your card, and not using the
+    fallback generic driver.<br>
     <br>
     <hr style="width: 100%; height: 2px;"><br>
     <span style="font-weight: bold;">NOTE</span> that if you wish to use
@@ -138,9 +141,15 @@
     to install the <a href="http://www.ftdichip.com/Drivers/VCP.htm">FTDI
 
 
+
+
+
       Virtual COM Port Drivers</a> (VCP), if they are not already on
     your system. You may have to update to the latest FTDI driver to
     work with the FTDI FT231XS chip that the <b>JETI</b> specbos <b>1511,
+
+
+
 
 
       1501</b> use.<br>
@@ -174,6 +183,11 @@
     Please <b>NOTE</b> that on some versions of Windows 10, you may
     have to temporarily <b>disable secure boot</b> in your UEFI BIOS to
     be able to Disable Driver Signature Enforcement.<br>
+    <br>
+    If you <u>often</u> want to switch between using ArgyllCMS and the
+    OEM driver, you can try using a different physical USB port for each
+    installation, as this reportedly avoids the need to manually switch
+    drivers.<br>
     <br>
     <span style="text-decoration: underline;">To install the Argyll
       driver for the first instrument:</span><br>
@@ -212,8 +226,8 @@
       Driver:</span><br>
     &nbsp;&nbsp;&nbsp; Settings -&gt; Power -&gt; <span
       style="font-weight: bold;">Hold Shift Key down and click</span>
-    "Restart" -&gt; Troubleshoot -&gt; Advanced Options -&gt; Startup
-    Settings -&gt; Restart -&gt;<br>
+    "Restart", wait for restart then -&gt; Troubleshoot -&gt; Advanced
+    Options -&gt; Startup Settings -&gt; Restart -&gt;<br>
     &nbsp;&nbsp;&nbsp; (After Reboot) -&gt; Disable Driver Signature
     Enforcement" (number 7 on the list)<br>
     &nbsp;&nbsp;&nbsp; (After system starts, Plug in instrument)<br>
@@ -307,6 +321,9 @@
         style="color: rgb(0, 0, 0); text-decoration: underline;"><span
           style="color: rgb(51, 153, 153); font-weight: bold;"><span
             style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+
+
+
 
             Argyll drivers with existing OEM drivers</span></span>:</span></span><br>
     <br>
@@ -411,6 +428,9 @@
         style="color: rgb(0, 0, 0); text-decoration: underline;"><span
           style="color: rgb(51, 153, 153); font-weight: bold;"><span
             style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+
+
+
 
             Argyll drivers with existing OEM drivers</span></span>:</span></span><br>
     <br>
@@ -532,6 +552,9 @@
         style="color: rgb(0, 0, 0); text-decoration: underline;"><span
           style="color: rgb(51, 153, 153); font-weight: bold;"><span
             style="color: rgb(0, 0, 0); text-decoration: underline;">Using
+
+
+
 
             Argyll drivers with existing OEM drivers</span></span>:</span></span><br>
     <br>

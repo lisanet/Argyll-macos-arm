@@ -2,7 +2,7 @@
 #ifndef DUMMYWIN_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Virtual target patch window
  *
  * Author: Graeme W. Gill

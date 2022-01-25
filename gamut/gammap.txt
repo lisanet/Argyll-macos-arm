@@ -121,13 +121,13 @@ Discussion of the gamut mapping algorithm used in Argyll:
 	may not be the case though. If we assume that people
 	do not in general adapt to the black points of a colorspace,
 	then a consequence is that it is difficult to fully exploit
-	the full dynamic range of the colorspace, since an
+	the full dynamic range of the colorspace, since a
 	source black that is misaligned with the destination black
 	will probably not be able to achieve as low a J value,
 	and this can noticably affect the percieved quality of
 	an image.
 
-	The compromise deemed the best in Argyll, is to
+	The compromise I deemed the best in Argyll, is to
 	assume that people do not adapt to black points,
 	and that therefore only the white points should be
 	aligned by rotating the source space around 0,0,0
@@ -231,7 +231,7 @@ Limitations and future challenges:
 	The gammapweights structure would be expanded to add a weight
 	as to how much the source hue cusps would be distorted.
 
-	[Done by Feb '06]
+	[Added to the code by Feb '06]
 
 
 	2) There is not much flexibility in what the gammapweights

@@ -3,7 +3,7 @@
 /* This file is conditionaly #included into usbio.c */
  
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   2006/22/4

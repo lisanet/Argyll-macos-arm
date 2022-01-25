@@ -41,7 +41,6 @@ axTLS/rc4.c
 axTLS/rsa.c
 axTLS/sha1.c
 axTLS/ssl.h
-axTLS/temp
 axTLS/tls1.c
 axTLS/tls1.h
 axTLS/tls1_clnt.c

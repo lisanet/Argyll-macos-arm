@@ -2,7 +2,7 @@
 #define RSPL_GAM_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized spline data structure
  *
  * Precise gamut surface, gamut pruning, ink limiting and K min/max

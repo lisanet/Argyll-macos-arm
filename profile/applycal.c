@@ -34,7 +34,7 @@
 #include "rspl.h"
 #include "xicc.h"
 
-#undef DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #undef DBG
@@ -329,6 +329,7 @@ main(int argc, char *argv[]) {
 					}
 				}
 			}
+
 			/* Second pass we create backups and calibrated curves */
 			for (sigp = ssigp; sigp->prim != 0; sigp++) { /* Process each tag */
 				icmBase *primt;
@@ -373,6 +374,8 @@ main(int argc, char *argv[]) {
 						wo->allocate((icmBase *)wo);	/* Allocate space */
 						strcpy(wo->desc, ro->desc);		/* Copy the string in */
 						/* Hmm. what should we do with Unicode and script ? */
+					} else {
+						DBG(("Found backup\n"));
 					}
 
 					if (cal->xpi.profDesc != NULL)
@@ -380,14 +383,14 @@ main(int argc, char *argv[]) {
 					else
 						extra = cal_name;
 
-					ro->size = strlen(ro->desc) + 3 + strlen(extra) + 3;
+					ro->size = strlen(wo->desc) + 3 + strlen(extra) + 3;
 					ro->allocate((icmBase *)ro);	/* Allocate space */
 					strcpy(ro->desc, wo->desc);
 					strcat(ro->desc, " [ ");
 					strcat(ro->desc, extra);
 					strcat(ro->desc, " ]");
 
-					DBG(("Set tag contents to '%s'\n",ro->desc));
+					DBG(("Set tag contents to '%s' len %ld size %d\n",ro->desc,strlen(ro->desc)+1,ro->size));
 
 				/* icSigAToBXTag or icSigBToAXTag */
 				} else if (primt->ttype == icSigLut8Type
@@ -432,6 +435,8 @@ main(int argc, char *argv[]) {
 								wo->allocate((icmBase *)wo);	/* Allocate space */
 								for (i = 0; i < wo->size; i++)	/* Copy the curve */
 									wo->data[i] = ro->inputTable[j * ro->inputEnt + i];
+							} else {
+								DBG(("Found backup\n"));
 							}
 
 							/* Create new input curve from inv cal + orginal curve */
@@ -470,6 +475,8 @@ main(int argc, char *argv[]) {
 								wo->allocate((icmBase *)wo);	/* Allocate space */
 								for (i = 0; i < wo->size; i++)	/* Copy the curve */
 									wo->data[i] = ro->outputTable[j * ro->outputEnt + i];
+							} else {
+								DBG(("Found backup\n"));
 							}
 
 							/* Create new output curve from original + cal */
@@ -514,8 +521,10 @@ main(int argc, char *argv[]) {
 						if (ro->flag != icmCurveSpec || wo->size < 256) {
 							ro->flag = icmCurveSpec;
 							ro->size = 256;
-							ro->allocate((icmBase *)wo);	/* Allocate space */
+							ro->allocate((icmBase *)ro);	/* Allocate space */
 						} 
+					} else {
+						DBG(("Found backup\n"));
 					}
 
 					/* Create new forward direction curve from cal + orginal curve */
@@ -523,11 +532,8 @@ main(int argc, char *argv[]) {
 					for (i = 0; i < ro->size; i++) {
 						double val;
 						val = i/(ro->size-1.0);
-//printf("~1 Input val %f", val);
 						val = cal->inv_interp_ch(cal, j, val);	/* Inverse output calibration */
-//printf(", after inv curve %f", val);
 						wo->lookup_fwd(wo, &val, &val);			/* Original curve */
-//printf(", after orig %f\n", val);
 						ro->data[i] = val;
 					}
 					DBG(("Created calibrated %s curve for chan %d\n",inp ? "input" : "output",j));

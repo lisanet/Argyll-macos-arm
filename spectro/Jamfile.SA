@@ -1,0 +1,32 @@
+
+# Jamfile for compiling standalone instrumement driver
+
+#ifndef NOT_GNU_COPYRIGHT
+# Copyright 2000 - 2007 Graeme W. Gill
+# This material is licenced under the GNU GENERAL PUBLIC LICENSE Version 2 or later :-
+# see the License2.txt file for licencing details.
+#else
+# NG_COPYRIGHT_1
+# NG_COPYRIGHT_2
+# NG_COPYRIGHT_3
+#endif
+
+PREF_CCFLAGS 	= $(CCOPTFLAG) ;		# Turn optimisation on
+#PREF_CCFLAGS    = $(CCDEBUGFLAG) ;		# Debugging flags
+#PREF_CCFLAGS	= $(CCHEAPDEBUG) ;		# Heap Debugging flags
+PREF_LINKFLAGS	= $(LINKDEBUGFLAG) ;	# Link debugging flags
+
+DEFINES += SALONEINSTLIB ENABLE_SERIAL ENABLE_FAST_SERIAL ENABLE_USB ;
+
+INSTOBJS = dtp20.c dtp22.c dtp41.c dtp51.c dtp92.c ss.c ss_imp.c i1disp.c i1d3.c i1pro.c i1pro_imp.c i1pro3.c i1pro3_imp.c munki.c munki_imp.c hcfr.c huey.c colorhug.c spyd2.c spydX.c specbos.c kleink10.c ex1.c smcube.c ;
+
+Library libinst : conv.c sa_conv.c aglob.c inst.c numsup.c rspl1.c icoms.c usbio.c hidio.c insttypes.c disptechs.c rspec.c xrga.c pollem.c xspect.c xdg_bds.c ccss.c ccmx.c pars.c cgats.c $(INSTOBJS) ;
+
+Library libinstappsup : instappsup.c ;
+
+LINKLIBS = libinst libinstappsup ;
+
+MainsFromSources spotread.c ;
+
+Main oeminst : oeminst.c oemarch.c inflate.c vinflate.c LzmaDec.c ;
+

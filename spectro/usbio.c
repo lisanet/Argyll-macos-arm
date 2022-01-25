@@ -2,7 +2,7 @@
  /* General USB I/O support */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   2006/22/4
@@ -64,15 +64,15 @@ void usb_uninit_cancel(usb_cancelt *p) {
 
 /* Used by caller of icoms to re-init for wait_io */
 /* Must be called before icoms_usb_wait_io() */
-void usb_reinit_cancel(usb_cancelt *p) {
+void usb_reinit_cancel(usb_cancelt *cancelt) {
 	
-	amutex_lock(p->cmtx);
+	amutex_lock(cancelt->cmtx);
 
-	p->hcancel = NULL;
-	p->state = 0;
-	amutex_lock(p->condx);		/* Block until IO is started */
+	cancelt->hcancel = NULL;
+	cancelt->state = 0;
+	amutex_lock(cancelt->condx);		/* Block until IO is started */
 
-	amutex_unlock(p->cmtx);
+	amutex_unlock(cancelt->cmtx);
 }
 
 /* Wait for the given transaction to be pending or complete. */
@@ -115,7 +115,8 @@ int request,			/* 8 bit request code (USB bRequest) */
 int value,				/* 16 bit value (USB wValue) */
 int index,				/* 16 bit index (USB wIndex) */
 unsigned char *rwbuf,	/* Write or read buffer */
-int rwsize, 			/* Bytes to read or write */
+int rwsize, 			/* Size to write/max bytes to read */
+int *xferred,			/* Bytes written or read (may be NULL) */
 double tout				/* Timeout in seconds */
 ) {
 	int rv = 0;			/* Return value */
@@ -147,7 +148,10 @@ double tout				/* Timeout in seconds */
 	a1logd(p->log, 8, "icoms_usb_control: returning ICOM err 0x%x\n",rv);
 
 	if (p->log->debug >= 8 && (requesttype & IUSB_ENDPOINT_IN)) 
-		a1logd(p->log, 8, " read data %s\n",icoms_tohex(rwbuf, rwsize));
+		a1logd(p->log, 8, " read data %s\n",icoms_tohex(rwbuf, rwbytes));
+
+	if (xferred != NULL)
+		*xferred = rwbytes;
 
 	return rv;
 }
@@ -295,7 +299,7 @@ static void icoms_sighandler(int arg) {
 		in_usb_rw = -1;
 	icoms_cleanup();
 
-	/* Call the existing handlers */
+	/* Call through to previous handlers */
 #ifdef UNIX
 	if (arg == SIGHUP && usbio_hup != SIG_DFL && usbio_hup != SIG_IGN)
 		usbio_hup(arg);
@@ -313,15 +317,34 @@ static void icoms_sighandler(int arg) {
 
 /* - - - - - - - - - - - - - - - - - - - */
 
+/* Use sigaction() if we can, to get SA_RESTART behavior */
+#if defined(UNIX)
+//sighandler_t signal_x(int signum, sighandler_t handler) {
+static void (*signal_x(int signum, void (*handler)(int)))(int) {
+	struct sigaction new, old;
+	int rv = 0;
+
+	new.sa_handler = handler;
+	sigemptyset(&new.sa_mask);
+	new.sa_flags = SA_RESTART;
+
+	rv =  sigaction(signum, &new, &old);
+
+	return old.sa_handler;
+}
+#else
+# define signal_x signal
+#endif
+
 /* Install the cleanup signal handlers */
 void usb_install_signal_handlers(icoms *p) {
 	if (icoms_list == NULL) {
 		a1logd(g_log, 6, "usb_install_signal_handlers: called\n");
 #if defined(UNIX)
-		usbio_hup = signal(SIGHUP, icoms_sighandler);
+		usbio_hup = signal_x(SIGHUP, icoms_sighandler);
 #endif /* UNIX */
-		usbio_int = signal(SIGINT, icoms_sighandler);
-		usbio_term = signal(SIGTERM, icoms_sighandler);
+		usbio_int = signal_x(SIGINT, icoms_sighandler);
+		usbio_term = signal_x(SIGTERM, icoms_sighandler);
 	}
 
 	/* Add it to our static list, to allow automatic cleanup on signal */
@@ -339,10 +362,10 @@ void usb_delete_from_cleanup_list(icoms *p) {
 			icoms_list = p->next;
 			if (icoms_list == NULL) {
 #if defined(UNIX)
-				signal(SIGHUP, usbio_hup);
+				signal_x(SIGHUP, usbio_hup);
 #endif /* UNIX */
-				signal(SIGINT, usbio_int);
-				signal(SIGTERM, usbio_term);
+				signal_x(SIGINT, usbio_int);
+				signal_x(SIGTERM, usbio_term);
 			}
 		} else {
 			icoms *pp;

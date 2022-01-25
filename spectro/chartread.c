@@ -2,7 +2,7 @@
 /* Spectrometer/Colorimeter target test chart reader */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   4/10/96
@@ -184,6 +184,7 @@ typedef struct {
 	int rr;						/* nz if reading read (used for tracking unread patches) */
 
 	inst_meas_type mtype;		/* Measurement type */
+	inst_meas_cond mcond;		/* Measurement conditions */
 	double XYZ[3];				/* Colorimeter readings (100.0 scale for ref.) */
 
 	xspect sp;					/* Spectrum. sp.spec_n > 0 if valid, 100 scaled for ref. */
@@ -261,7 +262,7 @@ inst_opt_filter fe,	/* Optional filter */
 xcalstd scalstd,	/* X-Rite calibration standard to set */
 xcalstd *ucalstd,	/* X-Rite calibration standard actually used */
 int nocal,			/* Disable initial calibration */
-int disbidi,		/* Disable automatic bi-directional strip recognition */
+int disbidi,		/* 1 = Disable automatic bi-directional strip recognition, 2 = force enable */
 int highres,		/* Use high res spectral mode */
 char *ccxxname,		/* Colorimeter Correction/Colorimeter Calibration name */
 icxObserverType obType,	/* ccss observer */
@@ -313,15 +314,6 @@ a1log *log			/* verb, debug & error log */
 			       it->inst_interp_error(it, rv), it->interp_error(it, rv));
 			it->del(it);
 			return -1;
-		}
-
-		/* set filter configuration before initialising/calibrating */
-		if (fe != inst_opt_filter_unknown) {
-			if ((rv = it->get_set_opt(it, inst_opt_set_filter, fe)) != inst_ok) {
-				printf("Setting filter configuration not supported by instrument\n");
-				it->del(it);
-				return -1;
-			}
 		}
 
 		/* Set it up the way we want */
@@ -493,6 +485,15 @@ a1log *log			/* verb, debug & error log */
 				if ((rv = it->get_set_opt(it, inst_opt_set_ccss_obs, obType, custObserver)) != inst_ok) {
 					printf("\nSetting CCSS observer failed with error :'%s' (%s)\n",
 				     	       it->inst_interp_error(it, rv), it->interp_error(it, rv));
+					it->del(it);
+					return -1;
+				}
+			}
+
+			/* set reflective mode filters  */
+			if (fe != inst_opt_filter_unknown) {
+				if ((rv = it->get_set_opt(it, inst_opt_set_filter, fe)) != inst_ok) {
+					printf("Setting requested filter not supported by instrument\n");
 					it->del(it);
 					return -1;
 				}
@@ -807,6 +808,7 @@ a1log *log			/* verb, debug & error log */
 				scols[i]->sp = vals[i].sp;
 			}
 			scols[i]->mtype = vals[i].mtype;
+			scols[i]->mcond = vals[i].mcond;
 			scols[i]->rr = 1;		/* Has been read */
 		}
 		free(vals);
@@ -1141,8 +1143,8 @@ a1log *log			/* verb, debug & error log */
 
 		if (
 		    itype != instDTP20 &&
-	        !rand && disbidi == 0) {
-			warning("Can't do bi-directional strip recognition without randomized patch locations");
+	        !rand && disbidi == 2) {
+			warning("Bi-directional strip recognition may not work without randomized patch locations");
 		}
 
 		/* Do any needed calibration before the user places the instrument on a desired spot */
@@ -1350,6 +1352,8 @@ a1log *log			/* verb, debug & error log */
 							printf("Hit Esc or 'q' to give up, any other key to retry:"); fflush(stdout);
 							if ((ch = next_con_char()) == 0x1b || ch == 0x3 || ch == 'q' || ch == 'Q') {
 								printf("\n");
+								if (nn != NULL) free(nn);
+								free(vals);
 								it->del(it);
 								return -1;
 							}
@@ -1366,6 +1370,8 @@ a1log *log			/* verb, debug & error log */
 						printf("\nStrip read failed because instruments needs calibration\n");
 						ev = inst_handle_calibrate(it, inst_calt_needed, inst_calc_none, NULL, NULL, 0);
 						if (ev != inst_ok) {	/* Abort or fatal error */
+							if (nn != NULL) free(nn);
+							free(vals);
 							it->del(it);
 							return -1;
 						}
@@ -1385,6 +1391,8 @@ a1log *log			/* verb, debug & error log */
 						printf("Hit Esc to give up, any other key to retry:"); fflush(stdout);
 						if ((ch = next_con_char()) == 0x1b || ch == 0x3 || ch == 'q' || ch == 'Q') {
 							printf("\n");
+							if (nn != NULL) free(nn);
+							free(vals);
 							it->del(it);
 							return -1;
 						}
@@ -1399,6 +1407,8 @@ a1log *log			/* verb, debug & error log */
 						printf("Hit Esc or 'q' to give up, any other key to retry:"); fflush(stdout);
 						if ((ch = next_con_char()) == 0x1b || ch == 0x3 || ch == 'q' || ch == 'Q') {
 							printf("\n");
+							if (nn != NULL) free(nn);
+							free(vals);
 							it->del(it);
 							return -1;
 						}
@@ -1420,6 +1430,8 @@ a1log *log			/* verb, debug & error log */
 								printf("init_coms returned '%s' (%s)\n",
 							       it->inst_interp_error(it, rv), it->interp_error(it, rv));
 #endif /* DEBUG */
+								if (nn != NULL) free(nn);
+								free(vals);
 								it->del(it);
 								return -1;
 							}
@@ -1434,6 +1446,8 @@ a1log *log			/* verb, debug & error log */
 						printf("Hit Esc or 'q' to give up, any other key to retry:"); fflush(stdout);
 						if ((ch = next_con_char()) == 0x1b || ch == 0x3 || ch == 'q' || ch == 'Q') {
 							printf("\n");
+							if (nn != NULL) free(nn);
+							free(vals);
 							it->del(it);
 							return -1;
 						}
@@ -1453,15 +1467,16 @@ a1log *log			/* verb, debug & error log */
 
 					int boroi = -1;			/* Best overall row index */
 
-					double bcorr = 1e6;		/* Best correlation value */
+					double bcorr = 1e9;		/* Best correlation value */
 					double werror = 0.0;	/* Worst case error in best correlation strip */
 
-					double xbcorr = 1e6;	/* Expected pass correlation value */
+					double xbcorr = 1e9;	/* Expected pass correlation value */
 					int xboff;				/* Expected pass best offset */
 					int xbdir;				/* Expected pass overall pass direction */
 					double xwerror = 0.0;	/* Expected pass worst patcch error */
 
-					if (rand && disbidi == 0 && (cap2 & inst2_bidi_scan))
+					if (((rand && disbidi == 0) || disbidi == 2)
+					 && (cap2 & inst2_bidi_scan))
 						dirrg = 2;			/* Enable bi-directional strip recognition */
 
 					/* DTP51 has a nasty habit of misaligning test squares by +/- 1 */
@@ -1471,7 +1486,9 @@ a1log *log			/* verb, debug & error log */
 						hoff = 1;
 					}
 
+					/* Explor the rows */
 					for (choroi = 0; choroi < totpa; choroi++) {
+
 						/* Explore strip direction */
 						for (dir = 0; dir < dirrg; dir++) {
 							double pwerr;	/* This rows worst error */
@@ -1493,7 +1510,10 @@ a1log *log			/* verb, debug & error log */
 										refnorm += scb[i]->eXYZ[1];
 										ynorm += vals[ix].XYZ[1];
 									}
-									ynorm = refnorm/ynorm;
+									if (fabs(ynorm) > 1e-6)
+										ynorm = refnorm/ynorm;
+									else
+										ynorm = 1.0;
 								}
 
 								/* Compare just sample patches (not padding Max/Min) */
@@ -1562,6 +1582,8 @@ a1log *log			/* verb, debug & error log */
 						free(mm);
 						if ((ch = next_con_char()) == 0x1b || ch == 0x3 || ch == 'q' || ch == 'Q') {
 							printf("\n");
+							if (nn != NULL) free(nn);
+							free(vals);
 							it->del(it);
 							return -1;
 						}
@@ -1589,6 +1611,8 @@ a1log *log			/* verb, debug & error log */
 						printf("Hit Return to use it anyway, any other key to retry, Esc or  'q' to give up:"); fflush(stdout);
 						if ((ch = next_con_char()) == 0x1b || ch == 0x3 || ch == 'q' || ch == 'Q') {
 							printf("\n");
+							if (nn != NULL) free(nn);
+							free(vals);
 							it->del(it);
 							return -1;
 						}
@@ -2132,7 +2156,7 @@ usage() {
 	}
 	fprintf(stderr," -t              Use transmission measurement mode\n");
 	fprintf(stderr," -d              Use display measurement mode (white Y relative results)\n");
-	cap2 = inst_show_disptype_options(stderr, " -y              ", icmps, 0);
+	cap2 = inst_show_disptype_options(stderr, " -y              ", icmps, 0, 0);
 	fprintf(stderr," -e              Emissive for transparency on a light box\n");
 	fprintf(stderr," -p              Measure patch by patch rather than strip\n");
 	fprintf(stderr," -x [lx]         Take external values, either L*a*b* (-xl) or XYZ (-xx).\n");
@@ -2141,14 +2165,16 @@ usage() {
 	fprintf(stderr," -L              Save CIE as D50 L*a*b* as well as XYZ\n");
 	fprintf(stderr," -r              Resume reading partly read chart\n");
 	fprintf(stderr," -I file.cal     Override calibration info from .ti2 in resulting .ti3\n");
-	fprintf(stderr," -F filter       Set filter configuration (if aplicable):\n");
-	fprintf(stderr,"    n             None\n");
-	fprintf(stderr,"    p             Polarising filter\n");
-	fprintf(stderr,"    6             D65\n");
-	fprintf(stderr,"    u             U.V. Cut\n");
+	fprintf(stderr," -F filter            Set filter configuration (if aplicable):\n");
+	fprintf(stderr,"    n                  None (M0)\n");
+	fprintf(stderr,"    5                  D50 (M1)\n");
+	fprintf(stderr,"    6                  D65\n");
+	fprintf(stderr,"    u                  U.V. Cut (M2)\n");
+	fprintf(stderr,"    p                  Polarising filter (M3)\n");
 	fprintf(stderr," -A N|A|X|G      XRGA conversion (default N)\n");
 	fprintf(stderr," -N              Disable initial calibration of instrument if possible\n");
 	fprintf(stderr," -B              Disable auto bi-directional strip recognition\n");
+	fprintf(stderr," -b              Force auto bi-directional strip recognition\n");
 	fprintf(stderr," -H              Use high resolution spectrum mode (if available)\n");
 	if (cap2 & inst2_ccmx)
 		fprintf(stderr," -X file.ccmx    Apply Colorimeter Correction Matrix\n");
@@ -2194,7 +2220,7 @@ int main(int argc, char *argv[]) {
 	int ditype = 0;					/* Display type selection charater(s) */
 	inst_opt_filter fe = inst_opt_filter_unknown;
 	int pbypatch = 0;				/* Read patch by patch */
-	int disbidi = 0;				/* Disable bi-directional strip recognition */
+	int disbidi = 0;				/* 1 = Disable bi-directional strip recognition, 2 = force enable */
 	int highres = 0;				/* Use high res mode if available */
 	double scan_tol = 1.0;			/* Patch consistency tolerance modification */
 	int xtern = 0;					/* Take external values, 1 = Lab, 2 = XYZ */
@@ -2282,6 +2308,10 @@ int main(int argc, char *argv[]) {
 			/* Disable bi-directional strip recognition */
 			else if (argv[fa][1] == 'B')
 				disbidi = 1;
+
+			/* Force enable bi-directional strip recognition */
+			else if (argv[fa][1] == 'b')
+				disbidi = 2;
 
 			/* High res mode */
 			else if (argv[fa][1] == 'H')
@@ -2435,12 +2465,14 @@ int main(int argc, char *argv[]) {
 				if (na == NULL) usage();
 				if (na[0] == 'n' || na[0] == 'N')
 					fe = inst_opt_filter_none;
-				else if (na[0] == 'p' || na[0] == 'P')
-					fe = inst_opt_filter_pol;
+				else if (na[0] == '5')
+					fe = inst_opt_filter_D50;
 				else if (na[0] == '6')
 					fe = inst_opt_filter_D65;
 				else if (na[0] == 'u' || na[0] == 'U')
 					fe = inst_opt_filter_UVCut;
+				else if (na[0] == 'p' || na[0] == 'P')
+					fe = inst_opt_filter_pol;
 				else
 					usage();
 
@@ -3156,6 +3188,7 @@ int main(int argc, char *argv[]) {
 			error("Write error : %s",ocg->err);
 	}
 
+	free(scols);
 	icmps->del(icmps);
 	free(pis);
 	saix->del(saix);

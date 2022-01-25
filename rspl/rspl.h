@@ -2,7 +2,7 @@
 #define RSPL_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized spline data structure
  *
  * Author: Graeme W. Gill

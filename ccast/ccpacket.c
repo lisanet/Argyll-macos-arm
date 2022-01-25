@@ -172,10 +172,10 @@ static ccpacket_err connect_ccpacket_imp(
  	SSL_load_error_strings();
  	SSL_library_init();
 	SSL_CTX_set_verify(p->ctx, SSL_VERIFY_NONE, NULL);
-# else !defined USING_AXTLS
+# else 
 	OPENSSL_init_ssl(0, NULL);
 # endif
-#endif
+#endif /* !defined USING_AXTLS */
 
 	/* Open socket */
 	if ((p->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) {

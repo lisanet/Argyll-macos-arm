@@ -1,6 +1,6 @@
 
 /*
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Spectral .ti3 or .sp file converter
  *
  * Copyright 2005 Gerhard Fuernkranz
@@ -259,9 +259,10 @@ main(int argc, char *argv[])
 				}
 				else {				/* Assume it's a filename */
 					inst_meas_type mt;
+					inst_meas_cond mc;
 
 					inst_illum = icxIT_custom;
-					if (read_xspect (&inst_cust_illum, &mt,na) != 0)
+					if (read_xspect (&inst_cust_illum, &mt, &mc, na) != 0)
 						usage ();
 
 					if (mt != inst_mrt_none
@@ -300,9 +301,10 @@ main(int argc, char *argv[])
 						tillum = icxIT_F10;
 					} else {	/* Assume it's a filename */
 						inst_meas_type mt;
+						inst_meas_cond mc;
 
 						tillum = icxIT_custom;
-						if (read_xspect(&cust_tillum, &mt, na) != 0)
+						if (read_xspect(&cust_tillum, &mt, &mc, na) != 0)
 							usage();
 
 						if (mt != inst_mrt_none
@@ -348,9 +350,10 @@ main(int argc, char *argv[])
 				}
 				else {				/* Assume it's a filename */
 					inst_meas_type mt;
+					inst_meas_cond mc;
 
 					illum = icxIT_custom;
-					if (read_xspect (&cust_illum, &mt, na) != 0)
+					if (read_xspect (&cust_illum, &mt, &mc, na) != 0)
 						usage ();
 
 					if (mt != inst_mrt_none

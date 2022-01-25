@@ -52,6 +52,19 @@ typedef enum {						/* XYZ units,      Spectral units */
 /* Return a string describing the inst_meas_type */
 char *meas_type2str(inst_meas_type mt);
 
+/* Reflective measurement conditions */
+typedef enum {
+	inst_mrc_none           = 0,	/* M0 - Default or N/A */
+	inst_mrc_D50            = 1,	/* M1 - D50 illuminant */
+	inst_mrc_D65            = 2,	/*      D65 Illuminant */
+	inst_mrc_uvcut          = 3,	/* M2 - U.V. Cut */ 
+	inst_mrc_pol            = 4,	/* M3 - Polarized */
+	inst_mrc_custom         = 5  	/*      Custom */
+} inst_meas_cond;
+
+/* Return a string describing the inst_meas_type */
+char *meas_cond2str(inst_meas_cond mc);
+
 /* ------------------------------------------------------------------------------ */
 
 /* Structure for conveying spectral information */
@@ -126,8 +139,11 @@ typedef struct {
 #define XSPECT_WLI(PXSP) \
 ((((PXSP)->spec_wl_long) - ((PXSP)->spec_wl_short))/(((PXSP)->spec_n)-1.0))
 
-int write_xspect(char *fname, inst_meas_type mt, xspect *s);
-int read_xspect(xspect *sp, inst_meas_type *mt, char *fname);
+int write_xspect(char *fname, inst_meas_type mt, inst_meas_cond mc, xspect *s);
+/* mt, mc may be NULL */
+int read_xspect(xspect *sp, inst_meas_type *mt, inst_meas_cond *mc, char *fname);
+
+int write_C_xspect(char *fname, xspect *s);
 
 #ifndef SALONEINSTLIB
 
@@ -135,30 +151,33 @@ int read_xspect(xspect *sp, inst_meas_type *mt, char *fname);
 /* Two step write & read spectrum, to be able to write & read extra kewords values */
 
 /* Prepare to write spectrum, and return cgats */
-int write_xspect_1(cgats **ocgp, inst_meas_type mt, xspect *s);
+int write_xspect_1(cgats **ocgp, inst_meas_type mt, inst_meas_cond mc, xspect *s);
 
 /* Complete writing spectrum */
 int write_xspect_2(cgats *ocg, char *fname);
 
 /* Read spectrum and return cgats as well */
-int read_xspect_1(cgats **picg, xspect *sp, inst_meas_type *mt, char *fname);
+int read_xspect_1(cgats **picg, xspect *sp, inst_meas_type *mt, inst_meas_cond *mc, char *fname);
 
 /* Complete reading spectrum */
 int read_xspect_2(cgats *icg);
 
 /* Save a set of nspec spectrum to a CGATS file. Return NZ if error */
 /* type 0 = SPECT, 1 = CMF */
-int write_nxspect(char *fname, inst_meas_type mt, xspect *sp, int nspec, int type);
+int write_nxspect(char *fname, inst_meas_type mt, inst_meas_cond mc, xspect *sp,
+                  int nspec, int type);
 
 /* Restore a set of up to nspec spectrum from a CGATS file. Return NZ if error */
 /* type  = any, 1 = SPECT, 2 = CMF, 3 = both */
-int read_nxspect(xspect *sp, inst_meas_type *mt,
+int read_nxspect(xspect *sp, inst_meas_type *mt, inst_meas_cond *mc,
 	             char *fname, int *nret, int off, int nspec, int type);
 
 /* Two step write & read n spectrum, to be able to write & read extra kewords values */
-int write_nxspect_1(cgats **pocg, inst_meas_type mt, xspect *sp, int nspec, int type);
+/* (Alloactes cgats * on _1, free's it on _2) */
+int write_nxspect_1(cgats **pocg, inst_meas_type mt, inst_meas_cond mc, xspect *sp,
+                    int nspec, int type);
 int write_nxspect_2(cgats *ocg, char *fname);
-int read_nxspect_1(cgats **picg, xspect *sp, inst_meas_type *mt, char *fname,
+int read_nxspect_1(cgats **picg, xspect *sp, inst_meas_type *mt, inst_meas_cond *mc, char *fname,
                  int *nret, int off, int nspec, int type);
 int read_nxspect_2(cgats *icg);
 
@@ -169,13 +188,21 @@ int read_nxspect_2(cgats *icg);
 int write_cmf(char *fname, xspect cmf[3]);
 int read_cmf(xspect cmf[3], char *fname);
 
+
 /* Get a (normalised) linearly or poly interpolated spectrum value. */
 /* Return NZ if value is valid, Z and last valid value */
 /* if outside the range */
 int getval_xspec(xspect *sp, double *rv, double wl) ;
 
-/* Get interpolated value at wavelenth (not normalised) */
+/* Get linear or poly interpolated value at wavelenth (not normalised) */
 double value_xspect(xspect *sp, double wl);
+
+/* Get linear interpolated value at wavelenth (not normalised) */
+double value_xspect_lin(xspect *sp, double wl);
+
+/* Get poly interpolated value at wavelenth (not normalised) */
+double value_xspect_poly(xspect *sp, double wl);
+
 
 /* De-normalize and set normalisation factor to 1.0 */
 void xspect_denorm(xspect *sp);
@@ -184,6 +211,9 @@ void xspect_denorm(xspect *sp);
 void xspect_scale(xspect *sp, double scale);
 
 #ifndef SALONEINSTLIB
+/* Convert from one xspect type to another with a wl offset from source */
+void xspect2xspect_wloff(xspect *dst, xspect *targ, xspect *src, double wloff);
+
 /* Convert from one xspect type to another */
 void xspect2xspect(xspect *dst, xspect *targ, xspect *src);
 
@@ -204,6 +234,9 @@ void xspect_plotNp(xspect *sp[MXGPHS], int n);
 
 /* Plot up to 12 spectra pointed to by an array */
 void xspect_plotNp_w(xspect *sp[MXGPHS], int n, int wait);
+
+/* Plot up to 12 spectra pointed to by an array over a wl range */
+//void xspect_plotNp_w(xspect *sp[MXGPHS], int n, double shwl, double lowl, int wait);
 
 #endif /* !SALONEINSTLIB*/
 
@@ -255,6 +288,17 @@ double temp);				/* Optional temperature in degrees kelvin, For Dtemp and Ptemp 
 /* with respect to the average of the input spectrum. */
 void xsp_setUV(xspect *out, xspect *in, double uvlevel);
 
+/* General temperature Planckian (black body) spectra using CIE 15:2004 (exp 1.4388e-2) */
+/* Fill in the given xspect with the specified Planckian illuminant */
+/* normalised so that 560nm = 100. */
+/* Return nz if temperature is out of range */
+int planckian_il_sp(xspect *sp, double ct);
+
+/* General temperature Planckian (black body) spectra using CIE 15:2004 (exp 1.4388e-2) */
+/* Set the xspect to 300-830nm and fill with the specified Planckian illuminant */
+/* normalised so that 560nm = 100. */
+/* Return nz if temperature is out of range */
+static int planckian_il(xspect *sp, double ct);
 
 /* Type of observer */
 typedef enum {
@@ -284,10 +328,10 @@ char *standardObserverDescription(icxObserverType obType);
 /* Type of density values */
 typedef enum {
     icxDT_none	= 0,	/* No density */
-    icxDT_ISO	= 1,	/* ISO Visual, Type 1, Type 2 */
-    icxDT_A		= 2,	/* Status A CMYV */
-    icxDT_M		= 3,	/* Status M CMYV */
-    icxDT_T		= 4,	/* Status T CMYV */
+    icxDT_ISO	= 1,	/* ISO Visual + Type 1 + Type 2 */
+    icxDT_A		= 2,	/* Status A */
+    icxDT_M		= 3,	/* Status M */
+    icxDT_T		= 4,	/* Status T */
     icxDT_E		= 5
 } icxDensityType;
 

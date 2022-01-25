@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Scattered Data Interpolation with multilevel B-splines library.
  * This can be used by rspl, or independently by any other routine.

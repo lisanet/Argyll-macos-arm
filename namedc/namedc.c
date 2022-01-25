@@ -50,6 +50,7 @@
 #include <math.h>
 #include <sys/types.h>
 #include <time.h>
+#include <errno.h>
 #include "copyright.h"
 #include "aconfig.h"
 #ifndef SALONEINSTLIB
@@ -316,7 +317,8 @@ static int read_cxf(namedc *p, const char *filename, int options) {
 	p->options = options;
 
     if ((fp = fopen(p->filename, "r")) == NULL) {
-		snprintf(p->err, NAMEDC_ERRL, "Opening XML file '%s' failed",p->filename);
+		snprintf(p->err, NAMEDC_ERRL, "Opening XML file '%s' failed with %s",
+		                                     p->filename,strerror(errno));
 		a1logd(p->log, 1, "read_cxf: %s\n",p->err);
 		return p->errc = 1;
 	}
@@ -949,7 +951,8 @@ static int read_icc(namedc *p, const char *filename, int options) {
 	
 	/* Open up the file for reading */
 	if ((fp = new_icmFileStd_name(p->filename,"r")) == NULL) {
-		snprintf(p->err, NAMEDC_ERRL, "Opening ICC file '%s' failed",p->filename);
+		snprintf(p->err, NAMEDC_ERRL, "Opening ICC file '%s' failed with %s",
+		                                     p->filename,strerror(errno));
 		a1logd(p->log, 1, "read_icc: %s\n",p->err);
 		return p->errc = 1;
 	}

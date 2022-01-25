@@ -2,7 +2,7 @@
 #ifndef MADVRWIN_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * MadVR target patch window
  *
  * Author: Graeme W. Gill

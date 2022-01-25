@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Simple CMYK profile generator.
  *
  * Author: Graeme W. Gill

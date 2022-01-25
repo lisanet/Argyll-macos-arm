@@ -7,7 +7,7 @@
  */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   28/9/97
@@ -287,6 +287,13 @@ void sa_Clamp3(double out[3], double in[3]) {
 		out[i] = in[i] < 0.0 ? 0.0 : in[i];
 }
 
+/* Add two 3 vectors */
+void sa_Add3(double out[3], double in1[3], double in2[3]) {
+	out[0] = in1[0] + in2[0];
+	out[1] = in1[1] + in2[1];
+	out[2] = in1[2] + in2[2];
+}
+
 /* Return the normal Delta E given two Lab values */
 double sa_LabDE(double *Lab0, double *Lab1) {
 	double rv = 0.0, tt;
@@ -431,6 +438,28 @@ void sa_Yxy2XYZ(double *out, double *in) {
 		out[1] = Y;
 		out[2] = z * sum;
 	}
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/* 32 bit linear congruent generator */
+/* generates number between 0 and 4294967295 */
+/* (From Knuth & H.W.Lewis) */
+#define PSRAND32L(S) ((S) * 1664525L + 1013904223L)
+
+/* Return a 32 bit number between 0 and 4294967295 */
+unsigned int
+sa_rand32(					/* Return 32 bit random number */
+unsigned int seed		/* Optional seed. Non-zero re-initialized with that seed */
+) {
+	static unsigned int pval = 12345678;
+
+	if (seed != 0)
+		pval = seed;
+
+	pval = PSRAND32L(pval);
+
+	return pval;
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - */

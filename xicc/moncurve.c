@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Monotonic curve class for display calibration.
  *
  * Author: Graeme W. Gill

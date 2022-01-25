@@ -38,7 +38,7 @@ if $(BUILD_TESTS) {
 	HDRS = ../h ../numlib ../plot ../icc ../rspl ../xicc ../gamut ../cgats ../spectro $(TIFFINC) ;
 	LINKLIBS = ../xicc/libxicc ../gamut/libgamut ../spectro/libinsttypes librspl
 	           ../cgats/libcgats ../icc/libicc ../plot/libplot ../plot/libvrml
-	           ../numlib/libnum ../numlib/libui $(TIFFLIB) $(JPEGLIB) ;
+	           ../spectro/libconv ../numlib/libnum ../numlib/libui $(TIFFLIB) $(JPEGLIB) ;
 
 	# Smoothness factor tuning test in Nd.
 	Main smtnd : smtnd.c ;

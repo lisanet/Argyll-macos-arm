@@ -18,6 +18,8 @@
  * Experiment within an ICC Workflow", page 215, together with
  * their matrix formulation of inversion has been adopted.
  *
+ * A blue hue linearization tweak is also used.
+ *
  * In addition the algorithm has unique extensions to allow
  * it to operate reasonably over an unbounded domain.
  *
@@ -111,6 +113,14 @@
 	effects over the range of J from 0 to 100, and have more
 	moderate effects outside this range. 
 
+	To compensate for the slight CIECAM02 blue hue non-linearity at high Chroma,
+	a hue angle adjustment is made that is similar to that described in
+	the paper "Color gamut mapping in a hue-linearized CIELAB color space"
+    by Gustav Braun and Mark Fairchild.
+
+	NOTE we have turned symetrical compress/decompress off (undef ENABLE_DECOMPR)
+	because it causes some poor gamut mapping behaviour.
+
 */
 
 #include <copyright.h>
@@ -123,10 +133,11 @@
 #include "numlib.h"
 
 #define ENABLE_COMPR		/* [Def] Enable XYZ compression  */
-#undef ENABLE_DECOMPR		/* [Undef] Enable XYZ de-compression  */
-#define ENABLE_BLUE_ANGLE_FIX	/* [Def] Limit maximum blue angle */
+#undef ENABLE_DECOMPR		/* [Undef] Enable XYZ de-compression. (Will cause cam02test to fail)  */
+#define ENABLE_BLUE_ANGLE_FIX /* [Def] Limit maximum blue angle to avoid numeric failure */
 #define ENABLE_DDL			/* [Def] Enable k1,k2,k3 overall ss limit values (seems to be the best scheme) */
 #undef ENABLE_SS			/* [Undef] Disable overall ss limit values (not the scheme used) */
+#define ENABLE_BLUELIN		/* [Def] Enable blue linearity hack */
 
 #undef ENTRACE				/* [Undef] Enable internal value runtime tracing if s->trace != 0 */
 #undef DOTRACE				/* [Undef] Trace anyway (ie. set s->trace = 1) */
@@ -177,6 +188,15 @@
 #define JLIMIT 0.005		/* [0.005] J encoding cutover point straight line (0 - 1.0 range) */
 #define HKLIMIT 0.7			/* [0.7] Maximum Helmholtz-Kohlrausch lift out of 1.0 */
 
+#ifdef ENABLE_BLUELIN
+#define BLUELIN_h0    210.0     /* Low limit of hue angle to tweak */
+#define BLUELIN_h1    330.0     /* High limit of hue angle at C0 to tweak */
+#define BLUELIN_C0    50.0      /* Low limit of Chroma to tweak */
+#define BLUELIN_C10   80.0      /* High end of Chroma to tweak */
+#define BLUELIN_C11   140.0     /* High end of Hue and Chroma to tweak */
+#define BLUELIN_AMNT  0.60       /* Amount to tweak hue (< 1.0 increases tweak) */
+#endif /* ENABLE_BLUELIN */
+
 #ifdef TRACKMINMAX
 double minss = 1e60;
 double maxss = -1e60;
@@ -193,6 +213,91 @@ double minj = 1e38, maxj = -1e38;
 #else
 #define TRACE(xxxx) 
 #endif
+
+#ifdef ENABLE_BLUELIN
+/* Blue hue contancy hack functions */
+
+/* We are using simple linear interpolation for this. */
+static void bluelin_fwd(double out[3], double in[3]) {
+	double J, C, h;
+
+	C = sqrt(in[1] * in[1] + in[2] * in[2]);
+    h = (180.0/DBL_PI) * atan2(in[2], in[1]);
+	h = (h < 0.0) ? h + 360.0 : h;
+
+	if (h >= BLUELIN_h0 && h <= BLUELIN_h1
+	 && C > BLUELIN_C0) {
+		double hh = (h - BLUELIN_h0)/(BLUELIN_h1 - BLUELIN_h0);
+		double gr, c1, amnt;
+
+		c1 = (1.0 - hh) * BLUELIN_C10 + hh * BLUELIN_C11;
+	
+		gr = (C - BLUELIN_C0)/(c1 - BLUELIN_C0);
+		if (gr < 0.0)
+			gr = 0.0;
+		else if (gr > 1.0)
+			gr = 1.0;
+	
+		amnt = (1.0 - gr) * 1.0 + gr * BLUELIN_AMNT;
+
+		if (hh < 0.5) {
+			hh = hh * amnt;
+		} else {
+			hh = (0.5 * amnt) + (hh - 0.5) * (1.0 - 0.5 * amnt)/0.5;
+		}
+
+		h = BLUELIN_h0 + hh * (BLUELIN_h1 - BLUELIN_h0);
+	}
+
+	h = DBL_PI/180.0 * h;
+	out[0] = in[0];
+	out[1] = C * cos(h);
+	out[2] = C * sin(h);
+}
+
+static void bluelin_bwd(double out[3], double in[3]) {
+	double J, C, h;
+
+	C = sqrt(in[1] * in[1] + in[2] * in[2]);
+    h = (180.0/DBL_PI) * atan2(in[2], in[1]);
+	h = (h < 0.0) ? h + 360.0 : h;
+
+	if (h >= BLUELIN_h0 && h <= BLUELIN_h1
+	 && C > BLUELIN_C0) {
+		double hh = (h - BLUELIN_h0)/(BLUELIN_h1 - BLUELIN_h0);
+		double ho = hh;
+		double gr, c1 = 0.0, pc1 = -100.0, amnt;
+		int j;
+
+		/* Should be able to compute inverse analytically, but for the moment */
+		/* we'll simply itterate to sufficient accuracy... */
+		for (j = 0; fabs(c1 - pc1) > 0.02 && j < 20; j++) {
+			pc1 = c1;
+			c1 = (1.0 - ho) * BLUELIN_C10 + ho * BLUELIN_C11;
+	
+			gr = (C - BLUELIN_C0)/(c1 - BLUELIN_C0);
+			if (gr < 0.0)
+				gr = 0.0;
+			else if (gr > 1.0)
+				gr = 1.0;
+		
+			amnt = (1.0 - gr) * 1.0 + gr * BLUELIN_AMNT;
+	
+			if (hh < (0.5 * amnt)) {
+				ho = hh / amnt;
+			} else {
+				ho = 0.5 + (hh - 0.5 * amnt) * (1.0 - 0.5)/(1.0 - 0.5 * amnt);
+			}
+		}
+		h = BLUELIN_h0 + ho * (BLUELIN_h1 - BLUELIN_h0);
+	}
+
+	h = DBL_PI/180.0 * h;
+	out[0] = in[0];
+	out[1] = C * cos(h);
+	out[2] = C * sin(h);
+}
+#endif /* ENABLE_BLUELIN */
 
 static void cam_free(cam02 *s);
 static int set_view(struct _cam02 *s, ViewingCondition Ev, double Wxyz[3],
@@ -211,7 +316,6 @@ static double spow(double val, double pp) {
 /* Create a cam02 conversion object, with default viewing conditions */
 cam02 *new_cam02(void) {
 	cam02 *s;
-//	double D50[3] = { 0.9642, 1.0000, 0.8249 };
 
 	if ((s = (cam02 *)calloc(1, sizeof(cam02))) == NULL) {
 		fprintf(stderr,"cam02: malloc failed allocating object\n");
@@ -236,9 +340,10 @@ cam02 *new_cam02(void) {
 	s->ssmincj = SSMINcJ;
 	s->jlimit = JLIMIT;
 	s->hklimit = 1.0 / HKLIMIT;
+	s->bluelin = 1;					/* Default is enabled */
 
-	/* Set a default viewing condition ?? */
-	/* set_view(s, vc_average, D50, 33, 0.2, 0.0, 0.0, D50, 0); */
+	/* Set a default viewing condition */
+	set_view(s, vc_average, icmD50_ary3, 33, 0.2, 0.0, 0.0, 0.0, icmD50_ary3, 0, 0.0, 0.0, NULL);
 
 #ifdef DOTRACE
 	s->trace = 1;
@@ -818,6 +923,8 @@ double XYZ[3]
 	rgbp[0] = ss * tt + (1.0 - ss) * rgbp[0];
 	rgbp[1] = ss * tt + (1.0 - ss) * rgbp[1];
 	TRACE(("rgbp after blue fix ss = %f, rgbp = %f %f %f\n",ss,rgbp[0], rgbp[1], rgbp[2]))
+#else
+# pragma message("!!!!!!!!!!!! ENABLE_BLUE_ANGLE_FIX os not set !!!!!!!!!")
 #endif
 
 #ifdef DISABLE_NONLIN
@@ -1044,6 +1151,13 @@ double XYZ[3]
 	Jab[1] = ja;
 	Jab[2] = jb;
 
+#ifdef ENABLE_BLUELIN
+	if (s->bluelin) {
+		TRACE(("Jab pre blin %f %f %f\n",Jab[0], Jab[1], Jab[2]))
+		bluelin_fwd(Jab, Jab);
+	}
+#endif
+
 #ifdef NEVER	/* Brightness/Colorfulness */
 	{
 		double M, Q;
@@ -1100,6 +1214,13 @@ double Jab[3]
 
 	TRACE(("\nCIECAM02 Reverse conversion:\n"))
 	TRACE(("Jab %f %f %f\n",Jab[0], Jab[1], Jab[2]))
+
+#ifdef ENABLE_BLUELIN
+	if (s->bluelin) {
+		bluelin_bwd(Jab, Jab);
+		TRACE(("blin Jab %f %f %f\n",Jab[0], Jab[1], Jab[2]))
+	}
+#endif
 
 	JJ = Jab[0] * 0.01;	/* J/100 */
 	ja = Jab[1];
@@ -1282,6 +1403,7 @@ double Jab[3]
 
 
 #ifdef ENABLE_DECOMPR
+# pragma message("!!!!!!!!!!!! ENABLE_DECOMPR is set !!!!!!!!!")
 	/* Undo soft limiting */
 	{
 		double tt;			/* Temporary */

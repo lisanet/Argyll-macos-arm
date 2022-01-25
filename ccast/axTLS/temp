@@ -1,2 +1,0 @@
-// ~~~~9999
-printf("~1 SOCKET_READ to off %d returned len %d for req %d to 0x%x\n",ssl->bm_read_index, read_len, ssl->need_bytes-ssl->got_bytes,&buf[ssl->bm_read_index]);

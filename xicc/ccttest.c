@@ -242,7 +242,7 @@ main(
 	if (in_name[0] != '\000') {
 		inst_meas_type mt;	
 
-		if (read_xspect(&sp, &mt, in_name) != 0)
+		if (read_xspect(&sp, &mt, NULL, in_name) != 0)
 			error ("Unable to read custom spectrum '%s'",in_name);
 
 		if (mt != inst_mrt_none

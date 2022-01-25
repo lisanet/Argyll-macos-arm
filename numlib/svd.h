@@ -42,6 +42,7 @@
 	To reveal NULL space, make sure n >= m, since U[] vectors corrsponding
 	to zero's are set to zero.
 
+	Inverse of A = V.1/W.Ut ?
 */
 
 /* Compute Singular Value Decomposition of A = U.W.Vt */
@@ -110,6 +111,16 @@ int      s		/* Number of unknowns */
 int gen_solve_se(
 double **a,		/* A[0..m-1][0..n-1] input A[][], will return U[][] */
 double b[],		/* B[0..m-1]  Right hand side of equation, return solution */
+int      m,		/* Number of equations */
+int      n		/* Number of unknowns */
+);
+
+/* Compute the inverse matrix Ai[[0..n-1][0..m-1] from SVD components */
+static void svdinverse(
+double **u,		/* U[0..m-1][0..n-1] U, W, V SVD decomposition of A[][] */
+double  *w,		/* W[0..n-1] */
+double **v,		/* V[0..n-1][0..n-1] (not transpose!) */
+double **ia,	/* iA[0..n-1][0..m-1] return inverse of A */
 int      m,		/* Number of equations */
 int      n		/* Number of unknowns */
 );

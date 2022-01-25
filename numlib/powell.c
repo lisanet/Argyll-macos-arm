@@ -94,7 +94,7 @@ void (*prog)(void *pdata, int perc),		/* Optional progress percentage callback *
 void *pdata				/* Opaque data needed by prog() */
 ) {
 	int i;
-	double **dmtx, *_dmtx[10], __dmtx[10 * 10] = { 0.0 };		/* Direction vector */
+	double **dmtx, *_dmtx[10], __dmtx[10 * 10] = { 0.0 };		/* Direction vectors */
 	double *spt, _spt[10];			/* Sarting point before exploring all the directions */
 	double *xpt, _xpt[10];			/* Extrapolated point */
 	double *svec, _svec[10];		/* Search vector */
@@ -136,7 +136,7 @@ void *pdata				/* Opaque data needed by prog() */
 	retv = (*func)(fdata, cp);
 
 //printf("~1 ### initial retv = %f\n",retv);
-	/* Itterate untill we converge on a solution, or give up. */
+	/* Itterate until we converge on a solution, or give up. */
 	for (iter = 1; iter < maxit; iter++) {
 		int j;
 		double lretv;			/* Last function return value */
@@ -159,14 +159,14 @@ void *pdata				/* Opaque data needed by prog() */
 			lretv = retv;
 			retv = linmin(cp, svec, di, ftol, func, fdata);
 
-			/* Record bigest function decrease, and dimension it occured on */
+			/* Record bigest function decrease, and direction it occured on */
 			if (fabs(lretv - retv) > del) {
 				del = fabs(lretv - retv);
 				ibig = i;
 			}
 		}
 
-//printf("~1 ### biggest change was dir %d  by %f\n", ibig, del);
+//printf("~1 ### biggest change was dir %d by %f\n", ibig, del);
 
 #ifdef ABSTOL
 		stopth = ftol;				/* Absolute tollerance */
@@ -186,7 +186,8 @@ void *pdata				/* Opaque data needed by prog() */
 			}
 
 		}
-		/* If we have had at least one change of direction and */
+
+		/* If we have made at least one pass through all directions and */
 		/* reached a suitable tollerance, then finish */
 		if (iter > 1 && curdel <= stopth) {
 //printf("~1 ### stopping on itter %d because curdel %f <= stopth %f\n",iter, curdel,stopth);
@@ -196,6 +197,7 @@ void *pdata				/* Opaque data needed by prog() */
 		PDBG(("Not stopping because curdel %f > stopth %f\n",curdel,stopth))
 
 //printf("~1 ### recomputing direction\n");
+		/* Compute overall direction minimization moved in */
 		for (i = 0; i < di; i++) {
 			svec[i] = cp[i] - spt[i];	/* Average direction moved after minimization round */
 			xpt[i]  = cp[i] + svec[i];	/* Extrapolated point after round of minimization */
@@ -203,7 +205,7 @@ void *pdata				/* Opaque data needed by prog() */
 		}
 //printf("~1 ### new dir = %f %f\n", svec[0],svec[1]);
 
-		/* Function value at extrapolated point */
+		/* Function value at extrapolated point in overall direction moved in */
 		lretv = (*func)(fdata, xpt);
 
 		if (lretv < pretv) {			/* If extrapolation is an improvement */
@@ -223,7 +225,7 @@ void *pdata				/* Opaque data needed by prog() */
 				}
 			}
 		}
-	}
+	}		/* Continue itterating */
 
 //printf("~1 iters = %d\n",iter);
 

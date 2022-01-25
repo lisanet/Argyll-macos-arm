@@ -61,6 +61,10 @@
 
 
 
+
+
+
+
     "<span style="font-weight: bold;">DISPLAY</span>",&nbsp; <span
       style="font-weight: bold;">"INPUT"</span> or <span
       style="font-weight: bold;">"EMISINPUT"</span>.<br>
@@ -96,6 +100,10 @@
 
 
 
+
+
+
+
       119.657745 121.474236".<br>
       <br>
     </span>A display device may also have a <span style="font-weight:
@@ -109,7 +117,8 @@
       bold;">are</span> normalized to Y = 100. If the values are
     normalized to Y = 100, then the absolute values can be restored by
     multiplying the XYZ values by the <span style="font-weight: bold;">LUMINANCE_XYZ_CDM2</span>
-    Y value and dividing by 100.<br>
+    Y value and dividing by 100. If values are <b>not </b>normalized
+    to Y = 100, then they are assumed to be in absolute cd/m^2 units. <br>
     <br>
     There may be a keyword <span style="font-weight: bold;">TARGET_INSTRUMENT</span>
     which will identify the instrument used to read the test values.
@@ -198,8 +207,16 @@ Cyan
 
 
 
+
+
+
+
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
 
 
 
@@ -219,9 +236,17 @@ Cyan
 
 
 
+
+
+
+
     Y<br>
     &nbsp;&nbsp;&nbsp; Black &nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
 
 
 
@@ -239,9 +264,17 @@ Cyan
 
 
 
+
+
+
+
     O<br>
     &nbsp;&nbsp;&nbsp; Red
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
 
 
 
@@ -259,9 +292,17 @@ Cyan
 
 
 
+
+
+
+
     G<br>
     &nbsp;&nbsp;&nbsp; Blue &nbsp;&nbsp; &nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
 
 
 
@@ -282,9 +323,17 @@ Cyan
 
 
 
+
+
+
+
     c<br>
     &nbsp;&nbsp;&nbsp; Light
     Magenta&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
 
 
 
@@ -302,9 +351,17 @@ Cyan
 
 
 
+
+
+
+
     y<br>
     &nbsp;&nbsp;&nbsp; Light
     Black&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
 
 
 
@@ -348,6 +405,88 @@ Cyan
     &nbsp; <span style="font-weight: bold;">SPECTRAL_END_NM</span>
     shall contain the wavelength in nanometers of the last band, e.g. <span
       style="font-weight: bold;">"730.0"</span>.<br>
+    <br>
+    <table width="596" height="193" cellspacing="0" cellpadding="0"
+      border="1">
+      <tbody>
+        <tr>
+          <th valign="middle" align="center">&nbsp; Measurement Mode
+            &nbsp; <br>
+          </th>
+          <th valign="middle" align="center">&nbsp; Quantity Name &nbsp;
+            <br>
+          </th>
+          <th valign="middle" align="center">Y Units<br>
+          </th>
+          <th valign="middle" align="center"><b>Spectral Units</b><br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">Emission<br>
+          </td>
+          <td valign="middle" align="center">Luminance</td>
+          <td valign="middle" align="center">cd/m<sup>2<br>
+            </sup></td>
+          <td valign="middle" align="center">mW/(m^2.sr.nm)<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">Ambient<br>
+          </td>
+          <td valign="middle" align="center">Illuminance<br>
+          </td>
+          <td valign="middle" align="center">lm/m<sup>2</sup>, cd.sr/m<sup>2</sup>,
+            lux<br>
+          </td>
+          <td valign="middle" align="center">mW/(m^2.nm)<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">Emission Flash<br>
+          </td>
+          <td valign="middle" align="center">&nbsp; Surface Luminous
+            exposure &nbsp; </td>
+          <td valign="middle" align="center">&nbsp; cd.s/m<sup>2</sup>
+            &nbsp;&nbsp; <br>
+          </td>
+          <td valign="middle" align="center">mW.s/(m^2.sr.nm)<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">Ambient Flash<br>
+          </td>
+          <td valign="middle" align="center">&nbsp; Luminous
+            exposure&nbsp; <br>
+          </td>
+          <td valign="middle" align="center">&nbsp;lm.s/m<sup>2</sup>,
+            cd.sr.s/m<sup>2</sup>, lux.s&nbsp; <br>
+          </td>
+          <td valign="middle" align="center">mW.s/(m^2.nm)<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">Reflective<br>
+          </td>
+          <td valign="middle" align="center">Reflectance<br>
+          </td>
+          <td valign="middle" align="center">%<br>
+          </td>
+          <td valign="middle" align="center">%/nm<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">Transmissive<br>
+          </td>
+          <td valign="middle" align="center">Transmittance<br>
+          </td>
+          <td valign="middle" align="center">%<br>
+          </td>
+          <td valign="middle" align="center">%/nm<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
     <br>
     The <span style="font-weight: bold;">NUMBER_OF_FIELDS</span>
     keyword shall have a value that indicates the number of fields in

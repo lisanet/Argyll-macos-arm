@@ -3,7 +3,7 @@
 /* Colorimeter Calibration Spectral Sample creation utility */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Author: Graeme W. Gill
  * Date:   19/8/2010
  *
@@ -105,6 +105,7 @@ void
 /* Flag = 0x0000 = default */
 /* Flag & 0x0001 = list ChromCast's */
 /* Flag & 0x0002 = list Technology choice */
+/* Flag & 0x1xxx = -S flag */
 usage(int flag, char *diag, ...) {
 	disppath **dp;
 	icompaths *icmps = new_icompaths(0);
@@ -120,7 +121,7 @@ usage(int flag, char *diag, ...) {
 		va_end(args);
 		fprintf(stderr,"\n");
 	}
-	fprintf(stderr,"usage: ccmxmake -t dtech [-options] output.ccmx\n");
+	fprintf(stderr,"usage: ccxxmake -t dtech [-options] output.%s\n", flag & 0x1000 ? "ccss" : "ccmx");
 	fprintf(stderr," -v                Verbose mode\n");
 	fprintf(stderr," -S                Create CCSS rather than CCMX\n");
 	fprintf(stderr," -f ref.ti3[,targ.ti3]  Create from one or two .ti3 files rather than measure.\n");
@@ -168,7 +169,7 @@ usage(int flag, char *diag, ...) {
 //	fprintf(stderr," -d fake           Use a fake (ICC profile) display device for testing, fake%s if present\n",ICC_FILE_EXT);
 	fprintf(stderr," -p                Use telephoto mode (ie. for a projector, if available)\n");
 	fprintf(stderr," -a                Use ambient measurement mode (ie. for a projector, if available)\n");
-	cap = inst_show_disptype_options(stderr, " -y c|l                 ", icmps, 1);
+	cap = inst_show_disptype_options(stderr, " -y c|l                 ", icmps, 1, 0);
 	fprintf(stderr," -z disptype       Different display type for spectrometer (see -y)\n");
 	fprintf(stderr," -P ho,vo,ss[,vs]  Position test window and scale it\n");
 	fprintf(stderr,"                   ho,vi: 0.0 = left/top, 0.5 = center, 1.0 = right/bottom etc.\n");
@@ -269,6 +270,7 @@ int main(int argc, char *argv[]) {
 	char *displayname = NULL;			/* Given display name */
 	disptech_info *dtinfo = NULL;		/* Display technology */
 	char *uisel = NULL;					/* UI selection letters */
+	int uflag = 0;						/* usage flag */
 	int rv;
 
 	set_exe_path(argv[0]);				/* Set global exe_path and error_program */
@@ -294,8 +296,8 @@ int main(int argc, char *argv[]) {
 
 			if (argv[fa][1] == '?' || argv[fa][1] == '-') {
 				if (argv[fa][2] == '?' || argv[fa][2] == '-')
-					usage(2, "Extended usage requested");
-				usage(0, "Usage requested");
+					usage(uflag | 2, "Extended usage requested");
+				usage(uflag | 0, "Usage requested");
 
 			} else if (argv[fa][1] == 'v') {
 				verb = 1;
@@ -303,11 +305,12 @@ int main(int argc, char *argv[]) {
 
 			} else if (argv[fa][1] == 'S') {
 				doccss = 1;
+				uflag |= 0x1000;
 
 			} else if (argv[fa][1] == 'f') {
 				char *cna, *f1 = NULL;
 				fa = nfa;
-				if (na == NULL) usage(0,"Expect argument to input file flag -f");
+				if (na == NULL) usage(uflag | 0,"Expect argument to input file flag -f");
 
 				if ((cna = strdup(na)) == NULL)
 					error("Malloc failed");
@@ -333,7 +336,7 @@ int main(int argc, char *argv[]) {
 					if (na[3] == ':') {
 						webdisp = atoi(na+4);
 						if (webdisp == 0 || webdisp > 65535)
-							usage(0,"Web port number must be in range 1..65535");
+							usage(uflag | 0,"Web port number must be in range 1..65535");
 					}
 					fa = nfa;
 				} else if (strncmp(na,"cc",2) == 0
@@ -341,11 +344,11 @@ int main(int argc, char *argv[]) {
 					ccdisp = 1;
 					if (na[2] == ':') {
 						if (na[3] < '0' || na[3] > '9')
-							usage(0x0001,"Available ChromeCasts");
+							usage(uflag | 0x0001,"Available ChromeCasts");
 
 						ccdisp = atoi(na+3);
 						if (ccdisp <= 0)
-							usage(0,"ChromCast number must be in range 1..N");
+							usage(uflag | 0,"ChromCast number must be in range 1..N");
 					}
 					fa = nfa;
 #ifdef NT
@@ -363,10 +366,10 @@ int main(int argc, char *argv[]) {
 					int ix, iv;
 
 					if (strcmp(&argv[fa][2], "isplay") == 0 || strcmp(&argv[fa][2], "ISPLAY") == 0) {
-						if (++fa >= argc || argv[fa][0] == '-') usage(0,"Parameter expected following -display");
+						if (++fa >= argc || argv[fa][0] == '-') usage(uflag | 0,"Parameter expected following -display");
 						setenv("DISPLAY", argv[fa], 1);
 					} else {
-						if (na == NULL) usage(0,"Parameter expected following -d");
+						if (na == NULL) usage(uflag | 0,"Parameter expected following -d");
 						fa = nfa;
 						if (strcmp(na,"fake") == 0 || strcmp(na,"FAKE") == 0) {
 							fake = 1;
@@ -380,14 +383,14 @@ int main(int argc, char *argv[]) {
 							if (disp != NULL)
 								free_a_disppath(disp);
 							if ((disp = get_a_display(ix-1)) == NULL)
-								usage(0,"-d parameter %d out of range",ix);
+								usage(uflag | 0,"-d parameter %d out of range",ix);
 							if (iv > 0)
 								disp->rscreen = iv-1;
 						}
 					}
 #else
 					int ix;
-					if (na == NULL) usage(0,"Parameter expected following -d");
+					if (na == NULL) usage(uflag | 0,"Parameter expected following -d");
 					fa = nfa;
 					if (strcmp(na,"fake") == 0 || strcmp(na,"FAKE") == 0) {
 						fake = 1;
@@ -398,7 +401,7 @@ int main(int argc, char *argv[]) {
 						if (disp != NULL)
 							free_a_disppath(disp);
 						if ((disp = get_a_display(ix-1)) == NULL)
-							usage(0,"-d parameter %d out of range",ix);
+							usage(uflag | 0,"-d parameter %d out of range",ix);
 					}
 #endif
 				}
@@ -410,9 +413,9 @@ int main(int argc, char *argv[]) {
 			/* COM port  */
 			} else if (argv[fa][1] == 'c') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Paramater expected following -c");
+				if (na == NULL) usage(uflag | 0,"Paramater expected following -c");
 				comno = atoi(na);
-				if (comno < 1 || comno > 40) usage(0,"-c parameter %d out of range",comno);
+				if (comno < 1 || comno > 40) usage(uflag | 0,"-c parameter %d out of range",comno);
 
 			/* Telephoto */
 			} else if (argv[fa][1] == 'p') {
@@ -427,7 +430,7 @@ int main(int argc, char *argv[]) {
 			/* Display type */
 			} else if (argv[fa][1] == 'y') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expected after -y");
+				if (na == NULL) usage(uflag | 0,"Parameter expected after -y");
 				ditype = na[0];
 				if (ditype == '_' && na[1] != '\000')
 					ditype = ditype << 8 | na[1];
@@ -442,25 +445,25 @@ int main(int argc, char *argv[]) {
 			/* Spectro display type */
 			} else if (argv[fa][1] == 'z') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expected after -z");
+				if (na == NULL) usage(uflag | 0,"Parameter expected after -z");
 				sditype = na[0];
 
 			/* Test patch offset and size */
 			} else if (argv[fa][1] == 'P') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expected after -P");
+				if (na == NULL) usage(uflag | 0,"Parameter expected after -P");
 				if (sscanf(na, " %lf,%lf,%lf,%lf ", &ho, &vo, &hpatscale, &vpatscale) == 4) {
 					;
 				} else if (sscanf(na, " %lf,%lf,%lf ", &ho, &vo, &hpatscale) == 3) {
 					vpatscale = hpatscale;
 				} else {
-					usage(0,"-P parameter '%s' not recognised",na);
+					usage(uflag | 0,"-P parameter '%s' not recognised",na);
 				}
 				if (ho < 0.0 || ho > 1.0
 				 || vo < 0.0 || vo > 1.0
 				 || hpatscale <= 0.0 || hpatscale > 50.0
 				 || vpatscale <= 0.0 || vpatscale > 50.0)
-					usage(0,"-P parameters %f %f %f %f out of range",ho,vo,hpatscale,vpatscale);
+					usage(uflag | 0,"-P parameters %f %f %f %f out of range",ho,vo,hpatscale,vpatscale);
 				ho = 2.0 * ho - 1.0;
 				vo = 2.0 * vo - 1.0;
 
@@ -483,7 +486,7 @@ int main(int argc, char *argv[]) {
 			/* Spectral Observer type (only relevant for CCMX) */
 			} else if (argv[fa][1] == 'o' || argv[fa][1] == 'O') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expecte after -o");
+				if (na == NULL) usage(uflag | 0,"Parameter expecte after -o");
 				if (strcmp(na, "1931_2") == 0) {			/* Classic 2 degree */
 					spec = 2;
 					obType = icxOT_CIE_1931_2;
@@ -508,32 +511,32 @@ int main(int argc, char *argv[]) {
 				} else {	/* Assume it's a filename */
 					obType = icxOT_custom;
 					if (read_cmf(custObserver, na) != 0)
-						usage(0,"Failed to read custom observer CMF from -o file '%s'",na);
+						usage(uflag | 0,"Failed to read custom observer CMF from -o file '%s'",na);
 				}
 
 			} else if (argv[fa][1] == 's') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expecte after -s");
+				if (na == NULL) usage(uflag | 0,"Parameter expecte after -s");
 				msteps = atoi(na);
 				if (msteps < 1 || msteps > 16)
-					usage(0,"-s parameter value %d is outside the range 1 to 16",msteps);
+					usage(uflag | 0,"-s parameter value %d is outside the range 1 to 16",msteps);
 
 			/* Change color callout */
 			} else if (argv[fa][1] == 'C') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expected after -C");
+				if (na == NULL) usage(uflag | 0,"Parameter expected after -C");
 				ccallout = na;
 
 			/* Measure color callout */
 			} else if (argv[fa][1] == 'M') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Parameter expected after -M");
+				if (na == NULL) usage(uflag | 0,"Parameter expected after -M");
 				mcallout = na;
 
 			/* Serial port flow control */
 			} else if (argv[fa][1] == 'W') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Paramater expected following -W");
+				if (na == NULL) usage(uflag | 0,"Paramater expected following -W");
 				if (na[0] == 'n' || na[0] == 'N')
 					fc = fc_None;
 				else if (na[0] == 'h' || na[0] == 'H')
@@ -541,7 +544,7 @@ int main(int argc, char *argv[]) {
 				else if (na[0] == 'x' || na[0] == 'X')
 					fc = fc_XonXOff;
 				else
-					usage(0,"-W parameter '%c' not recognised",na[0]);
+					usage(uflag | 0,"-W parameter '%c' not recognised",na[0]);
 
 			} else if (argv[fa][1] == 'D') {
 				debug = 1;
@@ -553,28 +556,28 @@ int main(int argc, char *argv[]) {
 
 			} else if (argv[fa][1] == 'I') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Expect argument to display description flag -I");
+				if (na == NULL) usage(uflag | 0,"Expect argument to display description flag -I");
 				displayname = strdup(na);
 
 			} else if (argv[fa][1] == 't') {
 				fa = nfa;
-				if (na == NULL) usage(2,"Expect argument to display technology flag -t");
+				if (na == NULL) usage(uflag | 2,"Expect argument to display technology flag -t");
 				dtinfo = disptech_get_list();
 				if (na[1] != '\000')
-					usage(2,"Expect single character argument to display technology flag -t");
+					usage(uflag | 2,"Expect single character argument to display technology flag -t");
 				if ((dtinfo = disptech_select(dtinfo, na[0])) == NULL)
-					usage(2,"-t parameter '%c' not recognized",na[0]);
+					usage(uflag | 2,"-t parameter '%c' not recognized",na[0]);
 
 			/* Copyright string */
 			} else if (argv[fa][1] == 'E') {
 				fa = nfa;
-				if (na == NULL) usage(0,"Expect argument to overall description flag -E");
+				if (na == NULL) usage(uflag | 0,"Expect argument to overall description flag -E");
 				description = strdup(na);
 
 			/* Extra flags */
 			} else if (argv[fa][1] == 'Y') {
 				if (na == NULL)
-					usage(0,"Flag '-Y' expects extra flag");
+					usage(uflag | 0,"Flag '-Y' expects extra flag");
 			
 				if (na[0] == 'r') {
 					refrmode = 1;
@@ -582,32 +585,32 @@ int main(int argc, char *argv[]) {
 					refrmode = 0;
 				} else if (na[0] == 'R') {
 					if (na[1] != ':')
-						usage(0,"-Y R:rate syntax incorrect");
+						usage(uflag | 0,"-Y R:rate syntax incorrect");
 					refrate = atof(na+2);
 					if (refrate < 5.0 || refrate > 150.0)
-						usage(0,"-Y R:rate %f Hz not in valid range",refrate);
+						usage(uflag | 0,"-Y R:rate %f Hz not in valid range",refrate);
 				} else if (na[0] == 'A') {
 					nadaptive = 1;
 				} else {
-					usage(0,"Flag '-Z %c' not recognised",na[0]);
+					usage(uflag | 0,"Flag '-Z %c' not recognised",na[0]);
 				}
 				fa = nfa;
 
 			/* UI selection character */
 			} else if (argv[fa][1] == 'U') {
 				fa = nfa;
-				if (na == NULL || na[0] == '\000') usage(0,"Expect argument to flag -U");
+				if (na == NULL || na[0] == '\000') usage(uflag | 0,"Expect argument to flag -U");
 				uisel = na;
 				for (i = 0; uisel[i] != '\000'; i++) {
 					if (!( (uisel[i] >= '0' && uisel[i] <= '9')
 					    || (uisel[i] >= 'A' && uisel[i] <= 'Z')
 					    || (uisel[i] >= 'a' && uisel[i] <= 'z'))) {
-						usage(0,"-U character(s) must be 0-9,A-Z,a-z");
+						usage(uflag | 0,"-U character(s) must be 0-9,A-Z,a-z");
 					}
 				}
 
 			} else 
-				usage(0,"Flag '-%c' not recognised",argv[fa][1]);
+				usage(uflag | 0,"Flag '-%c' not recognised",argv[fa][1]);
 		}
 		else
 			break;
@@ -615,7 +618,7 @@ int main(int argc, char *argv[]) {
 
 	/* Get the output ccmx file name argument */
 	if (fa >= argc)
-		usage(0,"Output filname expected");
+		usage(uflag | 0,"Output filname expected");
 
 	strncpy(outname,argv[fa++],MAXNAMEL-1); outname[MAXNAMEL-1] = '\000';
 	if (strrchr(outname, '.') == NULL)	/* no extension */
@@ -639,6 +642,9 @@ int main(int argc, char *argv[]) {
 		xspect sp, *samples = NULL;
 		ccss *cc;
 		double bigv = -1e60;
+
+		if (innames[1][0] != '\000')
+			warning("second -f .ti3 '%s' ignored! (not needed for CCSS)", innames[1]);
 
 		/* Open spectral values file */
 		cgf = new_cgats();			/* Create a CGATS structure */
@@ -743,9 +749,9 @@ int main(int argc, char *argv[]) {
 			error("set_ccss failed with '%s'\n",cc->err);
 		}
 		if(cc->write_ccss(cc, outname))
-			printf("\nWriting CCXX file '%s' failed\n",outname);
+			printf("\nWriting CCSS file '%s' failed with '%s\n",outname, cc->err);
 		else
-			printf("\nWriting CCXX file '%s' succeeded\n",outname);
+			printf("\nWriting CCSS file '%s' succeeded\n",outname);
 		cc->del(cc);
 		free(samples);
 
@@ -762,7 +768,7 @@ int main(int argc, char *argv[]) {
 		ccmx *cc;
 
 		if (innames[1][0] == '\000') {
-			error("Need two .ti3 files to create CCMX");
+			error("Need two -f .ti3 files to create CCMX");
 		}
 
 		/* Open up each CIE file in turn, target then measured, */

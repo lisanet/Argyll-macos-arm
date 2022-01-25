@@ -389,10 +389,11 @@ main(int argc, char *argv[]) {
 						tillum = icxIT_F10;
 					} else {	/* Assume it's a filename */
 						inst_meas_type mt;
+						inst_meas_cond mc;
 
 						spec = 1;
 						tillum = icxIT_custom;
-						if (read_xspect(&cust_tillum, &mt, na) != 0)
+						if (read_xspect(&cust_tillum, &mt, &mc, na) != 0)
 							usage("Unable to read target spectrum '%s'",na);
 
 						if (mt != inst_mrt_none
@@ -436,10 +437,11 @@ main(int argc, char *argv[]) {
 					illum = icxIT_F10;
 				} else {	/* Assume it's a filename */
 					inst_meas_type mt;
+					inst_meas_cond mc;
 
 					spec = 1;
 					illum = icxIT_custom;
-					if (read_xspect(&cust_illum, &mt, na) != 0)
+					if (read_xspect(&cust_illum, &mt, &mc, na) != 0)
 						usage("Unable to read custom spectrum '%s'",na);
 
 					if (mt != inst_mrt_none

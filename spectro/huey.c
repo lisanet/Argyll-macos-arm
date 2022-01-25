@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * GretagMacbeth Huey related functions
  *
@@ -18,7 +18,7 @@
 
 /* 
    If you make use of the instrument driver code here, please note
-   that it is the author(s) of the code who take responsibility
+   that it is the author(s) of the code who are responsibility
    for its operation. Any problems or queries regarding driving
    instruments with the Argyll drivers, should be directed to
    the Argyll's author(s), and not to any other party.
@@ -187,7 +187,7 @@ huey_command(
 		se = p->icom->hid_write(p->icom, buf, 8, &wbytes, to); 
 	} else {
 		se = p->icom->usb_control(p->icom,
-		      IUSB_ENDPOINT_OUT | IUSB_REQ_TYPE_CLASS | IUSB_REQ_RECIP_INTERFACE, 0x9, 0x200, 0, buf, 8, to);
+		      IUSB_ENDPOINT_OUT | IUSB_REQ_TYPE_CLASS | IUSB_REQ_RECIP_INTERFACE, 0x9, 0x200, 0, buf, 8, NULL, to);
 		wbytes = 8;
 	}
 	if (se != 0) {
@@ -942,7 +942,7 @@ huey_read_all_regs(
 	if ((ev = huey_rdreg_word(p, &p->ser_no, 0) ) != inst_ok)
 		return ev;
 	a1logd(p->log,4,"serial number = %d\n",p->ser_no);
-
+	sprintf(p->serno, "%u",p->ser_no);
 
 	/* LCD/user calibration values */
 	for (i = 0; i < 9; i++) {
@@ -1170,6 +1170,17 @@ huey_init_inst(inst *pp) {
 	return inst_ok;
 }
 
+static char *huey_get_serial_no(inst *pp) {
+	huey *p = (huey *)pp;
+	
+	if (!pp->gotcoms)
+		return "";
+	if (!pp->inited)
+		return "";
+
+	return p->serno;
+}
+
 /* Read a single sample */
 /* Return the dtp error code */
 static inst_code
@@ -1233,6 +1244,7 @@ instClamping clamp) {		/* NZ if clamp XYZ/Lab to be +ve */
 		val->mtype = inst_mrt_ambient;
 	else
 		val->mtype = inst_mrt_none;
+	val->mcond = inst_mrc_none;
 	val->XYZ_v = 1;		/* These are absolute XYZ readings ? */
 	val->sp.spec_n = 0;
 	val->duration = 0.0;
@@ -1757,6 +1769,7 @@ extern huey *new_huey(icoms *icom, instType dtype) {
 
 	p->init_coms         = huey_init_coms;
 	p->init_inst         = huey_init_inst;
+	p->get_serial_no     = huey_get_serial_no;
 	p->capabilities      = huey_capabilities;
 	p->check_mode        = huey_check_mode;
 	p->set_mode          = huey_set_mode;

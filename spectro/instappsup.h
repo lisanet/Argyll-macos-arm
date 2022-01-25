@@ -4,7 +4,7 @@
 /* Instrument command line application support functions */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   15/3/2001
@@ -85,8 +85,10 @@ inst_code inst_handle_calibrate(
 
 /* A helper function to display -y flag usage for each instrument type available */
 /* Return accumulated capabilities2 of all the instruments. */
-/* If docbib is nz, then only display the base calibration display types */
-inst2_capability inst_show_disptype_options(FILE *fp, char *oline, icompaths *icmps, int docbib);
+/* If docbib is nz, then only display the base calibration display types. */
+/* If openallisnt is nz, then open even slow serial instruments for specific info. */
+inst2_capability inst_show_disptype_options(FILE *fp, char *oline, icompaths *icmps,
+                                            int docbib, int openallinst);
 
 /* A helper function to turn a -y flag into a list index */
 /* If docbib is nz, then only allow base calibration display types */

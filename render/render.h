@@ -282,7 +282,8 @@ double mat[2][2]	/* Unity orientation matrix */
 typedef enum {
 	tiff_file,		/* Write a TIFF format file */
 	png_file,		/* Write a PNG format file */
-	png_mem			/* Write a PNG image to a memory buffer */
+	png_mem,		/* Write a PNG image to a memory buffer */
+	mem_rast		/* Write a memory raster */
 } rend_format;
 
 /* ------------------------------------ */
@@ -316,6 +317,9 @@ struct _render2d {
 	prim2d *yl;				/* Active Y list linked list head */
 	prim2d *xl;				/* Active X list linked list head */
 
+	int ppitch;				/* if mem_rast, pixel pitch in bytes */
+	int lpitch;				/* if mem_rast, line pitch in bytes */
+
 /* Public: */
 	/* Methods */
 	void (*del)(struct _render2d *s);					/* Free ourselves and all primitives */
@@ -331,8 +335,15 @@ struct _render2d {
 
 	int (*write)(struct _render2d *s, char *filename, int comprn,
 		unsigned char **obuf, size_t *olen,
-	    rend_format fmt);
-												/* Render and write to a TIFF or PNG file */
+	    rend_format fmt);								/* Render and write to a TIFF or PNG file */
+
+	void (*rast_details)(struct _render2d *s,
+		int *width,										/* Return raster width in pixels */
+		int *height,									/* Return raster width in pixels */
+		int *ppitch,									/* Return pixel pitch in bytes */
+		int *lpitch										/* Return line pitch in bytes */
+	);
+
 }; typedef struct _render2d render2d;
 
 /* Constructor */
@@ -348,8 +359,8 @@ render2d *new_render2d(
 	int dither,		/* Dither flag, 1 = ordered, 2 = error diffusion, | 0x8000 to dither FG only */
 					/* | 0x4000 don't anti-alias by averaging pixels together. */
 	void (*quant)(void *qcntx, double *out, double *in), /* optional quantization func. for edith */
-	void *qcntx,
-	double mxerr	/* Maximum error diffusion error */
+	void *qcntx,	/* Optional context for quant */
+	double mxerr	/* Maximum error diffusion error (0.0 for default) */
 );
 
 #endif /* RENDER2D_H */

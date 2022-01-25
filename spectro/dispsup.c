@@ -1,7 +1,7 @@
 
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Common display patch reading support.
  *
  * Author: Graeme W. Gill
@@ -208,7 +208,7 @@ inst_code setup_display_calibrate(
 
 /* -------------------------------------------------------- */
 /* User requested calibration of the display instrument */
-/* Do all available non-deferrable calibrations */
+/* Do all available non-deferrable calibrations. */
 /* Should add an argument to be able to select type of calibration, */
 /* rather than guessing what the user wants ? */
 int disprd_calibration(
@@ -587,6 +587,7 @@ static int disprd_read_imp(
 		double rgb[3];
 
 		scb->mtype = inst_mrt_none;
+		scb->mcond = inst_mrc_none;
 		scb->XYZ_v = 0;		/* No readings are valid */
 		scb->sp.spec_n = 0;
 		scb->duration = 0.0;
@@ -633,6 +634,7 @@ static int disprd_read_imp(
 		/* Until we give up retrying */
 		for (;;) {
 			val.mtype = inst_mrt_none;
+			val.mcond = inst_mrc_none;
 			val.XYZ_v = 0;		/* No readings are valid */
 			val.sp.spec_n = 0;
 			val.duration = 0.0;
@@ -750,6 +752,7 @@ static int disprd_read_imp(
 		                val.XYZ[0], val.XYZ[1], val.XYZ[2]);
 
 		scb->mtype = val.mtype;
+		scb->mcond = val.mcond;
 
 		/* Copy XYZ */
 		if (val.XYZ_v != 0) {
@@ -1290,6 +1293,7 @@ int disprd_ambient(
 	for (;;) {
 		char ch;
 		val.mtype = inst_mrt_none;
+		val.mcond = inst_mrc_none;
 		val.XYZ_v = 0;		/* No readings are valid */
 		val.sp.spec_n = 0;
 		val.duration = 0.0;
@@ -1629,6 +1633,7 @@ static int disprd_fake_read(
 		cols[patch].XYZ_v = 1;
 		cols[patch].sp.spec_n = 0;
 		cols[patch].mtype = inst_mrt_emission;
+		cols[patch].mcond = inst_mrc_none;
 	}
 	if (acr && spat != 0 && tpat != 0 && (spat+patch-1) == tpat)
 		a1logv(p->log, 1, "\n");
@@ -1744,6 +1749,7 @@ static int disprd_fake_read_lu(
 		cols[patch].XYZ_v = 1;
 		cols[patch].sp.spec_n = 0;
 		cols[patch].mtype = inst_mrt_emission;
+		cols[patch].mcond = inst_mrc_none;
 	}
 	if (acr && spat != 0 && tpat != 0 && (spat+patch-1) == tpat)
 		a1logv(p->log, 1, "\n");
@@ -1873,6 +1879,7 @@ static int disprd_fake_read_co(disprd *p,
 			icmClamp3(cols[patch].XYZ, cols[patch].XYZ);
 		cols[patch].XYZ_v = 1;
 		cols[patch].mtype = inst_mrt_emission;
+		cols[patch].mcond = inst_mrc_none;
 
 		a1logv(p->log, 2, "Read XYZ %f %f %f from '%s'\n", cols[patch].XYZ[0],
 			                     cols[patch].XYZ[1],cols[patch].XYZ[2], cmd);
@@ -2032,6 +2039,7 @@ static int disprd_fake_read_manual(disprd *p,
 				icmClamp3(cols[patch].XYZ, cols[patch].XYZ);
 			cols[patch].XYZ_v = 1;
 			cols[patch].mtype = inst_mrt_emission;
+			cols[patch].mcond = inst_mrc_none;
 			printf(" Got XYZ value %f %f %f\n",cols[patch].XYZ[0], cols[patch].XYZ[1], cols[patch].XYZ[2]);
 			/* Advance to next patch. */
 			patch++;

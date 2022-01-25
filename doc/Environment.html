@@ -63,11 +63,11 @@
     <br>
     <div style="margin-left: 40px;">Normally Argylls tools expect that
       they are directly interacting with a user, and use a couple of
-      techniques for communicating with them through the command line.
-      One is to output progress information by re-writing the same
-      display line by using a Carriage Return rather than a Line Feed at
-      the end of each line. Another is to allow a single key stroke to
-      trigger an action or interrupt operations.<br>
+      techniques for communicating with them through the console and
+      command line. One is to output progress information by re-writing
+      the same display line by using a Carriage Return rather than a
+      Line Feed at the end of each line. Another is to allow a single
+      key stroke to trigger an action or interrupt operations.<br>
       <br>
       If the <span style="font-weight: bold;">ARGYLL_NOT_INTERACTIVE</span>
       environment variable is set, then:<br>
@@ -75,19 +75,18 @@
       &nbsp;&nbsp;&nbsp; A Line Feed will be added to the end of each
       progress line.<br>
       <br>
-      &nbsp;&nbsp;&nbsp; Any time it would wait for a single keystroke
-      input, it will instead wait for and read the next character from
-      stdin.<br>
-      &nbsp;&nbsp;&nbsp; To facilitate flushing stdin, any return or
-      line feed characters will be ignored, so a character other than
-      return or line feed must be used to trigger activity.<br>
+      &nbsp;&nbsp;&nbsp; Any time it would wait for a single console
+      keystroke input, it will instead wait for and read the next
+      character and a return from stdin.<br>
+      &nbsp;&nbsp;&nbsp; The first character read will be used, and any
+      following return characters ignored.<br>
       <br>
-      &nbsp;&nbsp;&nbsp; Note that while a reading is being made, a
-      character input can abort the reading, just as with normal
-      interactive mode.<br>
+      &nbsp;&nbsp;&nbsp; Note that while a measurement is being made, a
+      character input (i.e. stdin character followed by a return) can
+      abort the reading, just as with normal interactive mode.<br>
       <br>
-      &nbsp;&nbsp;&nbsp; Note that on MSWin systems, the character and
-      return or line fee characters must be written to stdin in a single
+      &nbsp;&nbsp;&nbsp; On MSWin systems, the character and return or
+      line feed characters must be written to stdin in a single
       operation (i.e. testing <span style="font-weight: bold;">ARGYLL_NOT_INTERACTIVE&nbsp;
 
 
@@ -103,8 +102,11 @@
 
 
 
+
+
+
       </span>mode manually will probably fail, because the character and
-      return get split up.)<br>
+      return get split up unless you are very fast at typing them.)<br>
     </div>
     <span style="font-weight: bold;"></span><br>
     <b><a name="ARGYLL_3D_DISP_FORMAT"></a>ARGYLL_3D_DISP_FORMAT<br>
@@ -130,8 +132,14 @@
 
 
 
+
+
+
       </b>or <b>X3DOM</b>, which will result in <b>.wrl</b>, <b>.x3d</b>
       and <b>.x3d.html</b> files respectively. See <a href="3dformat">3d
+
+
+
 
 
 
@@ -197,6 +205,9 @@ a
 
 
 
+
+
+
       delay of 200 msec is allowed between changing a patch color in
       software, and that change appearing in the displayed color itself.
       For some instuments (ie. i1d3, i1pro, ColorMunki, Klein K10-A)
@@ -212,6 +223,9 @@ a
 
 
 environment
+
+
+
 
 
 
@@ -382,6 +396,9 @@ environment
 
 
 
+
+
+
       for more details.)<span style="font-weight: bold;"><span
           style="font-weight: bold;"><span style="font-weight: bold;"><span
               style="font-weight: bold;"><span style="font-weight:
@@ -393,6 +410,9 @@ environment
                               style="font-weight: bold;"> <br>
                               <br>
                             </span></span></span></span></span></span></span></span></span></span></span></span>To
+
+
+
 
 
 
@@ -416,7 +436,13 @@ environment
 
 
 
+
+
+
                             </span></span></span></span></span></span></span></span></span></span></span></span>environment
+
+
+
 
 
 
@@ -497,11 +523,11 @@ environment
           style="font-weight: bold;"><span style="font-weight: bold;"> </span></span></span><br>
       <a name="ARGYLL_IGNORE_COLORD"></a>ARGYLL_USE_COLORD</span><br>
     <blockquote><small><small>By default </small></small>ArgyllCMS
-      &gt;= V 1.9.4&nbsp; will use its native <a
-        href="ucmm.html">ucmm</a> to store
-      display ICC profiles on Linux based systems, but if the&nbsp;<b>ARGYLL_USE_COLORD</b>
-      environment variable is set, it will attempt to use the Gnome <b>colord</b>
-      storage instead.<span style="font-weight: bold;"></span></blockquote>
+      &gt;= V 1.9.4&nbsp; will use its native <a href="ucmm.html">ucmm</a>
+      to store display ICC profiles on Linux based systems, but if
+      the&nbsp;<b>ARGYLL_USE_COLORD</b> environment variable is set, it
+      will attempt to use the Gnome <b>colord</b> storage instead.<span
+        style="font-weight: bold;"></span></blockquote>
     <span style="font-weight: bold;"><a
         name="ARGYLL_DISABLE_I1PRO2_DRIVER"></a>ARGYLL_DISABLE_I1PRO2_DRIVER<br>
       <br>
@@ -564,6 +590,9 @@ href="http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html">XD
 
 
 Base
+
+
+
 
 
 

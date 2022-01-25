@@ -3149,6 +3149,7 @@ int                quality			/* Quality metric, 0..3 */
 		} else {
 			/* We assume that the output target is well behaved, */
 			/* and that it includes a white point patch. */
+			/* Avarage together all the white patches values. */
 			int nw = 0;
 
 			wp[0] = wp[1] = wp[2] = 0.0;
@@ -3202,21 +3203,22 @@ int                quality			/* Quality metric, 0..3 */
 					minwp[0] = minwp[1] = minwp[2] = 0.0;
 					maxwp[0] = maxwp[1] = maxwp[2] = 0.0;
 
-					/* Look for both */
+					/* Look for both min & max */
 					for (i = 0; i < nodpbw; i++) {
-						if (ipoints[i].p[0] < 0.001)
+						if (ipoints[i].p[0] < 0.001) {
 							minwp[0] += ipoints[i].v[0];
 							minwp[1] += ipoints[i].v[1];
-							minwp[2] += ipoints[i].v[2]; {
+							minwp[2] += ipoints[i].v[2];
 							nminwp++;
 						}
-						if (ipoints[i].p[0] > 0.999)
+						if (ipoints[i].p[0] > 0.999) {
 							maxwp[0] += ipoints[i].v[0];
 							maxwp[1] += ipoints[i].v[1];
-							maxwp[2] += ipoints[i].v[2]; {
+							maxwp[2] += ipoints[i].v[2];
 							nmaxwp++;
 						}
 					}
+					/* And use the one we need */
 					if (nminwp > 0) {			/* Subtractive */
 						wp[0] = minwp[0];
 						wp[1] = minwp[1];
@@ -3254,6 +3256,8 @@ int                quality			/* Quality metric, 0..3 */
 				p->del((icxLuBase *)p);
 				return NULL;
 			}
+
+			/* Compute average */
 			wp[0] /= (double)nw;
 			wp[1] /= (double)nw;
 			wp[2] /= (double)nw;

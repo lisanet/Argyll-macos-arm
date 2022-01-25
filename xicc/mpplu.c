@@ -220,7 +220,7 @@ main(int argc, char *argv[]) {
 
 					spec = 1;
 					illum = icxIT_custom;
-					if (read_xspect(&cust_illum, &mt, na) != 0)
+					if (read_xspect(&cust_illum, &mt, NULL, na) != 0)
 						usage();
 
 					if (mt != inst_mrt_none

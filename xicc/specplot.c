@@ -358,6 +358,7 @@ main(
 		for (;;) {
 			int i, nret, nreq;
 			inst_meas_type mt;
+			inst_meas_cond mc;
 
 			/* If we've got to the limit of each plot, */
 			/* or at least one and we're not combining files and at start of a new file, */
@@ -374,7 +375,7 @@ main(
 			/* Read as many spectra from the file as possible */
 			nreq = MAXGRAPHS - nsp;
 
-			if (read_nxspect(&sp[nsp], &mt, argv[fa], &nret, soff, nreq, 0) != 0) {
+			if (read_nxspect(&sp[nsp], &mt, &mc, argv[fa], &nret, soff, nreq, 0) != 0) {
 				error ("Unable to read custom spectrum, CMF or CCSS '%s'",argv[fa]);
 			}
 

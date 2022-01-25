@@ -18,7 +18,7 @@ HDRS = ../h ../icc ../cgats ../xicc ../spectro ../gamut
 LINKLIBS = ../icc/libicc ../xicc/libxicc
            ../spectro/libinsttypes ../gamut/libgamut
            ../gamut/libgammap ../rspl/librspl 
-           ../cgats/libcgats ../numlib/libnum
+           ../cgats/libcgats ../spectro/libconv ../numlib/libnum
            ../plot/libplot ../plot/libvrml ../numlib/libui $(LibWin) ;
 
 LINKFLAGS += $(GUILINKFLAGS) ;

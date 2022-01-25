@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Synthetic device target chart reader
  *
  * Author: Graeme W. Gill

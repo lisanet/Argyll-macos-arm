@@ -1,5 +1,5 @@
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Average one or more .ti3 (or other CGATS like) file values together.
  * If just one file is supplied, all patches within it with
  * the same device value are averaged together. 

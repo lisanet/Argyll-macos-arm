@@ -3,7 +3,7 @@
 /* performance. Version uses direct bwd cell nnrev[] creation */ 
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized spline data structure
  *
  * Reverse interpolation support code.

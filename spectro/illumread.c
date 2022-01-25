@@ -2,7 +2,7 @@
  /* Illuminant measurement utility */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Author: Graeme W. Gill
  * Date:   3/10/2001
  *
@@ -436,17 +436,17 @@ int main(int argc, char *argv[])
 	
 		/* Special debug */
 		strcpy(tnp, "_i.sp");
-		if (read_xspect(&i_sp, NULL, tname) == 0) {
+		if (read_xspect(&i_sp, NULL, NULL, tname) == 0) {
 			rd_i = 1;
 			printf("(Found '%s' file and loaded it)\n",tname);
 		}
 		strcpy(tnp, "_r.sp");
-		if (read_xspect(&r_sp, NULL, tname) == 0) {
+		if (read_xspect(&r_sp, NULL, NULL, tname) == 0) {
 			rd_r = 1;
 			printf("(Found '%s' file and loaded it)\n",tname);
 		}
 		strcpy(tnp, "_p.sp");
-		if (read_xspect(&p_sp, NULL, tname) == 0) {
+		if (read_xspect(&p_sp, NULL, NULL, tname) == 0) {
 			rd_p = 1;
 			/* Should read instrument type from debug_p.sp !! */
 			if (inst_illuminant(&insp, instI1Pro) != 0)		/* Hack !! */
@@ -930,13 +930,13 @@ int main(int argc, char *argv[])
 				i_sp = val.sp;
 				if (tmode && rd_i == 0) {
 					strcpy(tnp, "_i.sp");
-					write_xspect(tname, inst_mrt_emission, &i_sp);
+					write_xspect(tname, inst_mrt_emission, inst_mrc_none, &i_sp);
 				}
 			} else if (c == '2') {	/* Illuminant reflected on paper */
 				r_sp = val.sp;
 				if (tmode && rd_r == 0) {
 					strcpy(tnp, "_r.sp");
-					write_xspect(tname, inst_mrt_emission, &r_sp);
+					write_xspect(tname, inst_mrt_emission, inst_mrc_none, &r_sp);
 				}
 			} else if (c == '3') {	/* Paper reflectance */
 				p_sp = val.sp;
@@ -948,7 +948,7 @@ int main(int argc, char *argv[])
 				if (tmode && rd_p == 0) {
 					/* Should save instrument type/instrument illuminant spectrum !!! */
 					strcpy(tnp, "_p.sp");
-					write_xspect(tname, inst_mrt_reflective, &p_sp);
+					write_xspect(tname, inst_mrt_reflective, inst_mrc_none, &p_sp);
 				}
 			}
 
@@ -1130,16 +1130,16 @@ int main(int argc, char *argv[])
 				for (i = 0; i < ill.spec_n; i++)
 					ill.spec[i] = aill.spec[i]/nacc;
 				
-				if(write_xspect(outname, inst_mrt_ambient, &ill))
+				if (write_xspect(outname, inst_mrt_ambient, inst_mrc_none, &ill))
 					printf("\nWriting file '%s' failed\n",outname);
 				else
 					printf("\nWriting file '%s' succeeded\n",outname);
 
 				if (tmode) {
 					strcpy(tnp, "_mpir.sp");		// Measured paper under illuminant spectrum
-					write_xspect(tname, inst_mrt_reflective, &bf.srop);
+					write_xspect(tname, inst_mrt_reflective, inst_mrc_none, &bf.srop);
 					strcpy(tnp, "_cpir.sp");		// Computed paper under illuminant spectrum
-					write_xspect(tname, inst_mrt_reflective, &bf.cpsp);
+					write_xspect(tname, inst_mrt_reflective, inst_mrc_none, &bf.cpsp);
 				}
 			}
 

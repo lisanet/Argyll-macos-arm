@@ -6,7 +6,7 @@
  */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   2008/2/9
@@ -121,6 +121,8 @@ void sa_Lab2XYZ(sa_XYZNumber *w, double *out, double *in);
 void sa_XYZ2Lab(sa_XYZNumber *w, double *out, double *in);
 void sa_Yxy2XYZ(double *out, double *in);
 
+void sa_Add3(double out[3], double in1[3], double in2[3]);
+
 #define icColorSpaceSignature sa_ColorSpaceSignature
 #define icSigXYZData sa_SigXYZData
 #define icSigLabData sa_SigLabData
@@ -178,10 +180,15 @@ void sa_Yxy2XYZ(double *out, double *in);
 #define icmInverse3x3 sa_Inverse3x3
 #define icmTranspose3x3 sa_Transpose3x3
 
+#define icmSet3(d_ary, s_val) ((d_ary)[0] = (s_val), (d_ary)[1] = (s_val), \
+                              (d_ary)[2] = (s_val))
 #define icmCpy3(d_ary, s_ary) ((d_ary)[0] = (s_ary)[0], (d_ary)[1] = (s_ary)[1], \
                               (d_ary)[2] = (s_ary)[2])
 #define icmScale3 sa_Scale3
 #define icmClamp3 sa_Clamp3
+
+#define icmAdd3 sa_Add3
+#define rand32 sa_rand32
 
 #define icmAry2XYZ(xyz, ary) ((xyz).X = (ary)[0], (xyz).Y = (ary)[1], (xyz).Z = (ary)[2])
 

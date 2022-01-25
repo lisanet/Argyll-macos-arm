@@ -29,7 +29,9 @@
 #define AA_LINES			/* Plot diagnostics using anti-aliased lines */
 
 #define MATCHCC 0.25		/* Match correlation threshold - reject any match under this */
-							/* (Might want to be able to override this in command line) */
+							/* (Might want to be able to override this in command line ?) */
+
+#define WMATCHCCR 0.5		/* Worst match correlation min. threshold ratio to best */
 
 #define ALT_ROT_TH 0.7		/* Correlation threshold of alternate rotations to be greater than this */
 
@@ -143,7 +145,6 @@ void *ddata			/* Opaque data for write_line */
 			if (s->flags & SI_SHOW_LINES) {
 				s->flags &= ~SI_SHOW_PERS;	/* Calc perspective failed! */
 				s->flags &= ~SI_SHOW_ROT;	/* Calc rotation not done! */
-				show_lines(s);
 			}
 			goto sierr;			/* Error */
 		}
@@ -154,7 +155,6 @@ void *ddata			/* Opaque data for write_line */
 	if (calc_rotation(s)) {
 		if (s->flags & SI_SHOW_LINES) {
 			s->flags &= ~SI_SHOW_ROT;	/* Calc rotation failed! */
-			show_lines(s);
 		}
 		goto sierr;			/* Error */
 	}
@@ -237,8 +237,9 @@ void *ddata			/* Opaque data for write_line */
 					if (s->verb >= 2)
 						DBG((dbgo,"About to compute match transform for rotation %f deg.\n",
 						          DEG(s->rots[s->crot].irot)));
-					if (compute_ptrans(s))
+					if (compute_ptrans(s)) {
 						goto sierr;
+					}
 			
 					/* Setup the input boxes ready for scanning in the input values */
 					if (s->verb >= 2)
@@ -307,11 +308,11 @@ void *ddata			/* Opaque data for write_line */
 			show_sbox(s);		/* Draw sample box outlines on diagnostic raster */
 		}
 	}
+sierr:;
 	if (s->flags & SI_SHOW_LINES)
 		if(show_lines(s))
 			goto sierr;		/* Error */
 
-sierr:;
 	if (s->verb >= 2)
 		DBG((dbgo,"About to write diag file\n"));
 	if (scanrd_write_diag(s))
@@ -1949,12 +1950,12 @@ int ref			/* 1 if generating reference lists */
 /********************************************************************************/
 /* Write the elists out to a file */
 
-/* Increment a string counter */
+/* Increment a string counter/label */
 static void
 strinc(
 char *s
 ) {
-	int i,n,c;	/* Length of string and carry flag */
+	int i,n,c;	/* Index, length of string and carry flag */
 	n = strlen(s);
 	for (c = 1, i = n-1; i >= 0 && c != 0; i--) {
 		char sval = ' ';
@@ -1974,10 +1975,10 @@ char *s
 			s[i]++;
 			c = 0;
 		}
-		if (i == 0 && c != 0) {
-			/* Assume there is some more space */
+		if (i == 0 && c != 0) {	/* If we've run out of space to the left */
+			/* Assume there is some more space to the right */
 			for (i = n; i >= 0; i--)
-				s[i+1] = s[i];
+				s[i+1] = s[i];			/* Shuffle right */
 			s[0] = sval;
 			break;
 		}
@@ -2101,7 +2102,7 @@ scanrd_ *s
 			strcpy(xf,xfix1);
 			for(;;) {	/* Do X increment */
 				if (i >= s->nsbox) {
-					em = "More BOXes that declared";
+					em = "More BOXes than declared";
 					goto read_error;
 				}
 				/* '_' is used as a null string marker for single character single cells */
@@ -2619,6 +2620,8 @@ scanrd_ *s
 ) {
 	ematch  xx, yy, xy, yx, xix, yiy, xiy, yix;	/* All 8 matches needed to detect rotations */
 	double r0, r90, r180, r270;			/* Correlation for each extra rotation of target */
+	double rr[4], bcc, wcc;
+	int i;
 
 	/* Check out all the matches */
 	if (s->verb >= 2) DBG((dbgo,"Checking xx\n"));
@@ -2669,15 +2672,34 @@ scanrd_ *s
 	r270 = sqrt(xy.cc * xy.cc + yix.cc * yix.cc)
 	     * (xy.scale > yix.scale ? yix.scale/xy.scale : xy.scale/yix.scale);
 
-	if (s->verb >= 2)
+	rr[0] = r0;
+	rr[1] = r90;
+	rr[2] = r180;
+	rr[3] = r270;
+
+	bcc = -1.0;
+	for (i = 0; i < 4; i++) {
+		if (rr[i] > bcc)
+			bcc = rr[i];
+	}
+	wcc = bcc;
+	for (i = 0; i < 4; i++) {
+		if (rr[i] < wcc)
+			wcc = rr[i];
+	}
+
+	if (s->verb >= 2) {
 		DBG((dbgo,"r0 = %f, r90 = %f, r180 = %f, r270 = %f\n",r0,r90,r180,r270));
+		DBG((dbgo,"bcc = %f, wcc = %f\n",bcc, wcc));
+	}
 
 	s->norots = 0;
 	if (s->flags & SI_GENERAL_ROT) { /* If general rotation allowed */
 		if (s->xpt == 0) {		/* No expected color information to check rotations agaist */
 								/* so choose the single best rotation by the edge matching */
 			DBG((dbgo,"There is no expected color information, so best fit rotations will be used\n"));
-			if (r0 >= MATCHCC && r0 >= r90 && r0 >= r180 && r0 >= r270) {
+			if (r0 >= MATCHCC && r0 >= r90 && r0 >= r180 && r0 >= r270
+			    && wcc < (WMATCHCCR * bcc)) {
 				s->rots[0].ixoff   = -xx.off; 
 				s->rots[0].ixscale = 1.0/xx.scale;
 				s->rots[0].iyoff   = -yy.off;
@@ -2685,7 +2707,8 @@ scanrd_ *s
 				s->rots[0].irot    = s->irot;
 				s->rots[0].cc      = r0;
 				s->norots = 1;
-			} else if (r90 >= MATCHCC && r90 >= r180 && r90 >= r270) {
+			} else if (r90 >= MATCHCC && r90 >= r180 && r90 >= r270
+			    && wcc < (WMATCHCCR * bcc)) {
 				s->rots[0].ixoff   = -xiy.off;
 				s->rots[0].ixscale = 1.0/xiy.scale;
 				s->rots[0].iyoff   = -yx.off;
@@ -2693,7 +2716,8 @@ scanrd_ *s
 				s->rots[0].irot    = s->irot + M_PI_2;
 				s->rots[0].cc      = r90;
 				s->norots = 1;
-			} else if (r180 >= MATCHCC && r180 >= r270) {
+			} else if (r180 >= MATCHCC && r180 >= r270
+			    && wcc < (WMATCHCCR * bcc)) {
 				s->rots[0].ixoff   = -xix.off;
 				s->rots[0].ixscale = 1.0/xix.scale;
 				s->rots[0].iyoff   = -yiy.off;
@@ -2701,7 +2725,8 @@ scanrd_ *s
 				s->rots[0].irot    = s->irot + M_PI;
 				s->rots[0].cc      = r180;
 				s->norots = 1;
-			} else if (r270 >= MATCHCC) {	/* 270 extra target rotation */
+			} else if (r270 >= MATCHCC
+			    && wcc < (WMATCHCCR * bcc)) {
 				s->rots[0].ixoff   = -xy.off;
 				s->rots[0].ixscale = 1.0/xy.scale;
 				s->rots[0].iyoff   = -yix.off;
@@ -2712,23 +2737,14 @@ scanrd_ *s
 			}
 
 		} else {	/* Got expected color info, so try reasonable rotations */
-			double bcc;		/* Best correlation coeff */
+			double arcc;
 
-			if (r0 >= r90 && r0 >= r180 && r0 >= r270)
-				bcc = r0;
-			else if (r90 >= r180 && r90 >= r270)
-				bcc = r90;
-			else if (r180 >= r270)
-				bcc = r180;
-			else 
-				bcc = r270;
-
-			bcc *= ALT_ROT_TH;		/* Threshold for allowing alternate rotation */
-			if (bcc < MATCHCC)
-				bcc = MATCHCC;
+			arcc = bcc * ALT_ROT_TH;		/* Threshold for allowing alternate rotation */
+			if (arcc < MATCHCC)
+				arcc = MATCHCC;
 
 			s->norots = 0;
-			if (r0 >= bcc) {
+			if (r0 >= arcc && wcc < (WMATCHCCR * bcc)) {
 				s->rots[s->norots].ixoff   = -xx.off; 
 				s->rots[s->norots].ixscale = 1.0/xx.scale;
 				s->rots[s->norots].iyoff   = -yy.off;
@@ -2737,7 +2753,7 @@ scanrd_ *s
 				s->rots[s->norots].cc      = r0;
 				s->norots++;
 			}
-			if (r90 >= bcc) {
+			if (r90 >= arcc && wcc < (WMATCHCCR * bcc)) {
 				s->rots[s->norots].ixoff   = -xiy.off;
 				s->rots[s->norots].ixscale = 1.0/xiy.scale;
 				s->rots[s->norots].iyoff   = -yx.off;
@@ -2746,7 +2762,7 @@ scanrd_ *s
 				s->rots[s->norots].cc      = r90;
 				s->norots++;
 			}
-			if (r180 >= bcc) {
+			if (r180 >= arcc && wcc < (WMATCHCCR * bcc)) {
 				s->rots[s->norots].ixoff   = -xix.off;
 				s->rots[s->norots].ixscale = 1.0/xix.scale;
 				s->rots[s->norots].iyoff   = -yiy.off;
@@ -2755,7 +2771,7 @@ scanrd_ *s
 				s->rots[s->norots].cc      = r180;
 				s->norots++;
 			}
-			if (r270 >= bcc) {
+			if (r270 >= arcc && wcc < (WMATCHCCR * bcc)) {
 				s->rots[s->norots].ixoff   = -xy.off;
 				s->rots[s->norots].ixscale = 1.0/xy.scale;
 				s->rots[s->norots].iyoff   = -yix.off;

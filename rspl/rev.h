@@ -2,7 +2,7 @@
 #define RSPL_REV_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized spline data structure
  *
  * Reverse interpolation support code.

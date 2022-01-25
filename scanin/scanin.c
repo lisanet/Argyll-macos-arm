@@ -1375,8 +1375,9 @@ int main(int argc, char *argv[])
 				for (j = 0; j < npat; j++) {
 					char id[100];		/* Reference patch id */
 
-					if (odhash != idhash[j])	/* Fast reject */
+					if (odhash != idhash[j]) {	/* Fast reject */
 						continue;
+					}
 
 					/* Normalise reference labels */
 					fix_it8(id, ((char *)icg->t[0].fdata[j][sx]));	/* Copy and fix */
@@ -1416,6 +1417,7 @@ int main(int argc, char *argv[])
 
 						break;
 					}
+
 					if (j >= npat && verb >= 1)
 						printf("Warning: Couldn't match field '%s'\n",od);
 				}
@@ -1452,6 +1454,7 @@ int main(int argc, char *argv[])
 
 /* Fix IT8 chart labels */
 void fix_it8(char *o, char *i) {
+	/* Some hacks for it8 */
 	if (strcmp(i,"Dmin")==0) {
 		strcpy(o,"GS00");
 		return;
@@ -1460,6 +1463,7 @@ void fix_it8(char *o, char *i) {
 		strcpy(o,"GS23");
 		return;
 	}
+
 	while (!isdigit(*i) && *i != '\000') 	/* Skip non-numbers */
 		*o++ = *i++; 
 	if (i[0] != '\000' && i[1] == '\000')	/* Single last digit */

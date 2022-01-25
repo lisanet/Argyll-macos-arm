@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional regularized spline data structure
  *
  * Precice gamut surface, gamut pruning, ink limiting and K min/max

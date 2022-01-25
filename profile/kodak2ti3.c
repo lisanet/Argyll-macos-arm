@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Read in the raw data from a Kodak print profile,
  * and convert it into a .ti3 CGATs format suitable for

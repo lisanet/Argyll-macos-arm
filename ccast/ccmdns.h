@@ -24,7 +24,7 @@
 typedef enum {
 	cctyp_unkn = 0,			/* Unknown */
 	cctyp_1,				/* Chromecast 1 or General Video */
-	cctyp_2,				/* Chromecast 2 */
+	cctyp_2,				/* Chromecast 2 (Can't be detected though - id will be cctyp_1) */
 	cctyp_Audio,			/* Chromecast Audio or General Audio */
 	cctyp_Ultra,			/* Chromecast Ultra */
 	cctyp_Other				/* Non Video/Audio output device */

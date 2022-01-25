@@ -7,7 +7,7 @@ PREF_LINKFLAGS	+= $(LINKDEBUGFLAG) ;
 #Products
 Libraries = libprof ;
 Executables = cb2ti3 kodak2ti3 txt2ti3 cxf2ti3 ls2ti3 splitti3 mppcheck mppprof
-              profcheck invprofcheck colverify colprof printcal applycal ;
+              profcheck invprofcheck colverify colprof printcal applycal iccvcgt ;
 Headers = prof.h ;
 Samples = example.sp example121.sp 3dap5k.sp GTIPlus.sp Office.sp Trulux.sp TruluxPlus.sp
 		D50_0.0.sp D50_0.1.sp D50_0.3.sp D50_0.5.sp D50_0.7.sp D50_1.0.sp D50_1.2.sp
@@ -27,8 +27,8 @@ HDRS = ../h ../icc ../cgats ../rspl
 Library libprof : profin.c profout.c ;
 
 
-LINKLIBS = ../rspl/librspl ../icc/libicc ../cgats/libcgats ../numlib/libnum ../plot/libplot
-           ../plot/libvrml ../numlib/libui ;
+LINKLIBS = ../rspl/librspl ../icc/libicc ../cgats/libcgats ../spectro/libconv ../numlib/libnum
+           ../plot/libplot ../plot/libvrml ../numlib/libui ;
 
 LINKFLAGS += $(GUILINKFLAGS) ;
 
@@ -83,6 +83,9 @@ Main printcal : printcal.c : : : $(TIFFINC) $(JPEGINC) ;
 
 # Applying calibration
 Main applycal : applycal.c ;
+
+# Changing an ICC profile vcgt 
+Main iccvcgt : iccvcgt.c ;
 
 # Optimised Separation Generator
 #Main sepgen : sepgen.c ;

@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Input device profile creator.
  *
  * Author: Graeme W. Gill

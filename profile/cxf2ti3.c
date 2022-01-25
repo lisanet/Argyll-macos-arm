@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * CxF to CIE/TI1/TI2/TI3 conversion utility.
  *
  * Author: Graeme W. Gill
@@ -104,13 +104,16 @@ type_cb(mxml_node_t *node) {
 	// <ReflectanceSpectrum MeasureDate="2003-09-28T12:15:33-05:00"_ColorSpecification="CSD65-2" Name="45/0 Spectral" StartWL="400" NumPoints="31" Increment="10">
 	// 0.0580 0.0594 0.0594 0.0584 0.0581 0.0591 0.0599 0.0601 0.0603 0.0610 0.0634 0.0695 0.0760 0.0786 0.0798 0.0826 0.0897 0.1024 0.1197 0.1350 0.1434 0.1455 0.1499 0.1594 0.1721 0.1842 0.1913 0.1928 0.1878 0.1734 0.1704
 
-	if (pfxcmp(pname, "ColorValues") == 0
+	if ((   pfxcmp(pname, "ColorValues") == 0
+	     || pfxcmp(pname, "ColourValues") == 0)
 	 && pfxcmp(name, "ReflectanceSpectrum") == 0)
 		return MXML_REAL;
 //		return MXML_OPAQUE;
 
 	if ((pfxcmp(pname, "ColorCIELab") == 0
-	  || pfxcmp(pname, "ColorSpaceCIELab") == 0)
+	  || pfxcmp(pname, "ColorSpaceCIELab") == 0
+	  || pfxcmp(pname, "ColourCIELab") == 0
+	  || pfxcmp(pname, "ColourSpaceCIELab") == 0)
 	 && (pfxcmp(name, "L") == 0
 	  || pfxcmp(name, "A") == 0
 	  || pfxcmp(name, "B") == 0))
@@ -118,21 +121,28 @@ type_cb(mxml_node_t *node) {
 
 	if ((pfxcmp(pname, "ColorCIEXYZ") == 0
 	  || pfxcmp(pname, "ColorIEXYZ") == 0
-	  || pfxcmp(pname, "ColorSpaceCIEXYZ") == 0)
+	  || pfxcmp(pname, "ColorSpaceCIEXYZ") == 0
+	  || pfxcmp(pname, "ColourCIEXYZ") == 0
+	  || pfxcmp(pname, "ColourIEXYZ") == 0
+	  || pfxcmp(pname, "ColourSpaceCIEXYZ") == 0)
 	 && (pfxcmp(name, "X") == 0
 	  || pfxcmp(name, "Y") == 0
 	  || pfxcmp(name, "Z") == 0))
 		return MXML_REAL;
 
 	if ((pfxcmp(pname, "ColorSRGB") == 0
-	  || pfxcmp(pname, "ColorSpaceSRGB") == 0)
+	  || pfxcmp(pname, "ColorSpaceSRGB") == 0
+	  || pfxcmp(pname, "ColourSRGB") == 0
+	  || pfxcmp(pname, "ColourSpaceSRGB") == 0)
 	 && (pfxcmp(name, "R") == 0
 	  || pfxcmp(name, "G") == 0
 	  || pfxcmp(name, "B") == 0))
 		return MXML_REAL;
 
 	if ((pfxcmp(pname, "ColorCMYK") == 0
-	  || pfxcmp(pname, "ColorSpaceCMYK") == 0)
+	  || pfxcmp(pname, "ColorSpaceCMYK") == 0
+	  || pfxcmp(pname, "ColourCMYK") == 0
+	  || pfxcmp(pname, "ColourSpaceCMYK") == 0)
 	 && (pfxcmp(name, "Cyan") == 0
 	  || pfxcmp(name, "Magenta") == 0
 	  || pfxcmp(name, "Yellow") == 0
@@ -148,7 +158,8 @@ type_cb(mxml_node_t *node) {
 
 	if ((pfxcmp(pname, "IlluminationOptions") == 0
 	  || pfxcmp(pname, "TristimulusSpec") == 0
-	  || pfxcmp(pname, "ColorSpaceSpecificationSpectrumTristimulus") == 0)
+	  || pfxcmp(pname, "ColorSpaceSpecificationSpectrumTristimulus") == 0
+	  || pfxcmp(pname, "ColourSpaceSpecificationSpectrumTristimulus") == 0)
 	 && (pfxcmp(name, "Illuminant") == 0
 	  || pfxcmp(name, "Observer") == 0
 	  || pfxcmp(name, "FieldOfView") == 0))
@@ -555,13 +566,15 @@ main(int argc, char *argv[]) {
 			/* Known values are: Standard, Color */
 			/* May be Trial, Target, Substrate, Colorant, ... ? */
 			if (strcmp(attr, "Standard") != 0
-			 && strcmp(attr, "Color") != 0) {
+			 && strcmp(attr, "Color") != 0
+			 && strcmp(attr, "Colour") != 0) {
 				a1logd(g_log, 6, "cxf2ti3: skipping node with ObjectType = '%s'\n",attr);
 				goto next;							/* Skip this one */
 			}
 #endif
 
-			if ((ppvals = mxmlFindElement(node, node, pfx(&ctx,"ColorValues"), NULL, NULL, MXML_DESCEND_FIRST)) == NULL) {
+			if ((ppvals = mxmlFindElement(node, node, pfx(&ctx,"ColorValues"), NULL, NULL, MXML_DESCEND_FIRST)) == NULL
+			 && (ppvals = mxmlFindElement(node, node, pfx(&ctx,"ColourValues"), NULL, NULL, MXML_DESCEND_FIRST)) == NULL) {
 				a1logd(g_log, 4, "cxf2ti3: no reference ColorValues element - skipping\n");
 				goto next;
 			}
@@ -580,13 +593,29 @@ main(int argc, char *argv[]) {
 					nsetel++;
 					has_loc = 1;	
 				} else {
-					setel[six++].c = strdup(attr);  
+					char *mattr = strdup(attr);
+
+					if (mattr == NULL)
+						error("strdup failed in %s at %d",__FILE__,__LINE__);
+
+					/* Hmm. Some .cxf files appear to have bodgy patch id's with a trailing */
+					/* space. This wrecks matching to an expected patch name for a given type */
+					/* of chart. Patch it up by truncating trailing spaces. */
+					for (j = strlen(mattr)-1; j >= 0; j--) {
+						if (mattr[j] == ' ')
+							mattr[j] = '\000';
+						else
+							break;
+					} 
+					setel[six++].c = mattr;  
 				}
 			}
 
 			/* See if there is ColorCIELab */
 			if ((pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorCIELab"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
-			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceCIELab"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceCIELab"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourCIELab"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourSpaceCIELab"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
 				char *key[3] = { "L", "A", "B" };
 
 				a1logd(g_log, 4, "cxf2ti3: got ColorCIELab\n");
@@ -594,7 +623,10 @@ main(int argc, char *argv[]) {
 				/* Check which color specification is being used with Lab */
 				if (LabSpecification == NULL) {
 					LabSpecification = mxmlElementGetAttr(pvals, "ColorSpecification");
-					a1logd(g_log, 4, "cxf2ti3: got LabSpecification '%s'\n",LabSpecification); 
+					if (LabSpecification == NULL)
+						LabSpecification = mxmlElementGetAttr(pvals, "ColourSpecification");
+					if (LabSpecification != NULL)
+						a1logd(g_log, 4, "cxf2ti3: got LabSpecification '%s'\n",LabSpecification); 
 				}
 
 				for (j = 0; j < 3; j++) {
@@ -625,7 +657,10 @@ main(int argc, char *argv[]) {
 			/* See if there is ColorCIEXYZ */
 			if ((pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorCIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
 			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
-			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceCIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceCIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourCIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+			 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourSpaceCIEXYZ"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
 				char *key[3] = { "X", "Y", "Z" };
 
 				a1logd(g_log, 4, "cxf2ti3: got ColorCIEXYZ\n");
@@ -633,7 +668,10 @@ main(int argc, char *argv[]) {
 				/* Check which color specification is being used with XYZ */
 				if (XYZSpecification == NULL) {
 					XYZSpecification = mxmlElementGetAttr(pvals, "ColorSpecification");
-					a1logd(g_log, 4, "cxf2ti3: got XYZSpecification '%s'\n",XYZSpecification); 
+					if (XYZSpecification == NULL)
+						XYZSpecification = mxmlElementGetAttr(pvals, "ColourSpecification");
+					if (XYZSpecification != NULL)
+						a1logd(g_log, 4, "cxf2ti3: got XYZSpecification '%s'\n",XYZSpecification); 
 				}
 
 				for (j = 0; j < 3; j++) {
@@ -670,7 +708,10 @@ main(int argc, char *argv[]) {
 				/* Check which color specification is being used with XYZ */
 				if (SpectSpecification == NULL) {
 					SpectSpecification = mxmlElementGetAttr(pvals, "ColorSpecification");
-					a1logd(g_log, 4, "cxf2ti3: got SpectSpecification '%s'\n",SpectSpecification); 
+					if (SpectSpecification == NULL)
+						SpectSpecification = mxmlElementGetAttr(pvals, "ColourSpecification");
+					if (SpectSpecification != NULL)
+						a1logd(g_log, 4, "cxf2ti3: got SpectSpecification '%s'\n",SpectSpecification); 
 				}
 
 				if ((elem = mxmlElementGetAttr(pvals, "StartWL")) != NULL) {
@@ -754,7 +795,8 @@ main(int argc, char *argv[]) {
 			}
 		
 			/* Read any device color values */
-			if ((ppvals = mxmlFindElement(node, node, pfx(&ctx,"DeviceColorValues"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
+			if ((ppvals = mxmlFindElement(node, node, pfx(&ctx,"DeviceColorValues"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+			 || (ppvals = mxmlFindElement(node, node, pfx(&ctx,"DeviceColourValues"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
 
 				a1logd(g_log, 4, "cxf2ti3: got DeviceColorValues\n");
 			}
@@ -765,7 +807,9 @@ main(int argc, char *argv[]) {
 
 				/* See if there is ColorRGB */
 				if ((pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorRGB"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
-				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceRGB"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
+				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceRGB"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourRGB"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourSpaceRGB"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
 					char *key[3] = { "Red", "Green", "Blue" };
 
 					a1logd(g_log, 4, "cxf2ti3: got ColorRGB\n");
@@ -797,7 +841,9 @@ main(int argc, char *argv[]) {
 
 				/* See if there is ColorCMYK */
 				if ((pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorCMYK"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
-				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceCMYK"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
+				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColorSpaceCMYK"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourCMYK"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL
+				 || (pvals = mxmlFindElement(ppvals, ppvals, pfx(&ctx,"ColourSpaceCMYK"), NULL, NULL, MXML_DESCEND_FIRST)) != NULL) {
 					char *key[4] = { "Cyan", "Magenta", "Yellow", "Black" };
 
 					a1logd(g_log, 4, "cxf2ti3: got ColorCMYK\n");

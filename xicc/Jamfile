@@ -16,6 +16,12 @@ InstallFile $(DESTDIR)$(PREFIX)/bin : $(Samples) ;
 #InstallFile $(DESTDIR)$(PREFIX)/h : $(Headers) ;
 #InstallLib  $(DESTDIR)$(PREFIX)/lib : $(Libraries) ;
 
+if $(USE_PLOT) = true {
+	DEFINES += EN_PLOT ; 
+} else {
+	UNDEFS += $(UNDEFFLAG)EN_PLOT ; 
+}
+
 HDRS = ../h ../icc ../rspl ../cgats ../numlib ../gamut ../spectro ../profile
        ../plot ../render $(TIFFINC) $(JPEGINC) $(LibWinH) ;
 
@@ -37,7 +43,7 @@ LibraryFromObjects libxutils : xutils2 iccjpeg2 ;
 
 LINKLIBS = libxicc ../spectro/libinsttypes ../gamut/libgamut ../rspl/librspl
            ../cgats/libcgats ../icc/libicc ../plot/libplot ../plot/libvrml
-           ../numlib/libnum ../numlib/libui
+           ../spectro/libconv ../numlib/libnum ../numlib/libui
            $(TIFFLIB) $(JPEGLIB) ; 
 
 LINKFLAGS += $(GUILINKFLAGS) ;
@@ -121,7 +127,8 @@ Main specsubsamp : specsubsamp.c ;
 Main specplot : specplot.c ;
 
 # CAM test routines
-Main cam97test : cam97test.c ;
+Main bluelin : bluelin.c ;
+Main cam02test : cam02test.c ;
 Main cam02test : cam02test.c ;
 
 # Test utility for moncurve

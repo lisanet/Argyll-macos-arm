@@ -13720,7 +13720,7 @@ void icmSqr3(double out[3], double in[3]) {
 		out[i] = in[i] * in[i];
 }
 
-/* Suqare root of values */
+/* Square root of values */
 void icmSqrt3(double out[3], double in[3]) {
 	int i;
 
@@ -13736,6 +13736,19 @@ void icmAbs3(double out[3], double in[3]) {
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/* Dump a 3x3 matrix to a stream */
+void icmDump3x3(FILE *fp, char *id, char *pfx, double a[3][3]) {
+	int i, j;
+	fprintf(fp, "%s%s[%d][%d]\n",pfx,id,3,3);
+
+	for (j = 0; j < 3; j++) {
+		fprintf(fp, "%s ",pfx);
+		for (i = 0; i < 3; i++)
+			fprintf(fp, "%f%s",a[j][i], i < (3-1) ? ", " : "");
+		fprintf(fp, "\n");
+	}
+}
 
 /* Set a 3x3 matrix to a value */
 void icmSetVal3x3(double mat[3][3], double val) {
@@ -13758,7 +13771,6 @@ void icmSetUnity3x3(double mat[3][3]) {
 				mat[j][i] = 0.0;
 		}
 	}
-	
 }
 
 /* Copy a 3x3 transform matrix */
@@ -13990,6 +14002,19 @@ double in[3][3]
         for(j = 0; j < 3; j++)
 		    out[i][j] /= det;
 	return 0;
+}
+
+/* Set a 2x2 matrix to unity */
+void icmSetUnity2x2(double mat[2][2]) {
+	int i, j;
+	for (j = 0; j < 2; j++) {
+		for (i = 0; i < 2; i++) {
+			if (i == j)
+				mat[j][i] = 1.0;
+			else
+				mat[j][i] = 0.0;
+		}
+	}
 }
 
 /* Invert a 2x2 transform matrix. Return 1 if error. */
@@ -14651,17 +14676,6 @@ double icmNorm22sq(double in1[2], double in0[2]) {
 	return rv;
 }
 
-/* Multiply 2 array by 2x2 transform matrix */
-void icmMulBy2x2(double out[2], double mat[2][2], double in[2]) {
-	double tt[2];
-
-	tt[0] = mat[0][0] * in[0] + mat[0][1] * in[1];
-	tt[1] = mat[1][0] * in[0] + mat[1][1] * in[1];
-
-	out[0] = tt[0];
-	out[1] = tt[1];
-}
-
 /* Compute the dot product of two 2 vectors */
 double icmDot2(double in1[2], double in2[2]) {
 	return in1[0] * in2[0] + in1[1] * in2[1];
@@ -14878,6 +14892,67 @@ void icmScaleAdd2(double out[3], double in2[2], double in1[2], double rat) {
 	out[1] = in2[1] + in1[1] * rat;
 }
 
+
+/* Convert orientation 0 = right, 1 = down, 2 = left, 3 = right */
+/* into rotation matrix */
+static void icmOr2mat(double mat[2][2], int or) {
+	if (or == 0) {
+		mat[0][0] = 1.0; 
+		mat[0][1] = 0.0; 
+		mat[1][0] = 0.0; 
+		mat[1][1] = 1.0; 
+	} else if (or == 1) {
+		mat[0][0] = 0.0; 
+		mat[0][1] = 1.0; 
+		mat[1][0] = -1.0; 
+		mat[1][1] = 0.0; 
+	} else if (or == 2) {
+		mat[0][0] = -1.0; 
+		mat[0][1] = 0.0; 
+		mat[1][0] = 0.0; 
+		mat[1][1] = -1.0; 
+	} else {
+		mat[0][0] = 0.0; 
+		mat[0][1] = -1.0; 
+		mat[1][0] = 1.0; 
+		mat[1][1] = 0.0; 
+	}
+}
+
+/* Convert an angle in radians into rotation matrix (0 = right) */
+void icmRad2mat(double mat[2][2], double rad) {
+	double sinv = sin(rad);
+	double cosv = cos(rad);
+	mat[0][0] = cosv;
+	mat[0][1] = -sinv;
+	mat[1][0] = sinv;
+	mat[1][1] = cosv;
+}
+
+/* Convert an angle in degrees (0 = right) into rotation matrix */
+void icmDeg2mat(double mat[2][2], double a) {
+	double rad = a * 3.1415926535897932384626433832795/180.0;
+	icmRad2mat(mat, rad);
+}
+
+/* Convert a vector into a rotation matrix */
+void icmVec2mat(double mat[2][2], double dx, double dy) {
+	double rad = atan2(dy, dx);
+	icmRad2mat(mat, rad);
+}
+
+/* Multiply 2 array by 2x2 transform matrix */
+void icmMulBy2x2(double out[2], double mat[2][2], double in[2]) {
+	double tt[2];
+
+	tt[0] = mat[0][0] * in[0] + mat[0][1] * in[1];
+	tt[1] = mat[1][0] * in[0] + mat[1][1] * in[1];
+
+	out[0] = tt[0];
+	out[1] = tt[1];
+}
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - */
 /* CIE Y (range 0 .. 1) to perceptual CIE 1976 L* (range 0 .. 100) */
 double
@@ -14967,7 +15042,7 @@ icmLab2XYZ(icmXYZNumber *w, double *out, double *in) {
  * This is a modern update to L*a*b*, based on IPT space.
  *
  * Differences to L*a*b* and IPT:
- *	Using inverse CIE 2012 2degree LMS to XYZ matrix instead of Hunt-Pointer-Estevez.
+ *	Using inverse CIE 2012 2 degree LMS to XYZ matrix instead of Hunt-Pointer-Estevez.
  *  Von Kries chromatic adapation in LMS cone space.
  *  Using L* compression rather than IPT pure 0.43 power.
  *  Tweaked LMS' to IPT matrix to account for change in XYZ to LMS matrix.

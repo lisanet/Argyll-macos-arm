@@ -1,7 +1,7 @@
 
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Dummy (non existant) target patch window.
  * Allows for shell callout function.
  *

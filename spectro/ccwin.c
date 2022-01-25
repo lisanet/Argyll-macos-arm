@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * ChromeCast Display target patch window
  *
  * Author: Graeme W. Gill
@@ -38,11 +38,20 @@
 						/* [def] 1 = use error diffusion dithering with ccast quant model */
 						/*       2 = use crafted 4x4 dither cell */
 
-#define VWIDTH  1920.0	/* Video stream and display size */
+#define VWIDTH  1920.0	/* Video stream and display size ? */
 #define VHEIGHT 1080.0
 
+/* Definitions for cctyp_1 */
 #define IWIDTH  1280.0	/* This is the native still image framebuffer size for ChromeCasts */
 #define IHEIGHT 720.0
+
+/* 2K Definitions for cctyp_Ultra ? */
+#define IWIDTH_H  1920.0
+#define IHEIGHT_H 1080.0
+
+/* 4K Definitions for cctyp_Ultra ? */
+#define IWIDTH_U  3840.0
+#define IHEIGHT_U 2160.0
 
 //#define STANDALONE_TEST
 

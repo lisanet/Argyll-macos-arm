@@ -2,7 +2,7 @@
 #ifndef CCWIN_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * ChromeCast Display target patch window
  *
  * Author: Graeme W. Gill

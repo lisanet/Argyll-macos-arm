@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Inverse profile checker.
  *
  * Author: Graeme W. Gill

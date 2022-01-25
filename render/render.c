@@ -334,7 +334,13 @@ static int render2d_write(
 	int png_samplesperpixel = 0;
 #endif
 
-	unsigned char *outbuf = NULL;
+	/* Memory raster output info */
+	unsigned char *rast = NULL;
+	int rast_len = 0;
+	int ppitch;
+	int lpitch;
+
+	unsigned char *outbuf = NULL;		/* Line output buffer at depth and pixel size */ 
 	unsigned char *dithbuf16 = NULL;	/* 16 bit buffer for dithering */
 	thscreens *screen = NULL;			/* dithering object */
 	int foundfg;						/* Found a forground object in this line */
@@ -600,6 +606,30 @@ static int render2d_write(
 		return 1;
 #endif	/* !PNG */
 		
+	} else if (fmt == mem_rast) {
+		
+		switch (s->dpth) {
+			case bpc8_2d:		/* 8 bits per component */
+				s->ppitch = s->ncc * 1;
+				break;
+			case bpc16_2d:		/* 16 bits per component */
+				s->ppitch = s->ncc * 2;
+				break;
+			default:
+				a1loge(g_log, 1, "render2d: Illegal bits per component\n");
+				return 1;
+		}
+
+		s->lpitch = s->ppitch * s->pw;
+		s->lpitch = (s->lpitch + 7) & ~7;
+
+		/* Allocate raster */
+		rast_len = s->lpitch * s->pw;
+		if ((rast = malloc(rast_len)) == NULL) {
+			a1loge(g_log, 1, "malloc of memory raster failed\n");
+			return 1;
+		}
+
 	} else {
 		a1loge(g_log, 1, "render2d: Illegal output format %d\n",fmt);
 		return 1;
@@ -695,6 +725,10 @@ static int render2d_write(
 #undef HEAP_COMPARE
 		xli = 0;
 		s->xl = NULL;
+
+		
+		if (fmt == mem_rast)
+			outbuf = rast + y * s->lpitch;
 
 		for (x = -1; x < s->pw; x++) {
 			int j;
@@ -988,15 +1022,41 @@ static int render2d_write(
 		if (fmt == png_file) {
 			fclose(png_fp);
 		} else if (fmt == png_mem) {
-			*obuf = png_minfo.buf;
-			*olen = png_minfo.off;
+			if (obuf != NULL)
+				*obuf = png_minfo.buf;
+			if (olen != NULL)
+				*olen = png_minfo.off;
 		}
 #endif	/* PNG */
+	} else if (fmt == mem_rast) {
+		if (obuf != NULL)
+			*obuf = rast;
+		if (olen != NULL)
+			*olen = rast_len;
+		rast = NULL;
 	}
 
 	so->del(so);
 
 	return 0;
+}
+
+/* Return memory raster details */
+static void render2d_rast_details(
+	render2d *s,
+	int *width,			/* Return raster width in pixels */
+	int *height,		/* Return raster width in pixels */
+	int *ppitch,		/* Return pixel pitch in bytes */
+	int *lpitch			/* Return line pitch in bytes */
+) {
+	if (width != NULL)
+		*width = s->pw;
+	if (height != NULL)
+		*height = s->ph;
+	if (ppitch != NULL)
+		*ppitch = s->ppitch;
+	if (lpitch != NULL)
+		*lpitch = s->lpitch;
 }
 
 /* Constructor */
@@ -1056,6 +1116,7 @@ double mxerr	/* Maximum error diffusion error */
 	s->set_bg_func = render2d_set_bg_func;
 	s->add = render2d_add;
 	s->write = render2d_write;
+	s->rast_details = render2d_rast_details;
 
 	/* Figure the raster size and actuall size */
 	s->pw = (int)(s->hres * w + 0.5);
@@ -1815,6 +1876,8 @@ struct _hyfont {
 hyfont fonts[];
 
 double h2dbl(unsigned char c) { return (double)(c-'R'); }
+
+/* NOTE icm library has these functions too.. */
 
 /* Convert orientation 0 = right, 1 = down, 2 = left, 3 = right */
 /* into transform matrix */

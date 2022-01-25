@@ -114,7 +114,7 @@
 #define PNTR UINT_PTR
 
 #define PF64PREC "I64"				/* printf format precision specifier */
-#define CF64PREC "LL"				/* Constant precision specifier */
+#define CF64PREC "i64"				/* Constant precision specifier */
 
 #ifndef ATTRIBUTE_NORETURN
 # define ATTRIBUTE_NORETURN __declspec(noreturn)
@@ -233,6 +233,17 @@
 #ifndef DBL_PI
 #define DBL_PI         3.1415926535897932384626433832795
 #endif
+#ifndef DBL_E
+#define DBL_E          2.7182818284590452353602874713526
+#endif
+
+/*
+
+	INT_MIN
+	INT_MAX
+
+
+*/
 
 /* =========================================================== */
 /* General verbose, debug, warning and error logging object and functions */
@@ -351,6 +362,10 @@ void a1loge(a1log *log, int ecode, char *fmt, ...);
 /* Unlatch an error message. */
 /* This resets errc and errm */
 void a1logue(a1log *log);
+
+/* Print bytes as hex to FILE */
+/* base is the base of the displayed offset */
+void dump_bytes(FILE *fp, char *pfx, unsigned char *buf, int base, int len);
 
 /* Print bytes as hex to debug log */
 /* base is the base of the displayed offset */
@@ -534,6 +549,10 @@ double matrix_max_diff(double **d, double **s, int nr,  int nc);
 /* Set zero based dvector */
 void vect_set(double *d, double v, int len);
 
+/* Set random dvector */
+/* See rand.h */
+/* void vect_rand(double *d, double min, double max, int len); */
+
 /* Copy zero based dvector */
 #define vect_cpy(dd, ss, len) memmove((char *)(dd), (char *)(ss), (len) * sizeof(double))
 
@@ -558,19 +577,48 @@ void vect_sub3(double *d, double *s1, double *s2, int len);
 /* Invert and copy a vector, d = 1/s */
 void vect_invert(double *d, double *s, int len);
 
+/* Multiply the dest by the vector, d *= s */
+void vect_mul(double *d, double *s, int len);
+
 /* Multiply the elements of two vectors, d = s1 * s2 */
 void vect_mul3(double *d, double *s1, double *s2, int len);
+
+/* Divide the destination by the source, d /= s */
+void vect_div(double *d, double *s, int len);
 
 /* Divide the elements of two vectors, d = s1 / s2 */
 void vect_div3(double *d, double *s1, double *s2, int len);
 
-/* Blend two vectors, d = bl * s1 + (1 - bl) * s2 */
+/* Divide the elements of two vectors, d = s1 / s2 */
+/* Return 1.0 if s2 < 1e-6 */
+void vect_div3_safe(double *d, double *s1, double *s2, int len);
+
+/* Multiply and divide, d *= s1 / s2 */
+void vect_muldiv(double *d, double *s1, double *s2, int len);
+
+/* Multiply and divide, d *= s1 / s2 */
+/* Don't change d if s2 < 1e-6 */
+void vect_muldiv_safe(double *d, double *s1, double *s2, int len);
+
+/* Multiply and divide, d = s1 * s2 / s3 */
+void vect_muldiv3(double *d, double *s1, double *s2, double *s3, int len);
+
+/* Return the maximum elements from two vectors */
+void vect_max_elem(double *d, double *s, int len);
+
+/* Return the maximum elements from two vectors */
+void vect_max_elem3(double *d, double *s1, double *s2, int len);
+
 /* Blend between s0 and s1 for bl 0..1 */
+/* i.e. d = (1 - bl) * s0 + bl * s1 */
 void vect_blend(double *d, double *s0, double *s1, double bl, int len);
 
 /* Scale a vector, */
-/* d may be same as v */
+/* d may be same as 2 */
 void vect_scale(double *d, double *s, double scale, int len);
+
+/* 1 argument scale a vector, */
+void vect_scale1(double *d, double scale, int len);
 
 /* Scale s and add to d */
 void vect_scaleadd(double *d, double *s, double scale, int len);
@@ -587,12 +635,27 @@ double vect_magsq(double *s, int len);
 /* Return the magnitude (norm) of the difference between two vectors */
 double vect_diffmag(double *s1, double *s2, int len);
 
+/* Return the sum of the vectors elements */
+double vect_sum(double *s, int len);
+
+/* Return the average value of the elements of a vector */
+double vect_avg(double *s1, int len);
+
 /* Return the normalized vectors */
 /* Return nz if norm is zero */
 int vect_normalize(double *d, double *s, int len);
 
-/* Return the vectors elements maximum magnitude (+ve) */
+/* Return the vectors elements maximum absolute magnitude */
+double vect_max_mag(double *s, int len);
+
+/* Return the vectors elements maximum value */
 double vect_max(double *s, int len);
+
+/* Return the elements maximum value from two vectors */
+double vect_max2(double *s1, int len1, double *s2, int len2);
+
+/* Return the vectors elements minimum value */
+double vect_min(double *s, int len);
 
 /* Take absolute of each element */
 void vect_abs(double *d, double *s, int len);
@@ -601,16 +664,57 @@ void vect_abs(double *d, double *s, int len);
 void vect_spow(double *d, double *s, double pv, int len);
 
 /* Clip to a range */
-void vect_clip(double *d, double *s, double min, double max, int len);
+/* Return NZ if any clipping occured */
+/* d may be null */
+int vect_clip(double *d, double *s, double min, double max, int len);
 
 /* Compare two vectors and return nz if they are the same */
 int vect_cmp(double *s1, double *s2, int len);
+
+
+
+/* Linearly search a vector from 0 for a given value. */
+/* The must be ordered from smallest to largest. */
+/* The returned index is p[ix] <= val < p[ix+1] */
+/* Clip to the range of the vector 0..len-1 */
+int vect_lsearch(double *p, double in, int len);
+
+/* Binary search a vector from 0 for a given value. */
+/* The must be ordered from smallest to largest. */
+/* The returned index is p[ix] <= val < p[ix+1] */
+/* Clip to the range of the vector 0..len-1 */
+int vect_bsearch(double *p, double in, int len);
+
+
+/* Do a linear interpolation into a vector */
+/* Input 0.0 .. 1.0, clips result if outside that range */
+double vect_lerp(double *s, double in, int len);
+
+/* Do a reverse linear interpolation into a vector. */
+/* This uses a simple search for the given value, */
+/* and so will return the reverse interpolation of the */
+/* matching span with the smallest index value. */ 
+/* Output 0.0 .. 1.0, clips result if outside that range to the */
+/* closest index. */
+double vect_rev_lerp(double *s, double in, int len);
+
+
+/* Do a linear interpolation into a vector pair, position->value. */
+/* It is assumed that p[] is in sorted smallest to largest order, */
+/* and that the entries are distinct. */
+/* If input is outside range of p[], then the returned value will be */
+/* linearly extrapolated. */
+double vect_lerp2x(double *p, double *v, double in, int len);
+
+/* Same as above, but clip rather than extrapolating. */
+double vect_lerp2(double *p, double *v, double in, int len);
 
 /* Copy zero based ivector */
 #define ivect_cpy(dd, ss, len) memmove((char *)(dd), (char *)(ss), (len) * sizeof(int))
 
 /* Set zero based ivector */
 void ivect_set(int *d, int v, int len);
+
 
 /* Diagnostics */
 /* id identifies matrix/vector */
@@ -677,6 +781,8 @@ void matrix_TransposeNxN(int n, double *out, double *in);
 
 void acode_dmatrix(FILE *fp, char *id, char *pfx, double **a, int nr,  int nc, int hb);
 
+void acode_dvector(FILE *fp, char *id, char *pfx, double *v, int nc, int hb);
+
 /* =========================================================== */
 
 /* Cast a native double to an IEEE754 encoded single precision value, */
@@ -695,6 +801,7 @@ ORD64 doubletoIEEE754_64(double d);
 /* Cast an IEEE754 encoded double precision value to a native double, */
 /* in a platform independent fashion. */
 double IEEE754_64todouble(ORD64 ip);
+
 
 /* Return a string representation of a 32 bit ctime. */
 /* A static buffer is used. There is no \n at the end */
@@ -721,6 +828,7 @@ void write_ORD8(ORD8 *p, unsigned int d);
 int read_INR8(ORD8 *p);
 void write_INR8(ORD8 *p, int d);
 
+
 /* Unsigned 16 bit */
 unsigned int read_ORD16_be(ORD8 *p);
 unsigned int read_ORD16_le(ORD8 *p);
@@ -732,6 +840,7 @@ int read_INR16_be(ORD8 *p);
 int read_INR16_le(ORD8 *p);
 void write_INR16_be(ORD8 *p, int d);
 void write_INR16_le(ORD8 *p, int d);
+
 
 /* Unsigned 32 bit */
 unsigned int read_ORD32_be(ORD8 *p);
@@ -745,6 +854,7 @@ int read_INR32_le(ORD8 *p);
 void write_INR32_be(ORD8 *p, int d);
 void write_INR32_le(ORD8 *p, int d);
 
+
 /* Unsigned 64 bit */
 ORD64 read_ORD64_be(ORD8 *p);
 ORD64 read_ORD64_le(ORD8 *p);
@@ -756,6 +866,19 @@ INR64 read_INR64_be(ORD8 *p);
 INR64 read_INR64_le(ORD8 *p);
 void write_INR64_be(ORD8 *p, INR64 d);
 void write_INR64_le(ORD8 *p, INR64 d);
+
+
+/* IEEE 32 bit float */
+double read_FLT32_be(ORD8 *p);
+double read_FLT32_le(ORD8 *p);
+void write_FLT32_be(ORD8 *p, double d);
+void write_FLT32_le(ORD8 *p, double d);
+
+/* IEEE 64 bit float */
+double read_FLT64_be(ORD8 *p);
+double read_FLT64_le(ORD8 *p);
+void write_FLT64_be(ORD8 *p, double d);
+void write_FLT64_le(ORD8 *p, double d);
 
 /*******************************************/
 
@@ -798,6 +921,9 @@ char *debPfv(int di, float *p);
 #define isNFinite(x) ( isNan(x) || (x) < DBL_MIN || DBL_MAX < (x))
 #define isFinite(x) (!isNFinite(x))
 #endif
+
+/*******************************************/
+double gamma_func(double x);
 
 
 #ifdef __cplusplus

@@ -1,0 +1,84 @@
+
+Argyll Device Driver SDK propsal
+--------------------------------
+
+(Ideas on how to allow plug in binary USB instrument drivers).
+
+
+1)	Configure by configuration file in on of the following locations:
+	$XDG_CONFIG_DIRS.
+	$XDG_CONFIG_HOME
+	executable directory
+
+	The config file contains a list of .dll/.so's.
+
+
+2)	Need to define API in a comiler independend way by
+	declaring used structures alignment, and function call semantics.
+
+3)	API consists of setup and then sharing objects with
+	avialable methods. ArgyllCMS calls plugins, plugins
+	can call callbacks set.
+
+	Setup:
+
+		Version negotiation:
+
+			err NegotiateVersion(&maj, &min, &bfi, maj, min, bfix);
+
+				Argyll provides its version number, and the plugin returns its version number.
+				A major version number mismatch results in the plugin being ignored.
+
+		Device discovery:
+
+			int GetNumberOfDevices()
+
+				Plugin returns the number of types of devices that it supports.
+
+			getDeviceID(dix, &vid, &pid, &flag)
+
+				For the given device within the number supported (dix), return
+				the USB identifier for the instrument. 
+				If it clashes with an existing built in or plugin VID/PID, it
+				will be ignored, unless the flag is used to override.
+
+			setDeviceType(dix, devType dtype); 
+
+				Assign an Argyll devType enum to the device type.
+				This signals that the type has been succesfully registerd.
+
+			--------- or ---------------
+
+			devClass *getDeviceClass(dix, devType dtype)
+
+				where the device class contains methods for everything else.
+
+
+		Device instance creation:
+
+			inst *new_inst(
+				int dix,			/* Index of device type withing pluggin */
+    			icompath *path,     /* Device path this instrument */
+    			int nocoms,         /* Don't open if communications are needed to establish inst type */
+    			a1log *log,         /* Log to use */
+    			inst_code (*uicallback)(void *cntx, inst_ui_purp purp),     /* optional uicallback */
+    			void *cntx          /* Context for callback */
+			);
+
+			Virtual constructor for a given type of instrument.
+
+		Alternative to Argyll discovering devices would be to simply assign
+		the devType, and have a callback to the plugin for device
+		discovery. Would have to signal this instead of getDeviceID().
+		Would call this to get device presense info.
+
+Need to augment device class/instrument object to support other resources
+that a plugin can use (i.e. error logging), and other resources
+that the plugin should provide (i.e. insttypes functions).
+i.e. need device class object as well as instace (inst) oject.
+
+
+
+
+		
+

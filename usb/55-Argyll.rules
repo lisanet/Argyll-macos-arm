@@ -1,4 +1,4 @@
-# Version=1.7.0
+# Version=2.1.3
 # udev rule to recognize instruments and make them accessible to user applications.
 # Copy this to /etc/udev/rules.d/55-Argyll.rules
 # or           /usr/lib/udev/rules.d/55-Argyll.rules
@@ -7,7 +7,7 @@
 # NOTE that hex values must be lower case!
 
 #--------------------------------------------------------------------------
-# Copyright 2012 Graeme W. Gill.
+# Copyright 2021 Graeme W. Gill.
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this file, to deal in this file without restriction, including without
@@ -57,6 +57,9 @@ ATTRS{idVendor}=="0765", ATTRS{idProduct}=="6003", ENV{COLORD_SENSOR_KIND}="colo
 
 # ColorMunki i1 Studio
 ATTRS{idVendor}=="0765", ATTRS{idProduct}=="6008", ENV{COLORD_SENSOR_KIND}="color-munki-photo" ENV{COLORD_SENSOR_CAPS}="lcd crt projector printer spot ambient"
+
+# i1Pro3
+ATTRS{idVendor}=="0765", ATTRS{idProduct}=="6009", ENV{COLORD_SENSOR_KIND}="i1-pro" ENV{COLORD_SENSOR_CAPS}="lcd crt projector printer ambient"
 
 # DTP20
 ATTRS{idVendor}=="0765", ATTRS{idProduct}=="d020", ENV{COLORD_SENSOR_KIND}="dtp20" ENV{COLORD_SENSOR_CAPS}="printer spot"
@@ -132,9 +135,10 @@ ATTRS{idVendor}=="2457", ATTRS{idProduct}=="4000", ENV{COLORD_SENSOR_KIND}="ex1"
 #########################################################
 
 # Set ID_VENDOR and ID_MODEL acording to VID and PID
-#TEST=="/lib/udev/usb-db", IMPORT{program}="usb-db %p"
+# Try to remain backwards compatible with older systems...
 ENV{COLORD_SENSOR_KIND}=="*?", ENV{ID_MODEL}=="", IMPORT{program}="usb_id --export %p"
-ENV{COLORD_SENSOR_KIND}=="*?", ENV{ID_MODEL_FROM_DATABASE}=="", IMPORT{program}="usb-db %p"
+ENV{COLORD_SENSOR_KIND}=="*?", TEST=="/lib/udev/usb-db", ENV{ID_MODEL_FROM_DATABASE}=="", IMPORT{program}="usb-db %p"
+ENV{COLORD_SENSOR_KIND}=="*?", ENV{ID_MODEL_FROM_DATABASE}=="", IMPORT{builtin}="hwdb --subsystem=usb"
 
 # Is a color calibration device. 70-uaccess.rules may use this to set TAG+="uaccess",
 # but there is no way to know if this is the case from here.

@@ -2,7 +2,7 @@
 /* Abstract Video Test Patch Generator and/or 3dLUT class implemenation */
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Author: Graeme W. Gill
  * Date:   10/3/2001

@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * Image Engineering EX1 related functions
  *
@@ -18,7 +18,7 @@
 
 /* 
    If you make use of the instrument driver code here, please note
-   that it is the author(s) of the code who take responsibility
+   that it is the author(s) of the code who are responsibility
    for its operation. Any problems or queries regarding driving
    instruments with the Argyll drivers, should be directed to
    the Argyll's author(s), and not to any other party.
@@ -411,6 +411,17 @@ ex1_init_inst(inst *pp) {
 	return inst_ok;
 }
 
+static char *ex1_get_serial_no(inst *pp) {
+	ex1 *p = (ex1 *)pp;
+	
+	if (!pp->gotcoms)
+		return "";
+	if (!pp->inited)
+		return "";
+
+	return p->serno;
+}
+
 /* Do a raw measurement. */
 /* Will delete existing *praw */
 /* return EX1 error */
@@ -444,6 +455,7 @@ static int ex1_do_meas(ex1 *p, rspec **praw, double *inttime, double duration) {
 	}
 
 	sens->mtype = inst_mrt_emission;
+	sens->mcond = inst_mrc_none;
 	sens->inttime = p->inttime;
 
 	/* + Any other processing from sens to raw, */
@@ -645,6 +657,7 @@ instClamping clamp	/* NZ if clamp XYZ/Lab to be +ve */
 #endif
 
 	val->mtype = wav->mtype;
+	val->mcond = wav->mcond;
 
 	/* Copy spectral in */
 	val->sp.spec_n = sconf->nwav;
@@ -1230,6 +1243,7 @@ extern ex1 *new_ex1(icoms *icom, instType dtype) {
 
 	p->init_coms         = ex1_init_coms;
 	p->init_inst         = ex1_init_inst;
+	p->get_serial_no     = ex1_get_serial_no;
 	p->capabilities      = ex1_capabilities;
 	p->meas_config       = ex1_meas_config;
 	p->check_mode        = ex1_check_mode;

@@ -1,5 +1,5 @@
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * DTP92/Spectrolino display target reader
  *
  * Author: Graeme W. Gill
@@ -177,7 +177,7 @@ void usage(int flag, char *diag, ...) {
 	}
 	fprintf(stderr," -p                   Use telephoto mode (ie. for a projector, if available)\n");
 	fprintf(stderr," -a                   Use ambient measurement mode (ie. for a projector, if available)\n");
-	cap2 = inst_show_disptype_options(stderr, " -y                   ", icmps, 0);
+	cap2 = inst_show_disptype_options(stderr, " -y                   ", icmps, 0, 0);
 	fprintf(stderr," -k file.cal          Load calibration file into display while reading\n");
 	fprintf(stderr," -K file.cal          Apply calibration file to test values while reading\n");
 #ifdef NT
@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
 	icompaths *icmps = NULL;
 	icompath *ipath = NULL;
 	flow_control fc = fc_nc;			/* Default flow control */
-	int docalib = 0;					/* Do a calibration */
+	int docalib = 0;					/* Force a calibration */
 	int highres = 0;					/* Use high res mode if available */
 	double refrate = 0.0;			    /* 0.0 = default, > 0.0 = override refresh rate */ 
 	int nadaptive = 0;					/* Use non-adaptive mode if available */
@@ -724,6 +724,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (docalib) {
+		
+		if (verb) printf("Forcing a calibration\n");
+
 		if ((rv = disprd_calibration(ipath, fc, ditype, -1, 0, tele, ambient, nadaptive, noautocal, 
 			                         disp, webdisp, ccid,
 #ifdef NT
@@ -783,9 +786,7 @@ int main(int argc, char *argv[]) {
 	if ((ti = icg->find_kword(icg, 0, "DARK_REGION_EMPHASIS")) >= 0)
 		ocg->add_kword(ocg, 0, "DARK_REGION_EMPHASIS",icg->t[0].kdata[ti], NULL);
 
-	if (verb) {
-		printf("Number of patches = %d\n",npat);
-	}
+	if (verb) printf("Number of patches = %d\n",npat);
 
 	/* Fields we want */
 	ocg->add_field(ocg, 0, "SAMPLE_ID", nqcs_t);

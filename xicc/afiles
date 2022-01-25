@@ -51,6 +51,7 @@ cam02.h
 cam02ref.h
 cam02test.c
 cam02plot.c
+bluelin.c
 tm3015.h
 tm3015.c
 moncurve.c

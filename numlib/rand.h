@@ -32,11 +32,37 @@ double d2_rand(double min, double max);
 
 /* Return a random floating point number with a gausian/normal */
 /* distribution, centered about 0.0, with standard deviation 1.0 */
-/* and an average deviation of 0.564 */
+/* and an average deviation of sqrt(2/pi) */
+/* 0.79788456080286535587989211986876 = */
 double norm_rand(void);
 
-/* Scale normal value by this to give it a mean absolute deviation of 1.0 */
-#define NORM_RAND_ABS_SCALE 0.62665706865775
+/* Scale normal vector components by the following to give the vector */
+/* a mean absolute deviation of 1.0 for the corresponding dimension. */
+/* [ Formula is 1.0/(sqrt(2.0) * gamma_func((d+1.0)/2.0)/gamma_func(d/2.0)) ] */
+
+#define NORM_RAND_ABS_SCALE_1 1.25331413731550320
+#define NORM_RAND_ABS_SCALE_2 0.79788456080287129
+#define NORM_RAND_ABS_SCALE_3 0.62665706865775450
+#define NORM_RAND_ABS_SCALE_4 0.53192304053525241
+#define NORM_RAND_ABS_SCALE_5 0.46999280149331241
+#define NORM_RAND_ABS_SCALE_6 0.42553843242820782
+#define NORM_RAND_ABS_SCALE_7 0.39166066791109894
+#define NORM_RAND_ABS_SCALE_8 0.36474722779559393
+#define NORM_RAND_ABS_SCALE_9 0.34270308442220981
+#define NORM_RAND_ABS_SCALE_10 0.32421975804054332
+#define NORM_RAND_ABS_SCALE_11 0.30843277597999841
+#define NORM_RAND_ABS_SCALE_12 0.29474523458229918
+#define NORM_RAND_ABS_SCALE_13 0.28273004464831558
+#define NORM_RAND_ABS_SCALE_14 0.27207252422983330
+#define NORM_RAND_ABS_SCALE_15 0.26253504145918249
+#define NORM_RAND_ABS_SCALE_16 0.25393435594782049
+#define NORM_RAND_ABS_SCALE_17 0.24612660136794409
+#define NORM_RAND_ABS_SCALE_18 0.23899704089211726
+#define NORM_RAND_ABS_SCALE_19 0.23245290129195134
+
+/* Table of the above values indexed by dimension */
+#define NORM_RAND_ABS_SCALE_MAXD 19
+extern double NORM_RAND_ABS_SCALE[NORM_RAND_ABS_SCALE_MAXD+1];
 
 /* - - - - - - - - - - - - - - - */
 /* Explicit state random generator */
@@ -77,6 +103,9 @@ double d2_rand_th(rand_state *p, double min, double max);
 /* distribution, centered about 0.0, with standard deviation 1.0 */
 /* and an average deviation of 0.564 */
 double norm_rand_th(rand_state *p);
+
+/* Set random dvector */
+void vect_rand(double *d, double min, double max, int len);
 
 #ifdef __cplusplus
 	}

@@ -1,7 +1,7 @@
 #ifndef HUEY_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  *
  * GretagMacbeth Huey related defines
  *
@@ -19,7 +19,7 @@
 
 /* 
    If you make use of the instrument driver code here, please note
-   that it is the author(s) of the code who take responsibility
+   that it is the author(s) of the code who are responsibility
    for its operation. Any problems or queries regarding driving
    instruments with the Argyll drivers, should be directed to
    the Argyll's author(s), and not to any other party.
@@ -96,6 +96,7 @@ struct _huey {
 	/* EEPROM registers */
 	/* Number is the register address, and B, S, W, F indicate the type/size */
 	int     ser_no;				/* Serial number */
+	char    serno[20];			/* Serial number as a string */
 
 	double  LCD_cal[9];			/* LCD 3x3 calibration matrix */
 	int     LCD_caltime;		/* Calibration time in secs from January 1, 1970, UTC */

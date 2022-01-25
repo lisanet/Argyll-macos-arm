@@ -1,7 +1,7 @@
 
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Web Display target patch window
  *
  * Author: Graeme W. Gill

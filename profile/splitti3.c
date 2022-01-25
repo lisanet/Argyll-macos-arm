@@ -1,5 +1,5 @@
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Split a .ti3 (or other CGATS like) file into two parts.
  *
  * Author: Graeme W. Gill

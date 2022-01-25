@@ -1,6 +1,17 @@
 Misc technical notes
 --------------------
 
+Targeting OS X SDK to compile for older versions
+
+	See environment variables:
+
+	SDKROOT
+	MACOSX_DEPLOYMENT_TARGET
+
+	See <https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/cross_development/Configuring/configuring.html>
+	<https://firefox-source-docs.mozilla.org/widget/cocoa/sdks.html>
+	
+
 
 Things I'd like to standardise
 ------------------------------

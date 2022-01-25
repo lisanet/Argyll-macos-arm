@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Create a linear display calibration file.
  *
  * Author: Graeme W. Gill

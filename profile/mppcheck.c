@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Color Printer Device Model Profile checker.
  * Check an mpp profile against a .ti3 file.
  *

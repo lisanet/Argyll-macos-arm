@@ -1,6 +1,6 @@
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Multi-dimensional multilevel spline data fitter
  * mlbs base version.
  *

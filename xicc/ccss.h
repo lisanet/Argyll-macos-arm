@@ -2,7 +2,7 @@
 #define CCSS_H
 
 /* 
- * Argyll Color Correction System
+ * Argyll Color Management System
  * Colorimeter Calibration Spectral Set support.
  */
 

@@ -158,7 +158,40 @@ double norm_rand_th(rand_state *p) {
 	}
 }
 
+/* Set random dvector */
+void vect_rand(double *d, double min, double max, int len) {
+	int i;
+	for (i = 0; i < len; i++)
+		d[i] = d_rand(min, max);
+}
 
+/* =================================================================== */
+
+/* Scale normal value by this to give it a mean absolute deviation of 1.0 */
+/* for a given multi-variate dimension */
+
+double NORM_RAND_ABS_SCALE[NORM_RAND_ABS_SCALE_MAXD+1] = {
+	0.0, 
+	NORM_RAND_ABS_SCALE_1,
+	NORM_RAND_ABS_SCALE_2,
+	NORM_RAND_ABS_SCALE_3,
+	NORM_RAND_ABS_SCALE_4,
+	NORM_RAND_ABS_SCALE_5,
+	NORM_RAND_ABS_SCALE_6,
+	NORM_RAND_ABS_SCALE_7,
+	NORM_RAND_ABS_SCALE_8,
+	NORM_RAND_ABS_SCALE_9,
+	NORM_RAND_ABS_SCALE_10,
+	NORM_RAND_ABS_SCALE_11,
+	NORM_RAND_ABS_SCALE_12,
+	NORM_RAND_ABS_SCALE_13,
+	NORM_RAND_ABS_SCALE_14,
+	NORM_RAND_ABS_SCALE_15,
+	NORM_RAND_ABS_SCALE_16,
+	NORM_RAND_ABS_SCALE_17,
+	NORM_RAND_ABS_SCALE_18,
+	NORM_RAND_ABS_SCALE_19
+};
 
 
 
