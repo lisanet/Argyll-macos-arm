@@ -10,10 +10,10 @@ get the display detection working again and to smoothly compile as arm64 binarie
 The easiest way is to download the binary package and unzip the archiv to a directory of your choice. 
 
 The binary package is not signed with a developer certificate so you need to remove the quarantine bit to allow the system to run them. 
-Just open Termonal.app and go to the directory where you've unzipped the archiv and type the following commands
+Just open Termonal.app and go to the directory where you've unzipped the archiv and type the following commands. The directory is named with the version number e.g. Argyll_V2.3.0 for Argyll version 2.3.0. You need to replace the version number in the following commands with the one you use.
 
 ```
-cd Argyll_V2.1.2
+cd Argyll_V2.3.0
 xattr -dr com.apple.quarantine *
 ```
 
@@ -21,7 +21,7 @@ To use this with [displayCAL](https://displaycal.net), open displayCAL and choos
 
 If you want to use argyll on the command line, make sure to put the bin directory into your PATH environment by doing
 ```
-export PATH=/our-custom-path/Argyll_V2.1.2/bin/:$PATH
+export PATH=/our-custom-path/Argyll_V2.3.0/bin/:$PATH
 ```
 
 ### Install from source code ###
@@ -35,17 +35,16 @@ export HOSTTYPE=arm64
 export MACHTYPE=arm64
 ```
 
-Then clone the repo, go to the source directory and type
+The easiest way to build Argyll is to clone the repo, then go to the source directory and type
+```
+./makepackagebin.sh
+```
+
+This will build a binary package which you can install as described above. If you want, for some reason, to build without packaging, then after cloning, type 
 ```
 ./makeall.sh
 ./makeinstall.sh
 ```
 
-The binaries will be located in the bin subdirectory. To make it easier to install argyll, you can build a binary package with 
-```
-./makepackagebin.sh
-```
-
-
-
+This way the binaries will be located in the bin subdirectory. 
 
